@@ -1,0 +1,31 @@
+#!/bin/bash
+#
+# hddtemp munin plugin
+# feedback: rhatto at riseup.net | gpl
+#
+# configuration example:
+#
+#  [hddtemp]
+#  user root
+#  env.devices hda hdb
+#  env.hddtemp /path/to/hddtemp
+#
+
+if [ "$1" == "config" ]; then
+  cat << EOF
+graph_title HDD Temperatures
+graph_vlabel Celsius
+graph_category sensors
+EOF
+  for dev in $devices; do
+    echo $dev.label $dev
+  done
+  exit 0
+else
+  if [ -z "$hddtemp" ]; then
+    hddtemp="/usr/sbin/hddtemp" 
+  fi
+  for device in $devices; do
+    echo $device.value `$hddtemp -n /dev/$device`
+  done
+fi

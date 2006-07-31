@@ -1,0 +1,124 @@
+#!/bin/sh
+#
+# slackbuild for ices by rhatto
+# based on http://www.slackware.com/~alien/slackbuilds/icecast/build/ices.SlackBuild
+# 
+
+CWD=`pwd`
+
+PACKAGE="ices"
+_VERSION="2.0.1"
+_ARCH="i486"
+_BUILD="1rha"
+_TMP="/tmp"
+
+if [ -f "/etc/slackbuildrc" ]; then
+  source /etc/slackbuildrc
+fi
+
+if [ -f "~/.slackbuildrc" ]; then
+  source ~/.slackbuildrc
+fi
+
+if [ -z "$VERSION" ]; then
+  VERSION="$_VERSION"
+fi
+
+if [ -z "$ARCH" ]; then
+  ARCH="$_ARCH"
+fi
+
+if [ -z "$BUILD" ]; then
+  BUILD="$_BUILD"
+fi
+
+if [ "$ARCH" == "x86_64" ]; then
+  LIBDIR=/usr/lib64
+else
+  LIBDIR=/usr/lib
+fi
+
+if [ -z "$SRC" ]; then
+  SRC_DIR="$CWD"
+else
+  SRC_DIR="$SRC"
+fi
+
+if [ -z "$TMP" ]; then
+  TMP="$_TMP"
+fi
+
+PRGNAM="$PACKAGE"
+RTOOL="wget"
+PACKAGE_EXT="bz2"
+SRC="$PACKAGE-$VERSION.tar.$PACKAGE_EXT"
+URL="http://downloads.us.xiph.org/releases/$PACKAGE/$SRC"
+PKG=$TMP/package-$PACKAGE
+
+if [ "$PACKAGE_EXT" == "bz2" ]; then
+  tarflag="j"
+else
+  tarflag="z"
+fi
+
+if [ "$RTOOL" == "wget" ] && [ ! -f "$SRC_DIR/$SRC" ]; then
+  wget "$URL" -O "$SRC_DIR/$SRC"
+fi
+
+rm -rf $PKG $TMP/tmp-$PRGNAM
+mkdir -p $TMP/tmp-$PRGNAM # location to build the source
+mkdir -p $PKG             # place for the package to be built
+
+cd $TMP/tmp-$PRGNAM
+tar xvpf$tarflag $SRC_DIR/$SRC
+cd $PRGNAM-$VERSION
+
+./configure --prefix=/usr --localstatedir=/var \
+            --sysconfdir=/usr/share/icecast/etc \
+            --libdir=$LIBDIR 
+
+make
+
+# Install all the needed stuff to the package dir
+# Use installwatch if available:
+which installwatch > /dev/null 2>&1
+if [ $? == 0 ]; then
+  installwatch -o $TMP/install-${PRGNAM}.log make DESTDIR=$PKG install
+else
+  make DESTDIR=$PKG install 2>&1 | tee $TMP/install-${PRGNAM}.log
+fi
+
+# Copy the documentation
+mkdir -p $PKG/usr/doc/$PRGNAM-$VERSION
+cp -R {AUTHORS,COPYING,README,TODO,doc} $PKG/usr/doc/$PRGNAM-$VERSION
+chmod -R -w $PKG/usr/doc/$PRGNAM-$VERSION
+
+# --- PACKAGE DESCRIPTION ---
+mkdir -p $PKG/install
+cat $CWD/ices.slack-desc > $PKG/install/slack-desc
+
+# --- BUILDING ---
+
+# Build the package and compute its md5 checksum:
+cd $PKG
+
+find . | xargs file | grep "executable" | grep ELF | cut -f 1 -d : | xargs strip --strip-unneeded 2> /dev/null
+find . | xargs file | grep "shared object" | grep ELF | cut -f 1 -d : | xargs strip --strip-unneeded 2> /dev/null
+
+makepkg --linkadd y --chown y $TMP/$PRGNAM-$VERSION-$ARCH-$BUILD.tgz
+(cd $TMP && md5sum $PRGNAM-$VERSION-$ARCH-$BUILD.tgz > $PRGNAM-$VERSION-$ARCH-$BUILD.tgz.md5)
+cat $CWD/${PRGNAM}.slack-desc | grep "^${PRGNAM}" > $TMP/$PRGNAM-$VERSION-$ARCH-$BUILD.txt
+
+# --- CLEANUP ---
+
+# Clean up the extra stuff:
+if [ "$1" = "--cleanup" ]; then
+  rm -rf $TMP/tmp-$PRGNAM
+  rm -rf $PKG
+else
+  echo You can check the 'installwatch' log file: $TMP/install-${PRGNAM}.log
+fi
+
+#
+# EOF
+#

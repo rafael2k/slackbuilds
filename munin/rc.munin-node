@@ -1,0 +1,23 @@
+#!/bin/bash
+
+if [ -a "/var/run/munin/munin-node.pid" ]; then
+  NODE_PID="`cat /var/run/munin/munin-node.pid`"
+fi
+
+function munin_node_start {
+  /usr/sbin/munin-node
+}
+
+function munin_node_stop {
+  kill -9 $NODE_PID &> /dev/null
+}
+
+if [ "$1" == "start" ]; then
+  munin_node_start
+elif [ "$1" == "stop" ]; then
+  munin_node_stop
+elif [ "$1" == "restart" ]; then
+  munin_node_stop
+  munin_node_start
+fi
+

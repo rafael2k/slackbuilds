@@ -1,0 +1,153 @@
+#!/bin/bash
+#
+# slackbuild for kernel-ratten
+#
+
+CWD="`pwd`"
+
+PACKAGE="kernel-ratten"
+KERNEL_VERSION="2.6.12"
+EXTRAVERSION=""
+ARCH="x86_64"
+BUILD="1rha"
+PATCHSET="bs"
+PATCH_VERSION="3.1.6-2.6.12"
+TMP=${TMP:=/tmp}
+SRC_DIR=${SRC:=$CWD}
+SPLASH="/etc/bootsplash/themes/Slack-Black-Tux/config/bootsplash-1024x768.cfg"
+
+cat << EOCAT
+Just remembering, you need the following stuff installed:
+
+  bootsplash
+  bootsplash theme: $SPLASH
+
+EOCAT
+
+if [ "$INTERACT" != "no" ]; then
+  echo "Hit ENTER do continue, Crtl-C to abort"
+  read crap
+else
+  echo sleeping 3 seconds...
+  sleep 3
+fi
+
+if [ -f "$SPLASH" ]; then
+  echo error: file not found: $SPLASH
+  exit 1
+fi
+
+if [ ! -z "$EXTRAVERSION" ]; then
+  KERNEL_VERSION="$KERNEL_VERSION.$EXTRAVERSION"
+fi
+
+RTOOL="wget"
+KERNEL="linux-$KERNEL_VERSION.tar.bz2"
+PATCH="bootsplash-$PATCH_VERSION.diff"
+KERNEL_URL="http://www.kernel.org/pub/linux/kernel/v2.6/$KERNEL"
+PATCH_URL="ftp://ftp.openbios.org/pub/bootsplash/kernel/$PATCH"
+
+SRC_DIR="$SRC_DIR/kernel"
+mkdir -p $SRC_DIR
+
+if [ "$RTOOL" == "wget" ]; then
+
+  if [ ! -f "$SRC_DIR/$KERNEL" ]; then
+    rm -f $SRC_DIR/$KERNEL.sign
+    wget "$KERNEL_URL" -O "$SRC_DIR/$KERNEL"
+    wget "$KERNEL_URL.sign" -O "$SRC_DIR/$KERNEL.sign"
+  fi
+
+  if [ ! -f "$SRC_DIR/$PATCH" ]; then
+    wget "$PATCH_URL" -O "$SRC_DIR/$PATCH"
+  fi
+
+fi
+
+TMP="$TMP/$PACKAGE"
+mkdir -p $TMP
+cd $TMP
+
+rm -rf linux-$KERNEL_VERSION*
+tar jxvf $SRC_DIR/$KERNEL
+
+if [ ! -z "$PATCHSET" ]; then
+  mv linux-$KERNEL_VERSION linux-$KERNEL_VERSION-$PATCHSET
+  KERNEL_VERSION="$KERNEL_VERSION-$PATCHSET"
+fi
+
+cp $CWD/config-$KERNEL_VERSION linux-$KERNEL_VERSION/.config
+cd linux-$KERNEL_VERSION
+
+if [ ! -z "$EXTRAVERSION" ] && [ ! -z "$PATCHSET" ]; then
+  sed -e "s/^EXTRAVERSION =*$/EXTRAVERSION = \.$EXTRAVERSION-$PATCHSET/" Makefile > Makefile.tmp
+elif [ ! -z "$PATCHSET" ]; then
+  sed -e "s/^EXTRAVERSION =*$/EXTRAVERSION = -$PATCHSET/" Makefile > Makefile.tmp
+fi
+
+mv Makefile.tmp Makefile
+patch -p1 < $SRC_DIR/$PATCH
+
+make oldconfig
+time make
+
+if [ -d "/lib/modules/$KERNEL_VERSION" ]; then
+  ( cd /lib/modules && mv $KERNEL_VERSION $KERNEL_VERSION.old )
+fi
+
+make modules_install
+
+# make the package
+
+PKG="$TMP/package-$PACKAGE"
+
+mkdir -p $PKG/{install,boot,lib/modules,usr/doc}
+
+cp -Rp /lib/modules/$KERNEL_VERSION $PKG/lib/modules
+
+if [ -d "/lib/modules/$KERNEL_VERSION.old" ]; then
+  ( cd /lib/modules && mv $KERNEL_VERSION $KERNEL_VERSION.delete && mv $KERNEL_VERSION.old $KERNEL_VERSION && rm -rf $KERNEL_VERSION.delete  )
+fi
+
+cp System.map $PKG/boot/System.map-$KERNEL_VERSION
+cp .config $PKG/boot/config-$KERNEL_VERSION
+cp arch/$ARCH/boot/bzImage $PKG/boot/vmlinuz-$KERNEL_VERSION
+
+cat << EOF > $PKG/install/slack-desc
+kernel-ratten: kernel-ratten (linux kernel 2.6.12-bs for ratten AMD64 workstation)
+kernel-ratten: 
+kernel-ratten: This is the kernel for the RATTEN workstation.
+kernel-ratten: 
+kernel-ratten: 
+kernel-ratten: 
+kernel-ratten: 
+kernel-ratten: 
+kernel-ratten: 
+kernel-ratten: 
+kernel-ratten: 
+EOF
+
+VERSION="`echo $KERNEL_VERSION | sed -e 's/-/_/g'`"
+
+# docs
+mkdir -p $PKG/usr/doc/$PACKAGE-$VERSION
+cp -r Documentation $PKG/usr/doc/$PACKAGE-$VERSION/
+for file in COPYING CREDITS MAINTAINERS README REPORTING-BUGS; do
+  cp $CWD/$file* $PKG/usr/doc/$PACKAGE-$VERSION/
+done
+
+mkinitrd -c -k 2.6.15.7 -o $PKG/boot/initrd.gz
+splash -s -f $SPLASH > $PKG/boot/initrd.gz 
+
+cd $PKG
+makepkg -c y -l y $TMP/$PACKAGE-$VERSION-$ARCH-$BUILD.tgz
+
+cat << EOCAT
+Please check if you need to build or install the following modules:
+
+  realtime-lsm
+  shfs
+
+Have a nice day.
+EOCAT
+

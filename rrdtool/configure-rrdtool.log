@@ -1,0 +1,278 @@
+checking build system type... x86_64-unknown-linux-gnu
+checking host system type... x86_64-unknown-linux-gnu
+checking target system type... x86_64-unknown-linux-gnu
+checking for a BSD-compatible install... /usr/bin/ginstall -c
+checking whether build environment is sane... yes
+checking for gawk... gawk
+checking whether make sets $(MAKE)... yes
+
+[1mAudit Compilation Environment[m
+checking for gcc... gcc
+checking for C compiler default output file name... a.out
+checking whether the C compiler works... yes
+checking whether we are cross compiling... no
+checking for suffix of executables... 
+checking for suffix of object files... o
+checking whether we are using the GNU C compiler... yes
+checking whether gcc accepts -g... yes
+checking for gcc option to accept ANSI C... none needed
+checking for style of include used by make... GNU
+checking dependency style of gcc... gcc3
+checking how to run the C preprocessor... gcc -E
+checking for a sed that does not truncate output... /bin/sed
+checking for egrep... grep -E
+checking for ld used by gcc... /usr/x86_64-slackware-linux/bin/ld
+checking if the linker (/usr/x86_64-slackware-linux/bin/ld) is GNU ld... yes
+checking for /usr/x86_64-slackware-linux/bin/ld option to reload object files... -r
+checking for BSD-compatible nm... /usr/bin/nm -B
+checking whether ln -s works... yes
+checking how to recognise dependent libraries... pass_all
+checking for ANSI C header files... yes
+checking for sys/types.h... yes
+checking for sys/stat.h... yes
+checking for stdlib.h... yes
+checking for string.h... yes
+checking for memory.h... yes
+checking for strings.h... yes
+checking for inttypes.h... yes
+checking for stdint.h... yes
+checking for unistd.h... yes
+checking dlfcn.h usability... yes
+checking dlfcn.h presence... yes
+checking for dlfcn.h... yes
+checking for g++... g++
+checking whether we are using the GNU C++ compiler... yes
+checking whether g++ accepts -g... yes
+checking dependency style of g++... gcc3
+checking how to run the C++ preprocessor... g++ -E
+checking for g77... g77
+checking whether we are using the GNU Fortran 77 compiler... yes
+checking whether g77 accepts -g... yes
+checking the maximum length of command line arguments... 32768
+checking command to parse /usr/bin/nm -B output from gcc object... ok
+checking for objdir... .libs
+checking for ar... ar
+checking for ranlib... ranlib
+checking for strip... strip
+checking if gcc static flag  works... yes
+checking if gcc supports -fno-rtti -fno-exceptions... no
+checking for gcc option to produce PIC... -fPIC
+checking if gcc PIC flag -fPIC works... yes
+checking if gcc supports -c -o file.o... yes
+checking whether the gcc linker (/usr/x86_64-slackware-linux/bin/ld -m elf_x86_64) supports shared libraries... yes
+checking whether -lc should be explicitly linked in... no
+checking dynamic linker characteristics... GNU/Linux ld.so
+checking how to hardcode library paths into programs... immediate
+checking whether stripping libraries is possible... yes
+checking if libtool supports shared libraries... yes
+checking whether to build shared libraries... yes
+checking whether to build static libraries... yes
+configure: creating libtool
+appending configuration tag "CXX" to libtool
+checking for ld used by g++... /usr/x86_64-slackware-linux/bin/ld -m elf_x86_64
+checking if the linker (/usr/x86_64-slackware-linux/bin/ld -m elf_x86_64) is GNU ld... yes
+checking whether the g++ linker (/usr/x86_64-slackware-linux/bin/ld -m elf_x86_64) supports shared libraries... yes
+checking for g++ option to produce PIC... -fPIC
+checking if g++ PIC flag -fPIC works... yes
+checking if g++ supports -c -o file.o... yes
+checking whether the g++ linker (/usr/x86_64-slackware-linux/bin/ld -m elf_x86_64) supports shared libraries... yes
+checking dynamic linker characteristics... GNU/Linux ld.so
+checking how to hardcode library paths into programs... immediate
+checking whether stripping libraries is possible... yes
+appending configuration tag "F77" to libtool
+checking if libtool supports shared libraries... yes
+checking whether to build shared libraries... yes
+checking whether to build static libraries... yes
+checking for g77 option to produce PIC... -fPIC
+checking if g77 PIC flag -fPIC works... yes
+checking if g77 supports -c -o file.o... yes
+checking whether the g77 linker (/usr/x86_64-slackware-linux/bin/ld -m elf_x86_64) supports shared libraries... yes
+checking dynamic linker characteristics... GNU/Linux ld.so
+checking how to hardcode library paths into programs... immediate
+checking whether stripping libraries is possible... yes
+
+[1mChecking for Header Files[m
+checking for ANSI C header files... (cached) yes
+checking for dirent.h that defines DIR... yes
+checking for library containing opendir... none required
+checking for sys/stat.h... (cached) yes
+checking for sys/types.h... (cached) yes
+checking fcntl.h usability... yes
+checking fcntl.h presence... yes
+checking for fcntl.h... yes
+checking time.h usability... yes
+checking time.h presence... yes
+checking for time.h... yes
+checking locale.h usability... yes
+checking locale.h presence... yes
+checking for locale.h... yes
+checking fp_class.h usability... no
+checking fp_class.h presence... no
+checking for fp_class.h... no
+checking malloc.h usability... yes
+checking malloc.h presence... yes
+checking for malloc.h... yes
+checking for unistd.h... (cached) yes
+checking ieeefp.h usability... no
+checking ieeefp.h presence... no
+checking for ieeefp.h... no
+checking math.h usability... yes
+checking math.h presence... yes
+checking for math.h... yes
+checking sys/time.h usability... yes
+checking sys/time.h presence... yes
+checking for sys/time.h... yes
+checking sys/times.h usability... yes
+checking sys/times.h presence... yes
+checking for sys/times.h... yes
+checking sys/param.h usability... yes
+checking sys/param.h presence... yes
+checking for sys/param.h... yes
+checking sys/resource.h usability... yes
+checking sys/resource.h presence... yes
+checking for sys/resource.h... yes
+checking float.h usability... yes
+checking float.h presence... yes
+checking for float.h... yes
+checking for an ANSI C-conforming const... yes
+checking whether time.h and sys/time.h may both be included... yes
+checking whether struct tm is in sys/time.h or time.h... time.h
+checking for acos... no
+checking for acos in -lm... yes
+
+[1mTest Library Functions[m
+checking for strftime... yes
+checking for vprintf... yes
+checking for _doprnt... no
+checking whether byte ordering is bigendian... no
+checking for tzset... yes
+checking for mbstowcs... yes
+checking for opendir... yes
+checking for readdir... yes
+checking for chdir... yes
+checking for chroot... yes
+checking for getuid... yes
+checking for setlocale... yes
+checking for strerror... yes
+checking for strerror_r... yes
+checking for snprintf... yes
+checking for vsnprintf... yes
+checking for fpclass... no
+checking for class... no
+checking for fp_class... no
+checking for isnan... yes
+checking for memmove... yes
+checking for strchr... yes
+checking for mktime... yes
+checking for getrusage... yes
+checking for gettimeofday... yes
+checking for stdlib.h... (cached) yes
+checking for unistd.h... (cached) yes
+checking for getpagesize... yes
+checking for working mmap... yes
+
+[1mIEEE Math Checks[m
+checking for fpclassify... no
+checking for fpclassify with <math.h>... no
+checking for finite... yes
+checking for isinf... yes
+checking if IEEE math works out of the box... yes
+
+[1mResolve Portability Issues[m
+checking if realloc can deal with NULL... yes
+checking if ctime_r need special care to act posixly correct... no
+checking for the pthreads library -lpthreads... no
+checking whether pthreads work without any flags... no
+checking whether pthreads work with -Kthread... no
+checking whether pthreads work with -kthread... no
+checking for the pthreads library -llthread... no
+checking whether pthreads work with -pthread... yes
+checking for joinable pthread attribute... PTHREAD_CREATE_JOINABLE
+checking if more special flags are required for pthreads... no
+checking for cc_r... gcc
+checking do we need malloc/malloc.h... nope, works out of the box
+
+[1mFindr 3rd-Party Libraries[m
+checking for art_vpath_add_point in -lart_lgpl_2... yes
+checking libart_lgpl/libart.h usability... yes
+checking libart_lgpl/libart.h presence... yes
+checking for libart_lgpl/libart.h... yes
+checking for zlibVersion in -lz... yes
+checking zlib.h usability... yes
+checking zlib.h presence... yes
+checking for zlib.h... yes
+checking for png_access_version_number in -lpng... yes
+checking png.h usability... yes
+checking png.h presence... yes
+checking for png.h... yes
+checking for FT_Init_FreeType in -lfreetype... yes
+checking ft2build.h usability... yes
+checking ft2build.h presence... yes
+checking for ft2build.h... yes
+
+[1mPrep for Building Language Bindings[m
+checking for perl... /usr/bin/perl
+checking for the perl version you are running... 5.8.7
+checking for the C compiler perl wants to use to build its modules... cc
+checking for cc... /usr/bin/cc
+checking Perl Modules to build... perl_piped perl_shared
+checking for tclConfig.sh in /usr/lib... no
+checking for tclConfig.sh in /usr/local/lib... no
+configure: WARNING: tclConfig.sh not found - Tcl interface won't be built
+checking for a Python interpreter with version >= 2.3... python
+checking for python... /usr/bin/python
+checking for python version... 2.3
+checking for python platform... linux2
+checking for python script directory... ${prefix}/lib/python2.3/site-packages
+checking for python extension module directory... ${exec_prefix}/lib/python2.3/site-packages
+checking for headers required to compile python extensions... found
+checking for gnroff... /usr/bin/gnroff
+checking for groff... /usr/bin/groff
+checking if we can use GCC-specific compiler options... yes
+
+[1mApply Configuration Information[m
+configure: creating ./config.status
+config.status: creating examples/shared-demo.pl
+config.status: creating examples/piped-demo.pl
+config.status: creating examples/stripes.pl
+config.status: creating examples/bigtops.pl
+config.status: creating examples/minmax.pl
+config.status: creating examples/cgi-demo.cgi
+config.status: creating examples/4charts.pl
+config.status: creating examples/Makefile
+config.status: creating doc/Makefile
+config.status: creating src/Makefile
+config.status: creating bindings/Makefile
+config.status: creating bindings/tcl/Makefile
+config.status: creating bindings/tcl/ifOctets.tcl
+config.status: creating bindings/python/Makefile
+config.status: creating Makefile
+config.status: creating config.h
+config.status: executing depfiles commands
+config.status: executing default commands
+checking in... and out again
+ordering CD from http://people.ee.ethz.ch/oetiker/wish .... just kidding ;-)
+
+----------------------------------------------------------------
+Config is DONE!
+
+          With MMAP IO: yes
+          Perl Modules: perl_piped perl_shared
+           Perl Binary: /usr/bin/perl
+          Perl Version: 5.8.7
+          Perl Options: 
+    Build Tcl Bindings: no
+ Build Python Bindings: yes
+          Build rrdcgi: yes
+       Build librrd MT: yes
+
+
+Type 'make' to compile the software and use 'make install' to 
+install everything to: /usr.
+
+       ... that wishlist is NO JOKE. If you find RRDtool useful
+make me happy. Go to http://people.ee.ethz.ch/oetiker/wish and
+place an order.
+
+                               -- Tobi Oetiker <tobi@oetiker.ch>
+----------------------------------------------------------------

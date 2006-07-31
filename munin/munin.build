@@ -1,0 +1,154 @@
+#!/bin/bash
+#
+# build script for munin by rhatto | gpl
+# build it with slacktrack, example:
+#
+#   ARCH=x86_64 slacktrack -jefkzp "munin-1.2.4-x86_64-2rha.tgz" "./munin.build"
+# 
+
+#
+# TODO: criacao de configuracoes padroes no /etc/munin
+#       pegar mais plugins de vserver em http://svn.debian.org/wsvn/pkg-vserver/people/holger/munin-plugins/plugins/?rev=0&sc=0
+#
+
+CWD="`pwd`"
+
+# default settings
+PACKAGE="munin"
+_TMP="/tmp"
+_VERSION="1.2.4"
+_ARCH="i386"
+_BUILD="2rha"
+
+if ! grep -qe "^$PACKAGE:" /etc/passwd || ! grep -qe "^$PACKAGE:" /etc/group; then
+  echo "WARNING: user and/or group $PACKAGE does not exist"
+  echo "Create it manually with \"groupadd $PACKAGE ; useradd $PACKAGE -g $PACKAGE\" and run this script again."
+  exit 1
+fi
+
+cat << EOCAT
+Attention: be sure that theres no munin installed on this system, otherwiser installation
+procedure will fail to copy plugins to their right place. Please uninstall any munin packages
+before continue.
+
+Hit enter to proceed.
+EOCAT
+
+read garbage
+
+if [ -f "/etc/slackbuildrc" ]; then
+  source /etc/slackbuildrc
+fi
+
+if [ -f "~/.slackbuildrc" ]; then
+  source ~/.slackbuildrc
+fi
+
+if [ -z "$VERSION" ]; then
+  VERSION="$_VERSION"
+fi
+
+if [ -z "$ARCH" ]; then
+  ARCH="$_ARCH"
+fi
+
+if [ -z "$BUILD" ]; then
+  BUILD="$_BUILD"
+fi
+
+if [ "$ARCH" == "x86_64" ]; then
+  LIBDIR=/usr/lib64
+else
+  LIBDIR=/usr/lib
+fi
+
+if [ -z "$SRC" ]; then
+  SRC_DIR="$CWD"
+else
+  SRC_DIR="$SRC"
+fi
+
+if [ -z "$TMP" ]; then
+  TMP="$_TMP"
+fi
+
+RTOOL="wget"
+PACKAGE_EXT="gz"
+SRC="$PACKAGE"_"$VERSION.tar.$PACKAGE_EXT"
+URL="http://easynews.dl.sourceforge.net/sourceforge/$PACKAGE/$SRC"
+
+if [ "$RTOOL" == "wget" ] && [ ! -f "$SRC_DIR/$SRC" ]; then
+ rm -f $SRC_DIR/$SRC
+ wget "$URL" -O "$SRC_DIR/$SRC"
+fi
+
+if [ "$PACKAGE_EXT" == "bz2" ]; then
+  tarflag="j"
+else
+  tarflag="z"
+fi
+
+rm -rf $TMP/package-$PACKAGE
+mkdir $TMP/package-$PACKAGE
+cd $TMP/package-$PACKAGE
+tar xvf$tarflag $SRC_DIR/$SRC
+cd $PACKAGE-$VERSION
+
+# config and install!
+
+mkdir -p /install
+
+sed -e 's/PREFIX     = $(DESTDIR)\/opt\/munin/PREFIX     = $(DESTDIR)\/usr/' \
+    -e 's/CONFDIR    = $(DESTDIR)\/etc\/opt\/munin/CONFDIR    = $(DESTDIR)\/etc\/munin/' \
+    -e 's/DBDIR      = $(DESTDIR)\/var\/opt\/munin/DBDIR      = $(DESTDIR)\/var\/munin/' \
+    -e 's/LIBDIR     = $(PREFIX)\/lib/LIBDIR     = $(PREFIX)\/lib\/munin/' \
+    -e 's/HTMLDIR    = $(PREFIX)\/var\/www/HTMLDIR    = \/var\/www/' \
+    -e 's/CGIDIR     = $(HTMLDIR)\/cgi/CGIDIR     = $(HTMLDIR)\/cgi-bin/' Makefile.config > Makefile.config.new
+
+mv Makefile.config.new Makefile.config
+
+make install-main
+make install-doc install-man
+make install-node install-node-plugins
+
+# make the package
+
+cp $CWD/plugins/* /usr/lib/munin/plugins/
+chmod 755 /usr/lib/munin/plugins/*
+
+mkdir -p /etc/munin/plugin{s,conf-d}
+mv /etc/munin/munin.conf /etc/munin/munin.conf.sample
+mv /etc/munin-node.conf /etc/munin-node.conf.sample
+
+mkdir -p /etc/rc.d
+cp $CWD/rc.munin-node /etc/rc.d/rc.munin-node.new
+
+cat << EOF > /install/slack-desc
+# HOW TO EDIT THIS FILE:
+# The "handy ruler" below makes it easier to edit a package description.  Line
+# up the first '|' above the ':' following the base package name, and the '|'
+# on the right side marks the last column you can put a character in.  You must
+# make exactly 11 lines for the formatting to be correct.  It's also
+# customary to leave one space after the ':'.
+
+     |-----handy-ruler-----------------------------------------------------|
+munin: munin (system to gather and graph all sorts of information)
+munin: 
+munin: Munin the tool surveys all your computers and remembers what it saw.
+munin: It presents all the information in in graphs through a web interface.
+munin: Its emphasis is on plug and play capabilities. After completing a
+munin: installation a high number of monitoring plugins will be playing with 
+munin: no more effort. Using Munin you can easily monitor the performance of 
+munin: your computers, networks, SANs, and quite possibly applications as 
+munin: well. It makes it easy to determine "what's different today" when 
+munin: a performance problem crops up. It makes it easy to see how you're 
+munin: doing capacity wise on all limited resources.
+EOF
+
+echo '( chroot . /sbin/ldconfig )' > /install/doinst.sh
+echo '( if ! grep -qe "^munin:" etc/group; then echo creating group munin ; chroot . /usr/sbin/groupadd munin; fi )' >> /install/doinst.sh
+echo '( if ! grep -qe "^munin:" etc/passwd; then echo creating user munin ; chroot . /usr/sbin/useradd munin -g munin; fi )' >> /install/doinst.sh
+echo '( if [ ! -f "etc/rc.d/rc.munin-node" ]; then mv etc/rc.d/rc.munin-node.new etc/rc.d/rc.munin-node; fi )' >> /install/doinst.sh
+echo '( mkdir -p var/log/munin var/run/munin var/munin )' >> /install/doinst.sh
+echo '( chroot . /usr/bin/chown munin.munin /var/log/munin /var/run/munin /var/munin )' >> /install/doinst.sh
+

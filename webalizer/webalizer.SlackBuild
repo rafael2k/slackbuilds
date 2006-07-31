@@ -1,0 +1,212 @@
+#!/bin/bash
+# Copyright (c) 2006 Eric Hameleers <alien@slackware.com>
+# Distributed under the terms of the GNU General Public License, Version 2
+# -----------------------------------------------------------------------------
+#
+# Slackware SlackBuild script 
+# ===========================
+# By:        Eric Hameleers <alien@slackware.com>
+# For:       webalizer
+# URL:       http://www.mrunix.net/webalizer/
+# Needs:     gd, freetype2
+# Changelog:
+# 2.01.10-1: 15/may/2005 by Eric Hameleers <alien@sox.homeip.net>
+#            * Initial build.
+# 2.01.10-2: 15/may/2005 by Eric Hameleers <alien@sox.homeip.net>
+#            * Fixed the DNS resolving (detection of db 1.85 compat)
+# 2.01.10-3: 28/apr/2006 by Eric Hameleers <alien@slackware.com>
+#            * Linked against gd-nox to avoid dependency on x11 (still
+#              needs freetype2 though!)
+# 2.01.10-4: 28/apr/2006 by Eric Hameleers <alien@slackware.com>
+#            * Added a "STATIC" variable to the script, so you can build
+#              webalizer without any dependencies at all.
+#
+# small changes by rhatto
+# 
+# Run 'sh SlackBuild --cleanup' to build a Slackware package.
+# The package (.tgz) plus descriptive .txt file are created in /tmp .
+# Install using 'installpkg'. 
+#
+# -----------------------------------------------------------------------------
+
+# --- INIT ---
+# Set initial variables:
+CWD="`pwd`"
+
+if [ -f "/etc/slackbuildrc" ]; then
+  source /etc/slackbuildrc
+fi
+
+if [ -f "~/.slackbuildrc" ]; then
+  source ~/.slackbuildrc
+fi
+
+# change STATIC to anything other than "yes" to enable dynamic build.
+STATIC=${STATIC:-no}
+
+[ "$STATIC" == "yes" ] && \
+  PRGNAM=webalizer_static     || \
+  PRGNAM=webalizer
+
+SRCNAM="webalizer"
+SRCVER="2.01-10"
+VERSION=${VERSION:=2.01.10}
+ARCH=${ARCH:-i486}
+BUILD=${BUILD:=1rha}
+PACKAGE="$PRGNAM"
+SRC_DIR=${SRC:=$CWD}
+TMP=${TMP:=/tmp}
+
+DOCS="CHANGES COPYING Copyright DNS.README INSTALL README README.FIRST country-codes.txt"
+
+if [ "$ARCH" == "x86_64" ]; then
+  LIBDIR=/usr/lib64
+else
+  LIBDIR=/usr/lib
+fi
+
+RTOOL="wget"
+PACKAGE_EXT="tgz"
+SRC="$SRCNAM-$SRCVER-src.$PACKAGE_EXT"
+URL="ftp://ftp.mrunix.net/pub/webalizer/$SRC"
+
+if [ "$PACKAGE_EXT" == "bz2" ]; then
+  tarflag="j"
+else
+  tarflag="z"
+fi
+
+if [ "$RTOOL" == "wget" ] && [ ! -f "$SRC_DIR/$SRC" ]; then
+  wget "$URL" -O "$SRC_DIR/$SRC"
+fi
+
+if [ "$ARCH" = "i386" ]; then
+  SLKCFLAGS="-O2 -march=i386 -mcpu=i686"
+elif [ "$ARCH" = "i486" ]; then
+  SLKCFLAGS="-O2 -march=i486 -mcpu=i686"
+elif [ "$ARCH" = "s390" ]; then
+  SLKCFLAGS="-O2"
+elif [ "$ARCH" = "x86_64" ]; then
+  SLKCFLAGS="-O2"
+fi
+
+PKG=$TMP/package-$PRGNAM
+
+if [ ! -d $TMP/tmp-$PRGNAM ]; then
+  mkdir -p $TMP/tmp-$PRGNAM # location to build the source
+fi
+if [ ! -d $PKG ]; then
+  mkdir -p $PKG # place for the package to be built
+fi
+
+# --- PACKAGE BUILDING ---
+
+echo "++"
+echo "|| $PRGNAM-$VERSION"
+echo "++"
+
+rm -rf $PKG/*
+
+cd $PKG
+
+# Explode the package framework:
+if [ -f $CWD/_$PRGNAM.tar.gz ]; then
+  explodepkg $CWD/_$PRGNAM.tar.gz
+fi
+
+cd $TMP/tmp-$PRGNAM
+
+# --- TARBALL EXTRACTION,PATCH,MODIFY ---
+
+echo "Extracting the program sources for $PRGNAM..."
+tar xvf$tarflag $SRC_DIR/$SRC
+
+mv ${SRCNAM}-${SRCVER} ${PRGNAM}-${SRCVER}
+cd ${PRGNAM}-${SRCVER}
+
+chown -R root.root *
+
+# --- BUILDING ---
+
+echo Building ...
+
+CPPFLAGS="-I/usr/include/db4" \
+CFLAGS="$SLKCFLAGS $CPPFLAGS" \
+./configure --prefix=/usr \
+            --localstatedir=/var \
+            --sysconfdir=/etc \
+            --with-db=/usr/include/db4 \
+            --with-dblib=/lib \
+            --libdir=$LIBDIR \
+            --enable-dns \
+            $([ "$STATIC" == "yes" ] && echo "--enable-static" || echo "") \
+            2>&1 | tee $TMP/configure-${PRGNAM}.log
+make 2>&1 | tee $TMP/make-${PRGNAM}.log
+
+#
+# Install all the needed stuff to the package dir
+#
+mkdir -p $PKG/etc
+mkdir -p $PKG/usr/bin
+mkdir -p $PKG/usr/man/man1
+
+# Use installwatch if available:
+which installwatch > /dev/null 2>&1
+if [ $? == 0 ]; then
+  installwatch -o $TMP/install-${PRGNAM}.log \
+    make BINDIR=$PKG/usr/bin MANDIR=$PKG/usr/man/man1 ETCDIR=$PKG/etc install
+else
+  make BINDIR=$PKG/usr/bin MANDIR=$PKG/usr/man/man1 ETCDIR=$PKG/etc install \
+    2>&1 |tee $TMP/install-${PRGNAM}.log
+fi
+
+
+# --- DOCUMENTATION ---
+
+mkdir -p $PKG/usr/doc/$PRGNAM-$VERSION
+cp -a $DOCS \
+      $PKG/usr/doc/$PRGNAM-$VERSION
+chmod -R a-w $PKG/usr/doc/$PRGNAM-$VERSION/*
+
+# Compress the man page(s)
+find $PKG/usr/man -type f -name "*.?" -exec gzip -9f {} \;
+
+# Strip binaries
+( cd $PKG
+  find . | xargs file | grep "executable" | grep ELF | cut -f 1 -d : | xargs strip --strip-unneeded 2> /dev/null
+  find . | xargs file | grep "shared object" | grep ELF | cut -f 1 -d : | xargs strip --strip-unneeded 2> /dev/null
+)
+
+
+# --- OWNERSHIP, RIGHTS ---
+
+chmod -R o-w $PKG
+
+# --- PACKAGE DESCRIPTION ---
+
+mkdir -p $PKG/install
+cat $CWD/$([ "$STATIC" == "yes" ] && echo "$PRGNAM." || echo "")slack-desc > $PKG/install/slack-desc
+
+if [ -f $CWD/doinst.sh ]; then
+  cat $CWD/doinst.sh > $PKG/install/doinst.sh
+else
+  echo '( if [ ! -f "/etc/webalizer.conf" ]; then mv /etc/webalizer.conf.sample /etc/webalizer.conf; fi )' > $PKG/install/doinst.sh
+fi
+
+# --- BUILDING ---
+
+# Build the package:
+cd $PKG
+makepkg --linkadd y --chown n $TMP/${PRGNAM}-${VERSION}-${ARCH}-${BUILD}.tgz \
+  2>&1 | tee $TMP/makepkg-${PRGNAM}.log
+(cd $TMP && md5sum ${PRGNAM}-${VERSION}-${ARCH}-${BUILD}.tgz > ${PRGNAM}-${VERSION}-${ARCH}-${BUILD}.tgz.md5)
+cat $PKG/install/slack-desc | grep "^${PRGNAM}" > $TMP/${PRGNAM}-${VERSION}-${ARCH}-${BUILD}.txt
+
+# --- CLEANUP ---
+
+# Clean up the extra stuff:
+if [ "$1" = "--cleanup" ]; then
+  rm -rf $TMP/tmp-$PRGNAM
+  rm -rf $PKG
+fi
+

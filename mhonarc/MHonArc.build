@@ -1,0 +1,139 @@
+#!/bin/bash
+#
+# build script for MHonArc by rhatto | gpl
+# build it with slacktrack, example:
+#
+#   slacktrack -jefkzp "MHonArc-2.6.15-noarch-1rha.tgz" "./MHonArc.build"
+# 
+
+CWD="`pwd`"
+
+# default settings
+PACKAGE="MHonArc"
+ARCH="noarch"
+_TMP="/tmp"
+_VERSION="2.6.15"
+_BUILD="1rha"
+
+if [ -f "/etc/slackbuildrc" ]; then
+  source /etc/slackbuildrc
+fi
+
+if [ -f "~/.slackbuildrc" ]; then
+  source ~/.slackbuildrc
+fi
+
+if [ -z "$VERSION" ]; then
+  VERSION="$_VERSION"
+fi
+
+if [ -z "$BUILD" ]; then
+  BUILD="$_BUILD"
+fi
+
+if [ "$ARCH" == "x86_64" ]; then
+  LIBDIR=/usr/lib64
+else
+  LIBDIR=/usr/lib
+fi
+
+if [ -z "$SRC" ]; then
+  SRC_DIR="$CWD"
+else
+  SRC_DIR="$SRC"
+fi
+
+if [ -z "$TMP" ]; then
+  TMP="$_TMP"
+fi
+
+RTOOL="wget"
+PACKAGE_EXT="gz"
+SRC="$PACKAGE-$VERSION.tar.$PACKAGE_EXT"
+URL="http://download.savannah.gnu.org/releases/mhonarc/$SRC"
+#URL="http://www.mhonarc.org/release/MHonArc/tar/$SRC"
+
+gpg --import << EOPGP
+-----BEGIN PGP PUBLIC KEY BLOCK-----
+Version: GnuPG v1.4.0 (GNU/Linux)
+
+mQGiBEKOHu4RBACtUzT7qUPCkph1PqSOykVrbFoC8KbQ4fJEk7uxZsmuFT4w0N86
+NL+OSnSdwSLYWps1sYt9sIs8Z73vqHML0mUoRtpMq6iVaU2y+TjiXLPFe46BHGWk
+wpqe04b9Bvv2hiK1SKn3UEq5Nh0qBlxa2nBZ7/KQgWYPmxX1Knk3IOXmCwCgs5Nn
+LXXgsjlAw/LZ9NvGnrg58vkEAIvjIkYgTDdycST7wm5HN+UHvp6j5lhnlJQvl36f
+xQ2FjwFAq1iKxtzyNY2tQ+gAyv17T4lkJEWM4JzcfQQor1M9FDzrHCbVwk7JpImT
+iFv94ABhJt73QJjqI+nhW3oNOxYPj+e0VrpYymrzrXcqKyn1BlPoyNaQ2a9tLRvn
+z5pEA/4mZiWip8bGJkGW5jRn56zrf4RqREAwHjs8XG92jDzWyIhX3mlv/8gCnOVY
+TOD/KNZ9MyJfIgq/CeqdtK31I9a33LWSb1hsi4/rhOCUPPTkBhk5lWioKssS2W8C
+CwUiYjWbIvBw12+Yvfm0JNNMGO/rzFOjj6s5WGO+B0weqfLcyrRATUhvbkFyYyBT
+aWduaW5nIFVzZXIgKE1Ib25BcmMgU2lnbmluZyBLZXkpIDxtaG9uYXJjQG1ob25h
+cmMub3JnPoheBBMRAgAeBQJCjh7uAhsDBgsJCAcDAgMVAgMDFgIBAh4BAheAAAoJ
+EEfx4u7GMGYGuKMAn1WwLggyhQ6e8krX5aKpm8ZtrbVaAJ4w2yAZlsmETeHnkozq
+e4fmW0u5DLkCDQRCjh/3EAgAq10ERViVtgnjJhJMq1FYOY/T1CUyzbKRSvZ186CF
+vcU6Cdl14dftSf9cyiSHjAPyg+hRf+MJnZ2eJDJOI5wA9+ckST53lr3dLU895Xz9
+0fBTO6uzMF3fiDazfe1PW/fWYpZtdwIPLTg2vlnoQ7NGF8hOUki8jL8CJIhN+UCq
+ehsz/2x6FcFh4NQLbChiyTMhjOnu0M+xHxn4sl2nKcsSxy8Y9IkGo2cswQ8+V+Kw
+9LPWem589bhfoKruDeNAn9K0uqpBYXlR7uhiWDjxklCGbzlLbiF+3XNy9f76DhOm
+yLxMuN+rq361uV2ePXjcUSl6XuvdNuz25lRRL32wNxDnnwAECwf/TiqZeiHH5qPC
+MmoQxZd90VW5/rLO0kgb/ijBQpgrjvKcWp3XsQcrRi/Ah4jyGzR4v0ueoGFN04k9
+rH4KZT61W7qtlG32YNvJIlmoOmuD6144GJExqbuLO09skXyUipQlaYIGFgkNHeBO
+v6YZ/CHIBeFYWju0mzsviITAbg+kW4bkm/kUFxQMFpIJTBDhYCh1WiWymwluTTxf
+3YmQu+0zloVC0C2CqdiPj+f6W73EtOOFHLcNdK4POXFjfdbTxw2MBUDHhorhr7vf
+ogj0dmUR8jUCLWd/0TPjyJ+Yd6F83T0y0G8KOzGTm0rsNoR0YrXv3TI/I0oge7H1
+A4EURC+Cb4hJBBgRAgAJBQJCjh/3AhsMAAoJEEfx4u7GMGYGATgAnRYYeRWI+SMF
+HQLvCJtzi5ItzFcUAKCsbdsaPrV6noZQ+IjvSYat1ObXVQ==
+=2R87
+-----END PGP PUBLIC KEY BLOCK-----
+EOPGP
+
+if [ "$RTOOL" == "wget" ] && [ ! -f "$SRC_DIR/$SRC" ]; then
+ rm -f $SRC_DIR/$SRC $SRC_DIR/$SRC.sig
+ wget "$URL" -O "$SRC_DIR/$SRC"
+ wget "$URL.sig" -O "$SRC_DIR/$SRC.sig"
+fi
+
+gpg --verify $SRC_DIR/$SRC.asc $SRC_DIR/$SRC || echo WARNING: Could not check signature or WRONG signature found.
+
+if [ "$PACKAGE_EXT" == "bz2" ]; then
+  tarflag="j"
+else
+  tarflag="z"
+fi
+
+rm -rf $TMP/package-$PACKAGE
+mkdir $TMP/package-$PACKAGE
+cd $TMP/package-$PACKAGE
+tar xvf$tarflag $SRC_DIR/$SRC
+cd $PACKAGE-$VERSION
+
+perl install.me -batch
+
+mkdir -p /usr/doc/$PACKAGE
+
+for file in ACKNOWLG BUGS CHANGES COPYING FILELIST INSTALL README.txt RELNOTES TODO; do
+  cp $file* /usr/doc/$PACKAGE/
+done
+
+mkdir -p /install
+cat << EOF > /install/slack-desc
+# HOW TO EDIT THIS FILE:
+# The "handy ruler" below makes it easier to edit a package description.  Line
+# up the first '|' above the ':' following the base package name, and the '|'
+# on the right side marks the last column you can put a character in.  You must
+# make exactly 11 lines for the formatting to be correct.  It's also
+# customary to leave one space after the ':'.
+
+       |-----handy-ruler-----------------------------------------------------|
+MHonArc: MHonArc (mail archiver)
+MHonArc:
+MHonArc: MHonArc is a Perl program for converting mail or news messages into
+MHonArc: HTML archives. It can also be used to convert individual messages
+MHonArc: into HTML documents. Other capabilities include robust MIME support
+MHonArc: and powerful user customization features.
+MHonArc:
+MHonArc:
+MHonArc:
+MHonArc:
+MHonArc:
+EOF
+

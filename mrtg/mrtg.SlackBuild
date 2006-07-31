@@ -1,0 +1,124 @@
+#!/bin/bash
+#
+# Retirado de http://www.brunorusso.eti.br/pacotes/mrtg/mrtg.SlackBuild
+# Pequenas modificacoes por rhatto
+#
+
+cat << EOCAT
+Just remembering, you need the following packages installed:
+
+  gd
+
+EOCAT
+
+if [ "$INTERACT" != "no" ]; then
+  echo "Hit ENTER do continue, Crtl-C to abort"
+  read crap
+else
+  echo sleeping 3 seconds...
+  sleep 3
+fi
+
+CWD="`pwd`"
+
+if [ -f "/etc/slackbuildrc" ]; then
+  source /etc/slackbuildrc
+fi
+
+if [ -f "~/.slackbuildrc" ]; then
+  source ~/.slackbuildrc
+fi
+
+PACKAGE="mrtg"
+VERSION=${VERSION:=2.14.3}
+BUILD=${BUILD:=1rha}
+ARCH=${ARCH:=i486}
+SRC_DIR=${SRC:=$CWD}
+
+PKG="$TMP/package-mrtg"
+TMP=${TMP:=/tmp}
+
+if [ "$ARCH" == "x86_64" ]; then
+  LIBDIR=/usr/lib64
+else
+  LIBDIR=/usr/lib
+fi
+
+RTOOL="wget"
+PACKAGE_EXT="gz"
+SRC="$PACKAGE-$VERSION.tar.$PACKAGE_EXT"
+URL="http://people.ee.ethz.ch/~oetiker/webtools/mrtg/pub/$SRC"
+
+if [ "$PACKAGE_EXT" == "bz2" ]; then
+  tarflag="j"
+else
+  tarflag="z"
+fi
+
+if [ "$RTOOL" == "wget" ] && [ ! -f "$SRC_DIR/$SRC" ]; then
+  wget "$URL" -O "$SRC_DIR/$SRC"
+fi
+
+# Verifica qual e o tipo de arquitetura e define algumas opcoes de compilacao
+if [ "$ARCH" = "i386" ]; then
+  SLKCFLAGS="-O2 -march=i386 -mcpu=i686"
+elif [ "$ARCH" = "i486" ]; then
+  SLKCFLAGS="-O2 -march=i486 -mcpu=i686"
+elif [ "$ARCH" = "s390" ]; then
+  SLKCFLAGS="-O2"
+elif [ "$ARCH" = "x86_64" ]; then
+  SLKCFLAGS="-O2"
+fi
+
+rm -rf $PKG
+mkdir -p $PKG
+cd $TMP
+rm -rf mrtg-$VERSION
+tar xvf$tarflag $SRC_DIR/$SRC
+cd mrtg-$VERSION
+
+./configure --bindir=/usr/bin --libdir=$LIBDIR --localstatedir=/usr/share \
+            --sharedstatedir=/usr/share --libexecdir=/usr/lib --mandir=/usr/man \
+            --datadir=/usr/share --sysconfdir=/etc
+
+make
+make install DESTDIR=$PKG
+
+chown -R root.bin $PKG/usr/bin
+( cd $PKG
+	find . | xargs file | grep ELF \
+	| cut -f 1 -d : | \
+	xargs strip --strip-unneeded
+)
+( cd $PKG/usr/man
+	find . -name "*.?" | xargs gzip -9
+)
+
+mkdir $PKG/install
+
+cat << EOF > $PKG/install/slack-desc
+# HOW TO EDIT THIS FILE:
+# The "handy ruler" below makes it easier to edit a package description.  Line
+# up the first '|' above the ':' following the base package name, and the '|'
+# on the right side marks the last column you can put a character in.  You must
+# make exactly 11 lines for the formatting to be correct.  It's also
+# customary to leave one space after the ':'.
+
+    |-----handy-ruler------------------------------------------------------|
+mrtg: mrtg (Multi Router Grapher)
+mrtg:
+mrtg: The Multi Router Traffic Grapher (MRTG) is an open-source  tool to
+mrtg: monitor the traffic load on network-links. MRTG generates HTML pages
+mrtg: containing Web Graphics which provide a LIVE visual representation of
+mrtg: this traffic.
+mrtg:
+mrtg: Check 
+mrtg:      http://www.stat.ee.ethz.ch/mrtg/
+mrtg: to see what it does.
+mrtg:
+EOF
+
+mkdir -p $PKG/etc/mrtg
+cd $PKG
+
+makepkg -l y -c n $TMP/mrtg-$VERSION-$ARCH-$BUILD.tgz

@@ -1,0 +1,64 @@
+#!/bin/bash
+#
+# build script for fglrx by rhatto | gpl
+# build it with slacktrack, example:
+#
+#   ARCH=x86_64 slacktrack -jefkzp "fglrx-module-8.14.13_1-x86_64-1rha.tgz" "./fglrx.build"
+#
+
+# TODO: finnish and test
+
+PACKAGE="fglrx-module"
+VERSION="8.14.13_1"
+
+cd /lib/modules/fglrx/build_mod
+chmod +x make.sh
+
+# Patches aplicados em sequencia: http://www.tux3d.org/fglrx/Patches/Kernel-2.6.12/good-tested/
+patch -p0 < patches/fglrx-2.6-agpgart.patch
+patch -p0 < patches/fglrx-2.6.12-inter_module_get.patch
+patch -p1 < patches/fglrx-2.6.12-new-agpgart.patch
+patch -p0 < patches/fglrx-2.6.12-x86-64.patch
+
+# aply? -> patch -p0 < patches/firegl.patch       
+
+# -------------- para kernel 2.6.14 em diante, faça isto -------------- 
+# modulo verify_area (make e make install jah resolvem)
+#   http://www.colino.net/wordpress-1.5/archives/2005/10/29/fglrx-unknown-symbol-verify_area/
+#   http://www.geekounet.org/patches/files/verify_area.tar.gz
+#
+# especial atencao para o firegl_public.c, caso role erros do tipo
+#   fglrx: Unknown symbol register_ioctl32_conversion
+# voce terah que remover nesse arquivo as chamadas a 
+#  return register_ioctl32_conversion(cmd, handler) e
+#  unregister_ioctl32_conversion(cmd)
+# ---------------------------------------------------------------------
+
+./make.sh 
+cd /lib/modules/fglrx
+chmod +x make_install.sh
+./make_install.sh
+
+mkdir /install
+cat << EOF > /install/slack-desc
+# HOW TO EDIT THIS FILE:
+# The "handy ruler" below makes it easier to edit a package description.  Line
+# up the first '|' above the ':' following the base package name, and the '|'
+# on the right side marks the last column you can put a character in.  You must
+# make exactly 11 lines for the formatting to be correct.  It's also
+# customary to leave one space after the ':'.
+
+            |-----handy-ruler-----------------------------------------------------|
+fglrx-module: fglrx-module (kernel module for ATI's binary blob)
+fglrx-module:
+fglrx-module:
+fglrx-module:
+fglrx-module:
+fglrx-module:
+fglrx-module:
+fglrx-module:
+fglrx-module:
+fglrx-module:
+fglrx-module:
+EOF
+

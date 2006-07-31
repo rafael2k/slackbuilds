@@ -1,0 +1,116 @@
+#!/bin/bash
+#
+# slackbuild for vlan
+#
+
+CWD="`pwd`"
+
+# default settings
+PACKAGE="vlan"
+_VERSION="1.9"
+_ARCH="x86_64"
+_BUILD="1rha"
+_TMP="/tmp"
+
+if [ -f "/etc/slackbuildrc" ]; then
+  source /etc/slackbuildrc
+fi
+
+if [ -f "~/.slackbuildrc" ]; then
+  source ~/.slackbuildrc
+fi
+
+if [ -z "$VERSION" ]; then
+  VERSION="$_VERSION"
+fi
+
+if [ -z "$ARCH" ]; then
+  ARCH="$_ARCH"
+fi
+
+if [ -z "$BUILD" ]; then
+  BUILD="$_BUILD"
+fi
+
+if [ "$ARCH" == "x86_64" ]; then
+  LIBDIR=/usr/lib64
+else
+  LIBDIR=/usr/lib
+fi
+
+if [ -z "$SRC" ]; then
+  SRC_DIR="$CWD"
+else
+  SRC_DIR="$SRC"
+fi
+
+if [ -z "$TMP" ]; then
+  TMP="$_TMP"
+fi
+
+RTOOL="wget"
+PACKAGE_EXT="gz"
+SRC="$PACKAGE.$VERSION.tar.$PACKAGE_EXT"
+URL="http://www.candelatech.com/~greear/vlan/$SRC"
+
+if [ "$PACKAGE_EXT" == "bz2" ]; then
+  tarflag="j"
+else
+  tarflag="z"
+fi
+
+if [ "$RTOOL" == "wget" ] && [ ! -f "$SRC_DIR/$SRC" ]; then
+  wget "$URL" -O "$SRC_DIR/$SRC"
+fi
+
+cd $TMP
+rm -rf package-$PACKAGE
+mkdir package-$PACKAGE
+cd package-$PACKAGE
+
+tar xvf$tarflag $SRC_DIR/$SRC
+mv $PACKAGE $PACKAGE-$VERSION
+cd $PACKAGE-$VERSION
+rm -f vconfig vconfig.o
+make
+
+CWD="`pwd`"
+
+mkdir $TMP/package-$PACKAGE/$PACKAGE
+cd $TMP/package-$PACKAGE/$PACKAGE
+
+mkdir -p usr/bin
+cp $CWD/vconfig usr/bin
+
+mkdir install
+cat << EOF > install/slack-desc
+# HOW TO EDIT THIS FILE:
+# The "handy ruler" below makes it easier to edit a package description.  Line
+# up the first '|' above the ':' following the base package name, and the '|'
+# on the right side marks the last column you can put a character in.  You must
+# make exactly 11 lines for the formatting to be correct.  It's also
+# customary to leave one space after the ':'.
+
+    |-----handy-ruler-----------------------------------------------------|
+vlan: vlan (802.1Q VLAN implementation for Linux)
+vlan:
+vlan: http://www.candelatech.com/~greear/vlan.html
+vlan:
+vlan:
+vlan:
+vlan:
+vlan:
+vlan:
+vlan:
+vlan:
+EOF
+
+# docs
+mkdir -p usr/doc/$PACKAGE-$VERSION
+
+for file in CHANGELOG README vlan.html howto.html; do
+  cp $CWD/$file* usr/doc/$PACKAGE-$VERSION/
+done
+
+makepkg -c y -l y $TMP/$PACKAGE-$VERSION-$ARCH-$BUILD.tgz
+

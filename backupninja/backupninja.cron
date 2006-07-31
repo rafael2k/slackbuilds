@@ -1,0 +1,8 @@
+#!/bin/bash
+# /etc/cron.hourly/backupninja -- cron tab entry for package backupninja
+
+PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
+
+if [ -x /usr/sbin/backupninja ]; then
+  /usr/sbin/backupninja
+fi

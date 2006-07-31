@@ -1,0 +1,210 @@
+#!/bin/bash
+# Copyright 2000 BSDi, Inc. Concord, CA, USA
+# Copyright 2001, 2002, 2003, 2004  Slackware Linux, Inc. Concord, CA, USA
+# Copyright 2006  Patrick J. Volkerding, Sebeka, MN, USA
+# All rights reserved.
+#
+# Redistribution and use of this script, with or without modification, is
+# permitted provided that the following conditions are met:
+#
+# 1. Redistributions of this script must retain the above copyright
+#    notice, this list of conditions and the following disclaimer.
+#
+#  THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR IMPLIED
+#  WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+#  MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.  IN NO
+#  EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+#  SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+#  PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
+#  OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+#  WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
+#  OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+#  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+#
+# Small changes by rhatto.
+#
+
+CWD="`pwd`"
+
+if [ -f "/etc/slackbuildrc" ]; then
+  source /etc/slackbuildrc
+fi
+
+if [ -f "~/.slackbuildrc" ]; then
+  source ~/.slackbuildrc
+fi
+
+PACKAGE="openssh"
+VERSION=${VERSION:=4.3p2}
+ARCH=${ARCH:=x86_64}
+BUILD=${BUILD:=1rha}
+SRC_DIR=${SRC:=$CWD}
+TMP=${TMP:=/tmp}
+
+if [ "$ARCH" == "x86_64" ]; then
+  LIBDIR=/usr/lib64
+else
+  LIBDIR=/usr/lib
+fi
+
+RTOOL="wget"
+PACKAGE_EXT="gz"
+SRC="$PACKAGE-$VERSION.tar.$PACKAGE_EXT"
+URL="ftp://ftp.openbsd.org.br/pub/OpenBSD/OpenSSH/portable/$SRC"
+
+if [ "$PACKAGE_EXT" == "bz2" ]; then
+  tarflag="j"
+else
+  tarflag="z"
+fi
+
+if [ "$RTOOL" == "wget" ] && [ ! -f "$SRC_DIR/$SRC" ]; then
+  rm -f $SRC_DIR/$SRC.asc
+  wget "$URL" -O "$SRC_DIR/$SRC"
+  wget "$URL.asc" -O "$SRC_DIR/$SRC.asc"
+fi
+
+gpg --import << EOGPG
+-----BEGIN PGP PUBLIC KEY BLOCK-----
+Version: GnuPG v1.0.4 (GNU/Linux)
+Comment: For info see http://www.gnupg.org
+
+mQGiBDqa5pwRBADJSEyXXsgXiyytN93prDPTPmrueRP9lQQfgaQvCvqK0bN0AF1Z
+Vxxk9wlSXQp3+Qw5+qqsN5ovzsn39r9pqGslfCqQn9ACTmsn42+VCyW4hdwUGSBS
+5myh65ZJTK1ufWCZFssxQ0EiALagu4DlH6Z2O7tFDnJNagF55vlnK0uMQwCg/8RU
+QYDmisEHjkarAapPaupxjhkD/j9riCVasWPYJwAuhiQWAKxGRwp/ZyTaWCSERUBR
+4Dg9QxpuwHKIT8BeDA3hJa/9Yxu5jec2NVKbtVSZvRkgUfRNOkrcH2eiY8Iz6est
+J64dGWuGMKQW0GEqW+OXpRTTPJZ0mgPmU16qDzLPdx6F3BAk2LG+TTwlKUPuGqOt
+6u2EA/4+1CBYZ8mXq9GJnLRBPAoYwSJJzbQnMm9Jat/yg9N6nigSIiFyG8ixh167
+gGGKfzvpjY7DeJzDI0Cub+tRova8gFg+T15AcPMST5v7v6O/ug9aYWERZ0zjUhRH
+ybtYLYhUUbdYM29PwGBNfZhGIOYwfFE9UpPS5LeXHs28oVLlH7QuRGFtaWVuIE1p
+bGxlciAoUGVyc29uYWwgS2V5KSA8ZGptQG1pbmRyb3Qub3JnPohXBBMRAgAXBQI6
+muacBQsHCgMEAxUDAgMWAgECF4AACgkQzo7LA4b/nEiDMgCZAUzKq241h5GTJxC0
+guS6ht9i9ZsAoL/oXCmFsofARehZF6AakIdasvS9uQINBDqa5tQQCADz/XnCcyle
+9hmxgyntr35ZQJKx9g6ftBw178JSwM3O7JNOGp398Eh4Q9rkEp5NH1qVecG953Fu
+edT9IAXqr8pjp5tdqMYCcaKy+aJ0Sw1zVD2VOY3h7SyfU25pcYiHEa1grfKPVoWm
+53IwWGVVtquF5dimAe75+D0aXyVCOv0Ez9wgJR6H69lp4/cD2GyNaGarwY9HLvHF
+vXONY2qm/GV5OjyOUO41gmQ4pyXQh+gocFFHrM0AzveIswgNpJ0xNWXX8iXGsr3Y
+Cvqm7JoIU9JKxDV+96bxDLfTdKpoLYKb68WdtmAylsio5+iZfWtdOb/Xpk2Yx5Ld
+ady9/+n3m6cvAAURCACrvoVSbd0MR0FWX+bBZ0NjScNBo3kPSSCnQ6jRHokkz55r
++MHe7dqxCJ3pmu7aROl2fgug6wob+7+qXfKke/TdT6wuCb4CdFS6tPgPrfYV+iwq
+2NB/BatePGg7Z6UALaULQ0m83DCEVLJNnjemEdIouShelikAAO7QDKMr7vAjH8n0
+zwMpwRMXnvCM6zYlS9i1kOm8LVATk0WyihpQGSaTukdPjKlG7sKwMu20ssK9DGVp
+PgulTZ7rHqXl4juY8LQ2j4dPNaPoKWG8JuBVCsyf2D6GNW97PfKQSkzFeZsbVB4S
+RQrVTchgBSYoxRVW3fLk/yc3TC5Abh6Gpj4izawUiEYEGBECAAYFAjqa5tQACgkQ
+zo7LA4b/nEgftgCdHIZUDVAWDRa5siSi8Aos+IiyAgAAn02wGOl1Wo/YJ+RY+c6K
+N58TmAPE
+=rCFY
+-----END PGP PUBLIC KEY BLOCK-----
+EOGPG
+
+gpg --verify $SRC.asc $SRC || echo WARNING: Could not check signature or WRONG signature found.
+
+PKG=$TMP/package-openssh
+
+if [ "$ARCH" = "i386" ]; then
+  SLKCFLAGS="-O2 -march=i386 -mcpu=i686"
+elif [ "$ARCH" = "i486" ]; then
+  SLKCFLAGS="-O2 -march=i486 -mcpu=i686"
+elif [ "$ARCH" = "s390" ]; then
+  SLKCFLAGS="-O2"
+elif [ "$ARCH" = "x86_64" ]; then
+  SLKCFLAGS="-O2 -fPIC"
+fi
+
+# Clean target location:
+rm -rf $PKG
+mkdir -p $PKG
+
+# Prepare the framework and extract the package:
+cd $TMP
+rm -rf $PKG openssh-$VERSION
+tar xvf$tarflag $SRC_DIR/$SRC
+cd openssh-$VERSION
+chown -R root.root .
+
+# Compile package:
+CFLAGS="$SLKCFLAGS" \
+./configure \
+  --prefix=/usr \
+  --sysconfdir=/etc/ssh \
+  --libdir=$LIBDIR \
+  --without-pam \
+  --with-md5-passwords \
+  --with-tcp-wrappers \
+  --with-default-path=/usr/local/sbin:/usr/sbin:/sbin:/usr/local/bin:/usr/bin:/bin \
+  --with-ipv4-default \
+  --with-privsep-path=/var/empty \
+  --with-privsep-user=sshd \
+  $ARCH-slackware-linux
+
+make
+
+# Install the package:
+make install DESTDIR=$PKG
+
+( cd $PKG
+  find . | xargs file | grep "executable" | grep ELF | cut -f 1 -d : | xargs strip --strip-unneeded 2> /dev/null
+  find . | xargs file | grep "shared object" | grep ELF | cut -f 1 -d : | xargs strip --strip-unneeded 2> /dev/null
+)
+
+# Compress the installed manpages:
+find $PKG/usr/man -type f -exec gzip -9 {} \;
+
+# Relink the slogin(1) man page
+( cd $PKG/usr/man/man1
+  rm -f slogin.1
+  ln -sf ssh.1.gz slogin.1.gz
+)
+
+# Install directory used with PrivilegeSeparation option:
+mkdir -p $PKG/var/empty
+chmod 755 $PKG/var/empty
+
+# Install docs:
+mkdir -p $PKG/usr/doc/openssh-$VERSION
+cp -a \
+  CREDITS ChangeLog INSTALL LICENCE OVERVIEW README README.privsep README.smartcard RFC.nroff TODO WARNING.RNG \
+  $PKG/usr/doc/openssh-$VERSION
+chmod 644 $PKG/usr/doc/openssh-$VERSION/*
+
+# Install also 'ssh-copy-id' and its manpage from contrib:
+( cd contrib
+  cp -a ssh-copy-id $PKG/usr/bin/ssh-copy-id
+  chown root.bin $PKG/usr/bin/ssh-copy-id
+  chmod 755 $PKG/usr/bin/ssh-copy-id
+  cat ssh-copy-id.1 | gzip -9c > $PKG/usr/man/man1/ssh-copy-id.1.gz
+)
+
+# Fix some ownerships per FSSTND:
+chown -R root.bin $PKG/usr/bin $PKG/usr/sbin
+
+( cd $PKG
+
+  # Ditch the new host keys, since these have to be uniquely prepared on each machine:
+  rm -f etc/ssh/ssh_host_dsa_key
+  rm -f etc/ssh/ssh_host_dsa_key.pub
+  rm -f etc/ssh/ssh_host_rsa_key
+  rm -f etc/ssh/ssh_host_rsa_key.pub
+  rm -f etc/ssh/ssh_host_key
+  rm -f etc/ssh/ssh_host_key.pub
+
+  # Set up the config script installation:
+  mv etc/ssh/ssh_config etc/ssh/ssh_config.new
+  mv etc/ssh/sshd_config etc/ssh/sshd_config.new
+
+  # Add the init script:
+  mkdir -p etc/rc.d
+  cat $CWD/rc.sshd > etc/rc.d/rc.sshd
+  chmod 755 etc/rc.d/rc.sshd
+
+  # Copy runtime installation files:
+  mkdir -p install
+  zcat $CWD/doinst.sh.gz > install/doinst.sh
+  cat $CWD/slack-desc > install/slack-desc
+)
+
+# Create the package itself:
+cd $PKG
+makepkg -l y -c n $TMP/openssh-$VERSION-$ARCH-$BUILD.tgz
+

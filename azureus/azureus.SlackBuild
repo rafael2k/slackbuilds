@@ -1,0 +1,97 @@
+#!/bin/bash
+#
+# slackbuild for azureus
+# 
+
+CWD="`pwd`"
+
+if [ -f "/etc/slackbuildrc" ]; then
+  source /etc/slackbuildrc
+fi
+
+if [ -f "~/.slackbuildrc" ]; then
+  source ~/.slackbuildrc
+fi
+
+# default settings
+PRGNAM="azureus"
+PACKAGE="$PRGNAM"
+VERSION=${VERSION:=2.4.0.2}
+ARCH=${ARCH:=x86_64}
+BUILD=${BUILD:=3rha}
+TMP=${TMP:=/tmp}
+SRC_DIR=${SRC:=$CWD}
+TMP=${TMP:=/tmp}
+REPOS=${REPOS:=$TMP}
+
+if [ "$ARCH" == "x86_64" ]; then
+  LIBDIR=/usr/lib64
+else
+  LIBDIR=/usr/lib
+fi
+
+PACKAGE_EXT="bz2"
+SRC="Azureus_$VERSION"_"linux-$ARCH.tar.$PACKAGE_EXT"
+URL="http://easynews.dl.sourceforge.net/sourceforge/$PACKAGE/$SRC"
+RTOOL="wget"
+
+SRC_DIR="$SRC_DIR/$PACKAGE"
+mkdir -p $SRC_DIR
+
+if [ "$PACKAGE_EXT" == "bz2" ]; then
+  tarflag="j"
+else
+  tarflag="z"
+fi
+
+if [ "$RTOOL" == "wget" ] && [ ! -f "$SRC_DIR/$SRC" ]; then
+ wget "$URL" -O "$SRC_DIR/$SRC"
+fi
+
+TMP="$TMP/$PACKAGE"
+rm -rf $TMP
+mkdir -p $TMP
+cd $TMP
+
+rm -rf $PACKAGE-$VERSION $PACKAGE-$VERSION-$ARCH-$BUILD.tgz
+rm -rf $TMP/package-$PACKAGE
+mkdir -p $TMP/package-$PACKAGE/install
+cd $TMP/package-$PACKAGE
+
+mkdir -p usr/local
+cd usr/local
+
+tar xvf$tarflag $SRC_DIR/$SRC
+cd $TMP/package-$PACKAGE
+
+# TODO: this should be fixed
+rm usr/local/azureus/plugins/azplugins/*
+wget "http://azureus.sourceforge.net/plugins/azplugins_2.0.jar" -O "usr/local/azureus/plugins/azplugins/azplugins_2.0.jar"
+
+cat << EOF > install/slack-desc
+# HOW TO EDIT THIS FILE:
+# The "handy ruler" below makes it easier to edit a package description.  Line
+# up the first '|' above the ':' following the base package name, and the '|'
+# on the right side marks the last column you can put a character in.  You must
+# make exactly 11 lines for the formatting to be correct.  It's also
+# customary to leave one space after the ':'.
+
+       |-----handy-ruler------------------------------------------------------|
+azureus: azureus (a java BitTorrent client)
+azureus: 
+azureus: Azureus implements the BitTorrent protocol using java language
+azureus: and comes bundled with many invaluable features for both beginners
+azureus: and advanced users. 
+azureus: 
+azureus: 
+azureus: 
+azureus: 
+azureus: 
+azureus: 
+EOF
+
+makepkg -c y $REPOS/$PACKAGE-$VERSION-$ARCH-$BUILD.tgz
+
+if [ "$CLEANUP" == "yes" ]; then
+  rm -rf $TMP
+fi

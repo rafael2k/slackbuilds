@@ -1,0 +1,59 @@
+#!/bin/bash
+#
+# icecast munin plugin
+# feedback: rhatto at riseup.net | gpl
+#
+# configuration example:
+#
+#  [icecast]
+#  env.host localhost
+#  evn.port 8000
+#  env.stats /munin.xsl 
+#  env.lynx /usr/bin/lynx
+#
+# munin.xsl example:
+#
+# <xsl:stylesheet xmlns:xsl = "http://www.w3.org/1999/XSL/Transform" version = "1.0" >
+# <xsl:output omit-xml-declaration="no" method="xml" doctype-public="-//W3C//DTD XHTML 1.0 Strict//EN"
+#             doctype-system="http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd" indent="yes" encoding="UTF-8" />
+# <xsl:template match = "/icestats" >
+# <xsl:for-each select="source">
+# <xsl:value-of select="@mount" />.value, <xsl:value-of select="listeners" /><br />
+# </xsl:for-each>
+# </xsl:template>
+# </xsl:stylesheet>
+#
+
+if [ -z "$host" ]; then
+  host="localhost"
+fi
+
+if [ -z "$port" ]; then
+  port="8000"
+fi
+
+if [ -z "$stats" ]; then
+  stats="munin.xsl"
+fi
+
+if [ -z "$lynx" ]; then
+  lynx="/usr/bin/lynx"
+fi
+
+if [ "$1" == "config" ]; then
+  cat << EOF
+graph_title Icecast usage
+graph_vlabel Listeners
+graph_category other
+EOF
+
+for mount in `$lynx http://$host:$port/$stats -dump | cut -d , -f 1 | sed -e 's/\///g' -e 's/^   //' -e 's/.value//' -e 's/\./_/g' `; do
+  echo $mount.label $mount
+done
+
+exit 0
+else
+
+  $lynx http://$host:$port/$stats -dump | sed -e 's/,//g' -e 's/\///g' -e 's/^   //' -e 's/\.ogg/_ogg/'
+
+fi

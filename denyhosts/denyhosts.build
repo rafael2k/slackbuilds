@@ -1,0 +1,96 @@
+#!/bin/bash
+#
+# build script for denyhosts
+# build it with slacktrack, example:
+#
+#   slacktrack -jefkzp "denyhosts-0.5-noarch-1rha.tgz" "./denyhosts.build"
+# 
+
+CWD="`pwd`"
+
+if [ -f "/etc/slackbuildrc" ]; then
+  source /etc/slackbuildrc
+fi
+
+if [ -f "~/.slackbuildrc" ]; then
+  source ~/.slackbuildrc
+fi
+
+# default settings
+PACKAGE="denyhosts"
+VERSION=${VERSION:=2.5}
+ARCH="noarch"
+BUILD=${BUILD:=1rha}
+SRC_DIR=${SRC:=$CWD}
+TMP=${TMP:=/tmp}
+
+RTOOL="wget"
+PACKAGE_EXT="gz"
+SRC="DenyHosts-$VERSION.tar.$PACKAGE_EXT"
+URL="http://easynews.dl.sourceforge.net/sourceforge/$PACKAGE/$SRC"
+
+SRC_DIR="$SRC_DIR/$PACKAGE"
+
+if [ ! -d "$SRC_DIR" ]; then
+  mkdir -p $SRC_DIR
+fi
+
+if [ "$PACKAGE_EXT" == "bz2" ]; then
+  tarflag="j"
+else
+  tarflag="z"
+fi
+
+if [ "$RTOOL" == "wget" ] && [ ! -f "$SRC_DIR/$SRC" ]; then
+  wget "$URL" -O "$SRC_DIR/$SRC"
+fi
+
+TMP="$TMP/$PACKAGE"
+
+if [ ! -d "$TMP" ]; then
+  mkdir -p $TMP
+fi
+
+cd $TMP
+
+tar xvf$tarflag $SRC_DIR/$SRC
+cd DenyHosts-$VERSION
+
+python setup.py install
+
+CWD="`pwd`"
+
+mkdir /install
+
+cat << EOF > /install/slack-desc
+# HOW TO EDIT THIS FILE:
+# The "handy ruler" below makes it easier to edit a package description.  Line
+# up the first '|' above the ':' following the base package name, and the '|'
+# on the right side marks the last column you can put a character in.  You must
+# make exactly 11 lines for the formatting to be correct.  It's also
+# customary to leave one space after the ':'.
+
+         |-----handy-ruler-----------------------------------------------------|
+denyhosts: denyhosts
+denyhosts:
+denyhosts: DenyHosts is a script intended to help Linux system administrators
+denyhosts: thwart ssh server attacks. DenyHosts scans an ssh server log,
+denyhosts: updates /etc/hosts.deny after a configurable number of failed
+denyhosts: attempts from a rogue host is determined, and alerts the
+denyhosts: administrator of any suspicious logins.
+denyhosts:
+denyhosts:
+denyhosts:
+denyhosts:
+EOF
+
+# docs
+mkdir -p /usr/doc/$PACKAGE-$VERSION
+
+for file in CHANGELOG.txt LICENSE.txt README.txt; do
+  cp $CWD/$file* /usr/doc/$PACKAGE-$VERSION/
+done
+
+if [ "$CLEANUP" == "yes" ]; then
+  rm -rf $TMP
+fi

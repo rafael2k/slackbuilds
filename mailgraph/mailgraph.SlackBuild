@@ -1,0 +1,101 @@
+#!/bin/bash
+#
+# slackbuild for mailgraph
+# 
+
+CWD="`pwd`"
+
+# default settings
+PACKAGE="mailgraph"
+ARCH="noarch"
+_VERSION="1.12"
+_BUILD="1rha"
+_TMP="/tmp"
+
+if [ -f "/etc/slackbuildrc" ]; then
+  source /etc/slackbuildrc
+fi
+
+if [ -f "~/.slackbuildrc" ]; then
+  source ~/.slackbuildrc
+fi
+
+if [ -z "$VERSION" ]; then
+  VERSION="$_VERSION"
+fi
+
+if [ -z "$BUILD" ]; then
+  BUILD="$_BUILD"
+fi
+
+if [ "$ARCH" == "x86_64" ]; then
+  LIBDIR=/usr/lib64
+else
+  LIBDIR=/usr/lib
+fi
+
+if [ -z "$SRC" ]; then
+  SRC_DIR="$CWD"
+else
+  SRC_DIR="$SRC"
+fi
+
+if [ -z "$TMP" ]; then
+  TMP="$_TMP"
+fi
+
+RTOOL="wget"
+PACKAGE_EXT="gz"
+SRC="$PACKAGE-$VERSION.tar.$PACKAGE_EXT"
+URL="http://people.ee.ethz.ch/~dws/software/mailgraph/pub/$SRC"
+
+if [ "$PACKAGE_EXT" == "bz2" ]; then
+  tarflag="j"
+else
+  tarflag="z"
+fi
+
+if [ "$RTOOL" == "wget" ] && [ ! -f "$SRC_DIR/$SRC" ]; then
+  wget "$URL" -O "$SRC_DIR/$SRC"
+fi
+
+cd $TMP
+rm -rf $PACKAGE-$VERSION
+
+tar xvf$tarflag $SRC_DIR/$PACKAGE-$VERSION.tar.$PACKAGE_EXT
+cd $PACKAGE-$VERSION
+
+CWD="`pwd`"
+
+mkdir package && cd package
+
+mkdir -p etc/rc.d usr/{bin,doc/mailgraph,share/mailgraph} install
+sed -e 's/^MAILGRAPH_PL=\/usr\/local\/bin\/mailgraph.pl/MAILGRAPH_PL=\/usr\/bin\/mailgraph.pl/' $CWD/mailgraph-init > etc/rc.d/rc.mailgraph
+cp $CWD/mailgraph.pl usr/bin
+cp $CWD/{CHANGES,COPYING,README} usr/doc/mailgraph/
+cp $CWD/mailgraph.cgi usr/share/mailgraph/
+
+cat << EOF > install/slack-desc
+# HOW TO EDIT THIS FILE:
+# The "handy ruler" below makes it easier to edit a package description.  Line
+# up the first '|' above the ':' following the base package name, and the '|'
+# on the right side marks the last column you can put a character in.  You must
+# make exactly 11 lines for the formatting to be correct.  It's also
+# customary to leave one space after the ':'.
+
+          |-----handy-ruler-----------------------------------------------------|
+mailgraph: mailgraph (postfix graph tool)
+mailgraph:
+mailgraph: Mailgraph is a very simple mail statistics RRDtool frontend for
+mailgraph: Postfix that produces daily, weekly, monthly, and yearly graphs of
+mailgraph: received/sent and bounced/rejected mail.
+mailgraph:
+mailgraph:
+mailgraph:
+mailgraph:
+mailgraph:
+mailgraph:
+EOF
+
+makepkg -c y -l y $TMP/$PACKAGE-$VERSION-$ARCH-$BUILD.tgz
+

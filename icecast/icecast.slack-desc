@@ -1,0 +1,19 @@
+# HOW TO EDIT THIS FILE:
+# The "handy ruler" below makes it easier to edit a package description.  Line
+# up the first '|' above the ':' following the base package name, and the '|'
+# on the right side marks the last column you can put a character in.  You must
+# make exactly 11 lines for the formatting to be correct.  It's also
+# customary to leave one space after the ':'.
+
+       |-----handy-ruler------------------------------------------------------|
+icecast: icecast (Xiph's streaming media server for mp3 and ogg audio)
+icecast:
+icecast: Icecast needs a 'source client' like IceS, that provides the
+icecast: audio stream.
+icecast:
+icecast:
+icecast:
+icecast:
+icecast:
+icecast: Icecast homepage: http://www.icecast.org
+icecast:

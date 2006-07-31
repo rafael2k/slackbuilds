@@ -1,0 +1,104 @@
+#!/bin/bash
+#
+# based on slamd64 slackbuild script
+# rhatto usage: TMP=/phreak/apps/build/net/mozilla-firefox SRC=/phreak/apps/src/net/mozilla-firefox ./mozilla-firefox.SlackBuild
+#
+
+CWD="`pwd`"
+
+if [ -f "/etc/slackbuildrc" ]; then
+  source /etc/slackbuildrc
+fi
+
+if [ -f "~/.slackbuildrc" ]; then
+  source ~/.slackbuildrc
+fi
+
+# default settings
+PACKAGE="firefox"
+VERSION=${VERSION:=1.5.0.5}
+ARCH=${ARCH:=x86_64}
+BUILD=${BUILD:=1rha}
+TMP=${TMP:=/tmp}
+SRC_DIR=${SRC:=$CWD}
+
+if [ "$ARCH" == "x86_64" ]; then
+  LIBDIR=/usr/lib64
+else
+  LIBDIR=/usr/lib
+fi
+
+# adjust to your package build dir
+TMP="$TMP/$PACKAGE"
+PKG=$TMP/package-firefox
+
+if [ ! -d $TMP ]; then
+  mkdir -p $TMP
+fi
+rm -rf $PKG
+mkdir -p $PKG
+
+SRC_DIR="$SRC_DIR/$PACKAGE"
+mkdir -p $SRC_DIR
+
+PACKAGE_EXT="bz2"
+SRC="$PACKAGE-$VERSION-source.tar.$PACKAGE_EXT"
+URL="ftp://ftp.mozilla.org/pub/mozilla.org/$PACKAGE/releases/$VERSION/source/$SRC"
+RTOOL="wget"
+
+if [ "$RTOOL" == "wget" ] && [ ! -f "$SRC_DIR/$SRC" ]; then
+  wget "$URL" -O "$SRC_DIR/$SRC"
+fi
+
+if [ "$PACKAGE_EXT" == "bz2" ]; then
+  tarflag="j"
+else
+  tarflag="z"
+fi
+
+cd $TMP
+tar xf$tarflag $SRC_DIR/$SRC || exit 1
+echo foo
+if [ -d $PACKAGE-$VERSION ]; then
+	rm -rf $PACKAGE-$VERSION
+fi
+mv mozilla $PACKAGE-$VERSION
+cd $PACKAGE-$VERSION
+cp $CWD/default.xpm ./widget/src/gtk2/default.xpm
+
+CFLAGS="-O2 -fPIC" MOZ_PHOENIX=1 \
+	./configure --prefix=/usr --libdir=$LIBDIR --enable-optimize="-pipe -w -O2" \
+	--disable-debug \
+	--with-default-mozilla-five-home=$LIBDIR/firefox-${VERSION} \
+	--enable-strip-libs --enable-strip --disable-tests --enable-crypto --disable-ldap \
+	--enable-extensions=cookie,xml-rpc,xmlextras,pref,transformiix,universalchardet,webservices,inspector,gnomevfs \
+	--disable-mailnews --disable-composer --enable-single-profile --disable-profilesharing \
+	--enable-xft --enable-xinerama --disable-freetype2 --enable-default-toolkit=gtk2 \
+	--disable-installer --with-pthreads --disable-jsd \
+        --enable-application=browser || exit 1
+
+MOZ_PHOENIX=1 make -s export || exit 1
+MOZ_PHOENIX=1 make -s libs || exit 1
+MOZ_PHOENIX=1 make DESTDIR=$PKG install || exit 1
+
+find $PKG/ -name '*.so' | xargs chmod -x
+chmod -x ${PKG}${LIBDIR}/firefox-${VERSION}/components/*.js
+# rm -rf ${PKG}${LIBDIR}/firefox-${VERSION}/defaults/profile/extensions/installed-extensions.txt 2>/dev/null
+# mv ${PKG}${LIBDIR}/firefox-${VERSION}/defaults/profile/extensions/{972ce4c6-7e08-4474-a285-3208198ce6fd}/install.rdf ${PKG}${LIBDIR}/firefox-${VERSION}/extensions/{972ce4c6-7e08-4474-a285-3208198ce6fd}/
+# rm -rf ${PKG}${LIBDIR}/firefox-${VERSION}/defaults/profile/extensions/{972ce4c6-7e08-4474-a285-3208198ce6fd}
+
+mkdir -p $PKG/usr/share/applications
+cat $CWD/firefox.desktop > $PKG/usr/share/applications/firefox.desktop
+mkdir -p $PKG/usr/share/pixmaps
+cat $CWD/firefox.png > $PKG/usr/share/pixmaps/firefox.png
+mkdir $PKG/install
+cat $CWD/slack-desc > $PKG/install/slack-desc
+cat $CWD/slack-required > $PKG/install/slack-required
+sed -e "s/VERSION/$VERSION/g" $CWD/doinst.sh > $PKG/install/doinst.sh
+(cd ${PKG}${LIBDIR}/firefox-$VERSION; mv lib* ../; ln -s ../lib* ./ )
+(cd ${PKG}${LIBDIR}/firefox-$VERSION; ln -s mozilla-xremote-client mozilla-firefox-xremote-client)
+(cd ${PKG}${LIBDIR}/firefox-$VERSION; ln -sf mozilla-xremote-client firefox-xremote-client)
+
+cd $PKG
+makepkg -l y -c n $TMP/mozilla-firefox-$VERSION-$ARCH-$BUILD.tgz
+

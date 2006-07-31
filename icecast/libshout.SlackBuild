@@ -1,0 +1,167 @@
+#!/bin/sh
+# $Id: libshout.SlackBuild,v 1.2 2006/02/28 15:26:52 root Exp root $
+# Copyright (c) 2006 Eric Hameleers <alien@slackware.com>
+# Distributed under the terms of the GNU General Public License, Version 2
+# --------------------------------------------------------------------------
+# Slackware SlackBuild script
+# ===========================
+# By:        Eric Hameleers <alien@slackware.com>
+# For:       libshout
+# URL:       http://www.icecast.org/
+# Summary:   Library which can be used to write a source client like IceS
+# Needs:     libvorbis, libogg
+# Changelog:
+# 2.0-1:     20/oct/2004 by Eric Hameleers
+# 2.0-1rha:  07/jun/2006 by rhatto: small changes
+#
+# --------------------------------------------------------------------------
+#
+
+CWD=`pwd`
+
+# default settings
+PACKAGE="libshout"
+_VERSION="2.2.1"
+_ARCH="x86_64"
+_BUILD="2rha"
+_TMP="/tmp"
+
+if [ -f "/etc/slackbuildrc" ]; then
+  source /etc/slackbuildrc
+fi
+
+if [ -f "~/.slackbuildrc" ]; then
+  source ~/.slackbuildrc
+fi
+
+if [ -z "$VERSION" ]; then
+  VERSION="$_VERSION"
+fi
+
+if [ -z "$ARCH" ]; then
+  ARCH="$_ARCH"
+fi
+
+if [ -z "$BUILD" ]; then
+  BUILD="$_BUILD"
+fi
+
+if [ "$ARCH" == "x86_64" ]; then
+  LIBDIR=/usr/lib64
+else
+  LIBDIR=/usr/lib
+fi
+
+if [ -z "$SRC" ]; then
+  SRC_DIR="$CWD"
+else
+  SRC_DIR="$SRC"
+fi
+
+if [ -z "$TMP" ]; then
+  TMP="$_TMP"
+fi
+
+PRGNAM="$PACKAGE"
+PKG=$TMP/package-$PRGNAM
+
+RTOOL="wget"
+PACKAGE_EXT="gz"
+SRC="$PACKAGE-$VERSION.tar.$PACKAGE_EXT"
+URL="http://downloads.us.xiph.org/releases/$PACKAGE/$SRC"
+
+if [ "$PACKAGE_EXT" == "bz2" ]; then
+  tarflag="j"
+else
+  tarflag="z"
+fi
+
+if [ "$RTOOL" == "wget" ] && [ ! -f "$SRC_DIR/$SRC" ]; then
+  wget "$URL" -O "$SRC_DIR/$SRC"
+  wget "$URL.sig" -O "$SRC_DIR/$SRC.sig"
+fi
+
+if [ ! -d $TMP/tmp-$PRGNAM ]; then
+  mkdir -p $TMP/tmp-$PRGNAM # location to build the source
+fi
+if [ ! -d $PKG ]; then
+  mkdir -p $PKG             # place for the package to be built
+fi
+
+# --- PACKAGE BUILDING ---
+
+echo "+==============+"
+echo "| $PRGNAM-$VERSION |"
+echo "+==============+"
+
+rm -rf $PKG/*
+
+# Explode the package framework:
+cd $PKG
+if [ -f $CWD/_$PRGNAM.tar.gz ]; then
+  explodepkg $CWD/_$PRGNAM.tar.gz
+fi
+
+cd $TMP/tmp-$PRGNAM
+
+# Extract tar ball in TEMP dir
+echo Building $PRGNAM...
+tar xvpf$tarflag $SRC_DIR/$SRC
+cd $PRGNAM-$VERSION
+./configure --prefix=/usr --sysconfdir=/etc --localstatedir=/var --libdir=$LIBDIR \
+            | tee $TMP/${PRGNAM}_configure.log
+make | tee $TMP/${PRGNAM}_make.log
+
+# Install all the needed stuff to the package dir
+
+which installwatch > /dev/null 2>&1
+if [ $? == 0 ]; then
+  installwatch -o $TMP/${PRGNAM}_install.log make DESTDIR=$PKG install
+else
+  make DESTDIR=$PKG install
+fi
+
+if [ -f "$PKG/usr/include/shout.h" ]; then
+  mkdir -p $PKG/usr/include/shout
+  mv $PKG/usr/include/shout.h $PKG/usr/include/shout/
+fi
+
+# --- DOCUMENTATION ---
+
+# Compress the man page
+gzip -9 $PKG/usr/man/*/*
+
+# Copy the documentation
+mkdir -p $PKG/usr/doc/$PRGNAM-$VERSION
+mv $PKG/usr/share/doc/libshout/* $PKG/usr/doc/$PRGNAM-$VERSION/
+rm -r $PKG/usr/share/doc
+chmod -R a-w $PKG/usr/doc/$PRGNAM-$VERSION
+
+# --- OWNERSHIP, RIGHTS ---
+chown -R root.root $PKG
+
+# --- PACKAGE DESCRIPTION ---
+mkdir -p $PKG/install
+cat $CWD/${PRGNAM}.slack-desc > $PKG/install/slack-desc
+
+# --- BUILDING ---
+
+# Build the package and compute its md5 checksum:
+cd $PKG
+makepkg --linkadd y --chown n $TMP/$PRGNAM-$VERSION-$ARCH-$BUILD.tgz
+(cd $TMP && md5sum $PRGNAM-$VERSION-$ARCH-$BUILD.tgz > $PRGNAM-$VERSION-$ARCH-$BUILD.tgz.md5)
+cat $PKG/install/slack-desc | grep "^${PRGNAM}" > $TMP/$PRGNAM-$VERSION-$ARCH-$BUILD.txt
+
+# --- CLEANUP ---
+
+# Clean up the extra stuff:
+if [ "$1" = "--cleanup" ]; then
+  rm -rf $TMP/tmp-$PRGNAM
+  rm -rf $PKG
+else
+  echo You can check the 'installwatch' log file: $TMP/${PRGNAM}_install.log
+fi
+
+#
+# EOF
+#

@@ -1,0 +1,307 @@
+#!/bin/bash
+# Copyright 2000 BSDi, Inc. Concord, CA, USA
+# Copyright 2001, 2002 Slackware Linux, Inc.  Concord, CA, USA
+# Copyright 2005 Patrick J. Volkerding, Sebeka, MN, USA
+# All rights reserved.
+#
+# Redistribution and use of this script, with or without modification, is
+# permitted provided that the following conditions are met:
+#
+# 1. Redistributions of this script must retain the above copyright
+#    notice, this list of conditions and the following disclaimer.
+#
+#  THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR IMPLIED
+#  WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+#  MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.  IN NO
+#  EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+#  SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+#  PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
+#  OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+#  WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
+#  OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+#  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+#
+# Small changes by rhatto
+# 
+
+CWD="`pwd`"
+
+if [ -f "/etc/slackbuildrc" ]; then
+  source /etc/slackbuildrc
+fi
+
+if [ -f "~/.slackbuildrc" ]; then
+  source ~/.slackbuildrc
+fi
+
+VERSION=${VERSION:=0.9.7g}
+ARCH=${ARCH:=x86_64}
+BUILD=${BUILD:=1rha}
+SRC_DIR=${SRC:=$CWD}
+TMP=${TMP:=/tmp}
+
+RTOOL="wget"
+PACKAGE_EXT="gz"
+SRC="openssl-$VERSION.tar.$PACKAGE_EXT"
+URL="http://www.openssl.org/source/$SRC"
+
+if [ "$PACKAGE_EXT" == "bz2" ]; then
+  tarflag="j"
+else
+  tarflag="z"
+fi
+
+if [ "$RTOOL" == "wget" ] && [ ! -f "$SRC_DIR/$SRC" ]; then 
+  rm -f $SRC_DIR/$SRC.asc
+  wget "$URL" -O "$SRC_DIR/$SRC"
+  wget "$URL.asc" -O "$SRC_DIR/$SRC.asc"
+fi
+
+gpg --import << EOGPG
+-----BEGIN PGP PUBLIC KEY BLOCK-----
+Version: PGP Key Server 0.9.6
+
+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
+=N1Yk
+-----END PGP PUBLIC KEY BLOCK-----
+EOGPG
+
+gpg --verify $SRC_DIR/$SRC.asc $SRC || echo WARNING: Could not check signature or WRONG signature found.
+
+if [ "$ARCH" == "x86_64" ]; then
+  LIBDIR=/usr/lib64
+else
+  LIBDIR=/usr/lib
+fi
+
+PKG1=/tmp/package-openssl
+PKG2=/tmp/package-ossllibs
+NAME1=openssl-$VERSION-$ARCH-$BUILD
+NAME2=openssl-solibs-$VERSION-$ARCH-$BUILD
+
+# So that ls has the right field counts for parsing...
+export LC_ALL=C
+
+# This is used to fix manpage links:
+relink() {
+  ORIGLINE=`/bin/ls -l $1`
+  LINK=`echo $ORIGLINE | cut -f 9 -d ' '`.gz
+  FILE=`echo $ORIGLINE | cut -f 11 -d ' '`.gz
+  rm $1
+  if [ -r $FILE ]; then
+    ln -sf $FILE $LINK
+  fi
+}
+
+cd /tmp
+rm -rf $PKG1 $PKG2 openssl-$VERSION
+tar xvf$tarflag $SRC_DIR/$SRC
+cd openssl-$VERSION
+# Use .so.0, not .so.0.9.7:
+zcat $CWD/openssl.soname.diff.gz | patch -p1 --backup --verbose --suffix=.orig || exit
+# Fix CAN-2005-2969 (SSL 2.0 rollback bug):
+zcat $CWD/patch-CAN-2005-2969.diff.gz | patch -p0 --backup --verbose --suffix=.orig || exit
+if [ "$ARCH" = "i486" ]; then
+  # Build with -march=i486 -mcpu=i686:
+  zcat $CWD/openssl.optsx86.diff.gz | patch -p1 --backup --verbose --suffix=.orig || exit
+fi
+chown -R root.root .
+mkdir -p $PKG1/usr/doc/openssl-$VERSION
+cp -a CHANGES CHANGES.SSLeay FAQ INSTALL INSTALL.MacOS INSTALL.VMS INSTALL.W32 \
+  LICENSE NEWS README README.ENGINE doc $PKG1/usr/doc/openssl-$VERSION
+find $PKG1/usr/doc/openssl-$VERSION -type d -exec chmod 755 {} \;
+find $PKG1/usr/doc/openssl-$VERSION -type f -exec chmod 644 {} \;
+# These are the known patent issues with OpenSSL:
+# name   #         expires
+# MDC-2: 4,908,861 13/03/2007, not included.
+# IDEA:  5,214,703 25/05/2010, not included.
+# RC5:   5,724,428 03/03/2015, not included.
+./config --prefix=/usr --openssldir=/etc/ssl no-mdc2 no-idea no-rc5 shared
+make -j4
+make install INSTALL_PREFIX=$PKG1
+mv $PKG1/etc/ssl/openssl.cnf $PKG1/etc/ssl/openssl.cnf.new
+
+if [ "$ARCH" == "x86_64" ]; then
+  ( cd $PKG1/usr; mv lib lib64; mkdir lib; mv lib64/pkgconfig lib/pkgconfig )
+  strip --strip-unneeded $PKG1/usr/lib64/lib*.so.*.*.* $PKG1/usr/bin/*
+  ( cd $PKG1/usr/lib64 ; ln -sf libcrypto.so.0 libcrypto.so )
+  ( cd $PKG1/usr/lib64 ; ln -sf libssl.so.0 libssl.so )
+else
+  strip --strip-unneeded $PKG1/usr/lib/lib*.so.*.*.* $PKG1/usr/bin/*
+  ( cd $PKG1/usr/lib ; ln -sf libcrypto.so.0 libcrypto.so )
+  ( cd $PKG1/usr/lib ; ln -sf libssl.so.0 libssl.so )
+fi
+
+chown -R root.bin $PKG1/usr/bin
+mv $PKG1/etc/ssl/man $PKG1/usr
+( cd $PKG1/usr/man/man1 ; mv passwd.1 ssl_passwd.1 )
+( cd $PKG1/usr/man/man3 ; mv rand.3 ssl_rand.3 )
+gzip -9 $PKG1/usr/man/man?/*
+for mandir in man1 man3 man7 ; do
+  ( cd $PKG1/usr/man/$mandir
+    for page in *.? ; do
+      relink $page
+    done
+  )
+done
+cd $PKG1
+chmod 755 usr/lib/pkgconfig
+mkdir -p install
+zcat $CWD/doinst.sh.gz > install/doinst.sh
+cat $CWD/slack-desc.openssl > install/slack-desc
+makepkg -l y -c n ../${NAME1}.tgz
+
+# Make runtime package:
+
+if [ "$ARCH" == "x86_64" ]; then
+  mkdir -p $PKG2/usr/lib64
+  ( cd usr/lib64 ; cp -a lib*.so.*.*.* $PKG2/usr/lib64 )
+  ( cd $PKG2/usr/lib64 ; ldconfig -l * )
+else
+  mkdir -p $PKG2/usr/lib
+  ( cd usr/lib ; cp -a lib*.so.*.*.* $PKG2/usr/lib )
+  ( cd $PKG2/usr/lib ; ldconfig -l * )
+fi
+
+mkdir -p $PKG2/etc
+( cd $PKG2/etc ; cp -a $PKG1/etc/ssl . )
+mkdir -p $PKG2/usr/doc/openssl-$VERSION
+( cd /tmp/openssl-$VERSION
+  cp -a CHANGES CHANGES.SSLeay FAQ INSTALL INSTALL.MacOS INSTALL.VMS INSTALL.W32 \
+  LICENSE NEWS README README.ENGINE $PKG2/usr/doc/openssl-$VERSION
+)
+find $PKG2/usr/doc/openssl-$VERSION -type d -exec chmod 755 {} \;
+find $PKG2/usr/doc/openssl-$VERSION -type f -exec chmod 644 {} \;
+cd $PKG2
+mkdir -p install
+zcat $CWD/doinst.sh.gz > install/doinst.sh
+cat $CWD/slack-desc.openssl-solibs > install/slack-desc
+makepkg -l y -c n ../${NAME2}.tgz
+

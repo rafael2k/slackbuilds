@@ -1,0 +1,134 @@
+#!/bin/sh
+#
+# Copyright (C) 2006 Holger Levsen
+#
+# This program is free software; you can redistribute it and/or
+# modify it under the terms of the GNU General Public License
+# as published by the Free Software Foundation; version 2 dated June,
+# 1991.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+#
+# Configuration variables
+#   vservers - specify the vservers to include in the graph (default: all)
+#   limits - if true, turn on limit graphing (default: false)
+#
+# NOTE: If no configuration variables are set, the defaults will be used
+
+# Example /etc/munin/plugin-conf.d/munin-node 
+#
+# The first group monitors the vservers named "vserver1 vserver2
+# vserver3 vserver4" and looks to see if the resource limit has been
+# breached, if so it sends a message to nagios via send_nsca, and
+# sends an email to notify that this has happened.
+#
+# The second monitors the vservers "vserver5 vserver6 vserver7" and 
+# has no limit notifications turned on.
+#
+# The third monitors all vservers on the system, in one graph, and it has
+# no limit notifications defined.
+#
+# You can use any combination of these to fit your needs.
+#
+#
+# [vsrmem_group1]
+# user root
+# env.vservers vserver1 vserver2 vserver3 vserver4
+# env.limits 1
+# contacts nagios email
+# contact.nagios.command /usr/bin/send_nsca -H your.nagios-host.here -c /etc/send_nsca.cfg
+# contact.email.command mail -s "Munin-notification for ${var:group} :: ${var:host}" your@email.address.here
+#
+# [vsrmem_group2]
+# user root
+# env.vservers vserver5 vserver6 vserver7
+# env.limits 0
+#
+# [vserver_rmemory]
+# user root
+#
+# Graph Vserver RSS usage and limits
+#
+# Changelog
+# version 0.1 - 2006 April xx - Holger Levsen
+#  - initial author
+# version 0.2 - 2006 April 24 - Micah Anderson <micah@riseup.net>
+#  - Add dynamic arch page size determination
+#  - Some cleanup and clarification
+# version 0.3 - 2006 May 3 - Micah Anderson <micah@riseup.net>
+#  - Add ability to group vservers via environment vars
+#  - Fix missing close quotes and standardize indents
+#  - Add limit notification
+#  - Update documentation to include info on groups and limits
+
+VSERVERS="$vservers"
+LIMITS="$limits"
+
+if [ "$1" = "config" ]; then
+    echo 'graph_title Real memory used by vservers'
+    echo 'graph_args --base 1024k -l 0'
+    echo 'graph_vlabel Size of RSS pages'
+    echo 'graph_category vserver'
+    echo 'graph_info Shows page size used in RAM by each vserver.'
+    
+    # do not assume we are on i386 where pagesize is 4096...
+    pagesize=`perl -MPOSIX -e 'print POSIX::sysconf(_SC_PAGESIZE), "\n";'`
+
+    if [ -z "$VSERVERS" ]; then
+        for i in `find /proc/virtual/* -type d -exec basename {} \;` ; do 
+            NAME=`cat /proc/virtual/$i/cvirt |grep NodeName |cut -f2`
+            echo "$NAME.label $NAME"
+            echo "$NAME.info Size of pages in RAM used by $NAME. (Number multiplied by $pagesize to make human)"
+            echo "$NAME.cdef $NAME,$pagesize,*"
+            if [ ! -z "$LIMITS" -a "$LIMITS" = 1 ]; then
+                cat /proc/virtual/$i/limit | awk -v name="$NAME" \
+                    '{ if ( $1 == "RSS:" ) 
+                           {
+                            if ( $2 >= $3 ) 
+                                { 
+                                    printf "%s.critical %d\n", name, $2 
+                                }
+                           }
+                     }'
+            fi
+        done
+    else
+        for vserver in $vservers ; do
+            echo "$vserver.label $vserver"
+            echo "$vserver.info Size of pages in RAM used by $vserver. (Number multiplied by $pagesize to make human)"
+            echo "$vserver.cdef $vserver,$pagesize,*"
+            if [ ! -z "$LIMITS" -a "$LIMITS" = 1 ]; then
+                XID=`/usr/sbin/vserver-info $vserver CONTEXT`
+                LIMIT=`cat /proc/virtual/$XID/limit | grep RSS: | cut -f4`
+                if [ ${LIMIT:-0} -gt 0 ]; then
+                    echo "$NAME.critical $LIMIT"
+                fi
+            fi
+        done
+    fi
+    exit 0
+fi
+
+if [ -z "$VSERVERS" ]; then
+    for i in `find /proc/virtual/* -type d -exec basename {} \;` ; do
+        NAME=`cat /proc/virtual/$i/cvirt | grep NodeName | cut -f2`
+        cat /proc/virtual/$i/limit | awk -v name="$NAME" \
+            '{ if ( $1 == "RSS:" ) 
+               printf "%s.value %d\n", name, $2 }'
+    done
+else
+    for vserver in $VSERVERS ; do
+        XID=`/usr/sbin/vserver-info $vserver CONTEXT`
+        cat /proc/virtual/$XID/limit | awk -v name="$vserver" \
+            '{ if ( $1 == "RSS:" )
+               printf "%s.value %d\n", name, $2 }'
+    done
+fi
+

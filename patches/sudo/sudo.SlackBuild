@@ -1,0 +1,125 @@
+#!/bin/bash
+#
+# Got it from http://slamd64.he.net/slamd64-10.2b/source/ap/sudo/sudo.SlackBuild
+# Small changes by rhatto
+#
+
+# Set initial variables:
+CWD=`pwd`
+
+if [ -f "/etc/slackbuildrc" ]; then
+  source /etc/slackbuildrc
+fi
+
+if [ -f "~/.slackbuildrc" ]; then
+  source ~/.slackbuildrc
+fi
+
+PACKAGE="sudo"
+VERSION=${VERSION:=1.6.8p12}
+ARCH=${ARCH:=x86_64}
+BUILD=${BUILD:=1rha}
+SRC_DIR=${SRC:=$CWD}
+TMP=${TMP:=/tmp}
+
+RTOOL="wget"
+PACKAGE_EXT="gz"
+SRC="$PACKAGE-$VERSION.tar.$PACKAGE_EXT"
+URL="http://www.sudo.ws/sudo/dist/$SRC"
+
+if [ "$PACKAGE_EXT" == "bz2" ]; then
+  tarflag="j"
+else
+  tarflag="z"
+fi
+
+if [ "$RTOOL" == "wget" ] && [ ! -f "$SRC_DIR/$SRC" ]; then
+  rm -f $SRC_DIR/$SRC.sig
+  wget "$URL" -O "$SRC_DIR/$SRC"
+  wget "$URL.sig" -O "$SRC_DIR/$SRC.sig"
+fi
+
+gpg --import << EOGPG
+-----BEGIN PGP PUBLIC KEY BLOCK-----
+Version: GnuPG v1.0.7 (OpenBSD)
+
+mQGiBD2bdiURBACyoSsYq9t8jiLnhABRZcgDP2vaoJoGJD3eb9HNsv2+0IrcHaut
+s1QR1AY88AGTMnQTFWjH1vIXz/YCKnvgqklfbVCMehvkOUKvGv2eP7IkmWvVPIQb
+kayHCtChOKW86hqxZXyT8sbBJqHGHq7xBbg71uZ/CSaTY3ATencRX+UndwCg6ujz
+FFQhKoVwnPdYPkYA10kp2UsD/2Act3O9UJabaln5MLqLQrxo1Cqa3+ht4liAAOr3
+psMPcieyIULQ4yE19Jvb90s2sao88BUPVeDxBHV/nhcNQxlH4Boc+kWtU36XSxU3
+yrUhZDQIvrM4o1yCSgNSwUM88+qYm6ETAT0sZAiFT9biMjsT4Bw13KihyYtE2L36
+LdXOA/9MEH8zWRqUjQMt4X1yKTjwmIotAd9xetVNj+4lfTgmsnlZoex7T94Id0+B
+FDDSj4gpQ7GpFa0qOQgTyaUo5HgoPFw4F9TjebWiyey2SznIw4960KoAwfSTdSOG
+GoD96xuBsmQGCfdIFW43SJngXKiOpF/3VHoUxGYhTefOSGHAvLQqVG9kZCBDLiBN
+aWxsZXIgPFRvZGQuTWlsbGVyQGNvdXJ0ZXNhbi5jb20+iFkEExECABkFAj2bdiUE
+CwcDAgMVAgMDFgIBAh4BAheAAAoJEFqJ36J+5HDEQigAoLdD+y5EQzvogb6oybhC
+pBBmefqYAKDGlnXX7JNBJYBv/r5TBg4+zLOOL7kBDQQ9m3YnEAQAzhN0fOfOz3+z
+m0rHJ+hCW06ME9W1UWTgPdkh6izMO29j5tsq7MDOEoiBA8fGNV9+1nqXS3PWsYpP
+qnm+Yx/8zHPsepiOWe3UaJruBfFT8BlGSzN6p9aO1liQOnv57XouRab5tUFZPDM7
+ADHGAlruyvZjzywj/v6FWNoY6DLiqosAAwUEAKSap7csw/skFED0lF/lsllvmRa7
+4kd/lEYGPB62Cyau/4nucrnZrBNP7wSIdpCLzQxq6l/j/vP5aUV8qN2W6+DY1CZA
+rodtZKPUNGHCdop9ZcskEx6eOG2ivYpgn0z6scoXUJ4g5kCSshzPedG4DOLHFMtE
+hVDWxnHdtn0UFCntiEYEGBECAAYFAj2bdicACgkQWonfon7kcMTOeACgmCPD1Is5
+KhRmc+7kY4ILfdUX5OUAn2mdSBk/pObAfpdPzasJT7QxIQFL
+=3GDW
+-----END PGP PUBLIC KEY BLOCK-----
+EOGPG
+
+gpg --verify $SRC.sig $SRC || echo WARNING: Could not check signature or WRONG signature found.
+
+PKG=$TMP/package-sudo
+
+if [ ! -d $TMP ]; then
+  mkdir -p $TMP # location to build the source
+fi
+
+rm -rf $PKG
+mkdir -p $PKG
+
+if [ "$ARCH" = "i386" ]; then
+  SLKCFLAGS="-O2 -march=i386 -mcpu=i686"
+elif [ "$ARCH" = "i486" ]; then
+  SLKCFLAGS="-O2 -march=i486 -mcpu=i686"
+elif [ "$ARCH" = "s390" ]; then
+  SLKCFLAGS="-O2"
+elif [ "$ARCH" = "x86_64" ]; then
+  SLKCFLAGS="-O2"
+fi
+
+cd $TMP
+rm -rf sudo-$VERSION
+tar xvf$tarflag $SRC_DIR/$SRC
+cd sudo-$VERSION
+chown -R root.root .
+CFLAGS="$SLKCFLAGS" \
+./configure --prefix=/usr --sbindir=/usr/sbin --with-getpass --with-C2
+make
+make install DESTDIR=$PKG
+chown -R root:bin $PKG/usr/bin $PKG/usr/sbin
+( cd $PKG/usr/bin
+  chmod 4711 sudo
+  ln -sf sudo sudoedit
+)
+chmod 755 $PKG/usr/sbin/visudo
+rm -f $PKG/usr/man/man8/sudoedit.8
+gzip -9 $PKG/usr/man/man?/*.?
+( cd $PKG/usr/man/man8 ; ln -sf sudo.8.gz sudoedit.8.gz )
+( cd $PKG
+  find . | xargs file | grep "executable" | grep ELF | cut -f 1 -d : | xargs strip --strip-unneeded 2> /dev/null
+  find . | xargs file | grep "shared object" | grep ELF | cut -f 1 -d : | xargs strip --strip-unneeded 2> /dev/null
+)
+mv $PKG/etc/sudoers $PKG/etc/sudoers.new
+mkdir -p $PKG/usr/doc/sudo-$VERSION
+cp -a \
+  BUGS HISTORY INSTALL LICENSE PORTING README README.LDAP RUNSON TODO TROUBLESHOOTING UPGRADE \
+  $PKG/usr/doc/sudo-$VERSION
+chmod 644 $PKG/usr/doc/sudo-$VERSION/*
+mkdir -p $PKG/install
+cat $CWD/slack-desc > $PKG/install/slack-desc
+zcat $CWD/doinst.sh.gz > $PKG/install/doinst.sh
+
+# Build the package:
+cd $PKG
+makepkg -l y -c n $TMP/sudo-$VERSION-$ARCH-$BUILD.tgz
+

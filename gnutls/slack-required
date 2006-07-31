@@ -1,0 +1,10 @@
+glibc-solibs >= 2.3.5-i486-5
+gpm >= 1.19.6-i486-6
+libcfg+ >= 0.6.2-i486-3sl
+libgcrypt >= 1.2.2-i486-1sl
+libgpg-error >= 1.3-i486-1sl
+lzo >= 2.02-i486-1sl
+ncurses >= 5.4-i486-2
+opencdk >= 0.5.8-i486-1sl
+readline >= 4.3-i486-3
+zlib >= 1.2.3-i486-1

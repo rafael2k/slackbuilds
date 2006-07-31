@@ -1,0 +1,19 @@
+# HOW TO EDIT THIS FILE:
+# The "handy ruler" below makes it easier to edit a package description.  Line
+# up the first '|' above the ':' following the base package name, and the '|'
+# on the right side marks the last column you can put a character in.  You must
+# make exactly 11 lines for the formatting to be correct.  It's also
+# customary to leave one space after the ':'.
+
+                |-----handy-ruler------------------------------------------------------|
+webalizer_static: webalizer (webserver log analysis)
+webalizer_static:
+webalizer_static: The Webalizer is a fast, free web server log file analysis
+webalizer_static: program. It produces highly detailed, easily configurable
+webalizer_static: usage reports in HTML format, for viewing with a standard web
+webalizer_static: browser.
+webalizer_static: This package contains a statically linked binary.
+webalizer_static:
+webalizer_static:
+webalizer_static: webalizer lives at http://www.mrunix.net/webalizer/
+webalizer_static:

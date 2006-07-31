@@ -1,0 +1,139 @@
+#!/bin/bash
+#
+# slackbuild for rssh-chroot
+# 
+
+CWD="`pwd`"
+
+cat << EOCAT
+Please consider to run this script with the following things installed:
+
+  rssh
+  libsafe
+
+Hit ENTER to continue, Ctrl-C to abort.
+EOCAT
+
+read garbage
+
+# default settings
+PRGNAM="rssh-chroot"
+PACKAGE="$PRGNAM"
+_VERSION="2.3.2"
+_ARCH="i386"
+_BUILD="2rha"
+_TMP="/tmp"
+
+if [ -f "/etc/slackbuildrc" ]; then
+  source /etc/slackbuildrc
+fi
+
+if [ -f "~/.slackbuildrc" ]; then
+  source ~/.slackbuildrc
+fi
+
+if [ -z "$VERSION" ]; then
+  VERSION="$_VERSION"
+fi
+
+if [ -z "$ARCH" ]; then
+  ARCH="$_ARCH"
+fi
+
+if [ -z "$BUILD" ]; then
+  BUILD="$_BUILD"
+fi
+
+if [ "$ARCH" == "x86_64" ]; then
+  LIBDIR=/usr/lib64
+else
+  LIBDIR=/usr/lib
+fi
+
+if [ -z "$SRC" ]; then
+  SRC_DIR="$CWD"
+else
+  SRC_DIR="$SRC"
+fi
+
+if [ -z "$TMP" ]; then
+  TMP="$_TMP"
+fi
+
+# adjust to where your rssh chroot system will be located
+CHROOT_BASE="/var/users"
+
+cd $TMP
+
+rm -rf $TMP/package-$PACKAGE
+mkdir -p $TMP/package-$PACKAGE/install
+cd $TMP/package-$PACKAGE
+
+mkdir -p ./$CHROOT_BASE/{bin,etc,lib,lib/tls,usr/lib,usr/libexec,usr/bin,usr/doc,home,dev}
+
+if [ "$ARCH" == "x86_64" ]; then
+  mkdir -p ./$CHROOT_BASE/{lib64/tls,usr/lib64}
+fi
+
+for ldfile in ld.so.cache ld.so.conf ld.so.preload; do
+  if [ -f "/etc/$ldfile" ]; then
+    cp /etc/$ldfile ./$CHROOT_BASE/etc
+  fi
+done
+
+# inspired by http://www.howtoforge.com/chrooted_ssh_howto_debian_p2
+APPS="/usr/bin/rssh /usr/bin/scp /usr/libexec/sftp-server /usr/libexec/rssh_chroot_helper"
+for app in $APPS; do
+  cp $app ./$CHROOT_BASE/$app
+
+  # obtain a list of related libraries
+  ldd $app > /dev/null
+  if [ "$?" = 0 ] ; then
+    libs="`ldd $app | sed -e 's/=>//' -e 's/(.*)//' | awk '{ print $1 "\n" $2 }'`"
+    for lib in $libs; do
+      if [ -a "$lib" ]; then
+        mkdir -p ./$CHROOT_BASE/`dirname $lib` > /dev/null 2>&1
+        cp $lib ./$CHROOT_BASE/$lib
+      fi
+    done
+  fi
+done
+
+# dont work inside vservers:
+# mknod ./$CHROOT_BASE/dev/null c 1 3
+
+cp /dev/null ./$CHROOT_BASE/dev/null
+chmod 666 ./$CHROOT_BASE/dev/null
+
+mkdir -p usr/doc/$PACKAGE-$VERSION
+cp $CWD/COPYING* usr/doc/$PACKAGE-$VERSION/
+
+cat << EOF > install/slack-desc
+# HOW TO EDIT THIS FILE:
+# The "handy ruler" below makes it easier to edit a package description.  Line
+# up the first '|' above the ':' following the base package name, and the '|'
+# on the right side marks the last column you can put a character in.  You must
+# make exactly 11 lines for the formatting to be correct.  It's also
+# customary to leave one space after the ':'.
+
+           |-----handy-ruler-----------------------------------------------------|
+rssh-chroot: rssh-chroot: a chroot jail to use with rssh restricted secure shell 
+rssh-chroot: 
+rssh-chroot: 
+rssh-chroot: 
+rssh-chroot: 
+rssh-chroot: 
+rssh-chroot: 
+rssh-chroot: 
+rssh-chroot: 
+rssh-chroot: 
+rssh-chroot: 
+EOF
+
+chmod 755 ./$CHROOT_BASE/{bin,etc,lib,lib/tls,usr/lib,usr/libexec,usr/bin,usr/doc,dev}
+chmod 111 ./$CHROOT_BASE/home
+
+makepkg -c n $TMP/$PACKAGE-$VERSION-$ARCH-$BUILD.tgz
+
+rm -rf $TMP/$PACKAGE-$VERSION
+

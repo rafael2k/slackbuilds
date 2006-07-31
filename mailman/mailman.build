@@ -1,0 +1,102 @@
+#!/bin/bash
+#
+# build script for mailman by rhatto | gpl
+# build it with slacktrack, example:
+#
+#   ARCH=x86_64 slacktrack -jefkzp "mailman-1.2.8-x86_64-1rha.tgz" "./mailman.build"
+# 
+
+CWD="`pwd`"
+
+if [ -f "/etc/slackbuildrc" ]; then
+  source /etc/slackbuildrc
+fi
+
+if [ -f "~/.slackbuildrc" ]; then
+  source ~/.slackbuildrc
+fi
+
+# default settings
+PACKAGE="mailman"
+TMP=${TMP:=/tmp}
+VERSION=${VERSION:=2.1.8}
+ARCH=${ARCH:=i386}
+BUILD=${BUILD:=1rha}
+SRC_DIR=${SRC:=$CWD}
+PREFIX="/usr/local"
+
+if ! grep -qe "^$PACKAGE:" /etc/passwd || ! grep -qe "^$PACKAGE:" /etc/group; then
+  echo "WARNING: user and/or group $PACKAGE does not exist"
+  echo "Create it manually with \"groupadd $PACKAGE ; useradd $PACKAGE -g $PACKAGE\" and run this script again."
+  exit 1
+fi
+
+if [ "$ARCH" == "x86_64" ]; then
+  LIBDIR=/usr/lib64
+else
+  LIBDIR=/usr/lib
+fi
+
+RTOOL="wget"
+PACKAGE_EXT="tgz"
+SRC="$PACKAGE-$VERSION.$PACKAGE_EXT"
+URL="http://easynews.dl.sourceforge.net/sourceforge/mailman/$SRC"
+
+if [ "$RTOOL" == "wget" ] && [ ! -f "$SRC_DIR/$SRC" ]; then
+ wget "$URL" -O "$SRC_DIR/$SRC"
+fi
+
+if [ "$PACKAGE_EXT" == "bz2" ]; then
+  tarflag="j"
+else
+  tarflag="z"
+fi
+
+mkdir -p $PREFIX/mailman
+cd $PREFIX/mailman && chgrp mailman . && chmod a+rx,g+ws .
+
+rm -rf $TMP/package-$PACKAGE
+mkdir $TMP/package-$PACKAGE
+cd $TMP/package-$PACKAGE
+tar xvf$tarflag $SRC_DIR/$SRC
+cd $PACKAGE-$VERSION
+
+# config and install!
+mkdir -p /install
+
+./configure --with-mail-gid=nogroup --prefix=$PREFIX/mailman/
+make
+make install
+
+mv $PREFIX/mailman/Mailman/mm_cfg.py $PREFIX/mailman/Mailman/mm_cfg.py.new
+
+# make the package
+
+cat << EOF > /install/slack-desc
+# HOW TO EDIT THIS FILE:
+# The "handy ruler" below makes it easier to edit a package description.  Line
+# up the first '|' above the ':' following the base package name, and the '|'
+# on the right side marks the last column you can put a character in.  You must
+# make exactly 11 lines for the formatting to be correct.  It's also
+# customary to leave one space after the ':'.
+
+       |-----handy-ruler-----------------------------------------------------|
+mailman: mailman (A mailing list manager with an integrated Web interface)
+mailman:
+mailman: GNU Mailman is software to help manage email discussion lists and
+mailman: e-newsletters. Its integrated Web interface provides easy-to-use
+mailman: access for list members and list administrators. Mailman supports
+mailman: built-in archiving, automatic bounce processing, content filtering,
+mailman: digest delivery, spam filters, topics, Usenet gateways, and more.
+mailman: It is fully internationalized, and supports digests and email
+mailman: commands. It runs on any Linux or Unix-like operating system and is
+mailman: compatible with most email and Web servers, mail readers, and Web
+mailman: browsers.
+EOF
+
+# install script
+echo '( chroot . /sbin/ldconfig )' > /install/doinst.sh
+echo '( if ! grep -qe "^mailman:" etc/group; then echo creating group mailman... ; chroot . /usr/sbin/groupadd mailman; fi )' >> /install/doinst.sh
+echo '( if ! grep -qe "^mailman:" etc/passwd; then echo creating user mailman... ; chroot . /usr/sbin/useradd mailman -g mailman; fi )' >> /install/doinst.sh
+echo '( if [ ! -f "usr/local/mailman/Mailman/mm_cfg.py" ]; then mv usr/local/mailman/Mailman/mm_cfg.py.new usr/local/mailman/Mailman/mm_cfg.py; fi )' >> /install/doinst.sh
+echo '( chroot . /usr/bin/chwon -R mailman.mailman /usr/local/mailman )' >> /install/doinst.sh

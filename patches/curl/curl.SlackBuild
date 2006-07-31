@@ -1,0 +1,113 @@
+#!/bin/bash
+#
+# got it from ftp://ftp.slackware.com/pub/slackware/slackware-10.2/patches/source/curl/curl.SlackBuild
+# small changes by rhatto
+#
+
+CWD="`pwd`"
+
+if [ -f "/etc/slackbuildrc" ]; then
+  source /etc/slackbuildrc
+fi
+
+if [ -f "~/.slackbuildrc" ]; then
+  source ~/.slackbuildrc
+fi
+
+PACKAGE="curl"
+VERSION=7.12.2
+ARCH=${ARCH:=x86_64}
+BUILD=${BUILD:=1rha}
+TMP=${TMP:=/tmp}
+SRC_DIR=${SRC:=$CWD}
+
+PKG=$TMP/package-curl
+
+if [ "$ARCH" == "x86_64" ]; then
+  LIBDIR=/usr/lib64
+else
+  LIBDIR=/usr/lib
+fi
+
+RTOOL="wget"
+PACKAGE_EXT="bz2"
+SRC="$PACKAGE-$VERSION.tar.$PACKAGE_EXT"
+URL="http://curl.haxx.se/download/$SRC"
+KEY="http://pgp.mit.edu:11371/pks/lookup?op=get&search=0x279D5C91"
+
+if [ "$PACKAGE_EXT" == "bz2" ]; then
+  tarflag="j"
+else
+  tarflag="z"
+fi
+
+if [ "$RTOOL" == "wget" ] && [ ! -f "$SRC_DIR/$SRC" ]; then
+  rm -f $SRC_DIR/$SRC.asc
+  wget "$URL" -O "$SRC_DIR/$SRC"
+  wget "$URL.asc" -O "$SRC_DIR/$SRC.asc"
+fi
+
+lynx -dump "$KEY" | gpg --import
+gpg --verify $SRC_DIR/$SRC.asc || echo "WARNING: gpg check failed"
+
+# Uncomment to build a no-SSL version:
+#SSLOPT=--without-ssl
+
+if [ "$ARCH" = "i386" ]; then
+  SLKCFLAGS="-O2 -march=i386 -mcpu=i686"
+elif [ "$ARCH" = "i486" ]; then
+  SLKCFLAGS="-O2 -march=i486 -mcpu=i686"
+elif [ "$ARCH" = "s390" ]; then
+  SLKCFLAGS="-O2"
+elif [ "$ARCH" = "x86_64" ]; then
+  SLKCFLAGS="-O2 -fPIC"
+fi
+
+rm -rf $PKG
+mkdir -p $PKG
+cd $TMP
+rm -rf curl-$VERSION
+tar xvf$tarflag $SRC_DIR/$SRC
+cd curl-$VERSION
+
+zcat $CWD/libcurl-ntlmbuf.patch.gz | patch -p0 --verbose || exit
+
+chown -R root.root .
+find . -perm 777 -exec chmod 755 {} \;
+find . -perm 775 -exec chmod 755 {} \;
+find . -perm 664 -exec chmod 644 {} \;
+CFLAGS="$SLKCFLAGS" \
+./configure \
+  --prefix=/usr \
+  --libdir=$LIBDIR \
+  $SSLOPT
+make -j3
+make install DESTDIR=$PKG
+chown -R root.bin $PKG/usr/bin
+( cd $PKG
+  find . | xargs file | grep "executable" | grep ELF | cut -f 1 -d : | xargs strip --strip-unneeded 2> /dev/null
+  find . | xargs file | grep "shared object" | grep ELF | cut -f 1 -d : | xargs strip --strip-unneeded 2> /dev/null
+)
+
+if [ "$ARCH" == "x86_64" ]; then
+  strip -g $PKG/usr/lib64/libcurl.a
+else
+  strip -g $PKG/usr/lib/libcurl.a
+fi
+
+mkdir -p $PKG/usr/doc/curl-$VERSION
+cp -a \
+  CHANGES COPYING README UPGRADE \
+  $PKG/usr/doc/curl-$VERSION
+( cd docs
+  rm -rf Makefile* curl-config.1 curl-config.html curl.1 curl.html libcurl
+  cp -a \
+    BUGS CONTRIBUTE FAQ FEATURES INSTALL INTERNALS MANUAL README.win32 RESOURCES THANKS TODO examples \
+    $PKG/usr/doc/curl-$VERSION )
+gzip -9 $PKG/usr/man/man?/*.?
+mkdir -p $PKG/install
+cat $CWD/slack-desc > $PKG/install/slack-desc
+
+cd $PKG
+makepkg -l y -c n ../curl-$VERSION-$ARCH-$BUILD.tgz
+

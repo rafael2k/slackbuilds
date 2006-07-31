@@ -1,0 +1,150 @@
+#!/bin/bash
+#
+# slackbuild script for amavisd-new
+#
+
+cat << EOCAT
+You'll need the following perl modules to run amavisd-new:
+
+  cpan2tgz --no-recursive Compress::Zlib IO::Zlib Archive::Tar Archive::Zip Compress::Zlib       \\
+                          IO::Stringy Mail::Field Mail::Header Mail::Internet MIME::Body         \\
+                          Convert::TNEF Convert::UUlib MIME::Base64 MIME::Parser                 \\
+                          Net::Server Net::SMTP Digest::MD5 Time::HiRes Unix::Syslog BerkeleyDB
+
+Optional:
+
+  cpan2tgz --no-recursive Digest::SHA1 HTML::Tagset HTML::Parser     \\
+                          Mail::SpamAssassin DBD::mSQL Convert::ASN1 \\
+                          Net::LDAP Authen::SASL Mail::ClamAV SAVI
+
+EOCAT
+
+if [ "$INTERACT" != "no" ]; then
+  echo "Hit ENTER do continue, Crtl-C to abort"
+  read crap
+else
+  echo sleeping 3 seconds...
+  sleep 3
+fi
+
+CWD="`pwd`"
+
+if [ -f "/etc/slackbuildrc" ]; then
+  source /etc/slackbuildrc
+fi
+
+if [ -f "~/.slackbuildrc" ]; then
+  source ~/.slackbuildrc
+fi
+
+# default settings
+PACKAGE="amavisd-new"
+ARCH="noarch"
+VERSION=${VERSION:=2.4.1}
+BUILD=${BUILD:=1rha}
+TMP=${TMP:=/tmp}
+SRC_DIR=${SRC:=/tmp}
+REPOS=${REPOS:=$TMP}
+
+if [ "$ARCH" == "x86_64" ]; then
+  LIBDIR=/usr/lib64
+else
+  LIBDIR=/usr/lib
+fi
+
+RTOOL="wget"
+PACKAGE_EXT="gz"
+SRC="$PACKAGE-$VERSION.tar.$PACKAGE_EXT"
+URL="http://www.ijs.si/software/amavisd/$SRC"
+
+if [ "$PACKAGE_EXT" == "bz2" ]; then
+  tarflag="j"
+else
+  tarflag="z"
+fi
+
+SRC_DIR="$SRC_DIR/$PACKAGE"
+mkdir -p $SRC_DIR
+
+if [ "$RTOOL" == "wget" ] && [ ! -f "$SRC_DIR/$SRC" ]; then
+  wget "$URL" -O "$SRC_DIR/$SRC"
+fi
+
+TMP="$TMP/$PACKAGE"
+rm -rf $TMP
+mkdir -p $TMP
+cd $TMP
+rm -rf package-$PACKAGE
+mkdir package-$PACKAGE
+cd package-$PACKAGE
+
+tar xvf$tarflag $SRC_DIR/$SRC
+cd $PACKAGE-$VERSION
+
+CWD="`pwd`"
+
+mkdir -p $TMP/package-$PACKAGE/$PACKAGE
+cd $TMP/package-$PACKAGE/$PACKAGE
+
+mkdir -p etc/rc.d
+mkdir -p var/amavis/{tmp,var,db}
+mkdir -p usr/{sbin,doc,share/$PACKAGE-$VERSION}
+mkdir var/virusmails
+
+cp $CWD/*patch usr/share/$PACKAGE-$VERSION/
+
+cp $CWD/amavisd usr/sbin/
+cp $CWD/amavisd-{nanny,agent,release} usr/sbin/
+
+cp $CWD/amavisd.conf etc/amavisd.conf.new
+cp $CWD/amavisd_init.sh etc/rc.d/rc.amavisd.new
+
+chmod 755 etc/rc.d/rc.amavisd.new
+chmod 755 usr/sbin/amavisd*
+
+mkdir install
+cat << EOF > install/slack-desc
+# HOW TO EDIT THIS FILE:
+# The "handy ruler" below makes it easier to edit a package description.  Line
+# up the first '|' above the ':' following the base package name, and the '|'
+# on the right side marks the last column you can put a character in.  You must
+# make exactly 11 lines for the formatting to be correct.  It's also
+# customary to leave one space after the ':'.
+
+           |-----handy-ruler-----------------------------------------------------|
+amavisd-new: amavisd-new (an interface between MTAs and content checkers)
+amavisd-new:
+amavisd-new: amavisd-new is a high-performance interface between mailer (MTA) and
+amavisd-new: content checkers: virus scanners, and/or SpamAssassin. It is written
+amavisd-new: in Perl for maintainability, without paying a significant price for
+amavisd-new: speed. It talks to MTA via (E)SMTP or LMTP, or by using helper
+amavisd-new: programs. Best with Postfix, fine with dual-sendmail setup and Exim
+amavisd-new: v4, works with sendmail/milter, or with any MTA as a SMTP relay.
+amavisd-new: For Courier and qmail MTA integration there is a patch in the
+amavisd-new: distributed package.
+amavisd-new:
+EOF
+
+# docs
+mkdir -p usr/doc/$PACKAGE-$VERSION
+
+for file in AAAREADME.first INSTALL LDAP.schema LICENSE MANIFEST README_FILES RELEASE_NOTES TODO; do
+  cp $CWD/$file* usr/doc/$PACKAGE-$VERSION/
+done
+
+# install script
+echo '( chroot . /sbin/ldconfig )' > /install/doinst.sh
+echo '( if ! grep -qe "^amavis:" etc/group; then echo creating group amavis... ; chroot . /usr/sbin/groupadd amavis; fi )' >> install/doinst.sh
+echo '( if ! grep -qe "^amavis:" etc/passwd; then echo creating user amavis... ; chroot . /usr/sbin/useradd amavis -g amavis; fi )' >> install/doinst.sh
+echo '( echo setting permissions on /var/amavis to amavis.amavis... )' >> install/doinst.sh
+echo '( chroot . /usr/bin/chown -R amavis.amavis /var/amavis )' >> install/doinst.sh
+echo '( chroot . /usr/bin/chmod -R 750 /var/amavis )' >> install/doinst.sh
+echo '( if [ ! -f "etc/amavisd.conf" ]; then mv etc/amavisd.conf.new etc/amavisd.conf; fi )' >> install/doinst.sh
+echo '( if [ ! -f "etc/rc.d/rc.amavisd" ]; then mv etc/rc.d/rc.amavisd.new etc/rc.d/rc.amavisd; fi )' >> install/doinst.sh
+
+makepkg -c y -l y $REPOS/$PACKAGE-$VERSION-$ARCH-$BUILD.tgz
+
+if [ "$CLEANUP" == "yes" ]; then
+  rm -rf $TMP
+fi
+
