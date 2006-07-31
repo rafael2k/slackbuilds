@@ -1,6 +1,6 @@
 diff -Naur backupninja-0.9.3.orig/src/backupninja.in backupninja-0.9.3/src/backupninja.in
 --- backupninja-0.9.3.orig/src/backupninja.in	2006-01-17 22:22:52.000000000 +0000
-+++ backupninja-0.9.3/src/backupninja.in	2006-07-28 19:52:23.000000000 +0000
++++ backupninja-0.9.3/src/backupninja.in	2006-07-31 22:44:26.000000000 +0000
 @@ -464,7 +464,7 @@
  	check_perms $file
  	suffix="${file##*.}"
@@ -10,3 +10,12 @@ diff -Naur backupninja-0.9.3.orig/src/backupninja.in backupninja-0.9.3/src/backu
  		info "Skipping $file"
  		continue
  	fi
+@@ -500,7 +500,7 @@
+ 	 		echo ${messages[$i]}
+ 		done
+ 		echo -e "$errormsg"
+-	} | mail $reportemail -s "backupninja: $hostname $subject"
++	} | mail "backupninja: $hostname $subject" $reportemail
+ fi
+ 
+ if [ $actions_run != 0 ]; then
