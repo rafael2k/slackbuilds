@@ -15,7 +15,7 @@ diff -Naur backupninja-0.9.3.orig/src/backupninja.in backupninja-0.9.3/src/backu
  		done
  		echo -e "$errormsg"
 -	} | mail $reportemail -s "backupninja: $hostname $subject"
-+	} | mail "backupninja: $hostname $subject" $reportemail
++	} | mail -s "backupninja: $hostname $subject" $reportemail
  fi
  
  if [ $actions_run != 0 ]; then
