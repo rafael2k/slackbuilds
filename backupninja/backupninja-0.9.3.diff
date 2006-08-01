@@ -1,6 +1,6 @@
 diff -Naur backupninja-0.9.3.orig/handlers/mysql backupninja-0.9.3/handlers/mysql
 --- backupninja-0.9.3.orig/handlers/mysql	2006-01-19 21:58:56.000000000 +0000
-+++ backupninja-0.9.3/handlers/mysql	2006-08-01 01:30:14.000000000 +0000
++++ backupninja-0.9.3/handlers/mysql	2006-08-01 03:36:07.000000000 +0000
 @@ -24,7 +24,7 @@
  local usevserver=no
  local vroot
@@ -10,9 +10,47 @@ diff -Naur backupninja-0.9.3.orig/handlers/mysql backupninja-0.9.3/handlers/mysq
        # does it exist ?
        if ! vservers_exist "$vsname" ; then
           fatal "The vserver given in vsname ($vsname) does not exist."
+@@ -75,7 +75,7 @@
+ # 1. setting the user, so that /home/user/.my.cnf is used.
+ # 2. specifying the user and password in the handler config,
+ #    which generates a temporary .my.cnf in /root/.my.cnf
+-# 3. specify the config file with --defaults-file
++# 3. specify the config file with --defaults-extra-file
+ #    (this option DOESN'T WORK WITH MYSQLHOTCOPY)
+ #
+ 
+@@ -130,16 +130,16 @@
+ 	umask $oldmask
+ 	if [ $usevserver = yes ] 
+ 	then
+-	    defaultsfile="--defaults-file=$vhome/.my.cnf"
++	    defaultsfile="--defaults-extra-file=$vhome/.my.cnf"
+ 	else
+-	    defaultsfile="--defaults-file=$mycnf"
++	    defaultsfile="--defaults-extra-file=$mycnf"
+ 	fi
+ fi
+ 
+ # if a user is not set, use $configfile, otherwise use $mycnf
+ if [ "$user" == "" ]; then
+ 	user=root;
+-	defaultsfile="--defaults-file=$configfile"
++	defaultsfile="--defaults-extra-file=$configfile"
+ else
+ 	userset=true;
+ 	if [ $usevserver = yes ]
+@@ -160,7 +160,7 @@
+ 	
+ 	debug "User home set to: $userhome"
+ 	[ -f $userhome/.my.cnf ] || fatal "Can't find config file in $userhome/.my.cnf"
+-	defaultsfile="--defaults-file=$vuserhome/.my.cnf"
++	defaultsfile="--defaults-extra-file=$vuserhome/.my.cnf"
+ 	debug "using $defaultsfile"
+ fi
+ 
 diff -Naur backupninja-0.9.3.orig/src/backupninja.in backupninja-0.9.3/src/backupninja.in
 --- backupninja-0.9.3.orig/src/backupninja.in	2006-01-17 22:22:52.000000000 +0000
-+++ backupninja-0.9.3/src/backupninja.in	2006-08-01 01:29:41.000000000 +0000
++++ backupninja-0.9.3/src/backupninja.in	2006-08-01 03:35:29.000000000 +0000
 @@ -464,7 +464,7 @@
  	check_perms $file
  	suffix="${file##*.}"
