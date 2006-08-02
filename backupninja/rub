@@ -70,8 +70,8 @@ done
 
 if [ ! -z "$service" ]; then
   for daemon in $service; do
-    info "Stopping service $service..."
-    $initscripts/$service stop
+    info "Stopping service $daemon..."
+    $initscripts/$daemon stop
   done
 fi
 
@@ -120,15 +120,18 @@ fi
 
 for SECTION in $include; do
 
- if [ ! -d "$backupdir/$SECTION/$SECTION.0" ]; then
-   mkdir -p $backupdir/$SECTION/$SECTION.0
+ section="`basename $SECTION`"
+
+ if [ ! -d "$backupdir/$SECTION/$section.0" ]; then
+   mkdir -p $backupdir/$SECTION/$section.0
  fi
  
  info "Rotating $backupdir/$SECTION/$SECTION..."
- rotate $backupdir/$SECTION/$SECTION $keep
- info "Syncing $SECTION on $backupdir/$SECTION/$SECTION.0..."
- rsync -av --delete $EXCLUDES /$SECTION/ $backupdir/$SECTION/$SECTION.0/ >> $log
- touch $backupdir/$SECTION/$SECTION.0
+ echo "Rotating $backupdir/$SECTION/$SECTION..." >> $log
+ rotate $backupdir/$SECTION/$section $keep
+ info "Syncing $SECTION on $backupdir/$SECTION/$section.0..."
+ rsync -av --delete $EXCLUDES /$SECTION/ $backupdir/$SECTION/$section.0/ >> $log
+ touch $backupdir/$SECTION/$section.0
 
 done
 
@@ -148,13 +151,13 @@ fi
 
 if [ ! -z "$service" ]; then
   for daemon in $service; do
-    info "Starting service $service..."
-    $initscripts/$service start
+    info "Starting service $daemon..."
+    $initscripts/$daemo start
   done
 fi
 
 if [ ! -z "$lockfile" ]; then
-  rm lockfile || warning "Could not remove lockfile $lockfile"
+  rm $lockfile || warning "Could not remove lockfile $lockfile"
 fi
 
 echo "Finnishing backup at `date`" >> $log
