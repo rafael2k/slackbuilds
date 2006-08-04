@@ -51,15 +51,6 @@ diff -Naur backupninja-0.9.3.orig/handlers/mysql backupninja-0.9.3/handlers/mysq
 diff -Naur backupninja-0.9.3.orig/src/backupninja.in backupninja-0.9.3/src/backupninja.in
 --- backupninja-0.9.3.orig/src/backupninja.in	2006-01-17 22:22:52.000000000 +0000
 +++ backupninja-0.9.3/src/backupninja.in	2006-08-01 03:35:29.000000000 +0000
-@@ -464,7 +464,7 @@
- 	check_perms $file
- 	suffix="${file##*.}"
- 	base=`basename $file`
--	if [ "${base:0:1}" == "0" -o "$suffix" == "disabled" ]; then
-+	if [ "${base:0:1}" == "0" ] && [ "$suffix" == "disabled" ]; then
- 		info "Skipping $file"
- 		continue
- 	fi
 @@ -500,7 +500,7 @@
  	 		echo ${messages[$i]}
  		done
