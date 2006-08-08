@@ -16,6 +16,7 @@ if [ -f "~/.slackbuildrc" ]; then
   source ~/.slackbuildrc
 fi
 
+PACKAGE="pine"
 VERSION=${VERSION:=4.64}
 PINEPGP=${PINEPGP:=0.18.0}
 ARCH=${ARCH:=x86_64}
@@ -24,6 +25,11 @@ IMAPDBUILD=${BUILD:=1rha}
 
 TMP=${TMP:=/tmp}
 SRC_DIR=${SRC:=$CWD}
+REPOS=${REPOS:=$TMP}
+
+TMP="$TMP/$PACKAGE"
+rm -rf $TMP
+mkdir -p $TMP
 
 PKG1=$TMP/package-pine
 PKG2=$TMP/package-imapd
@@ -33,6 +39,9 @@ SRC="pine$VERSION.tar.bz2"
 URL="ftp://ftp.slackware.com/pub/slackware/slackware-10.2/patches/source/pine/$SRC"
 PGP="pinepgp-$PINEPGP.tar.gz"
 PGP_URL="ftp://ftp.slackware.com/pub/slackware/slackware-10.2/patches/source/pine/$PGP"
+
+SRC_DIR="$SRC_DIR/$PACKAGE"
+mkdir -p $SRC_DIR
 
 if [ "$RTOOL" == "wget" ]; then
 
@@ -135,9 +144,9 @@ chmod 644 $PKG1/usr/doc/pinepgp-$PINEPGP/*
 
 # Build the package:
 cd $PKG1
-makepkg -l y -c n $TMP/pine-$VERSION-$ARCH-$PINEBUILD.tgz
+makepkg -l y -c n $REPOS/pine-$VERSION-$ARCH-$PINEBUILD.tgz
 cd $PKG2
-makepkg -l y -c n $TMP/imapd-$VERSION-$ARCH-$IMAPDBUILD.tgz
+makepkg -l y -c n $REPOS/imapd-$VERSION-$ARCH-$IMAPDBUILD.tgz
 
 # Clean up the extra stuff:
 if [ "$1" = "--cleanup" ]; then
