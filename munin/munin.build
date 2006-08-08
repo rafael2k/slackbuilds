@@ -55,7 +55,12 @@ RTOOL="wget"
 PACKAGE_EXT="gz"
 SRC="$PACKAGE"_"$VERSION.tar.$PACKAGE_EXT"
 URL="http://easynews.dl.sourceforge.net/sourceforge/$PACKAGE/$SRC"
+
 SRC_DIR="$SRC_DIR/$PACKAGE"
+
+if [ ! -d "$SRC_DIR" ]; then
+  mkdir -p $SRC_DIR
+fi
 
 if [ "$RTOOL" == "wget" ] && [ ! -f "$SRC_DIR/$SRC" ]; then
  rm -f $SRC_DIR/$SRC
@@ -69,7 +74,11 @@ else
 fi
 
 TMP="$TMP/$PACKAGE"
-mkdir -p $TMP/package-$PACKAGE
+
+if [ ! -d "$TMP" ]; then
+  mkdir -p $TMP
+fi
+
 cd $TMP
 
 tar xvf$tarflag $SRC_DIR/$SRC
