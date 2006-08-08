@@ -20,6 +20,7 @@ VERSION=${VERSION:=1.9.2}
 BUILD=${BUILD:=1rha}
 SRC_DIR=${SRC:=$CWD}
 TMP=${TMP:=/tmp}
+REPOS=${REPOS:=$TMP}
 
 if [ "$ARCH" == "x86_64" ]; then
   LIBDIR=/usr/lib64
@@ -38,11 +39,18 @@ else
   tarflag="z"
 fi
 
+SRC_DIR="$SRC_DIR/$PACKAGE"
+mkdir -p $SRC_DIR
+
 if [ "$RTOOL" == "wget" ] && [ ! -f "$SRC_DIR/$SRC" ]; then
   wget "$URL" -O "$SRC_DIR/$SRC"
 fi
 
+TMP="$TMP/$PACKAGE"
+rm -rf $TMP
+mkdir -p $TMP
 cd $TMP
+
 rm -rf package-$PACKAGE
 mkdir package-$PACKAGE
 cd package-$PACKAGE
@@ -93,5 +101,5 @@ done
 
 echo 'chroot . /sbin/ldconfig' > install/doinst.sh
 
-makepkg -c y -l y $TMP/$PACKAGE-$VERSION-$ARCH-$BUILD.tgz
+makepkg -c y -l y $REPOS/$PACKAGE-$VERSION-$ARCH-$BUILD.tgz
 
