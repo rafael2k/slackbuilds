@@ -7,6 +7,21 @@
 # Small changes by rhatto
 #
 
+cat << EOCAT
+Recomended and required packages for building icecast are:
+
+  libiconv
+
+EOCAT
+
+if [ "$INTERACT" != "no" ]; then
+  echo If you dont have those installed, press Ctrl-C. Otherwise, hit ENTER.
+  read crap
+else
+  echo sleeping 3 seconds...
+  sleep 3
+fi
+
 CWD="`pwd`"
 
 if [ -f "/etc/slackbuildrc" ]; then
