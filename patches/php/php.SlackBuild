@@ -22,10 +22,9 @@ VERSION=${VERSION:=4.4.3}
 PINE=${PINE:=4.64}
 ARCH=${ARCH:=x86_64}
 BUILD=${BUILD:=1rha}
-
 TMP=${TMP:=/tmp}
-PKG=$TMP/package-php
 SRC_DIR=${SRC:=$CWD}
+REPOS=${REPOS:=$TMP}
 
 RTOOL="wget"
 
@@ -46,6 +45,9 @@ GETOPT="Console_Getopt-1.2.tgz"
 TEMPLATE="HTML_Template_IT-1.1.3.tgz"
 
 PEAR="http://pear.php.net/get"
+
+SRC_DIR="$SRC_DIR/$PACKAGE"
+mkdir -p $SRC_DIR
 
 if [ "$RTOOL" == "wget" ]; then
 
@@ -76,9 +78,11 @@ if [ "$RTOOL" == "wget" ]; then
 
 fi
 
-if [ ! -d $TMP ]; then
-  mkdir -p $TMP
-fi
+TMP="$TMP/$PACKAGE"
+PKG="$TMP/package-php"
+rm -rf $TMP
+mkdir -p $TMP
+cd $TMP
 
 if [ "$ARCH" = "i386" ]; then
   SLKCFLAGS="-O2 -march=i386 -mcpu=i686"
@@ -306,5 +310,5 @@ cat $CWD/slack-desc > $PKG/install/slack-desc
 #fi
 
 cd $PKG
-makepkg -l y -c n $TMP/php-$VERSION-$ARCH-$BUILD.tgz
+makepkg -l y -c n $REPOS/php-$VERSION-$ARCH-$BUILD.tgz
 
