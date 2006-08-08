@@ -13,12 +13,21 @@
 
 CWD="`pwd`"
 
+if [ -f "/etc/slackbuildrc" ]; then
+  source /etc/slackbuildrc
+fi
+
+if [ -f "~/.slackbuildrc" ]; then
+  source ~/.slackbuildrc
+fi
+
 # default settings
 PACKAGE="munin"
-_TMP="/tmp"
-_VERSION="1.2.4"
-_ARCH="i386"
-_BUILD="2rha"
+TMP=${TMP:=/tmp}
+VERSION=${VERSION:=1.2.4}
+ARCH=${ARCH:=i386}
+BUILD=${BUILD:=3rha}
+SRC_DIR=${SRC:=$CWD}
 
 if ! grep -qe "^$PACKAGE:" /etc/passwd || ! grep -qe "^$PACKAGE:" /etc/group; then
   echo "WARNING: user and/or group $PACKAGE does not exist"
@@ -36,46 +45,17 @@ EOCAT
 
 read garbage
 
-if [ -f "/etc/slackbuildrc" ]; then
-  source /etc/slackbuildrc
-fi
-
-if [ -f "~/.slackbuildrc" ]; then
-  source ~/.slackbuildrc
-fi
-
-if [ -z "$VERSION" ]; then
-  VERSION="$_VERSION"
-fi
-
-if [ -z "$ARCH" ]; then
-  ARCH="$_ARCH"
-fi
-
-if [ -z "$BUILD" ]; then
-  BUILD="$_BUILD"
-fi
-
 if [ "$ARCH" == "x86_64" ]; then
   LIBDIR=/usr/lib64
 else
   LIBDIR=/usr/lib
 fi
 
-if [ -z "$SRC" ]; then
-  SRC_DIR="$CWD"
-else
-  SRC_DIR="$SRC"
-fi
-
-if [ -z "$TMP" ]; then
-  TMP="$_TMP"
-fi
-
 RTOOL="wget"
 PACKAGE_EXT="gz"
 SRC="$PACKAGE"_"$VERSION.tar.$PACKAGE_EXT"
 URL="http://easynews.dl.sourceforge.net/sourceforge/$PACKAGE/$SRC"
+SRC_DIR="$SRC_DIR/$PACKAGE"
 
 if [ "$RTOOL" == "wget" ] && [ ! -f "$SRC_DIR/$SRC" ]; then
  rm -f $SRC_DIR/$SRC
@@ -88,9 +68,10 @@ else
   tarflag="z"
 fi
 
-rm -rf $TMP/package-$PACKAGE
-mkdir $TMP/package-$PACKAGE
-cd $TMP/package-$PACKAGE
+TMP="$TMP/$PACKAGE"
+mkdir -p $TMP/package-$PACKAGE
+cd $TMP
+
 tar xvf$tarflag $SRC_DIR/$SRC
 cd $PACKAGE-$VERSION
 
