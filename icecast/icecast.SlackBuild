@@ -304,9 +304,9 @@ find . | xargs file | grep "shared object" | grep ELF | cut -f 1 -d : | xargs st
 
 VERSION="`echo $VERSION | sed -e 's/-/_/g'`"
 
-makepkg --linkadd y --chown n $TMP/$PRGNAM-$VERSION-$ARCH-$BUILD.tgz
-(cd $TMP && md5sum $PRGNAM-$VERSION-$ARCH-$BUILD.tgz > $PRGNAM-$VERSION-$ARCH-$BUILD.tgz.md5)
-cat $PKG/install/slack-desc | grep "^${PRGNAM}" > $TMP/$PRGNAM-$VERSION-$ARCH-$BUILD.txt
+makepkg --linkadd y --chown n $REPOS/$PRGNAM-$VERSION-$ARCH-$BUILD.tgz
+(cd $REPOS && md5sum $PRGNAM-$VERSION-$ARCH-$BUILD.tgz > $PRGNAM-$VERSION-$ARCH-$BUILD.tgz.md5)
+cat $PKG/install/slack-desc | grep "^${PRGNAM}" > $REPOS/$PRGNAM-$VERSION-$ARCH-$BUILD.txt
  
 
 # --- CLEANUP ---
