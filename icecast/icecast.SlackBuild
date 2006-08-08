@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 # $Id: icecast.SlackBuild,v 1.4 2006/02/28 15:12:47 root Exp root $
 # Copyright (c) 2006 Eric Hameleers <alien@slackware.com>
 # Distributed under the terms of the GNU General Public License, Version 2
@@ -59,12 +59,23 @@ fi
 # Set initial variables:
 CWD="`pwd`"
 
+if [ -f "/etc/slackbuildrc" ]; then
+  source /etc/slackbuildrc
+fi
+
+if [ -f "~/.slackbuildrc" ]; then
+  source ~/.slackbuildrc
+fi
+
 PRGNAM=icecast
 PACKAGE="$PRGNAM"
-_VERSION="2.3.1"
-_ARCH="i486"
-_BUILD="1rha"
-_TMP="/tmp"
+#VERSION=${VERSION:=2.3.1}
+VERSION=${VERSION:=2.3-kh7}
+ARCH=${ARCH:=x86_64}
+BUILD=${BUILD:=1rha}
+TMP=${TMP:=/tmp}
+SRC_DIR=${SRC:=$CWD}
+REPOS=${REPOS:=$TMP}
 
 if [ -f "/etc/slackbuildrc" ]; then
   source /etc/slackbuildrc
@@ -74,39 +85,21 @@ if [ -f "~/.slackbuildrc" ]; then
   source ~/.slackbuildrc
 fi
 
-if [ -z "$VERSION" ]; then
-  VERSION="$_VERSION"
-fi
-
-if [ -z "$ARCH" ]; then
-  ARCH="$_ARCH"
-fi
-
-if [ -z "$BUILD" ]; then
-  BUILD="$_BUILD"
-fi
-
 if [ "$ARCH" == "x86_64" ]; then
   LIBDIR=/usr/lib64
 else
   LIBDIR=/usr/lib
 fi
 
-if [ -z "$SRC" ]; then
-  SRC_DIR="$CWD"
-else
-  SRC_DIR="$SRC"
-fi
-
-if [ -z "$TMP" ]; then
-  TMP="$_TMP"
-fi
-
 RTOOL="wget"
 PACKAGE_EXT="gz"
-PKG=$TMP/package-$PRGNAM
 SRC="$PACKAGE-$VERSION.tar.$PACKAGE_EXT"
-URL="http://downloads.xiph.org/releases/$PACKAGE/$SRC"
+
+if echo $VERSION | grep -q "kh"; then
+  URL="http://www.mediacast1.com/~karl/$SRC"
+else
+  URL="http://downloads.xiph.org/releases/$PACKAGE/$SRC"
+fi
 
 if [ "$PACKAGE_EXT" == "bz2" ]; then
   tarflag="j"
@@ -114,9 +107,17 @@ else
   tarflag="z"
 fi
 
+SRC_DIR="$SRC_DIR/$PACKAGE"
+mkdir -p $SRC_DIR
+
 if [ "$RTOOL" == "wget" ] && [ ! -f "$SRC_DIR/$SRC" ]; then
   wget "$URL" -O "$SRC_DIR/$SRC"
 fi
+
+TMP="$TMP/$PACKAGE"
+rm -rf $TMP
+
+PKG=$TMP/package-$PRGNAM
 
 if [ ! -d $TMP/tmp-$PRGNAM ]; then
   mkdir -p $TMP/tmp-$PRGNAM # location to build the source
@@ -300,6 +301,8 @@ cd $PKG
 
 find . | xargs file | grep "executable" | grep ELF | cut -f 1 -d : | xargs strip --strip-unneeded 2> /dev/null
 find . | xargs file | grep "shared object" | grep ELF | cut -f 1 -d : | xargs strip --strip-unneeded 2> /dev/null
+
+VERSION="`echo $VERSION | sed -e 's/-/_/g'`"
 
 makepkg --linkadd y --chown n $TMP/$PRGNAM-$VERSION-$ARCH-$BUILD.tgz
 (cd $TMP && md5sum $PRGNAM-$VERSION-$ARCH-$BUILD.tgz > $PRGNAM-$VERSION-$ARCH-$BUILD.tgz.md5)
