@@ -38,7 +38,8 @@ RTOOL="wget"
 PACKAGE_EXT="gz"
 SRC="$PACKAGE-$VERSION.tar.$PACKAGE_EXT"
 KEY="http://www.clamav.net/gpg/tkojm.gpg"
-URL="http://easynews.dl.sourceforge.net/sourceforge/$PACKAGE/$PACKAGE-$VERSION.tar.$PACKAGE_EXT"
+URL="http://mirror.clamav.net/$PACKAGE-$VERSION.tar.$PACKAGE_EXT"
+#URL="http://easynews.dl.sourceforge.net/sourceforge/$PACKAGE/$PACKAGE-$VERSION.tar.$PACKAGE_EXT"
 
 if [ "$PACKAGE_EXT" == "bz2" ]; then
   tarflag="j"
