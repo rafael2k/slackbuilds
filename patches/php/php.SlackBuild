@@ -93,12 +93,6 @@ if [ "$RTOOL" == "wget" ]; then
 
 fi
 
-TMP="$TMP/$PACKAGE"
-PKG="$TMP/package-php"
-rm -rf $TMP
-mkdir -p $TMP
-cd $TMP
-
 if [ "$ARCH" = "i386" ]; then
   SLKCFLAGS="-O2 -march=i386 -mcpu=i686"
 elif [ "$ARCH" = "i486" ]; then
@@ -136,6 +130,12 @@ else
     cp *.h $IMAPLIBDIR/include
   )
 fi
+
+TMP="$TMP/$PACKAGE"
+PKG="$TMP/package-php"
+rm -rf $TMP
+mkdir -p $TMP
+cd $TMP
 
 php_configure() {
 EXTENSION_DIR=/usr/$LIB/php/extensions \
