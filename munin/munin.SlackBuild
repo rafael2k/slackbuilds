@@ -25,5 +25,5 @@ REPOS=${REPOS:=$TMP}
 rm -rf $TMP/$PACKAGE
 mkdir -p $SRC_DIR/$PACKAGE $TMP/$PACKAGE
 
-slacktrack -x $TMP,$SRC_DIR,/dev -jefkzp "$PACKAGE-$VERSION-$ARCH-$BUILD.tgz" "./$PACKAGE.build"
+slacktrack -x $TMP,$SRC_DIR,/dev,/tmp -jefkzp "$PACKAGE-$VERSION-$ARCH-$BUILD.tgz" "./$PACKAGE.build"
 
