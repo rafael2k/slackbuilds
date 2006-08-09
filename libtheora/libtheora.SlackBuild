@@ -24,6 +24,7 @@ TARGET=${TARGET:=$ARCH}
 BUILD=${BUILD:=1rha}
 TMP=${TMP:=/tmp}
 SRC_DIR=${SRC:=$CWD}
+REPOS=${REPOS:=$TMP}
 
 RTOOL="wget"
 PACKAGE_EXT="bz2"
@@ -35,6 +36,9 @@ if [ "$PACKAGE_EXT" == "bz2" ]; then
 else
   tarflag="z"
 fi
+
+SRC_DIR="$SRC_DIR/$PACKAGE"
+mkdir -p $SRC_DIR
 
 if [ "$RTOOL" == "wget" ] && [ ! -f "$SRC_DIR/$SRC" ]; then
   wget "$URL" -O "$SRC_DIR/$SRC"
@@ -62,10 +66,14 @@ if [ ! -d $PKG ]; then
   mkdir -p $PKG
 fi
 
+TMP="$TMP/$PACKAGE"
+rm -rf $TMP
+mkdir -p $TMP
+cd $TMP
+
 NAME="$PACKAGE"
 PKG=$TMP/package-$PACKAGE
 
-cd $TMP
 tar xvf$tarflag $SRC_DIR/$SRC
 cd $NAME-$VERSION
 chown -R root.root .
@@ -116,9 +124,8 @@ cd $PKG
 
 echo 'chroot . /sbin/ldconfig' > install/doinst.sh
 
-makepkg -l y -c n $TMP/$NAME-$VERSION-$ARCH-$BUILD.tgz
+makepkg -l y -c n $REPOS/$NAME-$VERSION-$ARCH-$BUILD.tgz
 
 if [ "$1" = "--cleanup" ]; then
- rm -rf $TMP/$NAME-$VERSION
- rm -rf $PKG
+ rm -rf $TMP
 fi
