@@ -152,7 +152,7 @@ fi
 if [ ! -z "$service" ]; then
   for daemon in $service; do
     info "Starting service $daemon..."
-    $initscripts/$daemo start
+    $initscripts/$daemon start
   done
 fi
 
