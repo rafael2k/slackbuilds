@@ -17,7 +17,7 @@ fi
 PACKAGE="nano"
 ARCH=${ARCH:=x86_64}
 VERSION=${VERSION:=1.2.5}
-BUILD=${BUILD:=15rha}
+BUILD=${BUILD:=1rha}
 SRC_DIR=${SRC:=$CWD}
 TMP=${TMP:=/tmp}
 REPOS=${REPOS:=$TMP}
