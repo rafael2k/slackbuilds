@@ -68,8 +68,8 @@ find . -perm 777 -exec chmod 755 {} \;
 find . -perm 664 -exec chmod 644 {} \;
 
 if [ "$VERSION" == "3.8.2" ]; then
-  zcat $SRC_DIR/tiff-3.8.2.goo-sec.diff.gz | patch -p1 --verbose || exit 1
-  zcat $SRC_DIR/tiff-3.8.2.tiffsplit.commandline.overflow.diff.gz | patch -p1 --verbose || exit 1
+  zcat $CWD/tiff-3.8.2.goo-sec.diff.gz | patch -p1 --verbose || exit 1
+  zcat $CWD/tiff-3.8.2.tiffsplit.commandline.overflow.diff.gz | patch -p1 --verbose || exit 1
 fi
 
 CFLAGS="$SLKCFLAGS" \
