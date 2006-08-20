@@ -37,7 +37,7 @@ fi
 
 RTOOL="wget"
 PACKAGE_EXT="gz"
-SRC="$PACKAGE-$VERSION.tar.$PACKAGE_EXT"
+SRC="tiff-$VERSION.tar.$PACKAGE_EXT"
 URL="ftp://ftp.remotesensing.org/pub/libtiff/$SRC"
 
 SRC_DIR="$SRC_DIR/$PACKAGE"
