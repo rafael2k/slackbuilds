@@ -60,7 +60,7 @@ mkdir -p $TMP
 cd $TMP
 
 rm -rf tiff-$VERSION
-tar xjvf $SRC_DIR/tiff-$VERSION.tar.bz2
+tar xvf$tarflag $SRC_DIR/tiff-$VERSION.tar.$PACKAGE_EXT
 cd tiff-$VERSION
 
 chown -R root:root .
