@@ -47,11 +47,16 @@ else
   tarflag="z"
 fi
 
-if [ "$RTOOL" == "wget" ] && [ ! -f "$SRC_DIR/$SRC" ]; then
-  rm -rf $SRC_DIR/{$PATCH1,$PATCH2}
-  wget "$URL" -O "$SRC_DIR/$SRC"
-  wget "$PATCH1_URL" -O "$SRC_DIR/$PATCH1"
-  wget "$PATCH2_URL" -O "$SRC_DIR/$PATCH2"
+if [ "$RTOOL" == "wget" ]; then
+  if [ ! -f "$SRC_DIR/$SRC" ]; then
+    wget "$URL" -O "$SRC_DIR/$SRC"
+  fi
+  if [ ! -f "$SRC_DIR/$PATCH1" ]; then
+    wget "$PATCH1_URL" -O "$SRC_DIR/$PATCH1"
+  fi
+  if [ ! -f "$SRC_DIR/$PATCH2" ]; then
+    wget "$PATCH2_URL" -O "$SRC_DIR/$PATCH2"
+  fi
 fi
 
 if [ "$ARCH" == "i486" ]; then
