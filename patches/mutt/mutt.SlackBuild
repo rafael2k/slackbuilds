@@ -3,7 +3,8 @@
 # Build Mutt for Slackware (by volkerdi@slackware.com)
 # Small changes by rhatto
 #
-# Uses de following patches from http://www.woolridge.ca/mutt/
+# For version 1.5.6 or 1.5.6i, uses de following
+# patches from http://www.woolridge.ca/mutt/
 #
 #   - confirm-crypt-hook
 #   - multiple-crypt-hook
@@ -21,7 +22,8 @@ if [ -f "~/.slackbuildrc" ]; then
 fi
 
 PACKAGE="mutt"
-VERSION=${VERSION:=1.5.6i}
+#VERSION=${VERSION:=1.5.6i}
+VERSION=${VERSION:=1.5.12}
 ARCH=${ARCH:=i486}
 BUILD=${BUILD:=2rha}
 TMP=${TMP:=/tmp}
@@ -80,8 +82,10 @@ tar xvf$tarflag $SRC_DIR/$SRC
 
 cd `basename mutt-$VERSION i`
 
-patch -p1 < $SRC_DIR/$PATCH1
-patch -p1 < $SRC_DIR/$PATCH2
+if [ "$VERSION" == "1.5.6" ] || [ "$VERSION" == "1.5.6i" ]; then
+  patch -p1 < $SRC_DIR/$PATCH1
+  patch -p1 < $SRC_DIR/$PATCH2
+fi
 
 chown -R root.root .
 
