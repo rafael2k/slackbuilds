@@ -93,7 +93,7 @@ done
 
 # install script
 echo '( echo Add the following lines on /etc/apache/httpd.conf: )' > install/doinst.sh
-echo '( echo LoadModule fastcgi_module  /usr/libxec/apache/mod_fastcgi.so  )' >> install/doinst.sh
+echo '( echo LoadModule fastcgi_module  libexec/apache/mod_fastcgi.so  )' >> install/doinst.sh
 echo '( echo AddModule mod_fastcgi.c )' >> install/doinst.sh
 
 makepkg -c y -l y $TMP/$PACKAGE-$VERSION-$ARCH-$BUILD.tgz
