@@ -116,7 +116,7 @@ mkdir -p usr/doc/$PACKAGE-$VERSION
 cp $CWD/{AUTHORS,BUGS,COPYING,ChangeLog,FAQ,INSTALL,NEWS,README,TODO,UPGRADE} usr/doc/$PACKAGE-$VERSION/
 
 # install script
-echo '( chroot . /sbin/ldconfig )' > /install/doinst.sh
+echo '( chroot . /sbin/ldconfig )' > install/doinst.sh
 echo '( if ! grep -qe "^clamav:" etc/group; then echo creating group clamav... ; chroot . /usr/sbin/groupadd clamav; fi )' >> install/doinst.sh
 echo '( if ! grep -qe "^clamav:" etc/passwd; then echo creating user clamav... ; chroot . /usr/sbin/useradd clamav -g clamav; fi )' >> install/doinst.sh
 echo '( if [ ! -f "etc/clamd.conf" ]; then mv etc/clamd.conf.new etc/clamd.conf; fi )' >> install/doinst.sh

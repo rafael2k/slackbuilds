@@ -96,7 +96,7 @@ done
 # install script
 echo '( echo Now dont forget to edit your main config and add )' > /install/doinst.sh
 echo '( echo   LoadModule python_module /usr/libexec/apache/mod_python.so )' >> /install/doinst.sh
-echo '( echo If your configuration uses ClearModuleList, then also )' >> /install/doinst.sh
+echo '( echo If your configuration uses ClearModuleList, then also add )' >> /install/doinst.sh
 echo '( echo   AddModule mod_python.c )' >> /install/doinst.sh
 
 if [ "$CLEANUP" == "yes" ]; then
