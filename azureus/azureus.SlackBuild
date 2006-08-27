@@ -16,9 +16,9 @@ fi
 # default settings
 PRGNAM="azureus"
 PACKAGE="$PRGNAM"
-VERSION=${VERSION:=2.4.0.2}
+VERSION=${VERSION:=2.5.0.0}
 ARCH=${ARCH:=x86_64}
-BUILD=${BUILD:=3rha}
+BUILD=${BUILD:=1rha}
 TMP=${TMP:=/tmp}
 SRC_DIR=${SRC:=$CWD}
 TMP=${TMP:=/tmp}
@@ -64,9 +64,10 @@ cd usr/local
 tar xvf$tarflag $SRC_DIR/$SRC
 cd $TMP/package-$PACKAGE
 
-# TODO: this should be fixed
-rm usr/local/azureus/plugins/azplugins/*
-wget "http://azureus.sourceforge.net/plugins/azplugins_2.0.jar" -O "usr/local/azureus/plugins/azplugins/azplugins_2.0.jar"
+if [ "$VERSION" == "2.4.0.2" ]; then
+  rm usr/local/azureus/plugins/azplugins/*
+  wget "http://azureus.sourceforge.net/plugins/azplugins_2.0.jar" -O "usr/local/azureus/plugins/azplugins/azplugins_2.0.jar"
+fi
 
 cat << EOF > install/slack-desc
 # HOW TO EDIT THIS FILE:
