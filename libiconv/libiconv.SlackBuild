@@ -51,7 +51,6 @@ rm -rf $TMP
 mkdir -p $TMP
 cd $TMP
 
-rm -rf package-$PACKAGE
 mkdir package-$PACKAGE
 cd package-$PACKAGE
 
