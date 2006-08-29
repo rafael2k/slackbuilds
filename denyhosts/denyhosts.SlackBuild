@@ -20,9 +20,13 @@ ARCH="noarch"
 BUILD=${BUILD:=1rha}
 SRC_DIR=${SRC:=$CWD}
 TMP=${TMP:=/tmp}
+REPOS=${REPOS:=$TMP}
 
 rm -rf $TMP/$PACKAGE
 mkdir -p $SRC_DIR/$PACKAGE $TMP/$PACKAGE
 
-slacktrack -x $TMP,$SRC_DIR,/dev -jefkzp "$PACKAGE-$VERSION-$ARCH-$BUILD.tgz" "./$PACKAGE.build"
+slacktrack -b $REPOS -x $TMP,$SRC_DIR,/dev -jefkzp "$PACKAGE-$VERSION-$ARCH-$BUILD.tgz" "./$PACKAGE.build"
 
+if [ "$CLEANUP" == "yes" ]; then
+  rm -rf $TMP/$PACKAGE
+fi
