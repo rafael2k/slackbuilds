@@ -58,11 +58,11 @@ cd $PACKAGE-$VERSION
 # building with --disable-shared, otherwise stuff such as mrtg wont compile
 ./configure --prefix=/usr --sysconfdir=/etc --libdir=$LIBDIR --with-fontconfig=no --disable-shared
 make
-make DESTDIR=$TMP/package-$PACKAGE/$PACKAGE install
+make DESTDIR=$TMP/package-$PACKAGE install
 
 CWD="`pwd`"
 
-cd $TMP/package-$PACKAGE/$PACKAGE
+cd $TMP/package-$PACKAGE
 
 find . | xargs file | grep "executable" | grep ELF | cut -f 1 -d : | xargs strip --strip-unneeded 2> /dev/null
 find . | xargs file | grep "shared object" | grep ELF | cut -f 1 -d : | xargs strip --strip-unneeded 2> /dev/null
