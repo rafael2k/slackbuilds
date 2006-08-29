@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 #
 # slackbuild for libgpg-error from
 # http://www.slacky.it/download/libraries/libgpg-error/1.3/src/libgpg-error.SlackBuild
@@ -11,13 +11,6 @@
 
 CWD="`pwd`"
 
-# default settings
-PACKAGE="libgpg-error"
-_VERSION="1.3"
-_ARCH="i486"
-_BUILD="1rha"
-_TMP="/tmp"
-
 if [ -f "/etc/slackbuildrc" ]; then
   source /etc/slackbuildrc
 fi
@@ -26,17 +19,14 @@ if [ -f "~/.slackbuildrc" ]; then
   source ~/.slackbuildrc
 fi
 
-if [ -z "$VERSION" ]; then
-  VERSION="$_VERSION"
-fi
-
-if [ -z "$ARCH" ]; then
-  ARCH="$_ARCH"
-fi
-
-if [ -z "$BUILD" ]; then
-  BUILD="$_BUILD"
-fi
+# default settings
+PACKAGE="libgpg-error"
+ARCH=${ARCH:=x86_64}
+VERSION=${VERSION:=1.3}
+BUILD=${BUILD:=1rha}
+SRC_DIR=${SRC:=$CWD}
+TMP=${TMP:=/tmp}
+REPOS=${REPOS:=$TMP}
 
 if [ "$ARCH" == "x86_64" ]; then
   LIBDIR=/usr/lib64
@@ -44,20 +34,10 @@ else
   LIBDIR=/usr/lib
 fi
 
-if [ -z "$SRC" ]; then
-  SRC_DIR="$CWD"
-else
-  SRC_DIR="$SRC"
-fi
-
-if [ -z "$TMP" ]; then
-  TMP="$_TMP"
-fi
-
 RTOOL="wget"
 PACKAGE_EXT="bz2"
 SRC="$PACKAGE-$VERSION.tar.$PACKAGE_EXT"
-#KEY="http://www.courier-mta.org/KEYS.bin"
+#KEY="http://..."
 SRC="$PACKAGE-$VERSION.tar.$PACKAGE_EXT"
 URL="http://ftp.gnupg.org/GnuPG/libgpg-error/$SRC"
 
@@ -66,6 +46,9 @@ if [ "$PACKAGE_EXT" == "bz2" ]; then
 else
   tarflag="z"
 fi
+
+SRC_DIR="$SRC_DIR/$PACKAGE"
+mkdir -p $SRC_DIR
 
 if [ "$RTOOL" == "wget" ] && [ ! -f "$SRC_DIR/$SRC" ]; then
   wget "$URL" -O "$SRC_DIR/$SRC"
@@ -80,7 +63,6 @@ fi
 gpg --verify $SRC_DIR/$SRC.sig $SRC || echo WARNING: Could not check signature or WRONG signature found.
 
 NAME="$PACKAGE"
-PKG=$TMP/package-libgpg-error
 
 if [ "$ARCH" = "i486" ]; then
   SLKCFLAGS="-O2 -march=i486 -mcpu=i686"
@@ -90,14 +72,13 @@ elif [ "$ARCH" = "x86_64" ]; then
   SLKCFLAGS="-O2"
 fi
 
-if [ ! -d $TMP ]; then
- mkdir -p $TMP
-fi
-if [ ! -d $PKG ]; then
- mkdir -p $PKG
-fi
+TMP="$TMP/$PACKAGE"
+PKG=$TMP/package-libgpg-error
+rm -rf $TMP
+mkdir -p $PKG
 
 cd $TMP
+
 tar xvf$tarflag $SRC_DIR/$NAME-$VERSION.tar.bz2
 cd $NAME-$VERSION
 chown -R root.root .
@@ -126,9 +107,9 @@ echo 'chroot . /sbin/ldconfig' > $PKG/install/doinst.sh
 cd $PKG
 # requiredbuilder -v -y -s $CWD $PKG
 
-makepkg -l y -c n $TMP/$NAME-$VERSION-$ARCH-$BUILD.tgz
+makepkg -l y -c n $REPOS/$NAME-$VERSION-$ARCH-$BUILD.tgz
 
-if [ "$1" = "--cleanup" ]; then
-  rm -rf $TMP/$NAME-$VERSION
-  rm -rf $PKG
+if [ "$CLEANUP" == "yes" ]; then
+  rm -rf $TMP
 fi
+
