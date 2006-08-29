@@ -5,13 +5,6 @@
 
 CWD="`pwd`"
 
-# default settings
-PACKAGE="mailgraph"
-ARCH="noarch"
-_VERSION="1.12"
-_BUILD="1rha"
-_TMP="/tmp"
-
 if [ -f "/etc/slackbuildrc" ]; then
   source /etc/slackbuildrc
 fi
@@ -20,28 +13,19 @@ if [ -f "~/.slackbuildrc" ]; then
   source ~/.slackbuildrc
 fi
 
-if [ -z "$VERSION" ]; then
-  VERSION="$_VERSION"
-fi
-
-if [ -z "$BUILD" ]; then
-  BUILD="$_BUILD"
-fi
+# default settings
+PACKAGE="mailgraph"
+ARCH="noarch"
+VERSION=${VERSION:=1.12}
+BUILD=${BUILD:=1rha}
+SRC_DIR=${SRC:=$CWD}
+TMP=${TMP:=/tmp}
+REPOS=${REPOS:=$TMP}
 
 if [ "$ARCH" == "x86_64" ]; then
   LIBDIR=/usr/lib64
 else
   LIBDIR=/usr/lib
-fi
-
-if [ -z "$SRC" ]; then
-  SRC_DIR="$CWD"
-else
-  SRC_DIR="$SRC"
-fi
-
-if [ -z "$TMP" ]; then
-  TMP="$_TMP"
 fi
 
 RTOOL="wget"
@@ -55,19 +39,24 @@ else
   tarflag="z"
 fi
 
+SRC_DIR="$SRC_DIR/$PACKAGE"
+mkdir -p $SRC_DIR
+
 if [ "$RTOOL" == "wget" ] && [ ! -f "$SRC_DIR/$SRC" ]; then
   wget "$URL" -O "$SRC_DIR/$SRC"
 fi
 
+TMP="$TMP/$PACKAGE"
+rm -rf $TMP
+mkdir -p $TMP
 cd $TMP
-rm -rf $PACKAGE-$VERSION
 
 tar xvf$tarflag $SRC_DIR/$PACKAGE-$VERSION.tar.$PACKAGE_EXT
 cd $PACKAGE-$VERSION
 
 CWD="`pwd`"
 
-mkdir package && cd package
+mkdir package-$PACKAGE && cd package-$PACKAGE
 
 mkdir -p etc/rc.d usr/{bin,doc/mailgraph,share/mailgraph} install
 sed -e 's/^MAILGRAPH_PL=\/usr\/local\/bin\/mailgraph.pl/MAILGRAPH_PL=\/usr\/bin\/mailgraph.pl/' $CWD/mailgraph-init > etc/rc.d/rc.mailgraph
@@ -97,5 +86,9 @@ mailgraph:
 mailgraph:
 EOF
 
-makepkg -c y -l y $TMP/$PACKAGE-$VERSION-$ARCH-$BUILD.tgz
+makepkg -c y -l y $REPOS/$PACKAGE-$VERSION-$ARCH-$BUILD.tgz
+
+if [ "$CLEANUP" == "yes" ]; then
+  rm -rf $TMP
+fi
 
