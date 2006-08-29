@@ -15,6 +15,7 @@ PATCH_VERSION="3.1.6-2.6.12"
 TMP=${TMP:=/tmp}
 SRC_DIR=${SRC:=$CWD}
 SPLASH="/etc/bootsplash/themes/Slack-Black-Tux/config/bootsplash-1024x768.cfg"
+REPOS=${REPOS:=$TMP}
 
 cat << EOCAT
 Just remembering, you need the following stuff installed:
@@ -140,7 +141,7 @@ mkinitrd -c -k 2.6.15.7 -o $PKG/boot/initrd.gz
 splash -s -f $SPLASH > $PKG/boot/initrd.gz 
 
 cd $PKG
-makepkg -c y -l y $TMP/$PACKAGE-$VERSION-$ARCH-$BUILD.tgz
+makepkg -c y -l y $REPOS/$PACKAGE-$VERSION-$ARCH-$BUILD.tgz
 
 cat << EOCAT
 Please check if you need to build or install the following modules:
@@ -150,4 +151,8 @@ Please check if you need to build or install the following modules:
 
 Have a nice day.
 EOCAT
+
+if [ "$CLEANUP" == "yes" ]; then
+  rm -rf $TMP
+fi
 

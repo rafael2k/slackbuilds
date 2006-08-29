@@ -22,6 +22,7 @@ PATCHSET="vs2.0.2-rc22"
 PATCH_VERSION="2.6.16.20-$PATCHSET"
 TMP=${TMP:=/tmp}
 SRC_DIR=${SRC:=$CWD}
+REPOS=${REPOS:=$TMP}
 
 if [ ! -z "$EXTRAVERSION" ]; then
   KERNEL_VERSION=$KERNEL_VERSION.$EXTRAVERSION
@@ -115,5 +116,9 @@ cd $PKG
 ( cd boot && ln -s config-$KERNEL_VERSION config )
 ( cd boot && ln -s System.map-$KERNEL_VERSION System.map)
 
-makepkg -c y -l y $TMP/$PACKAGE-$VERSION-$ARCH-$BUILD.tgz
+makepkg -c y -l y $REPOS/$PACKAGE-$VERSION-$ARCH-$BUILD.tgz
+
+if [ "$CLEANUP" == "yes" ]; then
+  rm -rf $TMP
+fi
 
