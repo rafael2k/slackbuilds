@@ -3,7 +3,7 @@
 # build script for moin
 # build it with slacktrack, example:
 #
-#   slacktrack -jefkzp "moin-1.5.3-noarch-1rha.tgz" "./moin.build"
+#   slacktrack -jefkzp "moin-1.5.4-noarch-1rha.tgz" "./moin.build"
 # 
 
 CWD="`pwd`"
@@ -18,7 +18,7 @@ fi
 
 # default settings
 PACKAGE="moin"
-VERSION=${VERSION:=1.5.3}
+VERSION=${VERSION:=1.5.4}
 ARCH="noarch"
 BUILD=${BUILD:=1rha}
 SRC_DIR=${SRC:=$CWD}
@@ -28,6 +28,12 @@ RTOOL="wget"
 PACKAGE_EXT="gz"
 SRC="$PACKAGE-$VERSION.tar.$PACKAGE_EXT"
 URL="http://easynews.dl.sourceforge.net/sourceforge/moin/$SRC"
+
+SRC_DIR="$SRC_DIR/$PACKAGE"
+
+if [ ! -d "$SRC_DIR" ]; then
+  mkdir -p $SRC_DIR
+fi
 
 if [ "$PACKAGE_EXT" == "bz2" ]; then
   tarflag="j"
@@ -39,10 +45,13 @@ if [ "$RTOOL" == "wget" ] && [ ! -f "$SRC_DIR/$SRC" ]; then
   wget "$URL" -O "$SRC_DIR/$SRC"
 fi
 
+TMP="$TMP/$PACKAGE"
+
+if [ ! -d "$TMP" ]; then
+  mkdir -p $TMP
+fi
+
 cd $TMP
-rm -rf package-$PACKAGE
-mkdir package-$PACKAGE
-cd package-$PACKAGE
 
 tar xvf$tarflag $SRC_DIR/$SRC
 cd $PACKAGE-$VERSION
