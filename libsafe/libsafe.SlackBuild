@@ -21,6 +21,7 @@ TMP=${TMP:=/tmp}
 VERSION=2.0.16
 SRCPKG=2.0-16
 SRC_DIR=${SRC:=$CWD}
+REPOS=${REPOS:=$TMP}
 
 if [ "$ARCH" == "x86_64" ]; then
   LIBDIR=lib64
@@ -33,17 +34,23 @@ fi
 RTOOL="wget"
 SRC="$PACKAGE-$SRCPKG.tar.gz"
 URL="ftp://ftp.slackware.com/pub/slackware/slackware-10.2/extra/source/libsafe-$SRCPKG/$SRC"
-PKG=$TMP/package-libsafe
+
+SRC_DIR="$SRC_DIR/$PACKAGE"
+mkdir -p $SRC_DIR
 
 if [ "$RTOOL" == "wget" ] && [ ! -f "$SRC_DIR/$SRC" ]; then
   wget "$URL" -O "$SRC_DIR/$SRC"
 fi
 
+TMP="$TMP/$PACKAGE"
+PKG=$TMP/package-$PACKAGE
+rm -rf $TMP
+mkdir -p $TMP
 cd $TMP
-rm -rf $PKG
-mkdir -p $PKG
+
 tar xzvf $SRC_DIR/$SRC
 cd libsafe-$SRCPKG
+
 chown -R root.root .
 find . -perm 775 -exec chmod 755 {} \;
 find . -perm 664 -exec chmod 644 {} \;
@@ -61,5 +68,9 @@ cp -a \
 mkdir -p $PKG/usr/man/man8
 cat doc/libsafe.8 | gzip -9c > $PKG/usr/man/man8/libsafe.8.gz
 cd $PKG
-makepkg -l y -c n $TMP/$PACKAGE-$VERSION-$ARCH-$BUILD.tgz
+makepkg -l y -c n $REPOS/$PACKAGE-$VERSION-$ARCH-$BUILD.tgz
+
+if [ "$CLEANUP" == "yes" ]; then
+  rm -rf $TMP
+fi
 
