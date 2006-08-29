@@ -20,6 +20,7 @@ VERSION=${VERSION:=0.3}
 BUILD=${BUILD:=1rha}
 SRC_DIR=${SRC:=$CWD}
 TMP=${TMP:=/tmp}
+REPOS=${REPOS:=$TMP}
 
 if [ "$ARCH" == "x86_64" ]; then
   LIBDIR=/usr/lib64
@@ -40,16 +41,19 @@ else
   tarflag="z"
 fi
 
+SRC_DIR="$SRC_DIR/$PACKAGE"
+mkdir -p $SRC_DIR
+
 if [ "$RTOOL" == "wget" ] && [ ! -f "$SRC_DIR/$SRC" ]; then
   rm -f $SRC_DIR/$PATCH
   wget "$URL" -O "$SRC_DIR/$SRC"
   wget "$PATCH_URL" -O "$SRC_DIR/$PATCH"
 fi
 
+TMP="$TMP/$PACKAGE"
+rm -rf $TMP
+mkdir -p $TMP
 cd $TMP
-rm -rf package-$PACKAGE
-mkdir package-$PACKAGE
-cd package-$PACKAGE
 
 tar xvf$tarflag $SRC_DIR/$SRC
 gzip -dc $SRC_DIR/$PATCH | patch -p0
@@ -57,11 +61,11 @@ cd $PACKAGE-$VERSION.orig
 
 ./configure --prefix=/usr --sysconfdir=/etc --libdir=$LIBDIR
 make
-make DESTDIR=$TMP/package-$PACKAGE/$PACKAGE install
+make DESTDIR=$TMP/package-$PACKAGE install
 
 CWD="`pwd`"
 
-cd $TMP/package-$PACKAGE/$PACKAGE
+cd $TMP/package-$PACKAGE
 
 find . | xargs file | grep "executable" | grep ELF | cut -f 1 -d : | xargs strip --strip-unneeded 2> /dev/null
 find . | xargs file | grep "shared object" | grep ELF | cut -f 1 -d : | xargs strip --strip-unneeded 2> /dev/null
@@ -96,5 +100,9 @@ for file in AUTHORS COPYING ChangeLog INSTALL NEWS README; do
   cp $CWD/$file* usr/doc/$PACKAGE-$VERSION/
 done
 
-makepkg -c y -l y $TMP/$PACKAGE-$VERSION-$ARCH-$BUILD.tgz
+makepkg -c y -l y $REPOS/$PACKAGE-$VERSION-$ARCH-$BUILD.tgz
+
+if [ "$CLEANUP" == "yes" ]; then
+  rm -rf $TMP
+fi
 
