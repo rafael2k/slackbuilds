@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 # $Id: libshout.SlackBuild,v 1.2 2006/02/28 15:26:52 root Exp root $
 # Copyright (c) 2006 Eric Hameleers <alien@slackware.com>
 # Distributed under the terms of the GNU General Public License, Version 2
@@ -19,13 +19,6 @@
 
 CWD=`pwd`
 
-# default settings
-PACKAGE="libshout"
-_VERSION="2.2.1"
-_ARCH="x86_64"
-_BUILD="2rha"
-_TMP="/tmp"
-
 if [ -f "/etc/slackbuildrc" ]; then
   source /etc/slackbuildrc
 fi
@@ -34,36 +27,20 @@ if [ -f "~/.slackbuildrc" ]; then
   source ~/.slackbuildrc
 fi
 
-if [ -z "$VERSION" ]; then
-  VERSION="$_VERSION"
-fi
-
-if [ -z "$ARCH" ]; then
-  ARCH="$_ARCH"
-fi
-
-if [ -z "$BUILD" ]; then
-  BUILD="$_BUILD"
-fi
+# default settings
+PACKAGE="libshout"
+ARCH=${ARCH:=x86_64}
+VERSION=${VERSION:=2.2.1}
+BUILD=${BUILD:=2rha}
+SRC_DIR=${SRC:=$CWD}
+TMP=${TMP:=/tmp}
+REPOS=${REPOS:=$TMP}
 
 if [ "$ARCH" == "x86_64" ]; then
   LIBDIR=/usr/lib64
 else
   LIBDIR=/usr/lib
 fi
-
-if [ -z "$SRC" ]; then
-  SRC_DIR="$CWD"
-else
-  SRC_DIR="$SRC"
-fi
-
-if [ -z "$TMP" ]; then
-  TMP="$_TMP"
-fi
-
-PRGNAM="$PACKAGE"
-PKG=$TMP/package-$PRGNAM
 
 RTOOL="wget"
 PACKAGE_EXT="gz"
@@ -75,6 +52,9 @@ if [ "$PACKAGE_EXT" == "bz2" ]; then
 else
   tarflag="z"
 fi
+
+SRC_DIR="$SRC_DIR/$PACKAGE"
+mkdir -p $SRC_DIR
 
 if [ "$RTOOL" == "wget" ] && [ ! -f "$SRC_DIR/$SRC" ]; then
   wget "$URL" -O "$SRC_DIR/$SRC"
@@ -90,6 +70,13 @@ fi
 
 # --- PACKAGE BUILDING ---
 
+TMP="$TMP/$PACKAGE"
+PRGNAM="$PACKAGE"
+PKG=$TMP/package-$PRGNAM
+rm -rf $TMP
+mkdir -p $PKG
+cd $TMP
+
 echo "+==============+"
 echo "| $PRGNAM-$VERSION |"
 echo "+==============+"
@@ -101,8 +88,6 @@ cd $PKG
 if [ -f $CWD/_$PRGNAM.tar.gz ]; then
   explodepkg $CWD/_$PRGNAM.tar.gz
 fi
-
-cd $TMP/tmp-$PRGNAM
 
 # Extract tar ball in TEMP dir
 echo Building $PRGNAM...
@@ -148,18 +133,16 @@ cat $CWD/${PRGNAM}.slack-desc > $PKG/install/slack-desc
 
 # Build the package and compute its md5 checksum:
 cd $PKG
-makepkg --linkadd y --chown n $TMP/$PRGNAM-$VERSION-$ARCH-$BUILD.tgz
-(cd $TMP && md5sum $PRGNAM-$VERSION-$ARCH-$BUILD.tgz > $PRGNAM-$VERSION-$ARCH-$BUILD.tgz.md5)
-cat $PKG/install/slack-desc | grep "^${PRGNAM}" > $TMP/$PRGNAM-$VERSION-$ARCH-$BUILD.txt
+makepkg --linkadd y --chown n $REPOS/$PRGNAM-$VERSION-$ARCH-$BUILD.tgz
+
+#(cd $REPOS && md5sum $PRGNAM-$VERSION-$ARCH-$BUILD.tgz > $PRGNAM-$VERSION-$ARCH-$BUILD.tgz.md5)
+#cat $PKG/install/slack-desc | grep "^${PRGNAM}" > $REPOS/$PRGNAM-$VERSION-$ARCH-$BUILD.txt
 
 # --- CLEANUP ---
 
 # Clean up the extra stuff:
-if [ "$1" = "--cleanup" ]; then
-  rm -rf $TMP/tmp-$PRGNAM
-  rm -rf $PKG
-else
-  echo You can check the 'installwatch' log file: $TMP/${PRGNAM}_install.log
+if [ "$CLEANUP" == "yes" ]; then
+  rm -rf $TMP
 fi
 
 #

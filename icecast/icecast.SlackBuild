@@ -305,18 +305,16 @@ find . | xargs file | grep "shared object" | grep ELF | cut -f 1 -d : | xargs st
 VERSION="`echo $VERSION | sed -e 's/-/_/g'`"
 
 makepkg --linkadd y --chown n $REPOS/$PRGNAM-$VERSION-$ARCH-$BUILD.tgz
-(cd $REPOS && md5sum $PRGNAM-$VERSION-$ARCH-$BUILD.tgz > $PRGNAM-$VERSION-$ARCH-$BUILD.tgz.md5)
-cat $PKG/install/slack-desc | grep "^${PRGNAM}" > $REPOS/$PRGNAM-$VERSION-$ARCH-$BUILD.txt
+
+#(cd $REPOS && md5sum $PRGNAM-$VERSION-$ARCH-$BUILD.tgz > $PRGNAM-$VERSION-$ARCH-$BUILD.tgz.md5)
+#cat $PKG/install/slack-desc | grep "^${PRGNAM}" > $REPOS/$PRGNAM-$VERSION-$ARCH-$BUILD.txt
  
 
 # --- CLEANUP ---
 
 # Clean up the extra stuff:
-if [ "$1" = "--cleanup" ]; then
-  rm -rf $TMP/tmp-$PRGNAM
-  rm -rf $PKG
-else
-  echo You can check the 'installwatch' log file: $TMP/install-${PRGNAM}.log
+if [ "$CLEANUP" == "yes" ]; then
+  rm -rf $TMP
 fi
 
 #
