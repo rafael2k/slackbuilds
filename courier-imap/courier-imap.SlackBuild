@@ -34,8 +34,8 @@ VERSION=${VERSION:=4.1.1}
 ARCH=${ARCH:=x86_64}
 BUILD=${BUILD:1rha}
 TMP=${TMP:=/tmp}
-REPOS=${REPOS:=$TMP}
 SRC_DIR=${SRC:=$CWD}
+REPOS=${REPOS:=$TMP}
 
 if [ "`whoami`" == "root" ]; then
   echo This script should run as normal user.
