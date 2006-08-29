@@ -16,11 +16,12 @@ fi
 
 # default settings
 PACKAGE="firefox"
-VERSION=${VERSION:=1.5.0.5}
+VERSION=${VERSION:=1.5.0.6}
 ARCH=${ARCH:=x86_64}
 BUILD=${BUILD:=1rha}
 TMP=${TMP:=/tmp}
 SRC_DIR=${SRC:=$CWD}
+REPOS=${REPOS:=$TMP}
 
 if [ "$ARCH" == "x86_64" ]; then
   LIBDIR=/usr/lib64
@@ -100,5 +101,8 @@ sed -e "s/VERSION/$VERSION/g" $CWD/doinst.sh > $PKG/install/doinst.sh
 (cd ${PKG}${LIBDIR}/firefox-$VERSION; ln -sf mozilla-xremote-client firefox-xremote-client)
 
 cd $PKG
-makepkg -l y -c n $TMP/mozilla-firefox-$VERSION-$ARCH-$BUILD.tgz
+makepkg -l y -c n $REPOS/mozilla-firefox-$VERSION-$ARCH-$BUILD.tgz
 
+if [ "$CLEANUP" == "yes" ]; then
+  rm -rf $TMP
+fi
