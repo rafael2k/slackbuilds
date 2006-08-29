@@ -29,6 +29,7 @@ fi
 
 # default settings
 PACKAGE="libshout"
+PRGNAM="$PACKAGE"
 ARCH=${ARCH:=x86_64}
 VERSION=${VERSION:=2.2.1}
 BUILD=${BUILD:=2rha}
@@ -71,23 +72,22 @@ fi
 # --- PACKAGE BUILDING ---
 
 TMP="$TMP/$PACKAGE"
-PRGNAM="$PACKAGE"
 PKG=$TMP/package-$PRGNAM
 rm -rf $TMP
 mkdir -p $PKG
-cd $TMP
 
 echo "+==============+"
 echo "| $PRGNAM-$VERSION |"
 echo "+==============+"
 
-rm -rf $PKG/*
-
 # Explode the package framework:
 cd $PKG
+
 if [ -f $CWD/_$PRGNAM.tar.gz ]; then
   explodepkg $CWD/_$PRGNAM.tar.gz
 fi
+
+cd $TMP
 
 # Extract tar ball in TEMP dir
 echo Building $PRGNAM...
