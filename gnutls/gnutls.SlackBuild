@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 #
 # slackbuild for gnutls from http://www.slacky.it/download/libraries/gnutls/1.2.11/
 #
@@ -27,13 +27,6 @@ fi
 
 CWD=`pwd`
 
-# default settings
-PACKAGE="gnutls"
-_VERSION="1.4.0"
-_ARCH="x86_64"
-_BUILD="1rha"
-_TMP="/tmp"
-
 if [ -f "/etc/slackbuildrc" ]; then
   source /etc/slackbuildrc
 fi
@@ -42,17 +35,14 @@ if [ -f "~/.slackbuildrc" ]; then
   source ~/.slackbuildrc
 fi
 
-if [ -z "$VERSION" ]; then
-  VERSION="$_VERSION"
-fi
-
-if [ -z "$ARCH" ]; then
-  ARCH="$_ARCH"
-fi
-
-if [ -z "$BUILD" ]; then
-  BUILD="$_BUILD"
-fi
+# default settings
+PACKAGE="gnutls"
+ARCH=${ARCH:=x86_64}
+VERSION=${VERSION:=1.4.0}
+BUILD=${BUILD:=1rha}
+SRC_DIR=${SRC:=$CWD}
+TMP=${TMP:=/tmp}
+REPOS=${REPOS:=$TMP}
 
 if [ "$ARCH" == "x86_64" ]; then
   export LDFLAGS="-L/lib64 -L/usr/lib64"
@@ -61,19 +51,8 @@ else
   LIBDIR=/usr/lib
 fi
 
-if [ -z "$SRC" ]; then
-  SRC_DIR="$CWD"
-else
-  SRC_DIR="$SRC"
-fi
-
-if [ -z "$TMP" ]; then
-  TMP="$_TMP"
-fi
-
 RTOOL="wget"
 TARGET="$ARCH"
-PKG=$TMP/package-gnutls
 NAME="$PACKAGE"
 PACKAGE_EXT="bz2"
 SRC="$PACKAGE-$VERSION.tar.$PACKAGE_EXT"
@@ -84,6 +63,9 @@ if [ "$PACKAGE_EXT" == "bz2" ]; then
 else
   tarflag="z"
 fi
+
+SRC_DIR="$SRC_DIR/$PACKAGE"
+mkdir -p $SRC_DIR
 
 if [ "$RTOOL" == "wget" ] && [ ! -f "$SRC_DIR/$SRC" ]; then
   wget "$URL" -O "$SRC_DIR/$SRC"
@@ -97,17 +79,18 @@ elif [ "$ARCH" = "x86_64" ]; then
   SLKCFLAGS="-O2"
 fi
 
-if [ ! -d $TMP ]; then
- mkdir -p $TMP
-fi
-if [ ! -d $PKG ]; then
- mkdir -p $PKG
-fi
+TMP="$TMP/$PACKAGE"
+PKG=$TMP/package-gnutls
+rm -rf $TMP
+mkdir -p $PKG
 
 cd $TMP
+
 tar xvf$tarflag $SRC_DIR/$SRC
 cd $NAME-$VERSION
+
 chown -R root.root .
+
 CFLAGS="$SLKCFLAGS" \
 CXXFLAGS="$SLKCFLAGS" \
 ./configure --prefix=/usr --libdir=$LIBDIR \
@@ -115,8 +98,10 @@ CXXFLAGS="$SLKCFLAGS" \
 --program-prefix="" \
 --program-suffix="" \
 $TARGET-slackware-linux
+
 make
 make install DESTDIR=$PKG
+
 mkdir -p $PKG/usr/doc/$NAME-$VERSION
 cp -a AUTHORS COPYING* ChangeLog INSTALL NEWS README THANKS $PKG/usr/doc/$NAME-$VERSION
 cd $PKG
@@ -131,8 +116,9 @@ cat $CWD/slack-desc > $PKG/install/slack-desc
 cat $CWD/slack-desc > $PKG/usr/doc/$NAME-$VERSION/slack-desc
 cat $CWD/$NAME.SlackBuild > $PKG/usr/doc/$NAME-$VERSION/$NAME.SlackBuild
 #requiredbuilder -v -y -s $CWD $PKG
-makepkg -l y -c n $TMP/$NAME-$VERSION-$ARCH-$BUILD.tgz
+makepkg -l y -c n $REPOS/$NAME-$VERSION-$ARCH-$BUILD.tgz
 
-if [ "$1" = "--cleanup" ]; then
+if [ "$CLEANUP" == "yes" ]; then
   rm -rf $TMP
 fi
+
