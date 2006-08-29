@@ -51,19 +51,16 @@ rm -rf $TMP
 mkdir -p $TMP
 cd $TMP
 
-mkdir package-$PACKAGE
-cd package-$PACKAGE
-
 tar xvf$tarflag $SRC_DIR/$SRC
 cd $PACKAGE-$VERSION
 
 ./configure --prefix=/usr --libdir=$LIBDIR
 make
-make DESTDIR=$TMP/package-$PACKAGE/$PACKAGE install
+make DESTDIR=$TMP/package-$PACKAGE install
 
 CWD="`pwd`"
 
-cd $TMP/package-$PACKAGE/$PACKAGE
+cd $TMP/package-$PACKAGE
 
 find . | xargs file | grep "executable" | grep ELF | cut -f 1 -d : | xargs strip --strip-unneeded 2> /dev/null
 find . | xargs file | grep "shared object" | grep ELF | cut -f 1 -d : | xargs strip --strip-unneeded 2> /dev/null
