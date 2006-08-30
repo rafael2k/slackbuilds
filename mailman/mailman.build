@@ -3,7 +3,7 @@
 # build script for mailman by rhatto | gpl
 # build it with slacktrack, example:
 #
-#   ARCH=x86_64 slacktrack -jefkzp "mailman-1.2.8-x86_64-1rha.tgz" "./mailman.build"
+#   ARCH=x86_64 slacktrack -jefkzp "mailman-2.1.8-x86_64-1rha.tgz" "./mailman.build"
 # 
 
 CWD="`pwd`"
@@ -42,6 +42,12 @@ PACKAGE_EXT="tgz"
 SRC="$PACKAGE-$VERSION.$PACKAGE_EXT"
 URL="http://easynews.dl.sourceforge.net/sourceforge/mailman/$SRC"
 
+SRC_DIR="$SRC_DIR/$PACKAGE"
+
+if [ ! -d "$SRC_DIR" ]; then
+  mkdir -p $SRC_DIR
+fi
+
 if [ "$RTOOL" == "wget" ] && [ ! -f "$SRC_DIR/$SRC" ]; then
  wget "$URL" -O "$SRC_DIR/$SRC"
 fi
@@ -55,9 +61,14 @@ fi
 mkdir -p $PREFIX/mailman
 cd $PREFIX/mailman && chgrp mailman . && chmod a+rx,g+ws .
 
-rm -rf $TMP/package-$PACKAGE
-mkdir $TMP/package-$PACKAGE
-cd $TMP/package-$PACKAGE
+TMP="$TMP/$PACKAGE"
+
+if [ ! -d "$TMP" ]; then
+  mkdir -p $TMP
+fi
+
+cd $TMP
+
 tar xvf$tarflag $SRC_DIR/$SRC
 cd $PACKAGE-$VERSION
 
