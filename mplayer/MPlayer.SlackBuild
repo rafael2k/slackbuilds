@@ -114,3 +114,7 @@ done
 
 makepkg -c y -l y $REPOS/$PACKAGE-$VERSION-$ARCH-$BUILD.tgz
 
+if [ "$CLEANUP" == "yes" ]; then
+  rm -rf $TMP
+fi
+
