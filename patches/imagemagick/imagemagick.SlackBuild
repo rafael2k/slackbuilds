@@ -19,6 +19,7 @@ TMP=${TMP:=/tmp}
 ARCH=${ARCH:=x86_64}
 BUILD=${BUILD:=1rha}
 SRC_DIR=${SRC:=$CWD}
+REPOS=${REPOS:=$TMP}
 
 if [ "$ARCH" == "x86_64" ]; then
   LIBDIR=/usr/lib64
@@ -57,6 +58,9 @@ else
   tarflag="z"
 fi
 
+SRC_DIR="$SRC_DIR/$PACKAGE"
+mkdir -p $SRC_DIR
+
 if [ "$RTOOL" == "wget" ] && [ ! -f "$SRC_DIR/$SRC" ]; then
   wget "$URL" -O "$SRC_DIR/$SRC"
 fi
@@ -78,8 +82,11 @@ fi
 # I've heard a few reports of compile failures when this isn't in /usr.
 # Everyone else does it -- time to follow the path of least resistance.
 
+TMP="$TMP/$PACKAGE"
+rm -rf $TMP
+mkdir -p $TMP
 cd $TMP
-rm -rf ImageMagick-$BASEVER
+
 tar xvf$tarflag $SRC_DIR/$SRC
 cd ImageMagick-$BASEVER
 
@@ -147,5 +154,9 @@ mkdir -p $PKG/install
 cat $CWD/slack-desc > $PKG/install/slack-desc
 
 cd $PKG
-makepkg -l y -c n ../imagemagick-$PKGVER-$ARCH-$BUILD.tgz
+makepkg -l y -c n $REPOS/imagemagick-$PKGVER-$ARCH-$BUILD.tgz
+
+if [ "$CLEANUP" == "yes" ]; then
+  rm -rf $TMP
+fi
 
