@@ -172,7 +172,7 @@ gzip -9 $PKG/usr/man/man?/*.?
 cd $PKG
 makepkg -l y -c n $REPOS/mysql-$VERSION-$ARCH-$BUILD.tgz
 
-if [ "$1" == "--cleanup" ]; then
-   cd $TMP
-   rm -rf mysql-$VERSION
+if [ "$CLEANUP" == "yes" ]; then
+  rm -rf $TMP
 fi
+
