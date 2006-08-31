@@ -187,8 +187,7 @@ cd $PKG
 makepkg -l y -c n $REPOS/mod_ssl-${MODSSL_VER}_${APACHE_VER}-$ARCH-$BUILD.tgz
 
 # clean up
-if [ "$1" = "--cleanup" ]; then
-   cd $CWD
-   rm -rf $TMP
-   rm -rf $PKG
+if [ "$CLEANUP" == "yes" ]; then
+  rm -rf $TMP
 fi
+
