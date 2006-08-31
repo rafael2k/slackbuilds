@@ -6,11 +6,11 @@
 cat << EOECHO
 You'll need at least the following perl modules to build Sympa:
 
-  cpan2tgz --no-recursive Compress::Zlib Archive::Zip Sub::Uplevel Test::Builder::Tester Test::Exception  \\
-  Module::Build Array::Compare Tree::DAG_Node Test::Warn Test::Simple Crypt::CipherSaber DBD::mysql       \\
-  Digest::MD5 File::Spec IO::Scalar IO::Stringy URI HTML::Tagset HTML::Parser LWP Locale::TextDomain      \\
-  Mail::Field Mail::Header Mail::Internet MIME::Tools Mail::Internet Regexp::Common AppConfig             \\
-  Template XML::NamespaceSupport XML::SAX XML::LibXML::Common XML::LibXML Net::SSLeay IO::Socket          \\
+  cpan2tgz --no-recursive Compress::Zlib Archive::Zip Sub::Uplevel Test::Builder::Tester Test::Exception    \\
+  Module::Build Array::Compare Tree::DAG_Node Test::Warn Test::Simple Crypt::CipherSaber DBD::mysql         \\
+  Digest::MD5 File::Spec IO::Scalar IO::Stringy URI HTML::Tagset HTML::Parser LWP Locale::TextDomain        \\
+  Mail::Field Mail::Header Mail::Internet MIME::Tools Mail::Internet Regexp::Common File::HomeDir AppConfig \\
+  Template XML::NamespaceSupport XML::SAX XML::LibXML::Common XML::LibXML Net::SSLeay IO::Socket            \\
   Convert::ASN1 Digest::SHA1 Digest::HMAC_MD5 Authen::SASL Digest::MD5 Net::LDAP SOAP::Lite FCGI
 
 And the following packages:
