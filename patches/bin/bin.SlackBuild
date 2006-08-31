@@ -23,10 +23,12 @@ FILE=4.15
 
 TMP="$TMP/$PACKAGE"
 PKG=$TMP/package-bin
+rm -rf $PKG
 mkdir -p $PKG
 
-rm -rf $PKG
+SRC_DIR="$SRC_DIR/$PACKAGE"
 mkdir -p $SRC_DIR
+
 # REPO="ftp://ftp.slackware.com/pub/slackware/slackware-10.2/patches/source/bin"
 REPO="ftp://mirror.pacific.net.au/linux/slackware/slackware-10.2/patches/source/bin"
 if [ "$GET" != "no" ]; then ( cd $SRC_DIR && ncftpget $REPO/*gz ) ; fi
