@@ -21,9 +21,15 @@ postfix-anon support, first build/install the following packages:
   cyrus-sasl
   openldap-client
 
-Type ENTER you have those built and installed.
 EOECHO
-read
+
+if [ "$INTERACT" != "no" ]; then
+  echo "Hit ENTER do continue, Crtl-C to abort"
+  read crap
+else
+  echo sleeping 3 seconds...
+  sleep 3
+fi
 
 CWD=`pwd`
 
