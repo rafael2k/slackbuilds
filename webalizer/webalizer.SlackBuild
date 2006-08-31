@@ -56,6 +56,7 @@ BUILD=${BUILD:=1rha}
 PACKAGE="$PRGNAM"
 SRC_DIR=${SRC:=$CWD}
 TMP=${TMP:=/tmp}
+REPOS=${REPOS:=$TMP}
 
 DOCS="CHANGES COPYING Copyright DNS.README INSTALL README README.FIRST country-codes.txt"
 
@@ -76,6 +77,9 @@ else
   tarflag="z"
 fi
 
+SRC_DIR="$SRC_DIR/$PACKAGE"
+mkdir -p $SRC_DIR
+
 if [ "$RTOOL" == "wget" ] && [ ! -f "$SRC_DIR/$SRC" ]; then
   wget "$URL" -O "$SRC_DIR/$SRC"
 fi
@@ -90,22 +94,16 @@ elif [ "$ARCH" = "x86_64" ]; then
   SLKCFLAGS="-O2"
 fi
 
+TMP="$TMP/$PACKAGE"
 PKG=$TMP/package-$PRGNAM
-
-if [ ! -d $TMP/tmp-$PRGNAM ]; then
-  mkdir -p $TMP/tmp-$PRGNAM # location to build the source
-fi
-if [ ! -d $PKG ]; then
-  mkdir -p $PKG # place for the package to be built
-fi
+rm -rf $TMP
+mkdir -p $PKG
 
 # --- PACKAGE BUILDING ---
 
 echo "++"
 echo "|| $PRGNAM-$VERSION"
 echo "++"
-
-rm -rf $PKG/*
 
 cd $PKG
 
@@ -114,7 +112,7 @@ if [ -f $CWD/_$PRGNAM.tar.gz ]; then
   explodepkg $CWD/_$PRGNAM.tar.gz
 fi
 
-cd $TMP/tmp-$PRGNAM
+cd $TMP
 
 # --- TARBALL EXTRACTION,PATCH,MODIFY ---
 
@@ -197,16 +195,15 @@ fi
 
 # Build the package:
 cd $PKG
-makepkg --linkadd y --chown n $TMP/${PRGNAM}-${VERSION}-${ARCH}-${BUILD}.tgz \
+makepkg --linkadd y --chown n $REPOS/${PRGNAM}-${VERSION}-${ARCH}-${BUILD}.tgz \
   2>&1 | tee $TMP/makepkg-${PRGNAM}.log
-(cd $TMP && md5sum ${PRGNAM}-${VERSION}-${ARCH}-${BUILD}.tgz > ${PRGNAM}-${VERSION}-${ARCH}-${BUILD}.tgz.md5)
-cat $PKG/install/slack-desc | grep "^${PRGNAM}" > $TMP/${PRGNAM}-${VERSION}-${ARCH}-${BUILD}.txt
+#(cd $REPOS && md5sum ${PRGNAM}-${VERSION}-${ARCH}-${BUILD}.tgz > ${PRGNAM}-${VERSION}-${ARCH}-${BUILD}.tgz.md5)
+#cat $PKG/install/slack-desc | grep "^${PRGNAM}" > $REPOS/${PRGNAM}-${VERSION}-${ARCH}-${BUILD}.txt
 
 # --- CLEANUP ---
 
 # Clean up the extra stuff:
-if [ "$1" = "--cleanup" ]; then
-  rm -rf $TMP/tmp-$PRGNAM
-  rm -rf $PKG
+if [ "$CLEANUP" == "yes" ]; then
+  rm -rf $TMP
 fi
 
