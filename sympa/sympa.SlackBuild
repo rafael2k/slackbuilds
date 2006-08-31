@@ -77,21 +77,21 @@ if [ "$RTOOL" == "wget" ] && [ ! -f "$SRC_DIR/$SRC" ]; then
   wget "$URL" -O "$SRC_DIR/$SRC"
 fi
 
+TMP="$TMP/$PACKAGE"
+rm -rf $TMP
+mkdir -p $TMP
 cd $TMP
-rm -rf package-$PACKAGE
-mkdir package-$PACKAGE
-cd package-$PACKAGE
 
 tar xvf$tarflag $SRC_DIR/$SRC
 cd $PACKAGE-$VERSION
 ./configure --with-initdir=/etc/rc.d/ --prefix=/usr/local/sympa --with-confdir=/usr/local/sympa/conf \
             --with-etcdir=/usr/local/sympa/etc
 make
-make DESTDIR=$TMP/package-$PACKAGE/$PACKAGE install | tee $TMP/package-$PACKAGE/install.log
+make DESTDIR=$TMP/package-$PACKAGE install | tee $TMP/package-$PACKAGE/install.log
 
 CWD="`pwd`"
 
-cd $TMP/package-$PACKAGE/$PACKAGE
+cd $TMP/package-$PACKAGE
 
 mv usr/local/sympa/conf/sympa.conf usr/local/sympa/conf/sympa.conf.new
 mv usr/local/sympa/conf/wwsympa.conf usr/local/sympa/conf/wwsympa.conf.new
