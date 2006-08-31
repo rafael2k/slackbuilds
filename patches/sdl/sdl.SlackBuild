@@ -20,6 +20,7 @@ ARCH=${ARCH:=x86_64}
 BUILD=${BUILD:=1rha}
 SRC_DIR=${SRC:=$CWD}
 TMP=${TMP:=/tmp}
+REPOS=${REPOS:=$TMP}
 
 IMAGE=${IMAGE:=1.2.5}
 MIXER=${MIXER:=1.2.7}
@@ -197,5 +198,10 @@ chown -R root.bin $PKG/usr/bin
 gzip -9 $PKG/usr/man/man?/*.?
 
 cd $PKG
-makepkg -l y -c n ../sdl-$VERSION-$ARCH-$BUILD.tgz
+makepkg -l y -c n $REPOS/sdl-$VERSION-$ARCH-$BUILD.tgz
+
+if [ "$CLEANUP" == "yes" ]; then
+  rm -rf $TMP
+fi
+
 
