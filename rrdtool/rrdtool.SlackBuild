@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 # Copyright (c) 2006 Eric Hameleers <alien@sox.homeip.net>
 # Distributed under the terms of the GNU General Public License, Version 2
 # -----------------------------------------------------------------------------
@@ -27,12 +27,6 @@
 # Set initial variables:
 CWD=`pwd`
 
-PRGNAM=rrdtool
-_VERSION="1.2.13"
-_ARCH="i486"
-_BUILD="1rha"
-_TMP="/tmp"
-
 if [ -f "/etc/slackbuildrc" ]; then
   source /etc/slackbuildrc
 fi
@@ -41,17 +35,13 @@ if [ -f "~/.slackbuildrc" ]; then
   source ~/.slackbuildrc
 fi
 
-if [ -z "$VERSION" ]; then
-  VERSION="$_VERSION"
-fi
-
-if [ -z "$ARCH" ]; then
-  ARCH="$_ARCH"
-fi
-
-if [ -z "$BUILD" ]; then
-  BUILD="$_BUILD"
-fi
+PRGNAM=rrdtool
+ARCH=${ARCH:=x86_64}
+VERSION=${VERSION:=1.2.13}
+BUILD=${BUILD:=1rha}
+SRC_DIR=${SRC:=$CWD}
+TMP=${TMP:=/tmp}
+REPOS=${REPOS:=$TMP}
 
 if [ "$ARCH" == "x86_64" ]; then
   export LDFLAGS="-L/lib64 -L/usr/lib64"
@@ -60,18 +50,11 @@ else
   LIBDIR=/usr/lib
 fi
 
-if [ -z "$SRC" ]; then
-  SRC_DIR="$CWD"
-else
-  SRC_DIR="$SRC"
-fi
-
-if [ -z "$TMP" ]; then
-  TMP="$_TMP"
-fi
-
 SRC="$PRGNAM-$VERSION.tar.gz"
 URL="http://people.ee.ethz.ch/~oetiker/webtools/$PRGNAM/pub/$SRC"
+
+SRC_DIR="$SRC_DIR/$PACKAGE"
+mkdir -p $SRC_DIR
 
 if [ ! -f "$SRC_DIR/$SRC" ]; then
  wget "$URL" -O "$SRC_DIR/$SRC"
@@ -87,7 +70,10 @@ elif [ "$ARCH" = "x86_64" ]; then
   SLKCFLAGS="-O2"
 fi
 
+TMP="$TMP/$PACKAGE"
 PKG=$TMP/package-$PRGNAM
+rm -rf $TMP
+mkdir -p $PKG
 
 if [ ! -d $TMP/tmp-$PRGNAM ]; then
   mkdir -p $TMP/tmp-$PRGNAM # location to build the source
@@ -111,8 +97,7 @@ if [ -f $CWD/_$PRGNAM.tar.gz ]; then
   explodepkg $CWD/_$PRGNAM.tar.gz
 fi
 
-cd $TMP/tmp-$PRGNAM
-
+cd $TMP
 
 # --- TARBALL EXTRACTION,PATCH,MODIFY ---
 
@@ -230,20 +215,17 @@ fi
 # Build the package:
 cd $PKG
 
-# pala
 # mv usr/lib/perl usr/lib/perl5
 
-makepkg --linkadd y --chown n $TMP/${PRGNAM}-${VERSION}-${ARCH}-${BUILD}.tgz \
+makepkg --linkadd y --chown n $REPOS/${PRGNAM}-${VERSION}-${ARCH}-${BUILD}.tgz \
   2>&1 | tee $TMP/makepkg-${PRGNAM}.log
-(cd $TMP && md5sum ${PRGNAM}-${VERSION}-${ARCH}-${BUILD}.tgz > ${PRGNAM}-${VERSION}-${ARCH}-${BUILD}.tgz.md5)
-cat $PKG/install/slack-desc | grep "^${PRGNAM}" > $TMP/${PRGNAM}-${VERSION}-${ARCH}-${BUILD}.txt
+#(cd $REPOS && md5sum ${PRGNAM}-${VERSION}-${ARCH}-${BUILD}.tgz > ${PRGNAM}-${VERSION}-${ARCH}-${BUILD}.tgz.md5)
+#cat $PKG/install/slack-desc | grep "^${PRGNAM}" > $REPOS/${PRGNAM}-${VERSION}-${ARCH}-${BUILD}.txt
 
 
 # --- CLEANUP ---
 
 # Clean up the extra stuff:
-if [ "$1" = "--cleanup" ]; then
-  rm -rf $TMP/tmp-$PRGNAM
-  rm -rf $PKG
+if [ "$CLEANUP" == "yes" ]; then
+  rm -rf $TMP
 fi
-
