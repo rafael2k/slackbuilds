@@ -5,6 +5,14 @@
 
 CWD="`pwd`"
 
+if [ -f "/etc/slackbuildrc" ]; then
+  source /etc/slackbuildrc
+fi
+
+if [ -f "~/.slackbuildrc" ]; then
+  source ~/.slackbuildrc
+fi
+
 # default settings
 PACKAGE="courier-authlib"
 VERSION=${VERION:=0.58}
@@ -13,14 +21,6 @@ BUILD=${BUILD:=1rha}
 TMP=${TMP:=/tmp}
 REPOS=${REPOS:=$TMP}
 SRC_DIR=${SRC:=$CWD}
-
-if [ -f "/etc/slackbuildrc" ]; then
-  source /etc/slackbuildrc
-fi
-
-if [ -f "~/.slackbuildrc" ]; then
-  source ~/.slackbuildrc
-fi
 
 if [ "$ARCH" == "x86_64" ]; then
   LIBDIR=/usr/lib64
