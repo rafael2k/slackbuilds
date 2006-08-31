@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 #
 # original script from http://www.slacky.it/download/network/tool/postfix/2.2.10/src/postfix.SlackBuild
 # changes by rhatto at riseup.net
@@ -27,13 +27,6 @@ read
 
 CWD=`pwd`
 
-# default settings
-PACKAGE=postfix
-_VERSION="2.2.10"
-_ARCH="x86_64"
-_BUILD="2rha"
-_TMP="/tmp"
-
 if [ -f "/etc/slackbuildrc" ]; then
   source /etc/slackbuildrc
 fi
@@ -42,32 +35,19 @@ if [ -f "~/.slackbuildrc" ]; then
   source ~/.slackbuildrc
 fi
 
-if [ -z "$VERSION" ]; then
-  VERSION="$_VERSION"
-fi
-
-if [ -z "$ARCH" ]; then
-  ARCH="$_ARCH"
-fi
-
-if [ -z "$BUILD" ]; then
-  BUILD="$_BUILD"
-fi
+# default settings
+PACKAGE=postfix
+ARCH=${ARCH:=x86_64}
+VERSION=${VERSION:=2.2.10}
+BUILD=${BUILD:=2rha}
+SRC_DIR=${SRC:=$CWD}
+TMP=${TMP:=/tmp}
+REPOS=${REPOS:=$TMP}
 
 if [ "$ARCH" == "x86_64" ]; then
   LIBDIR=/usr/lib64
 else
   LIBDIR=/usr/lib
-fi
-
-if [ -z "$SRC" ]; then
-  SRC_DIR="$CWD"
-else
-  SRC_DIR="$SRC"
-fi
-
-if [ -z "$TMP" ]; then
-  TMP="$_TMP"
 fi
 
 # general definitions
@@ -77,6 +57,7 @@ DOCDIR=/usr/doc/${NAME}-${VERSION}
 READMEDIR=${DOCDIR}/README_FILES
 HTMLDIR=${DOCDIR}/HTML
 MANDIR=/usr/man
+TMP="$TMP/$PACKAGE"
 PKGDIR=${TMP}/package-${NAME}
 SOURCEDIR=${TMP}/${NAME}-${VERSION}
 RTOOL="wget"
@@ -87,6 +68,9 @@ VDA="$PACKAGE-$VERSION-vda.patch.gz"
 VDA_URL="http://web.onda.com.br/nadal/postfix/VDA/$VDA"
 ANON="postfix-anon-$VERSION.diff"
 URL="ftp://ftp.pucpr.br/$PACKAGE/official/$SRC"
+
+SRC_DIR="$SRC_DIR/$PACKAGE"
+mkdir -p $SRC_DIR
 
 # download sources
 if [ "$RTOOL" == "wget" ]; then
@@ -194,11 +178,10 @@ find ${PKGDIR}/bin ${PKGDIR}/sbin ${PKGDIR}/usr/bin ${PKGDIR}/usr/sbin -type f |
 # Build the package:
 cd $PKGDIR
 #requiredbuilder -v -y -s $CWD $PKGDIR
-/sbin/makepkg -l n -c n --prepend ${TMP}/${NAME}-${VERSION}-${ARCH}-${BUILD}.tgz
+/sbin/makepkg -l n -c n --prepend $REPOS/${NAME}-${VERSION}-${ARCH}-${BUILD}.tgz
 
 # Clean up the extra stuff:
-if [ "$1" = "--cleanup" ]; then
-  rm -rf ${SOURCE}
-  rm -rf ${PKGDIR}
+if [ "$CLEANUP" == "yes" ]; then
+  rm -rf $TMP
 fi
 
