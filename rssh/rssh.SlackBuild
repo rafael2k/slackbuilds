@@ -5,14 +5,6 @@
 
 CWD="`pwd`"
 
-# default settings
-PRGNAM="rssh"
-PACKAGE="$PRGNAM"
-_VERSION="2.3.2"
-_ARCH="i386"
-_BUILD="2rha"
-_TMP="/tmp"
-
 if [ -f "/etc/slackbuildrc" ]; then
   source /etc/slackbuildrc
 fi
@@ -21,32 +13,20 @@ if [ -f "~/.slackbuildrc" ]; then
   source ~/.slackbuildrc
 fi
 
-if [ -z "$VERSION" ]; then
-  VERSION="$_VERSION"
-fi
-
-if [ -z "$ARCH" ]; then
-  ARCH="$_ARCH"
-fi
-
-if [ -z "$BUILD" ]; then
-  BUILD="$_BUILD"
-fi
+# default settings
+PRGNAM="rssh"
+PACKAGE="$PRGNAM"
+ARCH=${ARCH:=x86_64}
+VERSION=${VERSION:=2.3.2}
+BUILD=${BUILD:=2rha}
+SRC_DIR=${SRC:=$CWD}
+TMP=${TMP:=/tmp}
+REPOS=${REPOS:=$TMP}
 
 if [ "$ARCH" == "x86_64" ]; then
   LIBDIR=/usr/lib64
 else
   LIBDIR=/usr/lib
-fi
-
-if [ -z "$SRC" ]; then
-  SRC_DIR="$CWD"
-else
-  SRC_DIR="$SRC"
-fi
-
-if [ -z "$TMP" ]; then
-  TMP="$_TMP"
 fi
 
 PACKAGE_EXT="gz"
@@ -71,6 +51,9 @@ else
   tarflag="z"
 fi
 
+SRC_DIR="$SRC_DIR/$PACKAGE"
+mkdir -p $SRC_DIR
+
 if [ "$RTOOL" == "wget" ] && [ ! -f "$SRC_DIR/$SRC" ]; then
  wget "$URL" -O "$SRC_DIR/$SRC"
  wget "$URL.sig" -O "$SRC_DIR/$SRC.sig"
@@ -82,6 +65,9 @@ fi
 
 gpg --verify $SRC.sig $SRC || echo WARNING: Could not check signature or WRONG signature found.
 
+TMP="$TMP/$PACKAGE"
+rm -rf $TMP
+mkdir -p $TMP
 cd $TMP
 
 rm -rf $PACKAGE-$VERSION $PACKAGE-$VERSION-$ARCH-$BUILD.tgz
@@ -136,7 +122,9 @@ cp $CWD/{AUTHORS,CHROOT,COPYING,ChangeLog,INSTALL,LICENSE,NEWS,README,SECURITY,T
 # install script
 echo '( if [ ! -f "etc/rssh.conf" ]; then mv etc/rssh.conf.new etc/rssh.conf; fi )' > install/doinst.sh
 
-makepkg -c y $TMP/$PACKAGE-$VERSION-$ARCH-$BUILD.tgz
+makepkg -c y $REPOS/$PACKAGE-$VERSION-$ARCH-$BUILD.tgz
 
-rm -rf $TMP/$PACKAGE-$VERSION
+if [ "$CLEANUP" == "yes" ]; then
+  rm -rf $TMP
+fi
 

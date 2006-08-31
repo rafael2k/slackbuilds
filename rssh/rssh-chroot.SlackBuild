@@ -14,15 +14,13 @@ Please consider to run this script with the following things installed:
 Hit ENTER to continue, Ctrl-C to abort.
 EOCAT
 
-read garbage
-
-# default settings
-PRGNAM="rssh-chroot"
-PACKAGE="$PRGNAM"
-_VERSION="2.3.2"
-_ARCH="i386"
-_BUILD="2rha"
-_TMP="/tmp"
+if [ "$INTERACT" != "no" ]; then
+  echo "Hit ENTER do continue, Crtl-C to abort"
+  read crap
+else
+  echo sleeping 3 seconds...
+  sleep 3
+fi
 
 if [ -f "/etc/slackbuildrc" ]; then
   source /etc/slackbuildrc
@@ -32,17 +30,15 @@ if [ -f "~/.slackbuildrc" ]; then
   source ~/.slackbuildrc
 fi
 
-if [ -z "$VERSION" ]; then
-  VERSION="$_VERSION"
-fi
-
-if [ -z "$ARCH" ]; then
-  ARCH="$_ARCH"
-fi
-
-if [ -z "$BUILD" ]; then
-  BUILD="$_BUILD"
-fi
+# default settings
+PRGNAM="rssh-chroot"
+PACKAGE="$PRGNAM"
+ARCH=${ARCH:=x86_64}
+VERSION=${VERSION:=2.3.2}
+BUILD=${BUILD:=2rha}
+SRC_DIR=${SRC:=$CWD}
+TMP=${TMP:=/tmp}
+REPOS=${REPOS:=$TMP}
 
 if [ "$ARCH" == "x86_64" ]; then
   LIBDIR=/usr/lib64
@@ -50,19 +46,12 @@ else
   LIBDIR=/usr/lib
 fi
 
-if [ -z "$SRC" ]; then
-  SRC_DIR="$CWD"
-else
-  SRC_DIR="$SRC"
-fi
-
-if [ -z "$TMP" ]; then
-  TMP="$_TMP"
-fi
-
 # adjust to where your rssh chroot system will be located
 CHROOT_BASE="/var/users"
 
+TMP="$TMP/$PACKAGE"
+rm -rf $TMP
+mkdir -p $TMP
 cd $TMP
 
 rm -rf $TMP/package-$PACKAGE
@@ -133,7 +122,9 @@ EOF
 chmod 755 ./$CHROOT_BASE/{bin,etc,lib,lib/tls,usr/lib,usr/libexec,usr/bin,usr/doc,dev}
 chmod 111 ./$CHROOT_BASE/home
 
-makepkg -c n $TMP/$PACKAGE-$VERSION-$ARCH-$BUILD.tgz
+makepkg -c n $REPOS/$PACKAGE-$VERSION-$ARCH-$BUILD.tgz
 
-rm -rf $TMP/$PACKAGE-$VERSION
+if [ "$CLEANUP" == "yes" ]; then
+  rm -rf $TMP
+fi
 
