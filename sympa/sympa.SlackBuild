@@ -45,6 +45,7 @@ ARCH=${ARCH:=x86_64}
 BUILD=${BUILD:=1rha}
 SRC_DIR=${SRC:=$CWD}
 TMP=${TMP:=/tmp}
+REPOS=${REPOS:=$TMP}
 
 if [ "$ARCH" == "x86_64" ]; then
   LIBDIR=/usr/lib64
@@ -62,6 +63,9 @@ if [ "$PACKAGE_EXT" == "bz2" ]; then
 else
   tarflag="z"
 fi
+
+SRC_DIR="$SRC_DIR/$PACKAGE"
+mkdir -p $SRC_DIR
 
 if [ "$RTOOL" == "wget" ] && [ ! -f "$SRC_DIR/$SRC" ]; then
   wget "$URL" -O "$SRC_DIR/$SRC"
@@ -135,8 +139,12 @@ echo '( chroot . /usr/bin/chown -R sympa.sympa /usr/local/sympa /var/mail/sympa 
 echo '( touch /var/log/sympa)' >> install/doinst.sh
 # echo '( chmod +s /usr/local/sympa/bin/queue )' >> install/doinst.sh
 
-makepkg -c y -l y $TMP/$PACKAGE-$VERSION-$ARCH-$BUILD.tgz
+makepkg -c y -l y $REPOS/$PACKAGE-$VERSION-$ARCH-$BUILD.tgz
 
 echo "Package creation complete. PLEASE check if everything was ok."
 echo "Log files at $TMP/package-$PACKAGE/install.log"
+
+if [ "$CLEANUP" == "yes" ]; then
+  rm -rf $TMP
+fi
 
