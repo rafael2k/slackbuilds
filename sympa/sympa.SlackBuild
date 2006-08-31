@@ -134,7 +134,7 @@ for file in AUTHORS COPYING ChangeLog INSTALL KNOWNBUGS NEWS README; do
 done
 
 # install script
-echo '( chroot . /sbin/ldconfig )' > /install/doinst.sh
+echo '( chroot . /sbin/ldconfig )' > install/doinst.sh
 echo '( if ! grep -qe "^sympa:" etc/group; then echo creating group sympa... ; chroot . /usr/sbin/groupadd sympa; fi )' >> install/doinst.sh
 echo '( if ! grep -qe "^sympa:" etc/passwd; then echo creating user sympa... ; chroot . /usr/sbin/useradd sympa -g sympa; fi )' >> install/doinst.sh
 echo '( if [ ! -f "usr/local/sympa/conf/sympa.conf" ]; then mv usr/local/sympa/conf/sympa.conf.new usr/local/sympa/conf/sympa.conf ; fi )' >> install/doinst.sh
