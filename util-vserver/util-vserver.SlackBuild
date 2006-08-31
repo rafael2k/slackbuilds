@@ -8,6 +8,8 @@ Check if you have the following stuff installed:
 
   beecrypt
   vlan
+  iproute2
+  iptables
 
 EOCAT
 
@@ -68,7 +70,7 @@ gpg --verify $SRC_DIR/$SRC.sig $SRC || echo WARNING: Could not check signature o
 
 TMP="$TMP/$PACKAGE"
 rm -rf $TMP
-mkdir -p $TMP
+mkdir -p $TMP/package-$PACKAGE
 cd $TMP
 
 tar xvf$tarflag $SRC_DIR/$SRC
