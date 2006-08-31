@@ -5,13 +5,6 @@
 
 CWD="`pwd`"
 
-# default settings
-PACKAGE="ssmtp"
-_VERSION="2.61"
-_ARCH="x86_64"
-_BUILD="4rha"
-_TMP="/tmp"
-
 if [ -f "/etc/slackbuildrc" ]; then
   source /etc/slackbuildrc
 fi
@@ -20,32 +13,19 @@ if [ -f "~/.slackbuildrc" ]; then
   source ~/.slackbuildrc
 fi
 
-if [ -z "$VERSION" ]; then
-  VERSION="$_VERSION"
-fi
-
-if [ -z "$ARCH" ]; then
-  ARCH="$_ARCH"
-fi
-
-if [ -z "$BUILD" ]; then
-  BUILD="$_BUILD"
-fi
+# default settings
+PACKAGE="ssmtp"
+ARCH=${ARCH:=x86_64}
+VERSION=${VERSION:=2.6.1}
+BUILD=${BUILD:=4rha}
+SRC_DIR=${SRC:=$CWD}
+TMP=${TMP:=/tmp}
+REPOS=${REPOS:=$TMP}
 
 if [ "$ARCH" == "x86_64" ]; then
   LIBDIR=/usr/lib64
 else
   LIBDIR=/usr/lib
-fi
-
-if [ -z "$SRC" ]; then
-  SRC_DIR="$CWD"
-else
-  SRC_DIR="$SRC"
-fi
-
-if [ -z "$TMP" ]; then
-  TMP="$_TMP"
 fi
 
 RTOOL="wget"
@@ -58,6 +38,9 @@ if [ "$PACKAGE_EXT" == "bz2" ]; then
 else
   tarflag="z"
 fi
+
+SRC_DIR="$SRC_DIR/$PACKAGE"
+mkdir -p $SRC_DIR
 
 if [ "$RTOOL" == "wget" ] && [ ! -f "$SRC_DIR/$SRC" ]; then
   wget "$URL" -O "$SRC_DIR/$SRC"
@@ -75,8 +58,10 @@ make
 
 CWD="`pwd`"
 
-mkdir -p $TMP/package-$PACKAGE/$PACKAGE
-cd $TMP/package-$PACKAGE/$PACKAGE
+TMP="$TMP/$PACKAGE"
+rm -rf $TMP
+mkdir -p $TMP
+cd $TMP
 
 mkdir -p usr/{sbin,man/man8}
 mkdir -p etc/ssmtp
@@ -127,5 +112,9 @@ echo '( cd usr/sbin ; rm -rf sendmail )' >> install/doinst.sh
 echo '( cd usr/sbin ; ln -sf ssmtp sendmail )' >> install/doinst.sh
 echo '( cd usr/lib ; ln -sf ../sbin/ssmtp sendmail )' >> install/doinst.sh
 
-makepkg -c y -l y $TMP/$PACKAGE-$VERSION-$ARCH-$BUILD.tgz
+makepkg -c y -l y $REPOS/$PACKAGE-$VERSION-$ARCH-$BUILD.tgz
+
+if [ "$CLEANUP" == "yes" ]; then
+  rm -rf $TMP
+fi
 
