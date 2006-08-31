@@ -5,13 +5,6 @@
 
 CWD="`pwd`"
 
-# default settings
-PACKAGE="vlan"
-_VERSION="1.9"
-_ARCH="x86_64"
-_BUILD="1rha"
-_TMP="/tmp"
-
 if [ -f "/etc/slackbuildrc" ]; then
   source /etc/slackbuildrc
 fi
@@ -20,32 +13,19 @@ if [ -f "~/.slackbuildrc" ]; then
   source ~/.slackbuildrc
 fi
 
-if [ -z "$VERSION" ]; then
-  VERSION="$_VERSION"
-fi
-
-if [ -z "$ARCH" ]; then
-  ARCH="$_ARCH"
-fi
-
-if [ -z "$BUILD" ]; then
-  BUILD="$_BUILD"
-fi
+# default settings
+PACKAGE="vlan"
+ARCH=${ARCH:=x86_64}
+VERSION=${VERSION:=1.9}
+BUILD=${BUILD:=1rha}
+SRC_DIR=${SRC:=$CWD}
+TMP=${TMP:=/tmp}
+REPOS=${REPOS:=$TMP}
 
 if [ "$ARCH" == "x86_64" ]; then
   LIBDIR=/usr/lib64
 else
   LIBDIR=/usr/lib
-fi
-
-if [ -z "$SRC" ]; then
-  SRC_DIR="$CWD"
-else
-  SRC_DIR="$SRC"
-fi
-
-if [ -z "$TMP" ]; then
-  TMP="$_TMP"
 fi
 
 RTOOL="wget"
@@ -59,14 +39,17 @@ else
   tarflag="z"
 fi
 
+SRC_DIR="$SRC_DIR/$PACKAGE"
+mkdir -p $SRC_DIR
+
 if [ "$RTOOL" == "wget" ] && [ ! -f "$SRC_DIR/$SRC" ]; then
   wget "$URL" -O "$SRC_DIR/$SRC"
 fi
 
+TMP="$TMP/$PACKAGE"
+rm -rf $TMP
+mkdir -p $TMP
 cd $TMP
-rm -rf package-$PACKAGE
-mkdir package-$PACKAGE
-cd package-$PACKAGE
 
 tar xvf$tarflag $SRC_DIR/$SRC
 mv $PACKAGE $PACKAGE-$VERSION
@@ -76,8 +59,8 @@ make
 
 CWD="`pwd`"
 
-mkdir $TMP/package-$PACKAGE/$PACKAGE
-cd $TMP/package-$PACKAGE/$PACKAGE
+mkdir $TMP/package-$PACKAGE
+cd $TMP/package-$PACKAGE
 
 mkdir -p usr/bin
 cp $CWD/vconfig usr/bin
@@ -112,5 +95,9 @@ for file in CHANGELOG README vlan.html howto.html; do
   cp $CWD/$file* usr/doc/$PACKAGE-$VERSION/
 done
 
-makepkg -c y -l y $TMP/$PACKAGE-$VERSION-$ARCH-$BUILD.tgz
+makepkg -c y -l y $REPOS/$PACKAGE-$VERSION-$ARCH-$BUILD.tgz
+
+if [ "$CLEANUP" == "yes" ]; then
+  rm -rf $TMP
+fi
 
