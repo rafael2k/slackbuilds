@@ -58,7 +58,7 @@ make
 
 CWD="`pwd`"
 
-cd $TMP/package-$PACKAGE/$PACKAGE
+cd $TMP/package-$PACKAGE
 
 mkdir -p lib/modules/`uname -r`/extra
 cp $CWD/realtime.ko lib/modules/`uname -r`/extra/
