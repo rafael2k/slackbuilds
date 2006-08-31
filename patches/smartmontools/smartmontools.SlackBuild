@@ -20,6 +20,7 @@ ARCH=${ARCH:=x86_64}
 BUILD=${BUILD:=1rha}
 TMP=${TMP:=/tmp}
 SRC_DIR=${SRC:=$CWD}
+REPOS=${REPOS:=$TMP}
 
 if [ "$ARCH" == "x86_64" ]; then
   LIBDIR=/usr/lib64
@@ -49,7 +50,6 @@ if [ "$RTOOL" == "wget" ] && [ ! -f "$SRC_DIR/$SRC" ]; then
   wget "$URL" -O "$SRC_DIR/$SRC"
   wget "$URL.asc" -O "$SRC_DIR/$SRC.asc"
 fi
-
 
 if [ ! -d $TMP ]; then
   mkdir -p $TMP # location to build the source
@@ -87,10 +87,10 @@ cat $CWD/slack-desc > $PKG/install/slack-desc
 
 # Build the package:
 cd $PKG
-makepkg -l y -c n $TMP/smartmontools-$VERSION-$ARCH-$BUILD.tgz
+makepkg -l y -c n $REPOS/smartmontools-$VERSION-$ARCH-$BUILD.tgz
 
 # Clean up the extra stuff:
-if [ "$1" = "--cleanup" ]; then
-  rm -rf $TMP/smartmontools-$VERSION
-  rm -rf $PKG
+if [ "$CLEANUP" == "yes" ]; then
+  rm -rf $TMP
 fi
+
