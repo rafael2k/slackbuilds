@@ -20,8 +20,7 @@ ARCH=${ARCH:=x86_64}
 BUILD=${BUILD:=1rha}
 TMP=${TMP:=/tmp}
 SRC_DIR=${SRC:=$CWD}
-
-PKG=$TMP/package-curl
+REPOS=${REPOS:=$TMP}
 
 if [ "$ARCH" == "x86_64" ]; then
   LIBDIR=/usr/lib64
@@ -40,6 +39,9 @@ if [ "$PACKAGE_EXT" == "bz2" ]; then
 else
   tarflag="z"
 fi
+
+SRC_DIR="$SRC_DIR/$PACKAGE"
+mkdir -p $SRC_DIR
 
 if [ "$RTOOL" == "wget" ] && [ ! -f "$SRC_DIR/$SRC" ]; then
   rm -f $SRC_DIR/$SRC.asc
@@ -63,10 +65,12 @@ elif [ "$ARCH" = "x86_64" ]; then
   SLKCFLAGS="-O2 -fPIC"
 fi
 
-rm -rf $PKG
+TMP="$TMP/$PACKAGE"
+PKG=$TMP/package-$PACKAGE
+rm -rf $TMP
 mkdir -p $PKG
 cd $TMP
-rm -rf curl-$VERSION
+
 tar xvf$tarflag $SRC_DIR/$SRC
 cd curl-$VERSION
 
@@ -109,5 +113,9 @@ mkdir -p $PKG/install
 cat $CWD/slack-desc > $PKG/install/slack-desc
 
 cd $PKG
-makepkg -l y -c n ../curl-$VERSION-$ARCH-$BUILD.tgz
+makepkg -l y -c n $REPOS/curl-$VERSION-$ARCH-$BUILD.tgz
+
+if [ "$CLEANUP" == "yes" ]; then
+  rm -rf $TMP
+fi
 
