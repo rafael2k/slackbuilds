@@ -38,7 +38,7 @@ fi
 # default settings
 PACKAGE=postfix
 ARCH=${ARCH:=x86_64}
-VERSION=${VERSION:=2.2.10}
+VERSION=${VERSION:=2.2.11}
 BUILD=${BUILD:=2rha}
 SRC_DIR=${SRC:=$CWD}
 TMP=${TMP:=/tmp}
