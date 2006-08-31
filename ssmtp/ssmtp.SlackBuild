@@ -96,8 +96,6 @@ ssmtp:
 ssmtp:
 EOF
 
-VERSION="`echo $VERSION | sed -e 's/-/_//g'`"
-
 # docs
 mkdir -p usr/doc/$PACKAGE-$VERSION
 
