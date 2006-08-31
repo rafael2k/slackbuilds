@@ -103,3 +103,7 @@ echo '( if [ ! -f "etc/postfix/postgrey_whitelist_clients" ]; then mv etc/postfi
 
 makepkg -c y -l y $REPOS/$PACKAGE-$VERSION-$ARCH-$BUILD.tgz
 
+if [ "$CLEANUP" == "yes" ]; then
+  rm -rf $TMP
+fi
+
