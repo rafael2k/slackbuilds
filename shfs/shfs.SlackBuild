@@ -20,6 +20,7 @@ VERSION=${VERSION:=0.35}
 BUILD=${BUILD:=1rha}
 SRC_DIR=${SRC:=$CWD}
 TMP=${TMP:=/tmp}
+REPOS=${REPOS:=$TMP}
 
 RTOOL="wget"
 PACKAGE_EXT="gz"
@@ -32,14 +33,17 @@ else
   tarflag="z"
 fi
 
+SRC_DIR="$SRC_DIR/$PACKAGE"
+mkdir -p $SRC_DIR
+
 if [ "$RTOOL" == "wget" ] && [ ! -f "$SRC_DIR/$SRC" ]; then
   wget "$URL" -O "$SRC_DIR/$SRC"
 fi
 
+TMP="$TMP/$PACKAGE"
+rm -rf $TMP
+mkdir -p $TMP
 cd $TMP
-rm -rf package-$PACKAGE
-mkdir package-$PACKAGE
-cd package-$PACKAGE
 
 tar xvf$tarflag $SRC_DIR/$SRC
 cd $PACKAGE-$VERSION
@@ -48,7 +52,7 @@ make
 
 CWD="`pwd`"
 
-cd $TMP/package-$PACKAGE/$PACKAGE
+cd $TMP/package-$PACKAGE
 
 mkdir -p lib/modules/`uname -r`/kernel/fs/shfs
 install -m644 -b -D shfs.ko lib/modules/`uname -r`/kernel/fs/shfs/shfs.ko
@@ -94,5 +98,9 @@ for file in COPYING COPYRIGHT Changelog README TODO; do
   cp $CWD/$file* usr/doc/$PACKAGE-$VERSION/
 done
 
-makepkg -c y -l y $TMP/$PACKAGE-$VERSION-$ARCH-$BUILD.tgz
+makepkg -c y -l y $REPOS/$PACKAGE-$VERSION-$ARCH-$BUILD.tgz
+
+if [ "$CLEANUP" == "yes" ]; then
+  rm -rf $TMP
+fi
 
