@@ -11,7 +11,6 @@ Please consider to run this script with the following things installed:
   rssh
   libsafe
 
-Hit ENTER to continue, Ctrl-C to abort.
 EOCAT
 
 if [ "$INTERACT" != "no" ]; then
