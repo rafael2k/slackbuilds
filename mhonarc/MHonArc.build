@@ -8,13 +8,6 @@
 
 CWD="`pwd`"
 
-# default settings
-PACKAGE="MHonArc"
-ARCH="noarch"
-_TMP="/tmp"
-_VERSION="2.6.15"
-_BUILD="1rha"
-
 if [ -f "/etc/slackbuildrc" ]; then
   source /etc/slackbuildrc
 fi
@@ -23,29 +16,15 @@ if [ -f "~/.slackbuildrc" ]; then
   source ~/.slackbuildrc
 fi
 
-if [ -z "$VERSION" ]; then
-  VERSION="$_VERSION"
-fi
-
-if [ -z "$BUILD" ]; then
-  BUILD="$_BUILD"
-fi
-
-if [ "$ARCH" == "x86_64" ]; then
-  LIBDIR=/usr/lib64
-else
-  LIBDIR=/usr/lib
-fi
-
-if [ -z "$SRC" ]; then
-  SRC_DIR="$CWD"
-else
-  SRC_DIR="$SRC"
-fi
-
-if [ -z "$TMP" ]; then
-  TMP="$_TMP"
-fi
+# default settings
+PACKAGE="MHonArc"
+ARCH="noarch"
+TMP=${TMP:=/tmp}
+VERSION=${VERSION:=2.6.15}
+ARCH=${ARCH:=i386}
+BUILD=${BUILD:=1rha}
+SRC_DIR=${SRC:=$CWD}
+PREFIX="/usr/local"
 
 RTOOL="wget"
 PACKAGE_EXT="gz"
@@ -86,6 +65,12 @@ HQLvCJtzi5ItzFcUAKCsbdsaPrV6noZQ+IjvSYat1ObXVQ==
 -----END PGP PUBLIC KEY BLOCK-----
 EOPGP
 
+SRC_DIR="$SRC_DIR/$PACKAGE"
+
+if [ ! -d "$SRC_DIR" ]; then
+  mkdir -p $SRC_DIR
+fi
+
 if [ "$RTOOL" == "wget" ] && [ ! -f "$SRC_DIR/$SRC" ]; then
  rm -f $SRC_DIR/$SRC $SRC_DIR/$SRC.sig
  wget "$URL" -O "$SRC_DIR/$SRC"
@@ -100,9 +85,14 @@ else
   tarflag="z"
 fi
 
-rm -rf $TMP/package-$PACKAGE
-mkdir $TMP/package-$PACKAGE
-cd $TMP/package-$PACKAGE
+TMP="$TMP/$PACKAGE"
+
+if [ ! -d "$TMP" ]; then
+  mkdir -p $TMP
+fi
+
+cd $TMP
+
 tar xvf$tarflag $SRC_DIR/$SRC
 cd $PACKAGE-$VERSION
 
