@@ -27,6 +27,21 @@
 # Set initial variables:
 CWD=`pwd`
 
+cat << EOCAT
+You'll need the following packages:
+
+  freetype
+
+EOCAT
+
+if [ "$INTERACT" != "no" ]; then
+  echo "Hit ENTER do continue, Crtl-C to abort"
+  read crap
+else
+  echo sleeping 3 seconds...
+  sleep 3
+fi
+
 if [ -f "/etc/slackbuildrc" ]; then
   source /etc/slackbuildrc
 fi
