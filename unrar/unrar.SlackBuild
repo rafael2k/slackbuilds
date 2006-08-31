@@ -20,6 +20,7 @@ VERSION=${VERSION:=0.40}
 BUILD=${BUILD:=1rha}
 SRC_DIR=${SRC:=$CWD}
 TMP=${TMP:=/tmp}
+REPOS=${REPOS:=$TMP}
 
 if [ "$ARCH" == "x86_64" ]; then
   LIBDIR=/usr/lib64
@@ -53,10 +54,10 @@ if [ "$RTOOL" == "wget" ]; then
   fi
 fi
 
+TMP="$TMP/$PACKAGE"
+rm -rf $TMP
+mkdir -p $TMP
 cd $TMP
-rm -rf package-$PACKAGE
-mkdir package-$PACKAGE
-cd package-$PACKAGE
 
 tar zxvf $SRC_DIR/$PATCH
 tar xvf$tarflag $SRC_DIR/$SRC
@@ -65,15 +66,15 @@ cp ../unrarlib-0.4.0/unrarlib/* .
 
 make
 
-mkdir -p $TMP/package-$PACKAGE/$PACKAGE/usr/{bin,doc/$PACKAGE-$VERSION}
-cp unrar $TMP/package-$PACKAGE/$PACKAGE/usr/bin
-cp readme.txt $TMP/package-$PACKAGE/$PACKAGE/usr/doc/$PACKAGE-$VERSION/readme-unrar.txt
-cp  ../unrarlib-0.4.0/{gpl,licence,unrarlib-license}.txt $TMP/package-$PACKAGE/$PACKAGE/usr/doc/$PACKAGE-$VERSION
-cp  ../unrarlib-0.4.0/readme.txt $TMP/package-$PACKAGE/$PACKAGE/usr/doc/$PACKAGE-$VERSION/readme-unrarlib.txt
+mkdir -p $TMP/package-$PACKAGE/usr/{bin,doc/$PACKAGE-$VERSION}
+cp unrar $TMP/package-$PACKAGE/usr/bin
+cp readme.txt $TMP/package-$PACKAGE/usr/doc/$PACKAGE-$VERSION/readme-unrar.txt
+cp  ../unrarlib-0.4.0/{gpl,licence,unrarlib-license}.txt $TMP/package-$PACKAGE/usr/doc/$PACKAGE-$VERSION
+cp  ../unrarlib-0.4.0/readme.txt $TMP/package-$PACKAGE/usr/doc/$PACKAGE-$VERSION/readme-unrarlib.txt
 
 CWD="`pwd`"
 
-cd $TMP/package-$PACKAGE/$PACKAGE
+cd $TMP/package-$PACKAGE
 
 find . | xargs file | grep "executable" | grep ELF | cut -f 1 -d : | xargs strip --strip-unneeded 2> /dev/null
 find . | xargs file | grep "shared object" | grep ELF | cut -f 1 -d : | xargs strip --strip-unneeded 2> /dev/null
@@ -101,5 +102,9 @@ unrar:
 unrar:
 EOF
 
-makepkg -c y -l y $TMP/$PACKAGE-$VERSION-$ARCH-$BUILD.tgz
+makepkg -c y -l y $REPOS/$PACKAGE-$VERSION-$ARCH-$BUILD.tgz
+
+if [ "$CLEANUP" == "yes" ]; then
+  rm -rf $TMP
+fi
 
