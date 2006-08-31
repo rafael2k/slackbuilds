@@ -35,6 +35,12 @@ PACKAGE_EXT="gz"
 SRC="$PACKAGE-$VERSION.tar.$PACKAGE_EXT"
 URL="http://savannah.nongnu.org/download/rdiff-backup/$SRC"
 
+SRC_DIR="$SRC_DIR/$PACKAGE"
+
+if [ ! -d "$SRC_DIR" ]; then
+  mkdir -p $SRC_DIR
+fi
+
 if [ "$RTOOL" == "wget" ] && [ ! -f "$SRC_DIR/$SRC" ]; then
  wget "$URL" -O "$SRC_DIR/$SRC"
 fi
@@ -45,9 +51,12 @@ else
   tarflag="z"
 fi
 
-rm -rf $TMP/package-$PACKAGE
-mkdir $TMP/package-$PACKAGE
-cd $TMP/package-$PACKAGE
+TMP="$TMP/$PACKAGE"
+
+if [ ! -d "$TMP" ]; then
+  mkdir -p $TMP
+fi
+
 tar xvf$tarflag $SRC_DIR/$SRC
 cd $PACKAGE-$VERSION
 
