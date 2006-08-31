@@ -9,7 +9,8 @@ Check if you have the following stuff installed:
   beecrypt
   vlan
   iproute2
-  iptables
+  iptables 
+  modutils
 
 EOCAT
 
