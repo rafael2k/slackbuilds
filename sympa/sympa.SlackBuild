@@ -16,7 +16,7 @@ You'll need at least the following perl modules to build Sympa:
 And the following packages:
 
   MHonarc
-  mod_fcgi
+  mod_fastcgi
 
 EOECHO
 
