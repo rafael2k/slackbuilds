@@ -40,6 +40,7 @@ ARCH=${ARCH:=x86_64}
 BUILD=${BUILD:=1rha}
 SRC_DIR=${SRC:=$CWD}
 TMP=${TMP:=/tmp}
+REPOS=${REPOS:=$TMP}
 
 if [ "$ARCH" == "x86_64" ]; then
   LIBDIR=/usr/lib64
@@ -57,6 +58,9 @@ if [ "$PACKAGE_EXT" == "bz2" ]; then
 else
   tarflag="z"
 fi
+
+SRC_DIR="$SRC_DIR/$PACKAGE"
+mkdir -p $SRC_DIR
 
 if [ "$RTOOL" == "wget" ] && [ ! -f "$SRC_DIR/$SRC" ]; then
   rm -f $SRC_DIR/$SRC.asc
@@ -100,8 +104,6 @@ EOGPG
 
 gpg --verify $SRC.asc $SRC || echo WARNING: Could not check signature or WRONG signature found.
 
-PKG=$TMP/package-openssh
-
 if [ "$ARCH" = "i386" ]; then
   SLKCFLAGS="-O2 -march=i386 -mcpu=i686"
 elif [ "$ARCH" = "i486" ]; then
@@ -113,7 +115,9 @@ elif [ "$ARCH" = "x86_64" ]; then
 fi
 
 # Clean target location:
-rm -rf $PKG
+TMP="$TMP/$PACKAGE"
+PKG=$TMP/package-$PACKAGE
+rm -rf $TMP
 mkdir -p $PKG
 
 # Prepare the framework and extract the package:
@@ -206,5 +210,9 @@ chown -R root.bin $PKG/usr/bin $PKG/usr/sbin
 
 # Create the package itself:
 cd $PKG
-makepkg -l y -c n $TMP/openssh-$VERSION-$ARCH-$BUILD.tgz
+makepkg -l y -c n $REPOS/openssh-$VERSION-$ARCH-$BUILD.tgz
+
+if [ "$CLEANUP" == "yes" ]; then
+  rm -rf $TMP
+fi
 
