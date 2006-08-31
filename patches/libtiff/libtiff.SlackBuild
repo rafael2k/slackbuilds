@@ -109,3 +109,7 @@ cat $CWD/slack-desc > $PKG/install/slack-desc
 cd $PKG
 makepkg -l y -c n $REPOS/libtiff-$VERSION-$ARCH-$BUILD.tgz
 
+if [ "$CLEANUP" == "yes" ]; then
+  rm -rf $TMP
+fi
+
