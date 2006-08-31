@@ -12,6 +12,8 @@ VERSION=10.2
 ARCH=${ARCH:=x86_64}
 BUILD="1rha"
 SRC_DIR=${SRC:=$CWD}
+TMP=${TMP:=/tmp}
+REPOS=${REPOS:=$TMP}
 
 DUTILS=2.7
 DOSFS=2.10
@@ -19,21 +21,15 @@ WHICH=2.16
 EJECT=2.1.4
 FILE=4.15
 
-TMP=${TMP:=/tmp}
+TMP="$TMP/$PACKAGE"
 PKG=$TMP/package-bin
+mkdir -p $PKG
 
 rm -rf $PKG
 mkdir -p $SRC_DIR
 # REPO="ftp://ftp.slackware.com/pub/slackware/slackware-10.2/patches/source/bin"
 REPO="ftp://mirror.pacific.net.au/linux/slackware/slackware-10.2/patches/source/bin"
 if [ "$GET" != "no" ]; then ( cd $SRC_DIR && ncftpget $REPO/*gz ) ; fi
-
-if [ ! -d $TMP ]; then
-  mkdir -p $TMP # location to build the source
-fi
-if [ ! -d $PKG ]; then
-  mkdir -p $PKG # place for the package to be built
-fi
 
 if [ "$ARCH" == "x86_64" ]; then
   LIB="lib64"
@@ -416,29 +412,10 @@ cat $CWD/slack-desc > $PKG/install/slack-desc
 
 # Build the package:
 cd $PKG
-makepkg -l y -c n $TMP/bin-$VERSION-$ARCH-$BUILD.tgz
+makepkg -l y -c n $REPOS/bin-$VERSION-$ARCH-$BUILD.tgz
 
 # Clean up the extra stuff:
-if [ "$1" = "--cleanup" ]; then
-  rm -rf $TMP/pwd
-  rm -rf $TMP/ed-0.2
-  rm -rf $TMP/banners
-  rm -rf $TMP/debianutils-$DUTILS
-  rm -rf $TMP/eject-$EJECT
-  rm -rf $TMP/fbset-2.1
-  rm -rf $TMP/file-$FILE
-  rm -rf $TMP/gencat
-  rm -rf $TMP/lha-1.00
-  rm -rf $TMP/dosfstools-$DOSFS
-  rm -rf $TMP/patch-2.5.4
-  rm -rf $TMP/sharutils-4.2.1
-  rm -rf $TMP/time-1.7
-  rm -rf $TMP/todos
-  rm -rf $TMP/unarj230
-  rm -rf $TMP/which-$WHICH
-  rm -rf $TMP/zoo-2.10
-  rm -rf $TMP/compress
-  rm -rf $TMP/splitvt-1.6.5
-  rm -rf $TMP/tree-1.4
-  rm -rf $PKG
+if [ "$CLEANUP" == "yes" ]; then
+  rm -rf $TMP
 fi
+
