@@ -34,9 +34,8 @@ VERSION=${VERSION:=2.14.3}
 BUILD=${BUILD:=1rha}
 ARCH=${ARCH:=i486}
 SRC_DIR=${SRC:=$CWD}
-
-PKG="$TMP/package-mrtg"
 TMP=${TMP:=/tmp}
+REPOS=${REPOS:=$TMP}
 
 if [ "$ARCH" == "x86_64" ]; then
   LIBDIR=/usr/lib64
@@ -55,6 +54,9 @@ else
   tarflag="z"
 fi
 
+SRC_DIR="$SRC_DIR/$PACKAGE"
+mkdir -p $SRC_DIR
+
 if [ "$RTOOL" == "wget" ] && [ ! -f "$SRC_DIR/$SRC" ]; then
   wget "$URL" -O "$SRC_DIR/$SRC"
 fi
@@ -70,10 +72,12 @@ elif [ "$ARCH" = "x86_64" ]; then
   SLKCFLAGS="-O2"
 fi
 
-rm -rf $PKG
+TMP="$TMP/$PACKAGE"
+PKG="$TMP/package-mrtg"
+rm -rf $TMP
 mkdir -p $PKG
 cd $TMP
-rm -rf mrtg-$VERSION
+
 tar xvf$tarflag $SRC_DIR/$SRC
 cd mrtg-$VERSION
 
@@ -121,4 +125,9 @@ EOF
 mkdir -p $PKG/etc/mrtg
 cd $PKG
 
-makepkg -l y -c n $TMP/mrtg-$VERSION-$ARCH-$BUILD.tgz
+makepkg -l y -c n $REPOS/mrtg-$VERSION-$ARCH-$BUILD.tgz
+
+if [ "$CLEANUP" == "yes" ]; then
+  rm -rf $TMP
+fi
+
