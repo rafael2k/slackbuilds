@@ -26,7 +26,7 @@ TMP=${TMP:=/tmp}
 
 if [ "$ARCH" == "x86_64" ]; then
   export CFLAGS="-fPIC"
-  export LDFLAGS="-L/lib64 -L/usr/lib64"
+  export LDFLAGS="-L/lib64 -L/usr/lib64 -fPIC"
   LIBDIR=/usr/lib64
 else
   LIBDIR=/usr/lib
