@@ -23,8 +23,10 @@ TMP=${TMP:=/tmp}
 REPOS=${REPOS:=$TMP}
 
 if [ "$ARCH" == "x86_64" ]; then
+  export CFLAGS="-fPIC"
   LIBDIR=/usr/lib64
   export LDFLAGS="-L/lib64 -L/usr/lib64"
+  EXTRA_ARG="--whithout-fvisibility-inlines-hidden"
 else
   LIBDIR=/usr/lib
 fi
@@ -59,7 +61,7 @@ if [ -f "$CWD/$PACKAGE-$VERSION.diff" ]; then
   patch -p1 < $CWD/$PACKAGE-$VERSION.diff
 fi
 
-./configure --prefix=/usr --sysconfdir=/etc --libdir=$LIBDIR
+./configure --prefix=/usr --sysconfdir=/etc --libdir=$LIBDIR $EXTRA_ARG
 make
 make DESTDIR=$TMP/package-$PACKAGE install
 
