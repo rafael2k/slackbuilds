@@ -25,8 +25,8 @@ REPOS=${REPOS:=$TMP}
 if [ "$ARCH" == "x86_64" ]; then
   export CFLAGS=-fPIC
   export LDFLAGS="-L/lib64 -L/usr/lib64 -fPIC"
-  export X_LDFLAGS="-L/usr/lib64"
-  export X_LIBS="-L/usr/lib64"
+  # export X_LDFLAGS="-L/usr/lib64"
+  # export X_LIBS="-L/usr/lib64"
   LIBDIR=/usr/lib64
 else
   LIBDIR=/usr/lib
@@ -63,6 +63,14 @@ if [ -f "$CWD/$PACKAGE-$VERSION.diff" ]; then
 fi
 
 ./configure --prefix=/usr --sysconfdir=/etc --libdir=$LIBDIR
+
+# coxa, favor corrigir!
+if [ "$ARCH" == "x86_64" ]; then
+  sed -e "s/^X_LDFLAGS = -L\/usr\/lib/X_LDFLAGS = -L\/usr\/lib64/" \
+      -e "s/^X_LIBS =  -L\/usr\/lib/X_LIBS =  -L\/usr\/lib64/" plugin/Makefile > plugin/Makefile.new
+  mv plugin/Makefile.new plugin/Makefile
+fi
+
 make
 make DESTDIR=$TMP/package-$PACKAGE install
 
