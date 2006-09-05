@@ -1,6 +1,7 @@
 #!/bin/bash
 #
 # build script for denyhosts
+# by rhatto at riseup.net
 # build it with slacktrack, example:
 #
 #   slacktrack -jefkzp "denyhosts-0.5-noarch-1rha.tgz" "./denyhosts.build"

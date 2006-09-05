@@ -1,6 +1,7 @@
 #!/bin/bash
 #
-# build script for MHonArc by rhatto | gpl
+# build script for MHonArc
+# by rhatto at riseup.net by rhatto | gpl
 # build it with slacktrack, example:
 #
 #   slacktrack -jefkzp "MHonArc-2.6.15-noarch-1rha.tgz" "./MHonArc.build"

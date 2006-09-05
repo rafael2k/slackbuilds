@@ -1,6 +1,7 @@
 #!/bin/bash
 #
-# build script for fglrx by rhatto | gpl
+# build script for fglrx
+# by rhatto at riseup.net by rhatto | gpl
 # build it with slacktrack, example:
 #
 #   ARCH=x86_64 slacktrack -jefkzp "fglrx-module-8.14.13_1-x86_64-1rha.tgz" "./fglrx.build"

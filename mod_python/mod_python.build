@@ -1,6 +1,7 @@
 #!/bin/bash
 #
 # build script for mod_python
+# by rhatto at riseup.net
 # build it with slacktrack, example:
 #
 #   slacktrack -jefkzp "mod_python-2.7.11-x86_64-1rha.tgz" "./mod_python.build"

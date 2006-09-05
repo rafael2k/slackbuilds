@@ -1,6 +1,7 @@
 #!/bin/bash
 #
 # build script for moin
+# by rhatto at riseup.net
 # build it with slacktrack, example:
 #
 #   slacktrack -jefkzp "moin-1.5.4-noarch-1rha.tgz" "./moin.build"

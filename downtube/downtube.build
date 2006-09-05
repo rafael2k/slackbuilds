@@ -1,6 +1,7 @@
 #!/bin/bash
 #
 # build script for downtube
+# by rhatto at riseup.net
 # build it with slacktrack, example:
 #
 #   slacktrack -jefkzp "downtube-1.2-noarch-1rha.tgz" "./downtube.build"
