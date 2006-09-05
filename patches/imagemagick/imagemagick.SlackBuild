@@ -16,7 +16,7 @@ fi
 
 PACKAGE="imagemagick"
 TMP=${TMP:=/tmp}
-ARCH=${ARCH:=x86_64}
+ARCH=${ARCH:=i486}
 BUILD=${BUILD:=1rha}
 SRC_DIR=${SRC:=$CWD}
 REPOS=${REPOS:=$TMP}

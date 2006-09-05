@@ -17,7 +17,7 @@ fi
 
 PACKAGE="sudo"
 VERSION=${VERSION:=1.6.8p12}
-ARCH=${ARCH:=x86_64}
+ARCH=${ARCH:=i486}
 BUILD=${BUILD:=1rha}
 SRC_DIR=${SRC:=$CWD}
 TMP=${TMP:=/tmp}

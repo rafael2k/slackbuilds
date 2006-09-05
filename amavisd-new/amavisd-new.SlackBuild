@@ -1,6 +1,7 @@
 #!/bin/bash
 #
 # slackbuild script for amavisd-new
+# by rhatto at riseup.net
 #
 
 cat << EOCAT

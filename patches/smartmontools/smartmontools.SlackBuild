@@ -16,7 +16,7 @@ fi
 
 PACKAGE="smartmontools"
 VERSION=${VERSION:=5.36}
-ARCH=${ARCH:=x86_64}
+ARCH=${ARCH:=i486}
 BUILD=${BUILD:=1rha}
 TMP=${TMP:=/tmp}
 SRC_DIR=${SRC:=$CWD}

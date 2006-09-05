@@ -1,6 +1,7 @@
 #!/bin/bash
 #
 # slackbuild script for backupninja
+# by rhatto at riseup.net
 #
 
 CWD="`pwd`"

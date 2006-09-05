@@ -1,6 +1,7 @@
 #!/bin/bash
 #
 # slackbuild script for ssmtp
+# by rhatto at riseup.net
 #
 
 CWD="`pwd`"
@@ -15,7 +16,7 @@ fi
 
 # default settings
 PACKAGE="ssmtp"
-ARCH=${ARCH:=x86_64}
+ARCH=${ARCH:=i486}
 VERSION=${VERSION:=2.61}
 BUILD=${BUILD:=4rha}
 SRC_DIR=${SRC:=$CWD}
