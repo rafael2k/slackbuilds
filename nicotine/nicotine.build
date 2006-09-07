@@ -57,7 +57,7 @@ cd $TMP
 tar xvf$tarflag $SRC_DIR/$SRC
 cd $PACKAGE+-$VERSION
 
-python setup.py --quiet install --record=install.log
+python setup.py install --prefix=/usr
 
 CWD="`pwd`"
 
