@@ -68,6 +68,8 @@ mkdir -p usr/libexec/apache
 cp $CWD/mod_fastcgi.so usr/libexec/apache/
 chmod 755 usr/libexec/apache/mod_fastcgi.so
 
+find . | xargs file | grep "shared object" | grep ELF | cut -f 1 -d : | xargs strip --strip-unneeded 2> /dev/null
+
 mkdir install
 cat << EOF > install/slack-desc
 # HOW TO EDIT THIS FILE:
