@@ -17,7 +17,7 @@ fi
 # default settings
 PACKAGE="inkscape"
 ARCH=${ARCH:=i486}
-VERSION=${VERSION:=0.4.4}
+VERSION=${VERSION:=0.44}
 BUILD=${BUILD:=1rha}
 SRC_DIR=${SRC:=$CWD}
 TMP=${TMP:=/tmp}
