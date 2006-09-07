@@ -18,7 +18,7 @@ if [ -f "~/.slackbuildrc" ]; then
 fi
 
 # default settings
-PACKAGE="nicotine"
+PACKAGE="nicotine+"
 VERSION=${VERSION:=1.2.4.1}
 ARCH="noarch"
 BUILD=${BUILD:=1rha}
