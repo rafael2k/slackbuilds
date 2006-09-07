@@ -34,7 +34,7 @@ PACKAGE_EXT="bz2"
 
 WORK_NAME="LiVeS"
 WORK_VERSION="`echo $VERSION | sed -e 's/pre/-pre/'`"
-SRC="$WORK_NAME-$VERSION.tar.$PACKAGE_EXT"
+SRC="$WORK_NAME-$WORK_VERSION.tar.$PACKAGE_EXT"
 URL="http://www.xs4all.nl/%7Esalsaman/lives/current/$SRC"
 
 SRC_DIR="$SRC_DIR/$PACKAGE"
