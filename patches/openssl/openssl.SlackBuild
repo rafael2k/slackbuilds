@@ -35,7 +35,7 @@ if [ -f "~/.slackbuildrc" ]; then
 fi
 
 PACKAGE="openssl"
-VERSION=${VERSION:=0.9.7g}
+VERSION=${VERSION:=0.9.7k}
 ARCH=${ARCH:=i486}
 BUILD=${BUILD:=1rha}
 SRC_DIR=${SRC:=$CWD}
@@ -234,8 +234,14 @@ tar xvf$tarflag $SRC_DIR/$SRC
 cd openssl-$VERSION
 # Use .so.0, not .so.0.9.7:
 zcat $CWD/openssl.soname.diff.gz | patch -p1 --backup --verbose --suffix=.orig || exit
+
 # Fix CAN-2005-2969 (SSL 2.0 rollback bug):
-zcat $CWD/patch-CAN-2005-2969.diff.gz | patch -p0 --backup --verbose --suffix=.orig || exit
+for vulnerable in 0.9.7g 0.9.7f 0.9.7e 0.9.7d 0.9.7c 0.9.7b 0.9.7a 0.9.7 0.9.8; do
+  if [ "$VERSION" == "$vulnerable" ]; then
+    zcat $CWD/patch-CAN-2005-2969.diff.gz | patch -p0 --backup --verbose --suffix=.orig || exit
+  fi
+done
+
 if [ "$ARCH" = "i486" ]; then
   # Build with -march=i486 -mcpu=i686:
   zcat $CWD/openssl.optsx86.diff.gz | patch -p1 --backup --verbose --suffix=.orig || exit
