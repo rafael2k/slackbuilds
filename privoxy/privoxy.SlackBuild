@@ -80,6 +80,9 @@ fi
 find . | xargs file | grep "executable" | grep ELF | cut -f 1 -d : | xargs strip --strip-unneeded 2> /dev/null
 find . | xargs file | grep "shared object" | grep ELF | cut -f 1 -d : | xargs strip --strip-unneeded 2> /dev/null
 
+mkdir -p etc/rc.d
+cp $CWD/rc.privoxy.new etc/rc.d
+
 mkdir install
 cat << EOF > install/slack-desc
 # HOW TO EDIT THIS FILE:
