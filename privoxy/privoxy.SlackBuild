@@ -18,7 +18,7 @@ fi
 PACKAGE="privoxy"
 ARCH=${ARCH:=i486}
 VERSION=${VERSION:=3.0.3}
-BUILD=${BUILD:=1rha}
+BUILD=${BUILD:=4rha}
 SRC_DIR=${SRC:=$CWD}
 TMP=${TMP:=/tmp}
 REPOS=${REPOS:=$TMP}
