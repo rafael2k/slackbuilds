@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# slackbuild script for nano
+# slackbuild script for privoxy
 # by rhatto at riseup.net
 #
 
@@ -56,12 +56,14 @@ tar xvf$tarflag $SRC_DIR/$SRC
 cd $PACKAGE-$VERSION-stable
 
 if [ -f "$CWD/$PACKAGE-$VERSION.diff" ]; then
+  # 3.0.3 patch got from 
+  # https://svn.openwrt.org/openwrt/trunk/openwrt/package/privoxy/patches/101-destdir.patch
   patch -p1 < $CWD/$PACKAGE-$VERSION.diff
 fi
 
 autoheader
 autoconf
-./configure --prefix=/usr --sysconfdir=/etc --libdir=$LIBDIR
+./configure --prefix=/usr --sysconfdir=/etc/$PACKAGE --libdir=$LIBDIR
 make
 
 CWD="`pwd`"
