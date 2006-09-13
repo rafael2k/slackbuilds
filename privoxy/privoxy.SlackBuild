@@ -66,24 +66,25 @@ autoconf
 ./configure --prefix=/usr --sysconfdir=/etc/$PACKAGE --libdir=$LIBDIR
 make
 
-CWD="`pwd`"
-
 # for VERSION=0.3.3, privoxy Makefile doesnt respect DESTDIR correctly,
 # so beyond the patch we still need to do some nasty stuff...
 
 if [ "$VERSION" == "3.0.3" ]; then
   make DESTDIR=install install
+  mkdir -p install/etc/rc.d
+  cp $CWD/rc.privoxy.new install/etc/rc.d
+  CWD="`pwd`"
   cd install
 else
   make DESTDIR=$TMP/package-$PACKAGE install
+  mkdir -p $TMP/package-$PACKAGE/etc/rc.d
+  cp $CWD/rc.privoxy.new $TMP/package-$PACKAGE/etc/rc.d
+  CWD="`pwd`"
   cd $TMP/package-$PACKAGE
 fi
 
 find . | xargs file | grep "executable" | grep ELF | cut -f 1 -d : | xargs strip --strip-unneeded 2> /dev/null
 find . | xargs file | grep "shared object" | grep ELF | cut -f 1 -d : | xargs strip --strip-unneeded 2> /dev/null
-
-mkdir -p etc/rc.d
-cp $CWD/rc.privoxy.new etc/rc.d
 
 mkdir install
 cat << EOF > install/slack-desc

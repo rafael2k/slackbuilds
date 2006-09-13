@@ -81,13 +81,13 @@ fi
 make
 make DESTDIR=$TMP/package-$PACKAGE install
 
-CWD="`pwd`"
+mkdir $TMP/package-$PACKAGE/etc/rc.d
+cp $CWD/rc.tor.new $TMP/package-$PACKAGE/etc/rc.d
 
+CWD="`pwd`"
 cd $TMP/package-$PACKAGE
 
 mv etc/tor/tor-tsocks.conf etc/tor/tor-tsocks.conf.sample
-mkdir etc/rc.d
-cp $CWD/rc.tor.new etc/rc.d
 
 find . | xargs file | grep "executable" | grep ELF | cut -f 1 -d : | xargs strip --strip-unneeded 2> /dev/null
 find . | xargs file | grep "shared object" | grep ELF | cut -f 1 -d : | xargs strip --strip-unneeded 2> /dev/null
