@@ -85,6 +85,8 @@ CWD="`pwd`"
 
 cd $TMP/package-$PACKAGE
 
+mv etc/tor/tor-tsocks.conf etc/tor/tor-tsocks.conf.sample
+
 find . | xargs file | grep "executable" | grep ELF | cut -f 1 -d : | xargs strip --strip-unneeded 2> /dev/null
 find . | xargs file | grep "shared object" | grep ELF | cut -f 1 -d : | xargs strip --strip-unneeded 2> /dev/null
 
@@ -121,6 +123,8 @@ done
 # install script
 echo '( chroot . /sbin/ldconfig )' > install/doinst.sh
 echo '( if [ ! -f "etc/rc.d/rc.tor" ]; then mv etc/rc.d/rc.tor.new etc/rc.d/rc.tor ; fi )' >> install/doinst.sh
+echo '( if [ ! -f "etc/tor/torrc" ]; then mv etc/tor/torrc.sample etc/tor/torrc ; fi )' >> install/doinst.sh
+echo '( if [ ! -f "etc/tor/tor-tsocks.conf" ]; then mv etc/tor/tor-tsocks.conf.sample etc/tor/tor-tsocks.conf ; fi )' >> install/doinst.sh
 
 makepkg -c y -l y $REPOS/$PACKAGE-$VERSION-$ARCH-$BUILD.tgz
 
