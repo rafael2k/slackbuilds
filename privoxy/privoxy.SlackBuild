@@ -110,6 +110,12 @@ for file in AUTHORS ChangeLog INSTALL LICENSE Makefile README; do
   cp $CWD/$file* usr/doc/$PACKAGE-$VERSION/
 done
 
+# install script
+echo '( chroot . /sbin/ldconfig )' > install/doinst.sh
+echo '( if ! grep -qe "^privoxy:" etc/group; then echo creating group privoxy... ; chroot . /usr/sbin/groupadd privoxy; fi )' >> install/doinst.sh
+echo '( if ! grep -qe "^privoxy:" etc/passwd; then echo creating user privoxy... ; chroot . /usr/sbin/useradd privoxy -g privoxy; fi )' >> install/doinst.sh
+echo '( if [ ! -f "etc/rc.d/rc.privoxy" ]; then mv etc/rc.d/rc.privoxy.new etc/rc.d/rc.privoxy; fi )' >> install/doinst.sh
+
 makepkg -c y -l y $REPOS/$PACKAGE-$VERSION-$ARCH-$BUILD.tgz
 
 if [ "$CLEANUP" == "yes" ]; then
