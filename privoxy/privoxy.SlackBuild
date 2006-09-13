@@ -69,7 +69,7 @@ CWD="`pwd`"
 # for VERSION=0.3.3, privoxy Makefile doesnt respect DESTDIR correctly,
 # so beyond the patch we still need to do some nasty stuff...
 
-if [ "$VERSION" == "0.3.3" ]; then
+if [ "$VERSION" == "3.0.3" ]; then
   make DESTDIR=install install
   cd install
 else
