@@ -83,6 +83,8 @@ else
   cd $TMP/package-$PACKAGE
 fi
 
+mv etc/privoxy/config etc/privoxy/config.sample
+
 find . | xargs file | grep "executable" | grep ELF | cut -f 1 -d : | xargs strip --strip-unneeded 2> /dev/null
 find . | xargs file | grep "shared object" | grep ELF | cut -f 1 -d : | xargs strip --strip-unneeded 2> /dev/null
 
@@ -121,6 +123,7 @@ echo '( chroot . /sbin/ldconfig )' > install/doinst.sh
 echo '( if ! grep -qe "^privoxy:" etc/group; then echo creating group privoxy... ; chroot . /usr/sbin/groupadd privoxy; fi )' >> install/doinst.sh
 echo '( if ! grep -qe "^privoxy:" etc/passwd; then echo creating user privoxy... ; chroot . /usr/sbin/useradd privoxy -g privoxy; fi )' >> install/doinst.sh
 echo '( if [ ! -f "etc/rc.d/rc.privoxy" ]; then mv etc/rc.d/rc.privoxy.new etc/rc.d/rc.privoxy; fi )' >> install/doinst.sh
+echo '( if [ ! -f "etc/privoxy/config" ]; then mv etc/privoxy/config.sample etc/privoxy/config; fi )' >> install/doinst.sh
 
 makepkg -c y -l y $REPOS/$PACKAGE-$VERSION-$ARCH-$BUILD.tgz
 
