@@ -1,0 +1,20 @@
+#!/bin/sh
+#
+# init script for tor
+#
+
+PID="/var/run"
+PRIVOXY_PID="$PID/privoxy.pid"
+TOR_PID="$PID/tor.pid"
+USER="privoxy"
+
+if [ -f $TOR_PID ]; then
+  if ps `cat $TOR_PID` | grep -q tor; then
+    kill `cat $TOR_PID`
+  fi
+  rm $TOR_PID
+fi
+
+sudo -u $USER /usr/bin/tor &> /dev/null &
+echo "$!" > $TOR_PID
+

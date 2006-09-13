@@ -4,7 +4,17 @@
 # by rhatto at riseup.net
 #
 
-# TODO: signature checking
+if [ -s "slack-required" ]; then
+  echo Recomended and required packages for building tor are:
+  cat slack-required | sed -e 's/^/\t/'
+  if [ "$INTERACT" != "no" ]; then
+    echo If you dont have those installed, press Ctrl-C. Otherwise, hit ENTER.
+    read crap
+  else
+    echo Sleeping 3 seconds...
+    sleep 3
+  fi
+fi
 
 CWD="`pwd`"
 
@@ -47,7 +57,13 @@ fi
 
 if [ "$RTOOL" == "wget" ] && [ ! -f "$SRC_DIR/$SRC" ]; then
   wget "$URL" -O "$SRC_DIR/$SRC"
+  wget "$URL.asc" -O "$SRC_DIR/$SRC.asc"
 fi
+
+gpg --keyserver subkeys.pgp.net --recv-keys 0x28988BF5
+gpg --keyserver subkeys.pgp.net --recv-keys 0x165733EA
+gpg --verify $SRC_DIR/$SRC.asc $SRC_DIR/$SRC || echo WARNING: Could not check signature or WRONG signature found.
+sleep 3
 
 TMP="$TMP/$PACKAGE"
 rm -rf $TMP
@@ -101,6 +117,10 @@ mkdir -p usr/doc/$PACKAGE-$VERSION
 for file in AUTHORS ChangeLog INSTALL LICENSE README; do 
   cp $CWD/$file* usr/doc/$PACKAGE-$VERSION/
 done
+
+# install script
+echo '( chroot . /sbin/ldconfig )' > install/doinst.sh
+echo '( if [ ! -f "etc/rc.d/rc.tor" ]; then mv etc/rc.d/rc.tor.new etc/rc.d/rc.tor ; fi )' >> install/doinst.sh
 
 makepkg -c y -l y $REPOS/$PACKAGE-$VERSION-$ARCH-$BUILD.tgz
 
