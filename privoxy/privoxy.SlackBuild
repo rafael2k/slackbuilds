@@ -23,6 +23,12 @@ SRC_DIR=${SRC:=$CWD}
 TMP=${TMP:=/tmp}
 REPOS=${REPOS:=$TMP}
 
+if ! grep -qe "^$PACKAGE:" /etc/passwd || ! grep -qe "^$PACKAGE:" /etc/group; then
+  echo "WARNING: user and/or group $PACKAGE does not exist"
+  echo "Create it manually with \"groupadd $PACKAGE ; useradd $PACKAGE -g $PACKAGE\" and run this script again."
+  exit 1
+fi
+
 if [ "$ARCH" == "x86_64" ]; then
   LIBDIR=/usr/lib64
 else
