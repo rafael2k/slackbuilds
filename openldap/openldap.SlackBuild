@@ -1,8 +1,20 @@
 #!/bin/bash
 #
-# slackbuild script for openldap
-# by rhatto at riseup.net
+# slackbuild script for pwlib
+# by rafael at riseup.net
 #
+
+if [ -s "openldap.slack-required" ]; then
+  echo Recomended and required packages for building openldap are:
+  cat client.slack-required | sed -e 's/^/\t/'
+  if [ "$INTERACT" != "no" ]; then
+    echo If you dont have those installed, press Ctrl-C. Otherwise, hit ENTER.
+    read crap
+  else
+    echo Sleeping 3 seconds...
+    sleep 3
+  fi
+fi
 
 CWD="`pwd`"
 
@@ -17,8 +29,8 @@ fi
 # default settings
 PACKAGE="openldap"
 ARCH=${ARCH:=i486}
-VERSION=${VERSION:=2.3.24}
-BUILD=${BUILD:=1rha}
+VERSION=${VERSION:=2.0.27}
+BUILD=${BUILD:=1rd}
 SRC_DIR=${SRC:=$CWD}
 TMP=${TMP:=/tmp}
 REPOS=${REPOS:=$TMP}
@@ -31,10 +43,12 @@ fi
 
 RTOOL="wget"
 PACKAGE_EXT="tgz"
-SRC="$PACKAGE-$VERSION.tar.$PACKAGE_EXT"
-KEY="http://www.courier-mta.org/KEYS.bin"
 SRC="$PACKAGE-$VERSION.$PACKAGE_EXT"
-URL="ftp://ftp.openldap.org/pub/OpenLDAP/openldap-release/$SRC"
+# URL="ftp://ftp.openldap.org/pub/OpenLDAP/openldap-release/$SRC"
+URL="http://www.gtlib.gatech.edu/pub/OpenLDAP/openldap-release/$SRC"
+
+SRC_DIR="$SRC_DIR/$PACKAGE"
+mkdir -p $SRC_DIR
 
 if [ "$PACKAGE_EXT" == "bz2" ]; then
   tarflag="j"
@@ -42,17 +56,8 @@ else
   tarflag="z"
 fi
 
-SRC_DIR="$SRC_DIR/$PACKAGE"
-mkdir -p $SRC_DIR
-
 if [ "$RTOOL" == "wget" ] && [ ! -f "$SRC_DIR/$SRC" ]; then
   wget "$URL" -O "$SRC_DIR/$SRC"
-fi
-
-if [ "$ARCH" == "x86_64" ]; then
-  LIBDIR="/usr/lib64"
-else
-  LIBDIR="/usr/lib"
 fi
 
 TMP="$TMP/$PACKAGE"
@@ -63,25 +68,14 @@ cd $TMP
 tar xvf$tarflag $SRC_DIR/$SRC
 cd $PACKAGE-$VERSION
 
-# otherwise will not work
-DBINC="`ls -l /usr/include/db.h | awk '{ print $10 }'`"
-if [ ! -f "$DBINC" ]; then
-  cp /usr/include/db.h db.h.save
+if [ -f "$CWD/$PACKAGE-$VERSION.diff" ]; then
+  patch -p1 < $CWD/$PACKAGE-$VERSION.diff
 fi
 
-ln -sf /usr/include/db4/db.h /usr/include/db.h
-
-./configure --prefix=/usr --sysconfdir=/etc --libdir=$LIBDIR
+./configure --prefix=/usr --sysconfdir=/etc --libdir=$LIBDIR --with-docdir=/usr/doc/$PACKAGE-$VERSION
 make depend
 make
 make DESTDIR=$TMP/package-$PACKAGE install
-
-# fix your system
-if [ ! -f "$DBINC" ]; then
-  cp db.h.save /usr/include/db.h
-else
-  ln -sf $DBINC /usr/include/db.h
-fi
 
 CWD="`pwd`"
 
@@ -100,33 +94,25 @@ cat << EOF > install/slack-desc
 # customary to leave one space after the ':'.
 
         |-----handy-ruler-----------------------------------------------------|
-openldap: openldap (LDAP suite of applications and development tools)
+openldap: openldap (Openldap is an open source implementation of LDAP)
 openldap:
-openldap: The OpenLDAP Project is a collaborative effort to provide a robust,
-openldap: commercial-grade, fully featured, open source LDAP software suite.
-openldap: The project is managed by a worldwide community of volunteers that
-openldap: use the Internet to communicate, plan, and develop OpenLDAP Software
-openldap: and its related documentation. OpenLDAP Software provides a complete
-openldap: LDAP implementation including server, clients, C SDK, and associated
-openldap: tools.
-openldap:
-openldap:
+openldap: OpenLDAP Software is an open source implementation of the 
+openldap: Lightweight Directory Access Protocol.
+openldap: 
+openldap: 
+openldap: 
+openldap: 
+openldap: 
+openldap: http://www.openldap.org/
+openldap: 
 EOF
-
-# configs
-mv etc/openldap/ldap.conf etc/openldap/ldap.conf.new
-mv etc/openldap/slapd.conf etc/openldap/slapd.conf.new
 
 # docs
 mkdir -p usr/doc/$PACKAGE-$VERSION
 
-for file in ANNOUNCEMENT CHANGES COPYRIGHT INSTALL LICENSE README; do
+for file in ANNOUNCEMENT CHANGES COPYRIGHT INSTALL LICENSE README;do
   cp $CWD/$file* usr/doc/$PACKAGE-$VERSION/
 done
-
-# install script
-echo '( if [ ! -f "etc/openldap/ldap.conf" ]; then mv etc/openldap/ldap.conf.new etc/openldap/ldap.conf; fi )' > install/doinst.sh
-echo '( if [ ! -f "etc/openldap/slapd.conf" ]; then mv etc/openldap/slapd.conf.new etc/openldap/slapd.conf; fi )' >> install/doinst.sh
 
 makepkg -c y -l y $REPOS/$PACKAGE-$VERSION-$ARCH-$BUILD.tgz
 
