@@ -91,7 +91,7 @@ cat << EOF > install/slack-desc
 # make exactly 11 lines for the formatting to be correct.  It's also
 # customary to leave one space after the ':'.
 
-           |-----handy-ruler-----------------------------------------------------|
+    |-----handy-ruler-----------------------------------------------------|
 opal: opal (Opal is a library for VoIP protocols)
 opal:
 opal: 
