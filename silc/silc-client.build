@@ -50,7 +50,7 @@ SRC="$PACKAGE-$VERSION.tar.$PACKAGE_EXT"
 URL="http://silcnet.org/download/client/sources/$SRC"
 
 SRC_DIR="$SRC_DIR/$PACKAGE"
-if [ ! -d $SRC_DIR ]; then
+if [ ! -d "$SRC_DIR" ]; then
   mkdir -p $SRC_DIR
 fi
 
@@ -65,8 +65,7 @@ if [ "$RTOOL" == "wget" ] && [ ! -f "$SRC_DIR/$SRC" ]; then
 fi
 
 TMP="$TMP/$PACKAGE"
-if [ ! -d $TMP ]; then
-  rm -rf $TMP
+if [ ! -d "$TMP" ]; then
   mkdir -p $TMP
 fi
 cd $TMP
@@ -114,8 +113,6 @@ mkdir -p /usr/doc/$PACKAGE-$VERSION
 for file in BSD CHANGES COPYING CREDITS GPL INSTALL README README.CVS README.MACOSX README.WIN32 TODO;do
   cp $CWD/$file* /usr/doc/$PACKAGE-$VERSION/
 done
-
-makepkg -c y -l y $REPOS/$PACKAGE-$VERSION-$ARCH-$BUILD.tgz
 
 if [ "$CLEANUP" == "yes" ]; then
   rm -rf $TMP

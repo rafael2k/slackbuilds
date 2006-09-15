@@ -1,0 +1,132 @@
+#!/bin/bash
+#
+# build script for privoxy
+# by rhatto at riseup.net
+# build it with slacktrack, example:
+#
+#   ARCH=x86_64 slacktrack -jefkzp "privoxy-3.0.3-x86_64-1rha.tgz" "./privoxy.build"
+#
+
+CWD="`pwd`"
+
+if [ -f "/etc/slackbuildrc" ]; then
+  source /etc/slackbuildrc
+fi
+
+if [ -f "~/.slackbuildrc" ]; then
+  source ~/.slackbuildrc
+fi
+
+# default settings
+PACKAGE="privoxy"
+ARCH=${ARCH:=i486}
+VERSION=${VERSION:=3.0.3}
+BUILD=${BUILD:=4rha}
+SRC_DIR=${SRC:=$CWD}
+TMP=${TMP:=/tmp}
+REPOS=${REPOS:=$TMP}
+
+if ! grep -qe "^$PACKAGE:" /etc/passwd || ! grep -qe "^$PACKAGE:" /etc/group; then
+  echo "WARNING: user and/or group $PACKAGE does not exist"
+  echo "Create it manually with \"groupadd $PACKAGE ; useradd $PACKAGE -g $PACKAGE\" and run this script again."
+  exit 1
+fi
+
+if [ "$ARCH" == "x86_64" ]; then
+  LIBDIR=/usr/lib64
+else
+  LIBDIR=/usr/lib
+fi
+
+RTOOL="wget"
+PACKAGE_EXT="gz"
+SRC="$PACKAGE-$VERSION-stable-src.tar.$PACKAGE_EXT"
+URL="http://easynews.dl.sourceforge.net/sourceforge/ijbswa/$SRC"
+
+SRC_DIR="$SRC_DIR/$PACKAGE"
+if [ ! -d "$SRC_DIR" ]; then
+  mkdir -p $SRC_DIR
+fi
+
+if [ "$PACKAGE_EXT" == "bz2" ]; then
+  tarflag="j"
+else
+  tarflag="z"
+fi
+
+if [ "$RTOOL" == "wget" ] && [ ! -f "$SRC_DIR/$SRC" ]; then
+  wget "$URL" -O "$SRC_DIR/$SRC"
+fi
+
+TMP="$TMP/$PACKAGE"
+if [ ! -d "$TMP" ]; then
+  mkdir -p $TMP
+fi
+cd $TMP
+
+tar xvf$tarflag $SRC_DIR/$SRC
+cd $PACKAGE-$VERSION-stable
+
+if [ -f "$CWD/$PACKAGE-$VERSION.diff" ]; then
+  # 3.0.3 patch got from 
+  # https://svn.openwrt.org/openwrt/trunk/openwrt/package/privoxy/patches/101-destdir.patch
+  patch -p1 < $CWD/$PACKAGE-$VERSION.diff
+fi
+
+autoheader
+autoconf
+./configure --prefix=/usr --sysconfdir=/etc/$PACKAGE --libdir=$LIBDIR
+make
+# privoxy isnt handling DESTDIR correctly
+make install
+
+mkdir /etc/rc.d/
+cp $CWD/rc.privoxy.new /etc/rc.d
+CWD="`pwd`"
+
+mv /etc/privoxy/config /etc/privoxy/config.sample
+
+find . | xargs file | grep "executable" | grep ELF | cut -f 1 -d : | xargs strip --strip-unneeded 2> /dev/null
+find . | xargs file | grep "shared object" | grep ELF | cut -f 1 -d : | xargs strip --strip-unneeded 2> /dev/null
+
+mkdir /install
+cat << EOF > /install/slack-desc
+# HOW TO EDIT THIS FILE:
+# The "handy ruler" below makes it easier to edit a package description.  Line
+# up the first '|' above the ':' following the base package name, and the '|'
+# on the right side marks the last column you can put a character in.  You must
+# make exactly 11 lines for the formatting to be correct.  It's also
+# customary to leave one space after the ':'.
+
+       |-----handy-ruler-----------------------------------------------------|
+privoxy: privoxy (A Web proxy with advanced filtering capabilities)
+privoxy:
+privoxy: Privoxy is a Web proxy based on Internet Junkbuster with advanced
+privoxy: filtering capabilities for protecting privacy, filtering Web page
+privoxy: content, managing cookies, controlling access, and removing ads,
+privoxy: banners, pop-ups, and other obnoxious Internet junk. Privoxy has a
+privoxy: very flexible configuration and can be customized to suit individual
+privoxy: needs and tastes. Privoxy is useful for both stand-alone systems and
+privoxy: multi-user networks.
+privoxy:
+privoxy:
+EOF
+
+# docs
+mkdir -p /usr/doc/$PACKAGE-$VERSION
+
+for file in AUTHORS ChangeLog INSTALL LICENSE Makefile README; do
+  cp $CWD/$file* /usr/doc/$PACKAGE-$VERSION/
+done
+
+# install script
+echo '( chroot . /sbin/ldconfig )' > /install/doinst.sh
+echo '( if ! grep -qe "^privoxy:" etc/group; then echo creating group privoxy... ; chroot . /usr/sbin/groupadd privoxy; fi )' >> /install/doinst.sh
+echo '( if ! grep -qe "^privoxy:" etc/passwd; then echo creating user privoxy... ; chroot . /usr/sbin/useradd privoxy -g privoxy; fi )' >> /install/doinst.sh
+echo '( if [ ! -f "etc/rc.d/rc.privoxy" ]; then mv etc/rc.d/rc.privoxy.new etc/rc.d/rc.privoxy; fi )' >> /install/doinst.sh
+echo '( if [ ! -f "etc/privoxy/config" ]; then mv etc/privoxy/config.sample etc/privoxy/config; fi )' >> /install/doinst.sh
+
+if [ "$CLEANUP" == "yes" ]; then
+  rm -rf $TMP
+fi
+
