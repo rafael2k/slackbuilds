@@ -22,7 +22,7 @@ fi
 # default settings
 PACKAGE="libgpg-error"
 ARCH=${ARCH:=i486}
-VERSION=${VERSION:=1.3}
+VERSION=${VERSION:=1.4}
 BUILD=${BUILD:=1rha}
 SRC_DIR=${SRC:=$CWD}
 TMP=${TMP:=/tmp}
