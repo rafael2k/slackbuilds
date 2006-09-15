@@ -34,7 +34,8 @@ PACKAGE_EXT="tgz"
 SRC="$PACKAGE-$VERSION.tar.$PACKAGE_EXT"
 KEY="http://www.courier-mta.org/KEYS.bin"
 SRC="$PACKAGE-$VERSION.$PACKAGE_EXT"
-URL="ftp://ftp.openldap.org/pub/OpenLDAP/openldap-release/$SRC"
+#URL="ftp://ftp.openldap.org/pub/OpenLDAP/openldap-release/$SRC"
+URL="http://public.planetmirror.com/pub/openldap/openldap-release/$SRC"
 
 if [ "$PACKAGE_EXT" == "bz2" ]; then
   tarflag="j"
