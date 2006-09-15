@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# slackbuild script for clamav
+# slackbuild script for openldap-client
 #
 
 CWD="`pwd`"
