@@ -42,7 +42,7 @@ else
   tarflag="z"
 fi
 
-SRC_DIR="$SRC_DIR/$PACKAGE"
+SRC_DIR="$SRC_DIR/openldap"
 mkdir -p $SRC_DIR
 
 if [ "$RTOOL" == "wget" ] && [ ! -f "$SRC_DIR/$SRC" ]; then
