@@ -21,7 +21,7 @@ fi
 PACKAGE="mailman"
 TMP=${TMP:=/tmp}
 VERSION=${VERSION:=2.1.8}
-ARCH=${ARCH:=i386}
+ARCH=${ARCH:=i486}
 BUILD=${BUILD:=1rha}
 SRC_DIR=${SRC:=$CWD}
 PREFIX="/usr/local"
