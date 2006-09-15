@@ -82,10 +82,12 @@ fi
 make
 make install
 
+CWD="`pwd`"
+
 strip --strip-unneeded /usr/bin/silc
 
 mkdir /install
-cat << EOF > install/slack-desc
+cat << EOF > /install/slack-desc
 # HOW TO EDIT THIS FILE:
 # The "handy ruler" below makes it easier to edit a package description.  Line
 # up the first '|' above the ':' following the base package name, and the '|'
