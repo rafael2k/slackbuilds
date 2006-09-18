@@ -4,9 +4,9 @@
 # by rafael at riseup.net
 #
 
-if [ -s "ekiga.slack-required" ]; then
+if [ -s "slack-required" ]; then
   echo Recomended and required packages for building ekiga are:
-  cat ekiga.slack-required | sed -e 's/^/\t/'
+  cat slack-required | sed -e 's/^/\t/'
   if [ "$INTERACT" != "no" ]; then
     echo If you dont have those installed, press Ctrl-C. Otherwise, hit ENTER.
     read crap
@@ -71,7 +71,7 @@ if [ -f "$CWD/$PACKAGE-$VERSION.diff" ]; then
   patch -p1 < $CWD/$PACKAGE-$VERSION.diff
 fi
 
-./configure --prefix=/usr --disable-gnome --disable-avahi --sysconfdir=/etc --libdir=$LIBDIR --with-docdir=/usr/doc/$PACKAGE-$VERSION
+./configure --prefix=/usr --disable-gnome --disable-avahi --sysconfdir=/etc --libdir=$LIBDIR 
 make
 make DESTDIR=$TMP/package-$PACKAGE install
 
