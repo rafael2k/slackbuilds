@@ -1,6 +1,6 @@
 diff -Naur backupninja-0.9.3.orig/handlers/mysql backupninja-0.9.3/handlers/mysql
 --- backupninja-0.9.3.orig/handlers/mysql	2006-01-19 19:58:56.000000000 -0200
-+++ backupninja-0.9.3/handlers/mysql	2006-09-19 10:30:32.000000000 -0300
++++ backupninja-0.9.3/handlers/mysql	2006-09-19 12:22:48.000000000 -0300
 @@ -24,7 +24,7 @@
  local usevserver=no
  local vroot
@@ -50,7 +50,7 @@ diff -Naur backupninja-0.9.3.orig/handlers/mysql backupninja-0.9.3/handlers/mysq
  
 diff -Naur backupninja-0.9.3.orig/handlers/rdiff backupninja-0.9.3/handlers/rdiff
 --- backupninja-0.9.3.orig/handlers/rdiff	2006-01-31 15:35:46.000000000 -0200
-+++ backupninja-0.9.3/handlers/rdiff	2006-09-19 10:34:09.000000000 -0300
++++ backupninja-0.9.3/handlers/rdiff	2006-09-19 12:24:54.000000000 -0300
 @@ -17,8 +17,8 @@
  	fi
  	local user=$1
@@ -81,9 +81,18 @@ diff -Naur backupninja-0.9.3.orig/handlers/rdiff backupninja-0.9.3/handlers/rdif
  check_consistency "destination" "$type" "$user" "$host"
  
  ### CHECK CONFIG ###
+@@ -147,7 +148,7 @@
+ 	keep="${keep}D"
+ fi
+ 
+-removestr="$RDIFFBACKUP --force --remove-older-than $keep "
++removestr="$RDIFFBACKUP $options --force --remove-older-than $keep "
+ if [ "$desttype" == "remote" ]; then
+ 	removestr="${removestr}${destuser}@${desthost}::"
+ fi
 diff -Naur backupninja-0.9.3.orig/src/backupninja.in backupninja-0.9.3/src/backupninja.in
 --- backupninja-0.9.3.orig/src/backupninja.in	2006-01-17 20:22:52.000000000 -0200
-+++ backupninja-0.9.3/src/backupninja.in	2006-09-19 10:30:32.000000000 -0300
++++ backupninja-0.9.3/src/backupninja.in	2006-09-19 12:22:48.000000000 -0300
 @@ -500,7 +500,7 @@
  	 		echo ${messages[$i]}
  		done
