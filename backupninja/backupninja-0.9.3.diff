@@ -1,6 +1,6 @@
 diff -Naur backupninja-0.9.3.orig/handlers/mysql backupninja-0.9.3/handlers/mysql
---- backupninja-0.9.3.orig/handlers/mysql	2006-01-19 21:58:56.000000000 +0000
-+++ backupninja-0.9.3/handlers/mysql	2006-08-01 03:36:07.000000000 +0000
+--- backupninja-0.9.3.orig/handlers/mysql	2006-01-19 19:58:56.000000000 -0200
++++ backupninja-0.9.3/handlers/mysql	2006-09-19 10:30:32.000000000 -0300
 @@ -24,7 +24,7 @@
  local usevserver=no
  local vroot
@@ -48,9 +48,42 @@ diff -Naur backupninja-0.9.3.orig/handlers/mysql backupninja-0.9.3/handlers/mysq
  	debug "using $defaultsfile"
  fi
  
+diff -Naur backupninja-0.9.3.orig/handlers/rdiff backupninja-0.9.3/handlers/rdiff
+--- backupninja-0.9.3.orig/handlers/rdiff	2006-01-31 15:35:46.000000000 -0200
++++ backupninja-0.9.3/handlers/rdiff	2006-09-19 10:34:09.000000000 -0300
+@@ -17,8 +17,8 @@
+ 	fi
+ 	local user=$1
+ 	local host=$2
+-	debug "ssh -o PasswordAuthentication=no $host -l $user 'echo -n 1'"
+-	local ret=`ssh -o PasswordAuthentication=no $host -l $user 'echo -n host is alive'`
++	debug "ssh $sshoptions -o PasswordAuthentication=no $host -l $user 'echo -n 1'"
++	local ret=`ssh $sshoptions -o PasswordAuthentication=no $host -l $user 'echo -n host is alive'`
+ 	if echo $ret | grep "host is alive"; then
+ 		debug "Connected to $host as $user successfully"
+ 	else
+@@ -36,8 +36,8 @@
+ 	else
+ 		local user=$1
+ 		local host=$2
+-		debug "ssh $host -l $user '$RDIFFBACKUP -V'"
+-		echo `ssh $host -l $user "$RDIFFBACKUP -V | grep rdiff-backup"`
++		debug "ssh $sshoptions $host -l $user '$RDIFFBACKUP -V'"
++		echo `ssh $sshoptions $host -l $user "$RDIFFBACKUP -V | grep rdiff-backup"`
+ 	fi
+ }
+ 
+@@ -89,6 +89,7 @@
+ getconf type; desttype=$type
+ getconf user; destuser=$user
+ getconf host; desthost=$host
++getconf sshoptions
+ check_consistency "destination" "$type" "$user" "$host"
+ 
+ ### CHECK CONFIG ###
 diff -Naur backupninja-0.9.3.orig/src/backupninja.in backupninja-0.9.3/src/backupninja.in
---- backupninja-0.9.3.orig/src/backupninja.in	2006-01-17 22:22:52.000000000 +0000
-+++ backupninja-0.9.3/src/backupninja.in	2006-08-01 03:35:29.000000000 +0000
+--- backupninja-0.9.3.orig/src/backupninja.in	2006-01-17 20:22:52.000000000 -0200
++++ backupninja-0.9.3/src/backupninja.in	2006-09-19 10:30:32.000000000 -0300
 @@ -500,7 +500,7 @@
  	 		echo ${messages[$i]}
  		done

@@ -18,7 +18,7 @@ fi
 PACKAGE="backupninja"
 ARCH="noarch"
 VERSION=${VERSION:=0.9.3}
-BUILD=${BUILD:=15rha}
+BUILD=${BUILD:=16rha}
 SRC_DIR=${SRC:=$CWD}
 TMP=${TMP:=/tmp}
 REPOS=${REPOS:=$TMP}
