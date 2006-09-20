@@ -146,7 +146,7 @@ for SECTION in $include; do
       error "Config file error: either user or host was not specified"
       exit 1
     else
-      $rsync "$ssh" $user@$host:/$SECTION/ $backupdir/$SECTION/$section.0 >> $log
+      $rsync $EXCLUDES -e "$ssh" $user@$host:/$SECTION/ $backupdir/$SECTION/$section.0 >> $log
     fi
   else
     error "Invalid source $from"
