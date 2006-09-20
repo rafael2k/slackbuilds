@@ -139,7 +139,7 @@ for SECTION in $include; do
   rotate $backupdir/$SECTION/$section $keep
   info "Syncing $SECTION on $backupdir/$SECTION/$section.0..."
 
-  if [ "$type" == "local" ] then
+  if [ "$type" == "local" ]; then
     $rsync $EXCLUDES /$SECTION/ $backupdir/$SECTION/$section.0/ >> $log
   elif [ "$type" == "remote" ]; then
     if [ -z "$user" ] || [ -z "$host" ]; then
