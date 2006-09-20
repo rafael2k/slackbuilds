@@ -22,7 +22,7 @@
 #   [source]
 #   include = include folder on backup
 #   exclude = exclude folder on backup
-#   type = local or remote
+#   from = local or remote
 #   ssh = ssh command line (remote only)
 #   rsync = rsync command line
 #
@@ -43,8 +43,8 @@ getconf days
 getconf lockfile
 
 setsection source
-getconf type local
-getconf rsync rsync -av --delete
+getconf from local
+getconf rsync "rsync -av --delete"
 getconf ssh ssh
 getconf user
 getconf host
@@ -139,9 +139,9 @@ for SECTION in $include; do
   rotate $backupdir/$SECTION/$section $keep
   info "Syncing $SECTION on $backupdir/$SECTION/$section.0..."
 
-  if [ "$type" == "local" ]; then
+  if [ "$from" == "local" ]; then
     $rsync $EXCLUDES /$SECTION/ $backupdir/$SECTION/$section.0/ >> $log
-  elif [ "$type" == "remote" ]; then
+  elif [ "$from" == "remote" ]; then
     if [ -z "$user" ] || [ -z "$host" ]; then
       error "Config file error: either user or host was not specified"
       exit 1
@@ -149,7 +149,7 @@ for SECTION in $include; do
       $rsync "$ssh" $user@$host:/$SECTION/ $backupdir/$SECTION/$section.0 >> $log
     fi
   else
-    error "Invalid source type $type"
+    error "Invalid source $from"
     exit 1
   fi
 
