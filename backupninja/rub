@@ -150,7 +150,7 @@ for SECTION in $include; do
       exit 1
     else
       $rsync $EXCLUDES -e "$ssh" $user@$host:/$SECTION/ $backupdir/$SECTION/$section.0 >> $log
-      if [ "$?" != "0' ];
+      if [ "$?" != "0" ];
         error "Rsync error when trying to transfer $SECTION"
       fi
     fi
