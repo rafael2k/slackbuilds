@@ -65,7 +65,6 @@ make
 make DESTDIR=$TMP/package-$PACKAGE install
 
 cp $CWD/rub $TMP/package-$PACKAGE/usr/share/$PACKAGE/
-cp $CWD/pull $TMP/package-$PACKAGE/usr/share/$PACKAGE/
 rm -rf $TMP/package-$PACKAGE/etc/cron.d
 mkdir $TMP/package-$PACKAGE/etc/cron.hourly
 cp $CWD/backupninja.cron $TMP/package-$PACKAGE/etc/cron.hourly/backupninja

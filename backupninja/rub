@@ -22,6 +22,9 @@
 #   [source]
 #   include = include folder on backup
 #   exclude = exclude folder on backup
+#   type = local or remote
+#   ssh = ssh command line (remote only)
+#   rsync = rsync command line
 #
 #   [services]
 #   initscripts = absolute path where scripts are located
@@ -40,6 +43,11 @@ getconf days
 getconf lockfile
 
 setsection source
+getconf type local
+getconf rsync rsync -av --delete
+getconf ssh ssh
+getconf user
+getconf host
 getconf include
 getconf exclude
 
@@ -126,11 +134,25 @@ for SECTION in $include; do
     mkdir -p $backupdir/$SECTION/$section.0
   fi
  
-  info "Rotating $backupdir/$SECTION/$SECTION..."
-  echo "Rotating $backupdir/$SECTION/$SECTION..." >> $log
+  info "Rotating $backupdir/$SECTION/$section..."
+  echo "Rotating $backupdir/$SECTION/$section..." >> $log
   rotate $backupdir/$SECTION/$section $keep
   info "Syncing $SECTION on $backupdir/$SECTION/$section.0..."
-  rsync -av --delete $EXCLUDES /$SECTION/ $backupdir/$SECTION/$section.0/ >> $log
+
+  if [ "$type" == "local" ] then
+    $rsync $EXCLUDES /$SECTION/ $backupdir/$SECTION/$section.0/ >> $log
+  elif [ "$type" == "remote" ]; then
+    if [ -z "$user" ] || [ -z "$host" ]; then
+      error "Config file error: either user or host was not specified"
+      exit 1
+    else
+      $rsync "$ssh" $user@$host:/$SECTION/ $backupdir/$SECTION/$section.0 >> $log
+    fi
+  else
+    error "Invalid source type $type"
+    exit 1
+  fi
+
   touch $backupdir/$SECTION/$section.0
 
 done
