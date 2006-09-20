@@ -141,12 +141,18 @@ for SECTION in $include; do
 
   if [ "$from" == "local" ]; then
     $rsync $EXCLUDES /$SECTION/ $backupdir/$SECTION/$section.0/ >> $log
+    if [ "$?" != "0" ];
+      error "Rsync error when trying to transfer $SECTION"
+    fi
   elif [ "$from" == "remote" ]; then
     if [ -z "$user" ] || [ -z "$host" ]; then
       error "Config file error: either user or host was not specified"
       exit 1
     else
       $rsync $EXCLUDES -e "$ssh" $user@$host:/$SECTION/ $backupdir/$SECTION/$section.0 >> $log
+      if [ "$?" != "0' ];
+        error "Rsync error when trying to transfer $SECTION"
+      fi
     fi
   else
     error "Invalid source $from"
