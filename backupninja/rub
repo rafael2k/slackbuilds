@@ -140,18 +140,20 @@ for SECTION in $include; do
   info "Syncing $SECTION on $backupdir/$SECTION/$section.0..."
 
   if [ "$from" == "local" ]; then
+    debug $rsync $EXCLUDES /$SECTION/ $backupdir/$SECTION/$section.0/ 
     $rsync $EXCLUDES /$SECTION/ $backupdir/$SECTION/$section.0/ >> $log
     if [ "$?" != "0" ]; then
-      error "Rsync error when trying to transfer $SECTION"
+      warning "Rsync error when trying to transfer $SECTION"
     fi
   elif [ "$from" == "remote" ]; then
     if [ -z "$user" ] || [ -z "$host" ]; then
       error "Config file error: either user or host was not specified"
       exit 1
     else
+      debug $rsync $EXCLUDES -e "$ssh" $user@$host:/$SECTION/ $backupdir/$SECTION/$section.0
       $rsync $EXCLUDES -e "$ssh" $user@$host:/$SECTION/ $backupdir/$SECTION/$section.0 >> $log
       if [ "$?" != "0" ]; then
-        error "Rsync error when trying to transfer $SECTION"
+        warning "Rsync error when trying to transfer $SECTION"
       fi
     fi
   else
