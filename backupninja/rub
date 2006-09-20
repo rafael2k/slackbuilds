@@ -29,7 +29,7 @@
 #
 
 setsection general
-getconf log
+getconf log /var/log/backupninja-rub.log
 getconf partition
 getconf fsck
 getconf read_only
@@ -120,18 +120,18 @@ fi
 
 for SECTION in $include; do
 
- section="`basename $SECTION`"
+  section="`basename $SECTION`"
 
- if [ ! -d "$backupdir/$SECTION/$section.0" ]; then
-   mkdir -p $backupdir/$SECTION/$section.0
- fi
+  if [ ! -d "$backupdir/$SECTION/$section.0" ]; then
+    mkdir -p $backupdir/$SECTION/$section.0
+  fi
  
- info "Rotating $backupdir/$SECTION/$SECTION..."
- echo "Rotating $backupdir/$SECTION/$SECTION..." >> $log
- rotate $backupdir/$SECTION/$section $keep
- info "Syncing $SECTION on $backupdir/$SECTION/$section.0..."
- rsync -av --delete $EXCLUDES /$SECTION/ $backupdir/$SECTION/$section.0/ >> $log
- touch $backupdir/$SECTION/$section.0
+  info "Rotating $backupdir/$SECTION/$SECTION..."
+  echo "Rotating $backupdir/$SECTION/$SECTION..." >> $log
+  rotate $backupdir/$SECTION/$section $keep
+  info "Syncing $SECTION on $backupdir/$SECTION/$section.0..."
+  rsync -av --delete $EXCLUDES /$SECTION/ $backupdir/$SECTION/$section.0/ >> $log
+  touch $backupdir/$SECTION/$section.0
 
 done
 

@@ -18,7 +18,7 @@ fi
 PACKAGE="backupninja"
 ARCH="noarch"
 VERSION=${VERSION:=0.9.3}
-BUILD=${BUILD:=20rha}
+BUILD=${BUILD:=21rha}
 SRC_DIR=${SRC:=$CWD}
 TMP=${TMP:=/tmp}
 REPOS=${REPOS:=$TMP}
@@ -65,6 +65,7 @@ make
 make DESTDIR=$TMP/package-$PACKAGE install
 
 cp $CWD/rub $TMP/package-$PACKAGE/usr/share/$PACKAGE/
+cp $CWD/pull $TMP/package-$PACKAGE/usr/share/$PACKAGE/
 rm -rf $TMP/package-$PACKAGE/etc/cron.d
 mkdir $TMP/package-$PACKAGE/etc/cron.hourly
 cp $CWD/backupninja.cron $TMP/package-$PACKAGE/etc/cron.hourly/backupninja
