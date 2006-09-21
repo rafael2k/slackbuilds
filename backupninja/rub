@@ -132,6 +132,11 @@ if [ "$read_only" == "1" ] || [ "$read_only" == "yes" ]; then
 fi
 
 if [ "$vservers_are_available" == "yes" ]; then
+
+  # sane permission on backup
+  mkdir -p $backupdir/$VROOTDIR
+  chmod 000 $backupdir/$VROOTDIR
+
   for candidate in `ls $VROOTDIR`; do
     found_excluded_vserver="0"
     if [ "$candidate" != "lost+found" ]; then
