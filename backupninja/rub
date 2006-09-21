@@ -25,14 +25,14 @@
 #   from = local or remote
 #   ssh = ssh command line (remote only)
 #   rsync = rsync command line
+#   exclude_vserver = vserver-name (valid only if vservers = yes on backupninja.conf)
 #
 #   [services]
 #   initscripts = absolute path where scripts are located
 #   service = script name to be stoped at the begining of the backup and started at its end
 #
-# TODO: support for better vserver inclusion/exclusion, like:
-#       vservers = yes (global or local config)
-#       exclude_vserver = vserver-name
+# You dont need to manually specify vservers using "include = /vservers".
+# They are automatically backuped ff vserver is set to "yes" on you backupninja.conf.
 #
 
 setsection general
@@ -54,6 +54,7 @@ getconf user
 getconf host
 getconf include
 getconf exclude
+getconf exclude_vserver
 
 setsection services
 getconf initscripts
@@ -128,6 +129,23 @@ if [ "$read_only" == "1" ] || [ "$read_only" == "yes" ]; then
       exit 1
     fi
   fi
+fi
+
+if [ "$vservers_are_available" == "yes" ]; then
+  for candidate in `ls $VROOTDIR`; do
+    found_excluded_vserver="0"
+    if [ "$candidate" != "lost+found" ]; then
+      for excluded_vserver in $exclude_vserver; do
+        if [ "$excluded_vserver" == "$candidate" ]; then
+          found_excluded_vserver="1"
+          break
+        fi
+      done
+      if [ "$found_excluded_vserver" == "0" ]; then
+        include="$include $VROOTDIR/$candidate"
+      fi
+    fi
+  done
 fi
 
 for SECTION in $include; do
