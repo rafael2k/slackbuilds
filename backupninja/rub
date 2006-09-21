@@ -30,6 +30,10 @@
 #   initscripts = absolute path where scripts are located
 #   service = script name to be stoped at the begining of the backup and started at its end
 #
+# TODO: support for better vserver inclusion/exclusion, like:
+#       vservers = yes (global or local config)
+#       exclude_vserver = vserver-name
+#
 
 setsection general
 getconf log /var/log/backupninja-rub.log
