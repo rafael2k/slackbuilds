@@ -32,7 +32,7 @@
 #   service = script name to be stoped at the begining of the backup and started at its end
 #
 # You dont need to manually specify vservers using "include = /vservers".
-# They are automatically backuped ff vserver is set to "yes" on you backupninja.conf.
+# They are automatically backuped if vserver is set to "yes" on you backupninja.conf.
 #
 
 setsection general
