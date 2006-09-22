@@ -34,7 +34,7 @@ fi
 
 RTOOL="wget"
 PACKAGE_EXT="bz2"
-SRC="$PACKAGE-$VERSION.$PACKAGE_EXT"
+SRC="$PACKAGE-$VERSION.tar.$PACKAGE_EXT"
 URL="http://easynews.dl.sourceforge.net/sourceforge/wipe/$SRC"
 
 SRC_DIR="$SRC_DIR/$PACKAGE"
