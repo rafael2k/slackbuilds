@@ -114,7 +114,7 @@ cd $PKG
 
 ( cd boot && ln -s vmlinuz-$KERNEL_VERSION vmlinuz )
 ( cd boot && ln -s config-$KERNEL_VERSION config )
-( cd boot && ln -s System.map-$KERNEL_VERSION System.map)
+( cd boot && ln -s System.map-$KERNEL_VERSION System.map )
 
 makepkg -c y -l y $REPOS/$PACKAGE-$VERSION-$ARCH-$BUILD.tgz
 
