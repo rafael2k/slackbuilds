@@ -99,11 +99,12 @@ wipe:
 EOF
 
 # docs
-mkdir -p /usr/doc/$PACKAGE-$VERSION
+mv /usr/doc/$PACKAGE /usr/doc/$PACKAGE-$VERSION
+# mkdir -p /usr/doc/$PACKAGE-$VERSION
 
-for file in CHANGES INSTALL LICENSE README TESTING TODO; do
-  cp $CWD/$file* /usr/doc/$PACKAGE-$VERSION/
-done
+# for file in CHANGES INSTALL LICENSE README TESTING TODO; do
+#   cp $CWD/$file* /usr/doc/$PACKAGE-$VERSION/
+# done
 
 if [ "$CLEANUP" == "yes" ]; then
   rm -rf $TMP
