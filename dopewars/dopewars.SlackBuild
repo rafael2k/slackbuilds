@@ -94,7 +94,7 @@ dopewars:
 EOF
 
 # docs
-# mkdir -p usr/doc/$PACKAGE-$VERSION
+mkdir -p usr/doc
 mv usr/share/doc/$PACKAGE-$VERSION usr/doc/$PACKAGE-$VERSION
 rmdir usr/share/doc
 
