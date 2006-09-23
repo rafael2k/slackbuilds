@@ -37,6 +37,7 @@ REPOS=${REPOS:=$TMP}
 
 if [ "$ARCH" == "x86_64" ]; then
   LIBDIR=/usr/lib64
+  export LDFLAGS="$LDFLAGS -L/lib64 -L/usr/lib64 -fPIC"
   export CFLAGS="$CFLAGS -fPIC"
 else
   LIBDIR=/usr/lib
