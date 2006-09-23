@@ -72,10 +72,10 @@ fi
 
 if [ "$RTOOL" == "wget" ] && [ ! -f "$SRC_DIR/$SRC" ]; then
   wget "$URL" -O "$SRC_DIR/$SRC"
-  wget "$URL.asc" -O "$SRC_DIR/$SRC.asc"
+  wget "$URL.gpg" -O "$SRC_DIR/$SRC.gpg"
 fi
 
-gpg --verify $SRC_DIR/$SRC.asc $SRC_DIR/$SRC || echo WARNING: Could not check signature or WRONG signature found.
+gpg --verify $SRC_DIR/$SRC.gpg $SRC_DIR/$SRC || echo WARNING: Could not check signature or WRONG signature found.
 sleep 3
 
 TMP="$TMP/$PACKAGE"
