@@ -15,7 +15,7 @@ fi
 
 # default settings
 PACKAGE="mailman"
-VERSION=${VERSION:=2.1.8}
+VERSION=${VERSION:=2.1.9}
 ARCH="${ARCH:=i486}"
 BUILD=${BUILD:=1rha}
 SRC_DIR=${SRC:=$CWD}

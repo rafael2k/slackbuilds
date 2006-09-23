@@ -29,6 +29,33 @@ else
   LIBDIR=/usr/lib
 fi
 
+gpg --import <<EOF
+-----BEGIN PGP PUBLIC KEY BLOCK-----
+Version: GnuPG v1.2.1 (GNU/Linux)
+
+mQGiBD+FrAMRBACyEqh7S8vqlbYzptrQGHCpsrG8Djo3pCBkXWJ/Pfv4bZPf2voU
+bn19j+8fVncE527hWvlLY4dYR04jRVAifBvgTUbXNrl/3IxAelKmq0T22/qSCy8X
+DEHB2g9qgwhLPK44lVN7bN93VN8JEFrcFrFYanYQekq2xux0aL9digsX7wCgog+T
+xoUngcKQh8Pvt1mjWC5W5aUD/3OeX4ZEITchxh0E5OKWrpVvSRz4mpk4F1BrUe9y
+A3v4d8pyQurd5tCcwnZLKI8hqeKZ6ozZJEkO6NG9QYDNkHzPEdh4yi46JhnjP+9S
+KY3AAOSF0aR9r4k/iw7GbeuAxcRJp5zUxtUuASoVewMt46qkrIeBGXHMjy+yjgIg
+Uik2A/9v9yizDH/dIDWodlCK+GzpgZuy7IwgW+5H9fOfMj4GIzS7JoiCHNYRtsx6
+bJbAzYG9g86KXnMzEzkpZHs1C5lb8HFUgbpx6+zxi5FOwir08Gk7RA14b2xy7pYM
+1pNoWaM4XWCnttP9IgP15YcW0oqsnb9pC0GnzNbUFnSFVprr+bQaQmVuIFdlYmIg
+PGJlbkBzYWxpbGFiLm9yZz6IWQQTEQIAGQUCP4WsAwQLBwMCAxUCAwMWAgECHgEC
+F4AACgkQHMfQWXReYJONxACeOmq1bvpQ1dbX9Ns9X+SQnCeV5TwAnA/Kl5LC81eT
+iXvWhS87vkSYGpt+uQENBD+FrAUQBADYv786KL918UBe22Fa/cyC9pdSGmJNWMTW
+fFt/jQRc87voaWR5xHowO0W9j+Vw453nxdpGw5sBtL0UYHWd1LHYwu8atC+gP8yI
+7REyczt1vgZE+MJe13Skd1hKIBxOUPb0Ib3j+XAl+8aaf1OZ0l5/bw6hX38xSo8z
+cYj/x+Ba1wADBQQAnFNWQ8HjgXjg6rWR/85mLUlovwlfWu5RVMvBxdkslM9vTIFZ
+HlWIMcAh2eisesbJLXne+9CYLvKiPVmN5jK5umj9CSy7+5ubrpEfkPI4TtETtw7+
+k1A+jquMTa+oEr245vgQud+Jopou7P+zSnGiduMUIh3ummHcZwKSsXQ3jrmIRgQY
+EQIABgUCP4WsBQAKCRAcx9BZdF5gk7lPAJ9OtD+wr4mZTz7kkbMAJUpzGonfegCe
+LOV9WF3BhJoMhxVgqbLDywOcjb8=
+=4zKp
+-----END PGP PUBLIC KEY BLOCK-----
+EOF
+
 RTOOL="wget"
 PACKAGE_EXT="gz"
 SRC="$PACKAGE-$VERSION.tar.$PACKAGE_EXT"
@@ -45,7 +72,11 @@ fi
 
 if [ "$RTOOL" == "wget" ] && [ ! -f "$SRC_DIR/$SRC" ]; then
   wget "$URL" -O "$SRC_DIR/$SRC"
+  wget "$URL.asc" -O "$SRC_DIR/$SRC.asc"
 fi
+
+gpg --verify $SRC_DIR/$SRC.asc $SRC_DIR/$SRC || echo WARNING: Could not check signature or WRONG signature found.
+sleep 3
 
 TMP="$TMP/$PACKAGE"
 rm -rf $TMP

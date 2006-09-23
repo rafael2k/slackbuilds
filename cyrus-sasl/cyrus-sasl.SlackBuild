@@ -64,7 +64,8 @@ if [ ! -f "$SRC_DIR/$PACKAGE-key.asc" ]; then
   wget "$KEY" -O "$SRC_DIR/$PACKAGE-key.asc" && gpg --import $SRC_DIR/$PACKAGE-key.asc
 fi
 
-gpg --verify $SRC_DIR/$SRC.sig $SRC || echo WARNING: Could not check signature or WRONG signature found.
+gpg --verify $SRC_DIR/$SRC.sig $SRC_DIR/$SRC || echo WARNING: Could not check signature or WRONG signature found.
+sleep 3
 
 if [ "$ARCH" = "i386" ]; then
   SLKCFLAGS="-O2 -march=i386 -mcpu=i686"
