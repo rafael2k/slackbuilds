@@ -32,7 +32,7 @@ fi
 RTOOL="wget"
 PACKAGE_EXT="gz"
 SRC="$PACKAGE-$VERSION.tar.$PACKAGE_EXT"
-ULR="http://easynews.dl.sourceforge.net/sourceforge/dopewars/$SRC"
+URL="http://easynews.dl.sourceforge.net/sourceforge/dopewars/$SRC"
 
 SRC_DIR="$SRC_DIR/$PACKAGE"
 mkdir -p $SRC_DIR
