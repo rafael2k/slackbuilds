@@ -72,7 +72,7 @@ cd $TMP
 tar xvf$tarflag $SRC_DIR/$SRC
 cd $PACKAGE-$VERSION
 
-./configure --prefix=/usr --libdir=$LIBDIR --confdir=/etc --language=pt_BR --enable-largefiles --enable-gui
+./configure --prefix=/usr --libdir=$LIBDIR --confdir=/etc --language=pt_BR --enable-largefiles --enable-gui --enable-win32 --enable-real --enable-qtx --enable-xmms
 make
 make DESTDIR=$TMP/package-$PACKAGE/$PACKAGE install
 
