@@ -18,7 +18,7 @@ fi
 PACKAGE="libiconv"
 ARCH=${ARCH:=i486}
 VERSION=${VERSION:=1.9.2}
-BUILD=${BUILD:=1rha}
+BUILD=${BUILD:=2rha}
 SRC_DIR=${SRC:=$CWD}
 TMP=${TMP:=/tmp}
 REPOS=${REPOS:=$TMP}
@@ -55,7 +55,7 @@ cd $TMP
 tar xvf$tarflag $SRC_DIR/$SRC
 cd $PACKAGE-$VERSION
 
-./configure --prefix=/usr --libdir=$LIBDIR
+./configure --prefix=/usr --libdir=$LIBDIR --enable-static
 make
 make DESTDIR=$TMP/package-$PACKAGE install
 
