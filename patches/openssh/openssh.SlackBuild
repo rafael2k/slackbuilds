@@ -35,7 +35,7 @@ if [ -f "~/.slackbuildrc" ]; then
 fi
 
 PACKAGE="openssh"
-VERSION=${VERSION:=4.3p2}
+VERSION=${VERSION:=4.4p1}
 ARCH=${ARCH:=i486}
 BUILD=${BUILD:=1rha}
 SRC_DIR=${SRC:=$CWD}
