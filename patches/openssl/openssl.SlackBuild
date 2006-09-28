@@ -198,7 +198,7 @@ xdydjOJPeopowohJBBgRAgAJAhsMBQJClhIjAAoJEKevnnj3CUU79/IAoJ5oKNsH
 -----END PGP PUBLIC KEY BLOCK-----
 EOGPG
 
-gpg --verify $SRC_DIR/$SRC.asc $SRC || echo WARNING: Could not check signature or WRONG signature found.
+gpg --verify $SRC_DIR/$SRC.asc $SRC_DIR/$SRC || echo WARNING: Could not check signature or WRONG signature found.
 sleep 3
 
 if [ "$ARCH" == "x86_64" ]; then
