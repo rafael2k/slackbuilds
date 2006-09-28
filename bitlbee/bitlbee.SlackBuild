@@ -86,7 +86,7 @@ CWD="`pwd`"
 
 cd $TMP/package-$PACKAGE
 
-mkdir $TMP/package-$PACKAGE/etc/bitlbee 
+mkdir -p $TMP/package-$PACKAGE/etc/bitlbee 
 cp $CWD/bitlbee.conf $TMP/package-$PACKAGE/etc/bitlbee/bitlbee.conf.dist 
 
 find . | xargs file | grep "executable" | grep ELF | cut -f 1 -d : | xargs strip --strip-unneeded 2> /dev/null
