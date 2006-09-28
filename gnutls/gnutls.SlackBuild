@@ -9,20 +9,16 @@
 # small changes by rhatto
 #
 
-cat << EOCAT
-Just remembering, you need the following packages installed:
-
-  libgcrypt
-  libgpg-error
-
-EOCAT
-
-if [ "$INTERACT" != "no" ]; then
-  echo "Hit ENTER do continue, Crtl-C to abort"
-  read crap
-else
-  echo sleeping 3 seconds...
-  sleep 3
+if [ -s "slack-required" ]; then
+  echo Recomended and required packages for building gnutls are:
+  cat slack-required | sed -e 's/^/\t/'
+  if [ "$INTERACT" != "no" ]; then
+    echo If you dont have those installed, press Ctrl-C. Otherwise, hit ENTER.
+    read crap
+  else
+    echo Sleeping 3 seconds...
+    sleep 3
+  fi
 fi
 
 CWD=`pwd`
