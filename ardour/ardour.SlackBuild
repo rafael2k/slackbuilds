@@ -73,7 +73,7 @@ if [ -f "$CWD/$PACKAGE-$VERSION.diff" ]; then
 fi
 
 mkdir -p $TMP/package-$PACKAGE
-scons PREFIX=$TMP/package-$PACKAGE
+scons PREFIX=$TMP/package-$PACKAGE KSI=yes VST=yes
 scons install
 
 CWD="`pwd`"
