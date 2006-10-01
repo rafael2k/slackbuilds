@@ -1,7 +1,7 @@
 diff -Naur soundtracker-0.6.8.orig/app/Makefile.in soundtracker-0.6.8/app/Makefile.in
 --- soundtracker-0.6.8.orig/app/Makefile.in	2006-02-25 10:37:15.000000000 -0300
-+++ soundtracker-0.6.8/app/Makefile.in	2006-10-01 16:58:09.000000000 -0300
-@@ -716,16 +716,16 @@
++++ soundtracker-0.6.8/app/Makefile.in	2006-10-01 17:15:43.000000000 -0300
+@@ -716,19 +716,19 @@
  install-exec-local:
  	case `uname` in \
  	  OpenBSD) \
@@ -21,4 +21,8 @@ diff -Naur soundtracker-0.6.8.orig/app/Makefile.in soundtracker-0.6.8/app/Makefi
 +	    chown root:root $(DESTDIR)$(bindir)/soundtracker; \
  	    ;; \
  	esac
- 	chmod +s $(bindir)/soundtracker
+-	chmod +s $(bindir)/soundtracker
++	chmod +s $(DESTDIR)$(bindir)/soundtracker
+ 	@echo ""
+ 	@echo "***"
+ 	@echo "*** Installing SoundTracker suid root."
