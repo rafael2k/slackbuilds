@@ -119,14 +119,14 @@ echo '( echo ======================= )' >> install/doinst.sh
 echo '( echo " " )' >> install/doinst.sh
 echo '( echo By default, SoundTracker is installed suid root. This way, the audio )' >> install/doinst.sh
 echo '( echo rendering part of the program runs under higher system priority and )' >> install/doinst.sh
-echo '( because of that, there are less skips and pops in the sound under load )' >> install/doinst.sh
+echo '( echo because of that, there are less skips and pops in the sound under load )' >> install/doinst.sh
 echo '( echo " " )' >> install/doinst.sh
-echo '( This can be a security risk, however. If you are running this program )' >> install/doinst.sh
-echo '( on a multi-user machine -- that is, other users that you dont )' >> install/doinst.sh 
-echo '( completely trust have access to this machine -- you should think about )' >> install/doinst.sh
-echo '( removing the suid flag by doing a )' >> install/doinst.sh
+echo '( echo This can be a security risk, however. If you are running this program )' >> install/doinst.sh
+echo '( echo on a multi-user machine -- that is, other users that you dont )' >> install/doinst.sh 
+echo '( echo completely trust have access to this machine -- you should think about )' >> install/doinst.sh
+echo '( echo removing the suid flag by doing a )' >> install/doinst.sh
 echo '( echo " " )' >> install/doinst.sh
-echo '( echo -e \tchmod -s /usr/bin/soundtracker )' >> install/doinst.sh
+echo '( echo -e "\t chmod -s /usr/bin/soundtracker" )' >> install/doinst.sh
 echo '( echo " " )' >> install/doinst.sh
 echo '( echo as root. )' >> install/doinst.sh
 
