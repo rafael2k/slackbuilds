@@ -8,7 +8,7 @@ PRIVOXY_BIN="/usr/sbin/$PRIVOXY_PRG"
 PRIVOXY_CONF="/etc/privoxy/config"
 PRIVOXY_USER="privoxy"
 PRIVOXY_GROUP="privoxy"
-PRIVOXY_PID="/var/run/$PRIVOXY_PRG"/$PRIVOXY_PRG.pid
+PRIVOXY_PID="/var/run/$PRIVOXY_PRG/$PRIVOXY_PRG.pid"
 
 declare -i check
 check=(`/bin/ps -e|/bin/grep $PRIVOXY_PRG|/usr/bin/wc -l`)
@@ -26,7 +26,7 @@ start () {
 	echo -n $"Starting $PRIVOXY_PRG: "
 
 	if [ ! -f $PRIVOXY_PID ]; then
-		($PRIVOXY --user $PRIVOXY_USER.$PRIVOXY_GROUP --pidfile $PRIVOXY_PID -c $PRIVOXY_CONF 2>/dev/tty9 ) \
+		( $PRIVOXY --user $PRIVOXY_USER.$PRIVOXY_GROUP --pidfile $PRIVOXY_PID -c $PRIVOXY_CONF 2>/dev/tty9 ) \
 			&& echo " OK" \
 			&& /bin/touch /var/lock/$PRIVOXY_PRG \
 			&& RETVAL=0
