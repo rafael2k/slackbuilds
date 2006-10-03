@@ -1,0 +1,200 @@
+#!/bin/bash
+#
+# slackbuild for lame, by Rudson R. Alves
+# small changes by rhatto
+# requires: none
+# tested: lame-3.97
+
+CWD=`pwd`
+
+if [ -s "slack-required" ]; then
+  echo Recomended and required packages for building lame are:
+  cat slack-required | sed -e 's/^/\t/'
+  if [ "$INTERACT" != "no" ]; then
+    echo If you dont have those installed, press Ctrl-C. Otherwise, hit ENTER.
+    read crap
+  else
+    echo Sleeping 3 seconds...
+    sleep 3
+  fi
+fi
+
+if [ -e "/etc/slackbuildrc" ]; then
+  source /etc/slackbuildrc
+fi
+
+if [ -e "/root/.slackbuildrc" ]; then
+  source /root/.slackbuildrc
+fi
+
+# Nome da fonte para a qual o slackbuild foi construído e o seu md5sum
+# MD5_ORIG="4fbdad5d4203e75125cf5b875b171ac0" # md5 da versao 3.97
+EXTENSION="tar.gz"
+
+# Códigos de Erro
+ERROR_WGET=1
+ERROR_MAKE=1
+ERROR_INSTALL=1
+ERROR_MD5=1
+ERROR_CONF=1
+ERROR_HELP=1
+ERROR_TAR=1
+
+# Variáveis de entrada
+PACKAGE="lame"
+ARCH=${ARCH:=i468}
+VERSION=${VERSION:=3.97}
+BUILD=${BUILD:=1rud}
+SRC_DIR=${SRC:=$CWD}
+SRC=$PACKAGE-$VERSION.$EXTENSION
+TMP=${TMP:=/tmp}
+REPOS=${REPOS:=$TMP}
+PREFIX=${PREFIX:=/usr}
+OPTCONF=${OPTCONF:=""}
+MD5=${MD5:=$MD5_ORIG}
+URL=${URL:="http://ufpr.dl.sourceforge.net/sourceforge/lame/$SRC"}
+#
+
+# SlackBuild Help
+if [ "$1" = "--help" -o "$1" = "help" ]; then
+    echo -e "\033[01;32m
+Use: var1=\"value 1\" var2=\"value 2\" ... <package>.SlackBuild
+where:
+    ARCH=machine arch (i386, i486, i686, ...)
+    VERSION=package version
+    BUILD=package build version (default 1rud)
+    SRC=source directory (default $PWD)
+    TMP=temporary directory (default /tmp)
+    REPOS=repository directory
+    PREFIX=prefix from install package
+    OPTCONF=options to pass from ./configure. To configure
+            help, use OPTCONF=\"--help\"
+    MD5=md5sum from package source
+    URL=url from package source
+\033[m"
+    exit $ERROR_HELP
+fi
+
+# Fonte a ser compilada, com o path
+SOURCE=$SRC_DIR/$SRC
+# Verifica existência do pacote em $SRC em $SRC_DIR
+if [ ! -e $SOURCE ]; then
+    echo -e "\n\n\033[01;32m Download $PACKAGE \n\033[m"
+    wget "$URL" -P "$SRC_DIR/"
+    # Verifica se o
+    if [ "$?" != "0" ]; then
+        echo -e "\n\n\033[01;31m No such source file in $URL\n\033[m"
+        exit $ERROR_WGET
+    fi
+fi
+
+# Checa md5 do pacote
+if [ "$SRC_ORIG" = "$SRC" -o "$MD5" != "$MD5_ORIG" -a "$MD5" != "no" ]; then
+    SUM=`md5sum $SRC_DIR/$SRC | awk '{print $1}'`
+    if [ "$SUM" != "$MD5" ]; then
+        echo -e "\n\n\033[01;31m MD5SUM error: run Slackbuild again \n\033[m"
+        echo -e "\033[01;31m Remove $PACKAGE from $SRC_DIR and start Slackbuild again or use MD5=\"no\" \n\033[m"
+        exit $ERROR_MD5
+    fi
+    echo -e "\n\n\033[01;32m Md5sum Ok \n\033[m"
+fi
+
+# Libdir, para arch x86_64
+LIBDIR=$PREFIX/lib
+# Seleciona flags para o compilador
+if [ "$ARCH" = "i386" ]; then
+    SLKCFLAGS="-O2 -march=i386 -mcpu=i686"
+elif [ "$ARCH" = "i486" ]; then
+    SLKCFLAGS="-O2 -march=i486 -mcpu=i686"
+elif [ "$ARCH" = "i686" ]; then
+    SLKCFLAGS="-O2 -march=i686"
+elif [ "$ARCH" = "s390" ]; then
+    SLKCFLAGS="-O2"
+elif [ "$ARCH" = "x86_64" ]; then
+    SLKCFLAGS="-O2"
+    LIBDIR="$PREFIX/lib64"
+fi
+
+# Desempacota fontes em PKG_SRC=$TMP/$PACKAGE-source
+PKG_SRC=$TMP/$PACKAGE-source
+rm -rf $PKG_SRC 2>/dev/null
+mkdir -p $PKG_SRC
+# Desempacota $SOURCE em $TMP/$PACKAGE-source
+tar xvf $SOURCE -C $PKG_SRC
+if [ "$?" != "0" ]; then
+    echo -e "\n\n\033[01;31m $SOURCE file error \n\033[m"
+    exit $ERROR_TAR
+fi
+# Pega o nome do diretório das fontes independente de sua estrutura (package-version...)
+PKG_DIR="$PKG_SRC/$( ls $PKG_SRC/ )"
+cd $PKG_DIR
+
+# Configura programa
+echo -e "\n\n\033[01;32m CFLAGS=\"$SLKCFLAGS\" ./configure --prefix=$PREFIX --libdir=$LIBDIR $OPTCONF \n\033[m"
+CFLAGS="$SLKCFLAGS" ./configure --prefix=$PREFIX --libdir=$LIBDIR $OPTCONF
+if [ "$?" != "0" ]; then
+    echo -e "\n\n\033[01;31m Configure error \n\033[m"
+    exit $ERROR_CONF
+fi
+
+# Compila programa
+echo -e "\n\n\033[01;32m make all \n\033[m"
+make
+if [ "$?" != "0" ]; then
+    echo -e "\n\n\033[01;31m Build error \n\033[m"
+    exit $ERROR_MAKE
+fi
+
+# Cria diretório temporário para construção do pacote
+PKG=$TMP/$PACKAGE
+rm -rf $PKG
+mkdir -p $PKG
+
+# Instala programa em diretório temporário
+echo -e "\n\n\033[01;32m make install DESTDIR=$PKG \n\033[m"
+make install DESTDIR=$PKG
+if [ "$?" != "0" ]; then
+    echo -e "\n\n\033[01;31m Install error \n\033[m"
+    exit ERROR_INSTALL
+fi
+
+# Limpar o código
+cd $PKG
+find . | xargs file | grep "executable" | grep ELF | cut -f 1 -d : | xargs strip --strip-unneeded 2> /dev/null
+find . | xargs file | grep "shared object" | grep ELF | cut -f 1 -d : | xargs strip --strip-unneeded 2> /dev/null
+
+mkdir $PKG/install
+cat << EOF > $PKG/install/slack-desc
+# HOW TO EDIT THIS FILE:
+# The "handy ruler" below makes it easier to edit a package description.  Line
+# up the first '|' above the ':' following the base package name, and the '|' on
+# the right side marks the last column you can put a character in.  You must make
+# exactly 11 lines for the formatting to be correct.  It's also customary to
+# leave one space after the ':'.
+
+     |--------handy-ruler-----------------------------------------------------|
+lame: LAME package by Rudson R. Alves <rudsonalves[a]yahoo.com.br>
+lame:
+lame: LAME is an LGPL MP3 encoder. The Open source development model allowed
+lame: to improve its quality and speed since 1999. It is now an highly evolved
+lame: MP3 encoder, with quality and speed able to rival state of the art
+lame: commercial encoders.
+lame:
+lame: LAME is able to encode your music using one of its 3 encoding modes:
+lame: constant  bitrate  (CBR),  average  bitrate (ABR) and variable bitrate
+lame: (VBR).
+lame:
+EOF
+
+# Criar diretório de documentação
+PKG_DOC=$PKG/usr/doc/$PACKAGE-$VERSION
+mkdir -p $PKG_DOC
+cp $PKG_DIR/{API,COPYING,ChangeLog,DEFINES,HACKING,INSTALL,LICENSE,README,README.WINGTK,STYLEGUIDE,TODO,USAGE} $PKG_DOC
+
+echo -e "\n\n\033[01;32m makepkg -c y -l y $REPOS/$PACKAGE-$VERSION-$ARCH-$BUILD.tgz \n\033[m"
+makepkg -c y -l y $REPOS/$PACKAGE-$VERSION-$ARCH-$BUILD.tgz
+
+if [ "$CLEANUP" = "yes" ]; then
+    echo -e "\n\n\033[01;32m Remove files... \n\033[m"
+    rm -rf $PKG $PKG_SRC
+fi
