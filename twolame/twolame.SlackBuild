@@ -29,7 +29,7 @@ fi
 # default settings
 PACKAGE="twolame"
 ARCH=${ARCH:=i486}
-VERSION=${VERSION:=0.3.6}
+VERSION=${VERSION:=0.3.7}
 BUILD=${BUILD:=1rha}
 SRC_DIR=${SRC:=$CWD}
 TMP=${TMP:=/tmp}
@@ -43,7 +43,7 @@ else
 fi
 
 RTOOL="wget"
-PACKAGE_EXT="bz2"
+PACKAGE_EXT="gz"
 SRC="$PACKAGE-$VERSION.tar.$PACKAGE_EXT"
 URL="http://easynews.dl.sourceforge.net/sourceforge/twolame/$SRC"
 
