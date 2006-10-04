@@ -1,0 +1,95 @@
+diff -Naur darkice-0.17.1.orig/configure darkice-0.17.1/configure
+--- darkice-0.17.1.orig/configure	2006-05-19 10:08:33.000000000 -0300
++++ darkice-0.17.1/configure	2006-10-03 22:23:56.000000000 -0300
+@@ -879,23 +879,23 @@
+   --without-PACKAGE       do not use PACKAGE (same as --with-PACKAGE=no)
+   --with-lame             use lame for encoding mp3 streams yes
+   --with-lame-prefix=DIR  alternate location for lame /usr
+-                              look for libraries in LAME-PREFIX/lib,
++                              look for libraries in LAME-PREFIX/lib64,
+                               for headers in LAME-PREFIX/include
+   --with-vorbis           use Ogg Vorbis for encoding vorbis streams yes
+   --with-vorbis-prefix=DIR    alternate location for vorbis /usr
+-                              look for libraries in VORBIS-PREFIX/lib,
++                              look for libraries in VORBIS-PREFIX/lib64,
+                               for headers in VORBIS-PREFIX/include
+   --with-faac             use faac for encoding AAC streams yes
+   --with-faac-prefix=DIR  alternate location for faac /usr
+-                              look for libraries in FAAC-PREFIX/lib,
++                              look for libraries in FAAC-PREFIX/lib64,
+                               for headers in FAAC-PREFIX/include
+   --with-twolame             use twolame for encoding MP2 streams yes
+   --with-twolame-prefix=DIR  alternate location for twolame /usr
+-                              look for libraries in TWOLAME-PREFIX/lib,
++                              look for libraries in TWOLAME-PREFIX/lib64,
+                               for headers in TWOLAME-PREFIX/include
+   --with-alsa             use ALSA sound system yes
+   --with-alsa-prefix=DIR      alternate location for ALSA /usr
+-                              look for libraries in ALSA-PREFIX/lib,
++                              look for libraries in ALSA-PREFIX/lib64,
+                               for headers in ALSA-PREFIX/include
+   --with-jack             use JACK audio server yes
+   --with-debug            enable debug mode no
+@@ -5975,7 +5975,7 @@
+ 
+   LAME_LIB_LOC=
+     for FILE in libmp3lame.a; do
+-    for DIR in ${CONFIG_LAME_PREFIX} ${CONFIG_LAME_PREFIX}/lib ; do
++    for DIR in ${CONFIG_LAME_PREFIX} ${CONFIG_LAME_PREFIX}/lib64 ; do
+             if test ".LAME_LIB_LOC"="." && test -f "$DIR/$FILE"; then
+         LAME_LIB_LOC=$DIR
+       fi
+@@ -6046,7 +6046,7 @@
+ 
+   OGG_LIB_LOC=
+     for FILE in libogg.a; do
+-    for DIR in ${CONFIG_VORBIS_PREFIX} ${CONFIG_VORBIS_PREFIX}/lib ; do
++    for DIR in ${CONFIG_VORBIS_PREFIX} ${CONFIG_VORBIS_PREFIX}/lib64 ; do
+             if test ".OGG_LIB_LOC"="." && test -f "$DIR/$FILE"; then
+         OGG_LIB_LOC=$DIR
+       fi
+@@ -6072,7 +6072,7 @@
+ 
+   VORBIS_LIB_LOC=
+     for FILE in libvorbis.a; do
+-    for DIR in ${CONFIG_VORBIS_PREFIX} ${CONFIG_VORBIS_PREFIX}/lib ; do
++    for DIR in ${CONFIG_VORBIS_PREFIX} ${CONFIG_VORBIS_PREFIX}/lib64 ; do
+             if test ".VORBIS_LIB_LOC"="." && test -f "$DIR/$FILE"; then
+         VORBIS_LIB_LOC=$DIR
+       fi
+@@ -6098,7 +6098,7 @@
+ 
+   VORBISENC_LIB_LOC=
+     for FILE in libvorbisenc.a; do
+-    for DIR in ${CONFIG_VORBIS_PREFIX} ${CONFIG_VORBIS_PREFIX}/lib ; do
++    for DIR in ${CONFIG_VORBIS_PREFIX} ${CONFIG_VORBIS_PREFIX}/lib64 ; do
+             if test ".VORBISENC_LIB_LOC"="." && test -f "$DIR/$FILE"; then
+         VORBISENC_LIB_LOC=$DIR
+       fi
+@@ -6173,7 +6173,7 @@
+ 
+   FAAC_LIB_LOC=
+     for FILE in libfaac.a; do
+-    for DIR in ${CONFIG_FAAC_PREFIX} ${CONFIG_FAAC_PREFIX}/lib ; do
++    for DIR in ${CONFIG_FAAC_PREFIX} ${CONFIG_FAAC_PREFIX}/lib64 ; do
+             if test ".FAAC_LIB_LOC"="." && test -f "$DIR/$FILE"; then
+         FAAC_LIB_LOC=$DIR
+       fi
+@@ -6244,7 +6244,7 @@
+ 
+   TWOLAME_LIB_LOC=
+     for FILE in libtwolame.a; do
+-    for DIR in ${CONFIG_TWOLAME_PREFIX} ${CONFIG_TWOLAME_PREFIX}/lib ; do
++    for DIR in ${CONFIG_TWOLAME_PREFIX} ${CONFIG_TWOLAME_PREFIX}/lib64 ; do
+             if test ".TWOLAME_LIB_LOC"="." && test -f "$DIR/$FILE"; then
+         TWOLAME_LIB_LOC=$DIR
+       fi
+@@ -6325,7 +6325,7 @@
+ 
+   ALSA_LIB_LOC=
+     for FILE in libasound.so; do
+-    for DIR in ${CONFIG_ALSA_PREFIX} ${CONFIG_ALSA_PREFIX}/lib ; do
++    for DIR in ${CONFIG_ALSA_PREFIX} ${CONFIG_ALSA_PREFIX}/lib64 ; do
+             if test ".ALSA_LIB_LOC"="." && test -f "$DIR/$FILE"; then
+         ALSA_LIB_LOC=$DIR
+       fi

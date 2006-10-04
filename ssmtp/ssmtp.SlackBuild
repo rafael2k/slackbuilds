@@ -47,10 +47,10 @@ if [ "$RTOOL" == "wget" ] && [ ! -f "$SRC_DIR/$SRC" ]; then
   wget "$URL" -O "$SRC_DIR/$SRC"
 fi
 
+TMP="$TMP/$PACKAGE"
+rm -rf $TMP
+mkdir -p $TMP/package-$PACKAGE
 cd $TMP
-rm -rf package-$PACKAGE
-mkdir package-$PACKAGE
-cd package-$PACKAGE
 
 tar xvf$tarflag $SRC_DIR/$SRC
 cd $PACKAGE-$VERSION
@@ -59,10 +59,7 @@ make
 
 CWD="`pwd`"
 
-TMP="$TMP/$PACKAGE"
-rm -rf $TMP
-mkdir -p $TMP
-cd $TMP
+cd $TMP/package-$PACKAGE
 
 mkdir -p usr/{sbin,man/man8}
 mkdir -p etc/ssmtp
