@@ -75,7 +75,7 @@ fi
 ./configure --prefix=/usr --sysconfdir=/etc --libdir=$LIBDIR 
 make
 strip darksnow
-make_pkg
+make make_pkg
 
 mv $PACKAGE-$VERSION-$ARCH-1rd.tgz $REPOS/$PACKAGE-$VERSION-$ARCH-$BUILD.tgz
 
