@@ -92,7 +92,7 @@ cat << EOF > install/slack-desc
 # customary to leave one space after the ':'.
 
            |-----handy-ruler-----------------------------------------------------|
-libiec61883: libiec61883 (libiec61883 )
+libiec61883: libiec61883 (libiec61883 is Firewire video related library)
 libiec61883:
 libiec61883: This library is an implementation of IEC 61883, part 1 (CIP, plug 
 libiec61883: registers, and CMP), part 2 (DV-SD), part 4 (MPEG2-TS), and part 6
