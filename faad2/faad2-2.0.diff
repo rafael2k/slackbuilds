@@ -1,0 +1,13 @@
+--- Makefile.orig	2006-10-05 04:47:27.000000000 -0300
++++ Makefile	2006-10-05 04:47:57.000000000 -0300
+@@ -624,10 +624,6 @@
+ 	tags tags-recursive uninstall uninstall-am uninstall-info-am
+ 
+ 
+-rpm:    Makefile
+-       make dist
+-       $(RPMBUILD) -ta $(PACKAGE)-$(VERSION).tar.gz
+-       rm $(PACKAGE)-$(VERSION).tar.gz
+ # Tell versions [3.59,3.63) of GNU make to not export all variables.
+ # Otherwise a system limit (for SysV at least) may be exceeded.
+ .NOEXPORT:
