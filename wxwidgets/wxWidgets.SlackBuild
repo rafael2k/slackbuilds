@@ -92,7 +92,7 @@ cat << EOF > install/slack-desc
 # customary to leave one space after the ':'.
 
          |-----handy-ruler-----------------------------------------------------|
-wxWidgets: wxWidgets (WxGTK is a library to write portable GUI code)
+wxWidgets: wxWidgets (WxWidgets is a library to write portable GUI code)
 wxWidgets:
 wxWidgets: wxWidgets lets developers create applications for Win32, Mac OS X, 
 wxWidgets: GTK+, X11, Motif, WinCE, and more using one codebase. It can be used 
