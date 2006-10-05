@@ -77,7 +77,7 @@ make
 strip darksnow
 make make_pkg
 
-mv $PACKAGE-$VERSION-$ARCH-1rd.tgz $REPOS/$PACKAGE-$VERSION-$ARCH-$BUILD.tgz
+mv *-1rd.tgz $REPOS/$PACKAGE-$VERSION-$ARCH-$BUILD.tgz
 
 if [ "$CLEANUP" == "yes" ]; then
   rm -rf $TMP
