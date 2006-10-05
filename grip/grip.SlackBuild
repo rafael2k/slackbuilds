@@ -43,7 +43,7 @@ else
 fi
 
 RTOOL="wget"
-PACKAGE_EXT="bz2"
+PACKAGE_EXT="gz"
 SRC="$PACKAGE-$VERSION.tar.$PACKAGE_EXT"
 URL="http://easynews.dl.sourceforge.net/sourceforge/grip/$SRC"
 
