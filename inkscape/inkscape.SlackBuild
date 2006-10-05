@@ -17,7 +17,7 @@ fi
 # default settings
 PACKAGE="inkscape"
 ARCH=${ARCH:=i486}
-VERSION=${VERSION:=0.44}
+VERSION=${VERSION:=0.44.1}
 BUILD=${BUILD:=1rha}
 SRC_DIR=${SRC:=$CWD}
 TMP=${TMP:=/tmp}
@@ -30,9 +30,10 @@ else
 fi
 
 RTOOL="wget"
-PACKAGE_EXT="bz2"
+PACKAGE_EXT="gz"
 SRC="$PACKAGE-$VERSION.tar.$PACKAGE_EXT"
-URL="http://easynews.dl.sourceforge.net/sourceforge/inkscape/$SRC"
+URL="http://ufpr.dl.sourceforge.net/sourceforge/inkscape/$SRC"
+# URL="http://easynews.dl.sourceforge.net/sourceforge/inkscape/$SRC"
 
 SRC_DIR="$SRC_DIR/$PACKAGE"
 mkdir -p $SRC_DIR
