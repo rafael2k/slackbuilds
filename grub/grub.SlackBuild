@@ -75,7 +75,7 @@ cat << EOF > install/slack-desc
 # make exactly 11 lines for the formatting to be correct.  It's also
 # customary to leave one space after the ':'.
 
-   |-----handy-ruler-----------------------------------------------------|
+    |-----handy-ruler-----------------------------------------------------|
 grub: grub (GNU GRUB Legacy bootloader)
 grub:
 grub: This is the legacy (0.9x) version of GNU GRUB, the GRand Unified
