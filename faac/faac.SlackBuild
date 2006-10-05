@@ -3,8 +3,6 @@
 # slackbuild script for faac
 # by rafael at riseup.net
 #
-# This software has problems w/ autoconf 1.60, I'm using autoconf 1.59 from slack 10.2 - rafael2k
-#
 
 if [ -s "slack-required" ]; then
   echo Recomended and required packages for building faac are:
