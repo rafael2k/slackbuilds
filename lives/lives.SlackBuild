@@ -17,7 +17,7 @@ fi
 # default settings
 PACKAGE="lives"
 ARCH=${ARCH:=i486}
-VERSION=${VERSION:=0.9.7pre1}
+VERSION=${VERSION:=0.9.7}
 BUILD=${BUILD:=1rha}
 SRC_DIR=${SRC:=$CWD}
 TMP=${TMP:=/tmp}

@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# slackbuild script for pwlib
+# slackbuild script for wxWidgets
 # by rafael at riseup.net
 #
 
@@ -27,7 +27,7 @@ if [ -f "~/.slackbuildrc" ]; then
 fi
 
 # default settings
-PACKAGE="wxGTK"
+PACKAGE="wxWidgets"
 ARCH=${ARCH:=i486}
 VERSION=${VERSION:=2.6.3}
 BUILD=${BUILD:=1rd}
@@ -91,24 +91,24 @@ cat << EOF > install/slack-desc
 # make exactly 11 lines for the formatting to be correct.  It's also
 # customary to leave one space after the ':'.
 
-     |-----handy-ruler-----------------------------------------------------|
-wxGTK: wxGTK (WxGTK is a library to write portable GUI code)
-wxGTK:
-wxGTK: wxWidgets lets developers create applications for Win32, Mac OS X, 
-wxGTK: GTK+, X11, Motif, WinCE, and more using one codebase. It can be used 
-wxGTK: from languages such as C++, Python, Perl, and C#/.NET. Unlike other 
-wxGTK: cross-platform toolkits, wxWidgets applications look and feel native. 
-wxGTK: This is because wxWidgets uses the platform's own native controls 
-wxGTK: rather than emulating them. It's also extensive, free, open-source, 
-wxGTK: and mature.
-wxGTK: http://www.wxwidgets.org/
-wxGTK: 
+         |-----handy-ruler-----------------------------------------------------|
+wxWidgets: wxWidgets (WxGTK is a library to write portable GUI code)
+wxWidgets:
+wxWidgets: wxWidgets lets developers create applications for Win32, Mac OS X, 
+wxWidgets: GTK+, X11, Motif, WinCE, and more using one codebase. It can be used 
+wxWidgets: from languages such as C++, Python, Perl, and C#/.NET. Unlike other 
+wxWidgets: cross-platform toolkits, wxWidgets applications look and feel native. 
+wxWidgets: This is because wxWidgets uses the platform's own native controls 
+wxWidgets: rather than emulating them. It's also extensive, free, open-source, 
+wxWidgets: and mature.
+wxWidgets: http://www.wxwidgets.org/
+wxWidgets: 
 EOF
 
 # docs
 mkdir -p usr/doc/$PACKAGE-$VERSION
 
-for file in CHANGES.txt COPYING.LIB INSTALL.txt LICENCE.txt README.txt TODO.txt;do
+for file in CHANGES.txt COPYING.LIB INSTALL-MAC.txt INSTALL-MGL.txt INSTALL-MOTIF.txt INSTALL-OS2.txt INSTALL-X11.txt LICENCE.txt README.txt;do
   cp $CWD/$file* usr/doc/$PACKAGE-$VERSION/
 done
 
