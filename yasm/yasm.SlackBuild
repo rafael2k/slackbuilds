@@ -1,11 +1,11 @@
 #!/bin/bash
 #
-# slackbuild script for yasmp
+# slackbuild script for yasm
 # by rhatto at riseup.net
 #
 
 if [ -s "slack-required" ]; then
-  echo Recomended and required packages for building yasmp are:
+  echo Recomended and required packages for building yasm are:
   cat slack-required | sed -e 's/^/\t/'
   if [ "$INTERACT" != "no" ]; then
     echo If you dont have those installed, press Ctrl-C. Otherwise, hit ENTER.
@@ -27,7 +27,7 @@ if [ -f "~/.slackbuildrc" ]; then
 fi
 
 # default settings
-PACKAGE="yasmp"
+PACKAGE="yasm"
 ARCH=${ARCH:=i486}
 VERSION=${VERSION:=0.5.0}
 BUILD=${BUILD:=1rha}
