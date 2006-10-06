@@ -68,7 +68,7 @@ cd $TMP
 svn checkout svn://svn.mplayerhq.hu/ffmpeg/trunk $PACKAGE
 cd $PACKAGE
 
-./configure --prefix=/usr --sysconfdir=/etc --libdir=$LIBDIR 
+./configure --prefix=/usr --libdir=$LIBDIR 
 make
 make DESTDIR=$TMP/package-$PACKAGE install
 
