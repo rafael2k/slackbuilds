@@ -74,13 +74,19 @@ if [ -f "$CWD/$PACKAGE-$VERSION.diff" ]; then
   patch -p1 < $CWD/$PACKAGE-$VERSION.diff
 fi
 
+# apply debian patches, if exist
+if [ -d "debian/patches" ]; then
+  for file in `ls debian/patches/*patch`; do
+    patch -p1 < $file
+  done
+fi
+
 ./configure --prefix=/usr --sysconfdir=/etc --libdir=$LIBDIR
 make
 make DESTDIR=$TMP/package-$PACKAGE install
 
 CWD="`pwd`"
 cd $TMP/package-$PACKAGE
-
 
 find . | xargs file | grep "executable" | grep ELF | cut -f 1 -d : | xargs strip --strip-unneeded 2> /dev/null
 find . | xargs file | grep "shared object" | grep ELF | cut -f 1 -d : | xargs strip --strip-unneeded 2> /dev/null
