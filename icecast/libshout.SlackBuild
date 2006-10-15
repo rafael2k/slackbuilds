@@ -62,13 +62,6 @@ if [ "$RTOOL" == "wget" ] && [ ! -f "$SRC_DIR/$SRC" ]; then
   wget "$URL.sig" -O "$SRC_DIR/$SRC.sig"
 fi
 
-if [ ! -d $TMP/tmp-$PRGNAM ]; then
-  mkdir -p $TMP/tmp-$PRGNAM # location to build the source
-fi
-if [ ! -d $PKG ]; then
-  mkdir -p $PKG             # place for the package to be built
-fi
-
 # --- PACKAGE BUILDING ---
 
 TMP="$TMP/$PACKAGE"
