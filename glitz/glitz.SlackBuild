@@ -50,7 +50,7 @@ ERROR_TAR=37;       ERROR_MKPKG=38
 RTOOL="wget"
 PACKAGE_EXT="gz"
 SRC="$PACKAGE-$VERSION.tar.$PACKAGE_EXT"
-URL="http://glitzgraphics.org/releases/$SRC"
+URL="http://cairographics.org/snapshots/$SRC"
 
 SRC_DIR="$SRC_DIR/$PACKAGE"
 mkdir -p $SRC_DIR
