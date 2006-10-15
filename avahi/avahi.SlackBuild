@@ -34,9 +34,11 @@ BUILD=${BUILD:=1rha}
 SRC_DIR=${SRC:=$CWD}
 TMP=${TMP:=/tmp}
 REPOS=${REPOS:=$TMP}
+QT_VERSION=${QT_VERSION:=3.3.3}
 
 if [ "$ARCH" == "x86_64" ]; then
   export LDFLAGS="-L/lib64 -L/usr/lib64"
+  export PKG_CONFIG_PATH=/usr/lib64/qt-$QT_VERSION/lib/
   LIBDIR=/usr/lib64
 else
   LIBDIR=/usr/lib
@@ -50,7 +52,7 @@ ERROR_TAR=37;       ERROR_MKPKG=38
 RTOOL="wget"
 PACKAGE_EXT="gz"
 SRC="$PACKAGE-$VERSION.tar.$PACKAGE_EXT"
-URL="http://avahigraphics.org/releases/$SRC"
+URL="http://avahi.org/download/$SRC"
 
 SRC_DIR="$SRC_DIR/$PACKAGE"
 mkdir -p $SRC_DIR
