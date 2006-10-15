@@ -38,7 +38,7 @@ REPOS=${REPOS:=$TMP}
 if [ "$ARCH" == "x86_64" ]; then
   LIBDIR=/usr/lib64
   export LDFLAGS="-L/lib64 -L/usr/lib64"
-  export PKG_CONFIG_PATH="$lIBDIR/qt/lib/"
+  export PKG_CONFIG_PATH="$LIBDIR/qt/lib/"
 else
   LIBDIR=/usr/lib
 fi
