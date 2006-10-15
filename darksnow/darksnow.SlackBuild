@@ -73,7 +73,7 @@ if [ -f "$CWD/$PACKAGE-$VERSION.diff" ]; then
 fi
 
 ./configure --prefix=/usr --sysconfdir=/etc --libdir=$LIBDIR 
-make
+make || exit 32
 strip darksnow
 make make_pkg
 

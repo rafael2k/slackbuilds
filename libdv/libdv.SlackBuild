@@ -82,7 +82,7 @@ if [ -d "debian/patches" ]; then
 fi
 
 ./configure --prefix=/usr --sysconfdir=/etc --libdir=$LIBDIR
-make
+make || exit 32
 make DESTDIR=$TMP/package-$PACKAGE install
 
 CWD="`pwd`"

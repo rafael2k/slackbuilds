@@ -67,7 +67,7 @@ chown -R root:root .
   --prefix=/usr \
   --sysconfdir=/etc \
   $ARCH-slackware-linux
-make
+make || exit 32
 make install DESTDIR=$PKG
 # Not used on Slackware:
 rm -rf $PKG/etc/rc.d

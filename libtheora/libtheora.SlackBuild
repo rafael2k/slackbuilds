@@ -85,7 +85,7 @@ find . -perm 777 -exec chmod 755 {} \;
 CFLAGS="$SLKCFLAGS" CXXFLAGS="$SLKCFLAGS" \
 ./configure --prefix=/usr --disable-static --libdir=$LIBDIR --program-prefix="" --program-suffix="" $TARGET-slackware-linux
 
-make
+make || exit 32
 make install DESTDIR=$PKG
 
 mkdir -p $PKG/usr/doc/$NAME-$VERSION

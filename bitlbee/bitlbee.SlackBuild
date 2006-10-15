@@ -79,7 +79,7 @@ if [ "$ARCH" == "x86_64" ]; then
   mv Makefile.settings.new Makefile.settings
 fi
 
-make
+make || exit 32
 make DESTDIR=$TMP/package-$PACKAGE install
 
 CWD="`pwd`"

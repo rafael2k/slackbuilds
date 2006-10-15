@@ -68,7 +68,7 @@ fi
 autoheader
 autoconf
 ./configure --prefix=/usr --sysconfdir=/etc/$PACKAGE --libdir=$LIBDIR
-make
+make || exit 32
 make install
 
 CWD="`pwd`"

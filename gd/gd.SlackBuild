@@ -58,7 +58,7 @@ cd $PACKAGE-$VERSION
 
 # building with --disable-shared, otherwise stuff such as mrtg wont compile
 ./configure --prefix=/usr --sysconfdir=/etc --libdir=$LIBDIR --with-fontconfig=no --disable-shared
-make
+make || exit 32
 make DESTDIR=$TMP/package-$PACKAGE install
 
 CWD="`pwd`"

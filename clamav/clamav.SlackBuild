@@ -75,7 +75,7 @@ cd $TMP
 tar xvf$tarflag $SRC_DIR/$PACKAGE-$VERSION.tar.$PACKAGE_EXT
 cd $PACKAGE-$VERSION
 ./configure --prefix=/usr --sysconfdir=/etc --libdir=$LIBDIR
-make
+make || exit 32
 make DESTDIR=$TMP/package-$PACKAGE install
 
 CWD="`pwd`"

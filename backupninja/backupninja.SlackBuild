@@ -61,7 +61,7 @@ fi
 
 ./autogen.sh
 ./configure --prefix=/usr --sysconfdir=/etc --libdir=$LIBDIR
-make
+make || exit 32
 make DESTDIR=$TMP/package-$PACKAGE install
 
 cp $CWD/rub $TMP/package-$PACKAGE/usr/share/$PACKAGE/

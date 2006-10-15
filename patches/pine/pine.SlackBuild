@@ -135,7 +135,7 @@ tar xzvf $SRC_DIR/pinepgp-$PINEPGP.tar.gz
 cd pinepgp-$PINEPGP
 chown -R root.root .
 ./configure --prefix=/usr
-make
+make || exit 32
 make install DESTDIR=$PKG1
 chown root.bin $PKG1/usr/bin/*
 mkdir -p $PKG1/usr/doc/pinepgp-$PINEPGP

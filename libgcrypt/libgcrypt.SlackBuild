@@ -81,7 +81,7 @@ CXXFLAGS="$SLKCFLAGS" \
 --program-prefix="" \
 --program-suffix="" \
 $ARCH-slackware-linux
-make
+make || exit 32
 make install DESTDIR=$PKG
 mkdir -p $PKG/usr/doc/$NAME-$VERSION 
 cp -a AUTHORS BUGS COPYING* NEWS README* THANKS TODO VERSION \

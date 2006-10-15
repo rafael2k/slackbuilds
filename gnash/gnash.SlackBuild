@@ -64,7 +64,7 @@ if [ -f "$CWD/$PACKAGE-$VERSION.diff" ]; then
 fi
 
 ./configure --prefix=/usr --sysconfdir=/etc --libdir=$LIBDIR --with-plugindir=$LIBDIR/mozilla/plugins --x-libraries=$LIBDIR
-make
+make || exit 32
 make DESTDIR=$TMP/package-$PACKAGE install
 
 CWD="`pwd`"

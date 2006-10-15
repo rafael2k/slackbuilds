@@ -60,7 +60,7 @@ tar xzvf $SRC_DIR/debianutils_$DUTILS.tar.gz
 cd debianutils-$DUTILS
 chown -R root.root .
 ./configure --prefix=/usr
-make
+make || exit 32
 ## We actually use our own very simple run-parts script instead...
 #cat run-parts > $PKG/usr/bin/run-parts
 #cat run-parts.8 | gzip -9c > $PKG/usr/man/man8/run-parts.8.gz
@@ -83,7 +83,7 @@ if [ "$ARCH" == "x86_64" ]; then
   zcat $CWD/eject-x86_64.diff.gz | patch -p1 --verbose
 fi
 CFLAGS= ./configure --prefix=/usr
-make
+make || exit 32
 cat eject > $PKG/usr/bin/eject
 cat eject.1 | gzip -9c > $PKG/usr/man/man1/eject.1.gz
 cat volname > $PKG/usr/bin/volname
@@ -100,7 +100,7 @@ cd $TMP
 tar xzvf $SRC_DIR/fbset-2.1.tar.gz
 cd fbset-2.1
 chown -R root.root .
-make
+make || exit 32
 mkdir -p $PKG/usr/sbin
 cat fbset > $PKG/usr/sbin/fbset
 chmod 755 $PKG/usr/sbin/fbset
@@ -120,7 +120,7 @@ cd lha-114i
 zcat $SRC_DIR/lha-114i-sec.patch.gz | patch -p1 --verbose
 zcat $SRC_DIR/lha-114i-symlink.patch.gz | patch -p1 --verbose
 chown -R root.root .
-make
+make || exit 32
 cat src/lha > $PKG/usr/bin/lha
 
 echo "+========+"
@@ -135,7 +135,7 @@ CFLAGS=-O2 \
 ./configure \
   --prefix=/usr \
   $ARCH-slackware-linux
-make
+make || exit 32
 cat ed > $PKG/bin/ed
 cat ed.1 | gzip -9c > $PKG/usr/man/man1/ed.1.gz
 cat ed.info | gzip -9c > $PKG/usr/info/ed.info.gz
@@ -151,7 +151,7 @@ zcat $SRC_DIR/compress.diff.gz | patch -p0 -E --backup --verbose
 if [ "$ARCH" == "x86_64" ]; then
   echo 450000 > USERMEM # the default from the source file
 fi
-make
+make || exit 32
 cat compress > $PKG/usr/bin/compress
 cat compress.1 | gzip -9c > $PKG/usr/man/man1/compress.1.gz
 echo '.so man1/compress.1' | gzip -9c > $PKG/usr/man/man1/uncompress.1.gz
@@ -163,7 +163,7 @@ cd $TMP
 tar xzvf $SRC_DIR/banners.tar.gz
 cd banners
 chown -R root.root .
-make
+make || exit 32
 cat bban > $PKG/usr/bin/bban
 cat sysvbanner > $PKG/usr/bin/sysvbanner
 
@@ -186,7 +186,7 @@ zcat $SRC_DIR/file.zisofs.magic.gz >> magic/Magdir/compress
   --enable-fsect-man5 \
   --enable-shared=no \
   $ARCH-slackware-linux
-make
+make || exit 32
 make install DESTDIR=$PKG
 # Is file really this much of a processing bottleneck?  Doubtful.
 rm -f $PKG/etc/file/magic.mgc $PKG/etc/file/magic.mime.mgc
@@ -219,7 +219,7 @@ mkdir -p $PKG/usr/doc/dosfstools-$DOSFS/mkdosfs
 ( cd mkdosfs ; cp -a ANNOUNCE COPYING ChangeLog README mkdosfs-ygg-0.3b.lsm $PKG/usr/doc/dosfstools-$DOSFS/mkdosfs )
 mkdir -p $PKG/usr/doc/dosfstools-$DOSFS/dosfsck
 ( cd dosfsck ; cp -a CHANGES COPYING README $PKG/usr/doc/dosfstools-$DOSFS/dosfsck )
-make
+make || exit 32
 cd mkdosfs
 cat mkdosfs > $PKG/sbin/mkdosfs
 cat mkdosfs.8 | gzip -9c > $PKG/usr/man/man8/mkdosfs.8.gz
@@ -280,7 +280,7 @@ CFLAGS=-O2 \
   --disable-nls \
   --prefix=/usr \
   $ARCH-slackware-linux
-make
+make || exit 32
 cd src
 cat shar > $PKG/usr/bin/shar
 cat unshar > $PKG/usr/bin/unshar
@@ -305,7 +305,7 @@ cd splitvt-1.6.5
 zcat $SRC_DIR/splitvt.devpts.diff.gz | patch -p1 --verbose
 chown -R root.root .
 ./configure
-make
+make || exit 32
 cat splitvt > $PKG/usr/bin/splitvt
 cat splitvt.1 | gzip -9c > $PKG/usr/man/man1/splitvt.1.gz
 mkdir -p $PKG/usr/doc/splitvt-1.6.5
@@ -336,7 +336,7 @@ cd $TMP
 tar xzvf $SRC_DIR/todos.tar.gz
 cd todos
 chown -R root.root .
-make
+make || exit 32
 cat todos > $PKG/usr/bin/todos
 cat fromdos > $PKG/usr/bin/fromdos
 cat todos.1.gz > $PKG/usr/man/man1/todos.1.gz
@@ -351,7 +351,7 @@ cd tree-1.4
 if [ "$ARCH" == "x86_64" ]; then zcat $CWD/tree-x86_64.diff.gz | patch -p1 --verbose; fi
 chown -R root.root .
 make clean
-make
+make || exit 32
 cat tree > $PKG/usr/bin/tree
 chmod 755 $PKG/usr/bin/tree
 cat tree.1 | gzip -9c > $PKG/usr/man/man1/tree.1.gz
@@ -367,7 +367,7 @@ tar xzvf $SRC_DIR/unarj230.tar.gz
 cd unarj230
 chown -R root.root .
 zcat $SRC_DIR/unarj230.diff.gz | patch -p0 -E --verbose --backup
-make
+make || exit 32
 cat unarj > $PKG/usr/bin/unarj
 
 echo "+============+"

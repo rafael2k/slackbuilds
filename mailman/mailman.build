@@ -77,7 +77,7 @@ cd $PACKAGE-$VERSION
 mkdir -p /install
 
 ./configure --with-mail-gid=nogroup --prefix=$PREFIX/mailman/
-make
+make || exit 32
 make install
 
 mv $PREFIX/mailman/Mailman/mm_cfg.py $PREFIX/mailman/Mailman/mm_cfg.py.new

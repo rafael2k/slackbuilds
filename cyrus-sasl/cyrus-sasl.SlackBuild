@@ -105,7 +105,7 @@ CXXFLAGS="$SLKCFLAGS" \
 #            --with-bdb-incdir=/usr/include/db4 --prefix=/usr --sysconfdir=/etc --localstatedir=/var/lib --enable-ldap \
 #            --with-ldap=/usr/libexec/openldap --with-authdaemond=/usr/sbin/authdaemond
 ./configure --prefix=/usr --sysconfdir=/etc --with-authdaemond=/usr/sbin/authdaemond --libdir=$LIBDIR
-make
+make || exit 32
 make install DESTDIR=$PKG
 strip $PKG/usr/sbin/*
 chown -R root.bin $PKG/usr/bin

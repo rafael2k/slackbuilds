@@ -61,7 +61,7 @@ gzip -dc $SRC_DIR/$PATCH | patch -p0
 cd $PACKAGE-$VERSION.orig
 
 ./configure --prefix=/usr --sysconfdir=/etc --libdir=$LIBDIR
-make
+make || exit 32
 make DESTDIR=$TMP/package-$PACKAGE install
 
 CWD="`pwd`"

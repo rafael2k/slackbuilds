@@ -74,7 +74,7 @@ if [ -f "$CWD/$PACKAGE-$VERSION.diff" ]; then
   patch -p0 < $CWD/$PACKAGE-$VERSION.diff
 fi
 
-make
+make || exit 32
 make DESTDIR=$TMP/package-$PACKAGE install
 
 CWD="`pwd`"

@@ -68,7 +68,7 @@ cd $PACKAGE-$VERSION
             --without-cyrus-sasl --without-tls --without-threads --disable-slapd --disable-slurpd
 
 make depend
-make
+make || exit 32
 make DESTDIR=$TMP/package-$PACKAGE install
 
 CWD="`pwd`"

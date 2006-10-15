@@ -85,7 +85,7 @@ cd mrtg-$VERSION
             --sharedstatedir=/usr/share --libexecdir=/usr/lib --mandir=/usr/man \
             --datadir=/usr/share --sysconfdir=/etc
 
-make
+make || exit 32
 make install DESTDIR=$PKG
 
 chown -R root.bin $PKG/usr/bin

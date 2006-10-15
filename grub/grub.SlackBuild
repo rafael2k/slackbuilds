@@ -56,7 +56,7 @@ tar xvf$tarflag $SRC_DIR/$SRC
 cd $PACKAGE-$VERSION
 
 ./configure --prefix=/usr --libdir=$LIBDIR
-make
+make || exit 32
 make DESTDIR=$TMP/package-$PACKAGE install
 
 CWD="`pwd`"

@@ -73,7 +73,7 @@ if [ "$ARCH" == "x86_64" ]; then
   mv src/Makefile.new src/Makefile
 fi
 
-make
+make || exit 32
 make install
 
 CWD="`pwd`"

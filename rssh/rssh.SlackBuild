@@ -80,7 +80,7 @@ sed -e 's/chmod u+s \$(libexecdir)\/rssh_chroot_helper/chmod u+s \$(DESTDIR)\$(l
     Makefile.in > Makefile.in.new && mv Makefile.in.new Makefile.in
 
 ./configure --prefix=/usr --sysconfdir=/etc --libdir=$LIBDIR
-make
+make || exit 32
 make install DESTDIR=$TMP/package-$PACKAGE
 
 CWD="`pwd`"

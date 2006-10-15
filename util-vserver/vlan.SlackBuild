@@ -55,7 +55,7 @@ tar xvf$tarflag $SRC_DIR/$SRC
 mv $PACKAGE $PACKAGE-$VERSION
 cd $PACKAGE-$VERSION
 rm -f vconfig vconfig.o
-make
+make || exit 32
 
 CWD="`pwd`"
 

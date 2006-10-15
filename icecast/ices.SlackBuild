@@ -61,7 +61,7 @@ cd $PRGNAM-$VERSION
             --sysconfdir=/usr/share/icecast/etc \
             --libdir=$LIBDIR 
 
-make
+make || exit 32
 
 # Install all the needed stuff to the package dir
 # Use installwatch if available:

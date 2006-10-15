@@ -112,7 +112,7 @@ fi
 
 chown -R root.root .
 CFLAGS="$SLKCFLAGS" make setup CFG="--prefix=/usr --libdir=$LIBDIR $ARCH-slackware-linux"
-make
+make || exit 32
 make install DESTDIR=$PKG
 ldconfig
 

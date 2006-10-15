@@ -136,7 +136,7 @@ sleep 1
 
 make -f Makefile.init makefiles CCARGS="-DUSE_SASL_AUTH -I/usr/include/sasl/ -DHAS_MYSQL -I/usr/include/mysql/ -I/usr/include -DHAS_LDAP -DUSE_TLS -I/usr/include/gnutls/ -DHAS_PCRE -I/usr/include" AUXLIBS="-L/usr/lib -lsasl2 -L/usr/lib/mysql/ -lmysqlclient -lz -lm -L/usr/lib -lssl -lcrypto -L/usr/lib -lpcre -L/usr/lib -lldap -L/usr/lib -llber"
 
-make
+make || exit 32
 sleep 1
 
 sh postfix-install						\

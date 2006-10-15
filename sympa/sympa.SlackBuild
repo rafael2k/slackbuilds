@@ -87,7 +87,7 @@ tar xvf$tarflag $SRC_DIR/$SRC
 cd $PACKAGE-$VERSION
 ./configure --with-initdir=/etc/rc.d/ --prefix=/usr/local/sympa --with-confdir=/usr/local/sympa/conf \
             --with-etcdir=/usr/local/sympa/etc
-make
+make || exit 32
 make DESTDIR=$TMP/package-$PACKAGE install | tee $TMP/package-$PACKAGE/install.log
 
 CWD="`pwd`"

@@ -95,7 +95,7 @@ CXXFLAGS="$SLKCFLAGS" \
 --program-suffix="" \
 $TARGET-slackware-linux
 
-make
+make || exit 32
 make install DESTDIR=$PKG
 
 mkdir -p $PKG/usr/doc/$NAME-$VERSION

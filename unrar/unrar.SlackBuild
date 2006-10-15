@@ -65,7 +65,7 @@ tar xvf$tarflag $SRC_DIR/$SRC
 cd unrarlib040-unrar-patch-ab
 cp ../unrarlib-0.4.0/unrarlib/* .
 
-make
+make || exit 32
 
 mkdir -p $TMP/package-$PACKAGE/usr/{bin,doc/$PACKAGE-$VERSION}
 cp unrar $TMP/package-$PACKAGE/usr/bin

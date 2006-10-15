@@ -74,7 +74,7 @@ ln -sf /usr/include/db4/db.h /usr/include/db.h
 
 ./configure --prefix=/usr --sysconfdir=/etc --libdir=$LIBDIR
 make depend
-make
+make || exit 32
 make DESTDIR=$TMP/package-$PACKAGE install
 
 # fix your system

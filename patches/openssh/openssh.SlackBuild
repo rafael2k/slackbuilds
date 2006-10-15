@@ -142,7 +142,7 @@ CFLAGS="$SLKCFLAGS" \
   --with-privsep-user=sshd \
   $ARCH-slackware-linux
 
-make
+make || exit 32
 
 # Install the package:
 make install DESTDIR=$PKG

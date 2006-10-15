@@ -69,7 +69,7 @@ svn checkout svn://svn.mplayerhq.hu/ffmpeg/trunk $PACKAGE
 cd $PACKAGE
 
 ./configure --prefix=/usr --libdir=$LIBDIR 
-make
+make || exit 32
 make DESTDIR=$TMP/package-$PACKAGE install
 
 CWD="`pwd`"

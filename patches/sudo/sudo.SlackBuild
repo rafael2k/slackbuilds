@@ -94,7 +94,7 @@ cd sudo-$VERSION
 chown -R root.root .
 CFLAGS="$SLKCFLAGS" \
 ./configure --prefix=/usr --sbindir=/usr/sbin --with-getpass --with-C2
-make
+make || exit 32
 make install DESTDIR=$PKG
 chown -R root:bin $PKG/usr/bin $PKG/usr/sbin
 ( cd $PKG/usr/bin

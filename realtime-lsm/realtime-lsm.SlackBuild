@@ -55,7 +55,7 @@ cd $TMP
 tar xvf$tarflag $SRC_DIR/$SRC
 cd $PACKAGE-$VERSION
 
-make
+make || exit 32
 
 CWD="`pwd`"
 

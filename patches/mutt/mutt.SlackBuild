@@ -101,7 +101,7 @@ CFLAGS="-O2 $AOPTS" ./configure \
            --libdir=$LIBDIR
            $ARCH-slackware-linux
 
-make
+make || exit 32
 make install DESTDIR=$PKG
 
 ( cd $PKG

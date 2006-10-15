@@ -115,7 +115,7 @@ CXXFLAGS="$SLKCFLAGS" \
             --enable-shared \
             --with-perl \
             $ARCH-slackware-linux
-make
+make || exit 32
 make install DESTDIR=$PKG
 
 # Lately ImageMagick has been smoking crack:
