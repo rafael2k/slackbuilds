@@ -68,7 +68,7 @@ cd $TMP
 svn checkout svn://svn.mplayerhq.hu/ffmpeg/trunk $PACKAGE
 cd $PACKAGE
 
-./configure --prefix=/usr --libdir=$LIBDIR 
+./configure --prefix=/usr --libdir=$LIBDIR --enable-shared --enable-pthreads --enable-mp3lame --enable-vorbis --enable-gpl
 make || exit 32
 make DESTDIR=$TMP/package-$PACKAGE install
 
