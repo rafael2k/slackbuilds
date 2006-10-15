@@ -37,9 +37,9 @@ REPOS=${REPOS:=$TMP}
 QT_VERSION=${QT_VERSION:=3.3.3}
 
 if [ "$ARCH" == "x86_64" ]; then
-  export LDFLAGS="-L/lib64 -L/usr/lib64"
-  export PKG_CONFIG_PATH=/usr/lib64/qt-$QT_VERSION/lib/
   LIBDIR=/usr/lib64
+  export LDFLAGS="-L/lib64 -L/usr/lib64"
+  export PKG_CONFIG_PATH="$lIBDIR/qt-$QT_VERSION/lib/"
 else
   LIBDIR=/usr/lib
 fi
