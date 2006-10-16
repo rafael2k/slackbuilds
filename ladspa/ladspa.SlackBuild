@@ -73,6 +73,9 @@ fi
 
 cd src
 
+# for mkdirhier
+export PATH="$PATH:/usr/X11R6/bin/"
+
 sed -e 's/\/usr\/local\/lib\/ladspa\//\/usr\/lib\/ladspa\//' \
     -e 's/\/usr\/local\/bin\//\/usr\/bin\//' makefile > makefile.tmp || exit $ERROR_CONF
 
