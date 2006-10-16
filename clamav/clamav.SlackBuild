@@ -60,6 +60,7 @@ if [ ! -f "$SRC_DIR/$PACKAGE-key.asc" ]; then
 fi
 
 gpg --verify $SRC_DIR/$SRC.sig $SRC_DIR/$SRC || echo WARNING: Could not check signature or WRONG signature found.
+sleep 3
 
 if [ "$ARCH" == "x86_64" ]; then
   LIBDIR="/usr/lib64"
