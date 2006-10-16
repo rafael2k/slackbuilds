@@ -76,7 +76,7 @@ cd src
 sed -e 's/\/usr\/local\/lib\/ladspa\//\/usr\/lib\/ladspa\//' \
     -e 's/\/usr\/local\/bin\//\/usr\/bin\//' makefile > makefile.tmp || exit $ERROR_CONF
 
-echo 'PREFIX = $TMP/package-$PACKAGE' >> makefile.tmp || exit $ERROR_CONF
+echo "PREFIX = $TMP/package-$PACKAGE" >> makefile.tmp || exit $ERROR_CONF
 
 sed -e 's/$(INSTALL_PLUGINS_DIR)/$(PREFIX)\/$(INSTALL_PLUGINS_DIR)/g' \
     -e 's/$(INSTALL_INCLUDE_DIR)/$(PREFIX)\/$(INSTALL_INCLUDE_DIR)/g' \
