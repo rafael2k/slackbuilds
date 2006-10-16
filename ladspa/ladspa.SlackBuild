@@ -29,7 +29,7 @@ fi
 # default settings
 PACKAGE="ladspa"
 ARCH=${ARCH:=i486}
-VERSION=${VERSION:=1.2.4}
+VERSION=${VERSION:=1.12}
 BUILD=${BUILD:=1rha}
 SRC_DIR=${SRC:=$CWD}
 TMP=${TMP:=/tmp}
