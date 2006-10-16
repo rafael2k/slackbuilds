@@ -51,9 +51,9 @@ RTOOL="wget"
 PACKAGE_EXT="gz"
 
 if [ "$VERSION" == "0.8.1" ]; then
-  SRC="$PACKAGE-$VERSION"a.tar."$PACKAGE_EXT"
+  SRC="muse-$VERSION"a.tar."$PACKAGE_EXT"
 else
-  SRC="$PACKAGE-$VERSION.tar.$PACKAGE_EXT"
+  SRC="muse-$VERSION.tar.$PACKAGE_EXT"
 fi
 
 URL="http://easynews.dl.sourceforge.net/sourceforge/lmuse/$SRC"
