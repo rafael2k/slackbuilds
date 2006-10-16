@@ -145,11 +145,11 @@ mkdir -p $PKG
 # ---------------  Instala programa  ----------------------
 # Instala programa em diretório temporário
 echo -e "\n\n\033[01;32m make install DESTDIR=$PKG \n\033[m"
-make install prefix=$TMP_DEST/$PREFIX \
-             bindir=$TMP_DEST/$PREFIX/bin \
-             mandir=$TMP_DEST/$PREFIX/man \
-             datadir=$TMP_DEST/$PREFIX/share/qemu \
-             docdir=$TMP_DEST/$PREFIX/doc/qemu-$VERSION
+make install prefix=$PKG/$PREFIX \
+             bindir=$PKG/$PREFIX/bin \
+             mandir=$PKG/$PREFIX/man \
+             datadir=$PKG/$PREFIX/share/qemu \
+             docdir=$PKG/$PREFIX/doc/qemu-$VERSION
 if [ $? -ne 0 ]; then
     echo -e "\n\n\033[01;31m Install error \n\033[m"
     exit $ERROR_INSTALL
