@@ -29,15 +29,7 @@ if [ -s "slack-required" ]; then
   fi
 fi
 
-if [ "$INTERACT" != "no" ]; then
-  echo "Hit ENTER do continue, Crtl-C to abort"
-  read crap
-else
-  echo sleeping 3 seconds...
-  sleep 3
-fi
-
-if [ -f "$SPLASH" ]; then
+if [ ! -f "$SPLASH" ]; then
   echo error: file not found: $SPLASH
   exit 1
 fi
