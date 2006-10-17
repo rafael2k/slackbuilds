@@ -58,6 +58,8 @@ if [ -f "$CWD/$PACKAGE-$VERSION.diff" ]; then
   patch -p1 < $CWD/$PACKAGE-$VERSION.diff
 fi
 
+VERSION=r"`svnversion cinelerra`"
+
 ./autogen.sh
 ./configure --prefix=/usr --libdir=$LIBDIR 
 make || exit 32
