@@ -6,24 +6,28 @@
 CWD="`pwd`"
 
 PACKAGE="kernel-ratten"
-KERNEL_VERSION="2.6.12"
+KERNEL_VERSION="2.6.15"
 EXTRAVERSION=""
 ARCH="x86_64"
 BUILD="1rha"
 PATCHSET="bs"
-PATCH_VERSION="3.1.6-2.6.12"
+PATCH_VERSION="3.1.6-2.6.15"
 TMP=${TMP:=/tmp}
 SRC_DIR=${SRC:=$CWD}
 SPLASH="/etc/bootsplash/themes/Slack-Black-Tux/config/bootsplash-1024x768.cfg"
 REPOS=${REPOS:=$TMP}
 
-cat << EOCAT
-Just remembering, you need the following stuff installed:
-
-  bootsplash
-  bootsplash theme: $SPLASH
-
-EOCAT
+if [ -s "slack-required" ]; then
+  echo Recomended and required packages for building cairo are:
+  cat slack-required | sed -e 's/^/\t/'
+  if [ "$INTERACT" != "no" ]; then
+    echo If you dont have those installed, press Ctrl-C. Otherwise, hit ENTER.
+    read crap
+  else
+    echo Sleeping 3 seconds...
+    sleep 3
+  fi
+fi
 
 if [ "$INTERACT" != "no" ]; then
   echo "Hit ENTER do continue, Crtl-C to abort"
@@ -115,7 +119,7 @@ cp .config $PKG/boot/config-$KERNEL_VERSION
 cp arch/$ARCH/boot/bzImage $PKG/boot/vmlinuz-$KERNEL_VERSION
 
 cat << EOF > $PKG/install/slack-desc
-kernel-ratten: kernel-ratten (linux kernel 2.6.12-bs for ratten AMD64 workstation)
+kernel-ratten: kernel-ratten (linux kernel $KERNEL_VERSION for ratten AMD64 workstation)
 kernel-ratten: 
 kernel-ratten: This is the kernel for the RATTEN workstation.
 kernel-ratten: 
