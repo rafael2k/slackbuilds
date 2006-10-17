@@ -1,6 +1,7 @@
 #!/bin/bash
 #
 # slackbuild for kernel-ratten
+# by rhatto at riseup.net
 #
 
 if [ -s "slack-required" ]; then
@@ -143,10 +144,15 @@ for file in COPYING CREDITS MAINTAINERS README REPORTING-BUGS; do
   cp $CWD/$file* $PKG/usr/doc/$PACKAGE-$VERSION/
 done
 
-mkinitrd -c -k 2.6.15.7 -o $PKG/boot/initrd.gz
+mkinitrd -c -k $KERNEL_VERSION -o $PKG/boot/initrd.gz
 splash -s -f $SPLASH > $PKG/boot/initrd.gz 
 
 cd $PKG
+
+( cd boot && ln -s vmlinuz-$KERNEL_VERSION vmlinuz )
+( cd boot && ln -s config-$KERNEL_VERSION config )
+( cd boot && ln -s System.map-$KERNEL_VERSION System.map )
+
 makepkg -c y -l y $REPOS/$PACKAGE-$VERSION-$ARCH-$BUILD.tgz
 
 if [ "$CLEANUP" == "yes" ]; then
