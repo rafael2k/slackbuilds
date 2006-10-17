@@ -30,8 +30,9 @@ KERNEL_VERSION="2.6.15"
 EXTRAVERSION=""
 ARCH="x86_64"
 BUILD="1rha"
-PATCHSET="bs"
+PATCHSET="bs-rt"
 PATCH_VERSION="3.1.6-2.6.15"
+REALTIME_PATCH="rt-lsm-0.8.7-kernel.patch"
 TMP=${TMP:=/tmp}
 SRC_DIR=${SRC:=$CWD}
 SPLASH="/etc/bootsplash/themes/Slack-Black-Tux/config/bootsplash-1024x768.cfg"
@@ -91,6 +92,7 @@ elif [ ! -z "$PATCHSET" ]; then
 fi
 
 mv Makefile.tmp Makefile
+patch -p1 < $CWD/$REALTIME_PATCH
 patch -p1 < $SRC_DIR/$PATCH
 
 make oldconfig
@@ -146,15 +148,6 @@ splash -s -f $SPLASH > $PKG/boot/initrd.gz
 
 cd $PKG
 makepkg -c y -l y $REPOS/$PACKAGE-$VERSION-$ARCH-$BUILD.tgz
-
-cat << EOCAT
-Please check if you need to build or install the following modules:
-
-  realtime-lsm
-  shfs
-
-Have a nice day.
-EOCAT
 
 if [ "$CLEANUP" == "yes" ]; then
   rm -rf $TMP
