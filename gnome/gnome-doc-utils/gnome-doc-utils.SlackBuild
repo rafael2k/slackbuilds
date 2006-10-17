@@ -67,7 +67,8 @@ if [ "$RTOOL" == "wget" ]; then
 fi
 
 cd $SRC_DIR
-grep $SRC $MD5 > $MD5
+grep $SRC $MD5 > $MD5.tmp
+mv $MD5.tmp $MD5
 md5sum $SRC | diff - $MD5 || exit $ERROR_MD5
 
 TMP="$TMP/$PACKAGE"
