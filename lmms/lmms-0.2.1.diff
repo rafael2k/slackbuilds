@@ -1,0 +1,12 @@
+diff -Naur lmms-0.2.1.orig/plugins/flp_import/flp_import.cpp lmms-0.2.1/plugins/flp_import/flp_import.cpp
+--- lmms-0.2.1.orig/plugins/flp_import/flp_import.cpp	2006-07-17 05:46:48.000000000 -0300
++++ lmms-0.2.1/plugins/flp_import/flp_import.cpp	2006-10-16 23:49:50.000000000 -0200
+@@ -45,7 +45,7 @@
+ #include "tempo_sync_knob.h"
+ #include "piano_widget.h"
+ #include "debug.h"
+-
++#include "ctype.h"
+ 
+ #ifdef QT4
+ 
