@@ -3,20 +3,6 @@
 # slackbuild for kernel-ratten
 #
 
-CWD="`pwd`"
-
-PACKAGE="kernel-ratten"
-KERNEL_VERSION="2.6.15"
-EXTRAVERSION=""
-ARCH="x86_64"
-BUILD="1rha"
-PATCHSET="bs"
-PATCH_VERSION="3.1.6-2.6.15"
-TMP=${TMP:=/tmp}
-SRC_DIR=${SRC:=$CWD}
-SPLASH="/etc/bootsplash/themes/Slack-Black-Tux/config/bootsplash-1024x768.cfg"
-REPOS=${REPOS:=$TMP}
-
 if [ -s "slack-required" ]; then
   echo Recomended and required packages for building cairo are:
   cat slack-required | sed -e 's/^/\t/'
@@ -36,6 +22,20 @@ fi
 if [ -f "~/.slackbuildrc" ]; then
   source ~/.slackbuildrc
 fi
+
+CWD="`pwd`"
+
+PACKAGE="kernel-ratten"
+KERNEL_VERSION="2.6.15"
+EXTRAVERSION=""
+ARCH="x86_64"
+BUILD="1rha"
+PATCHSET="bs"
+PATCH_VERSION="3.1.6-2.6.15"
+TMP=${TMP:=/tmp}
+SRC_DIR=${SRC:=$CWD}
+SPLASH="/etc/bootsplash/themes/Slack-Black-Tux/config/bootsplash-1024x768.cfg"
+REPOS=${REPOS:=$TMP}
 
 if [ ! -f "$SPLASH" ]; then
   echo error: file not found: $SPLASH
