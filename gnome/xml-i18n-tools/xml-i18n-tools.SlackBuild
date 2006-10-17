@@ -51,7 +51,7 @@ RTOOL="wget"
 PACKAGE_EXT="gz"
 SRC="$PACKAGE-$VERSION.tar.$PACKAGE_EXT"
 URL="ftp://ftp.gnome.org/pub/gnome/sources/xml-i18n-tools/0.9/$SRC"
-MD5="$PACKAGE-$VERSION.md5"
+MD5="$PACKAGE-$VERSION.tar.$PACKAGE_EXT.md5"
 MD5_URL="ftp://ftp.gnome.org/pub/gnome/sources/xml-i18n-tools/0.9/$MD5"
 
 SRC_DIR="$SRC_DIR/$PACKAGE"
