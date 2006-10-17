@@ -138,7 +138,7 @@ VERSION="`echo $KERNEL_VERSION | sed -e 's/-/_/g'`"
 
 # docs
 mkdir -p $PKG/usr/doc/$PACKAGE-$VERSION
-cp -r Documentation $PKG/usr/doc/$PACKAGE-$VERSION/
+# cp -r Documentation $PKG/usr/doc/$PACKAGE-$VERSION/
 for file in COPYING CREDITS MAINTAINERS README REPORTING-BUGS; do
   cp $CWD/$file* $PKG/usr/doc/$PACKAGE-$VERSION/
 done
