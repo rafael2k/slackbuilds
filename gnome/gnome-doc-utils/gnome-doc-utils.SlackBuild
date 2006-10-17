@@ -61,7 +61,7 @@ if [ "$RTOOL" == "wget" ]; then
   if [ ! -f "$SRC_DIR/$SRC" ]; then
     wget "$URL" -O "$SRC_DIR/$SRC" || exit $ERROR_WGET
   fi
-  if [ ! -f "$SRC_DIR/$SRC" ]; then
+  if [ ! -f "$SRC_DIR/$MD5" ]; then
     wget "$MD5_URL" -O "$SRC_DIR/$MD5" || exit $ERROR_WGET
   fi
 fi
