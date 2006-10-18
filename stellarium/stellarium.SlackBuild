@@ -1,11 +1,11 @@
 #!/bin/bash
 #
-# slackbuild script for liba52
-# by rafael at riseup.net
+# slackbuild script for stellarium
+# by rhatto at riseup.net
 #
 
 if [ -s "slack-required" ]; then
-  echo Recomended and required packages for building liba52 are:
+  echo Recomended and required packages for building stellarium are:
   cat slack-required | sed -e 's/^/\t/'
   if [ "$INTERACT" != "no" ]; then
     echo If you dont have those installed, press Ctrl-C. Otherwise, hit ENTER.
@@ -27,37 +27,37 @@ if [ -f "~/.slackbuildrc" ]; then
 fi
 
 # default settings
-PACKAGE="liba52"
+PACKAGE="stellarium"
 ARCH=${ARCH:=i486}
-VERSION=${VERSION:=0.7.4}
-BUILD=${BUILD:=1rd}
+VERSION=${VERSION:=0.8.2}
+BUILD=${BUILD:=1rha}
 SRC_DIR=${SRC:=$CWD}
 TMP=${TMP:=/tmp}
 REPOS=${REPOS:=$TMP}
 
 if [ "$ARCH" == "x86_64" ]; then
-  export CFLAGS=-fPIC
+  export LDFLAGS="-L/lib64 -L/usr/lib64"
   LIBDIR=/usr/lib64
 else
   LIBDIR=/usr/lib
 fi
 
+# -------  error codes for createpkg  --------------
+ERROR_WGET=31;      ERROR_MAKE=32;      ERROR_INSTALL=33
+ERROR_MD5=34;       ERROR_CONF=35;      ERROR_HELP=36
+ERROR_TAR=37;       ERROR_MKPKG=38;     ERROR_GPG=39
+ERROR_PATCH=40
+
 RTOOL="wget"
 PACKAGE_EXT="gz"
 SRC="$PACKAGE-$VERSION.tar.$PACKAGE_EXT"
-URL="http://liba52.sourceforge.net/files/a52dec-$VERSION.tar.$PACKAGE_EXT"
+URL="http://easynews.dl.sourceforge.net/sourceforge/$PACKAGE/$SRC"
 
 SRC_DIR="$SRC_DIR/$PACKAGE"
 mkdir -p $SRC_DIR
 
-if [ "$PACKAGE_EXT" == "bz2" ]; then
-  tarflag="j"
-else
-  tarflag="z"
-fi
-
 if [ "$RTOOL" == "wget" ] && [ ! -f "$SRC_DIR/$SRC" ]; then
-  wget "$URL" -O "$SRC_DIR/$SRC"
+  wget "$URL" -O "$SRC_DIR/$SRC" || exit $ERROR_WGET
 fi
 
 TMP="$TMP/$PACKAGE"
@@ -65,16 +65,16 @@ rm -rf $TMP
 mkdir -p $TMP
 cd $TMP
 
-tar xvf$tarflag $SRC_DIR/$SRC
-cd a52dec-$VERSION
+tar xvf $SRC_DIR/$SRC || exit $ERROR_TAR
+cd $PACKAGE-$VERSION
 
 if [ -f "$CWD/$PACKAGE-$VERSION.diff" ]; then
-  patch -p1 < $CWD/$PACKAGE-$VERSION.diff
+  patch -p1 < $CWD/$PACKAGE-$VERSION.diff || exit $ERROR_PATCH
 fi
 
-./configure --prefix=/usr --enable-shared --enable-double --sysconfdir=/etc --libdir=$LIBDIR --with-docdir=/usr/doc/$PACKAGE-$VERSION
-make || exit 32
-make DESTDIR=$TMP/package-$PACKAGE install
+./configure --prefix=/usr --sysconfdir=/etc --libdir=$LIBDIR || exit $ERROR_CONF
+make || exit $ERROR_MAKE
+make DESTDIR=$TMP/package-$PACKAGE install || exit $ERROR_INSTALL
 
 CWD="`pwd`"
 
@@ -92,28 +92,30 @@ cat << EOF > install/slack-desc
 # make exactly 11 lines for the formatting to be correct.  It's also
 # customary to leave one space after the ':'.
 
-      |-----handy-ruler-----------------------------------------------------|
-liba52: liba52 (liba52 is a free ATSC A/52 stream decoder)
-liba52:
-liba52: liba52 is a free library for decoding ATSC A/52 streams. It is 
-liba52: released under the terms of the GPL license. The A/52 standard is 
-liba52: used in a variety of applications, including digital television and 
-liba52: DVD. It is also known as AC-3.
-liba52: 
-liba52: 
-liba52: 
-liba52: http://liba52.sourceforge.net/
-liba52: 
+          |-----handy-ruler-----------------------------------------------------|
+stellarium: stellarium (A 3D astronomical sky renderer)
+stellarium:
+stellarium: Stellarium is a free GPL software which renders realistic skies in
+stellarium: real time with openGL. It is available for Linux/Unix, Windows and
+stellarium: MacOSX. With Stellarium, you really see what you can see with your
+stellarium: eyes, binoculars or a small telescope.
+stellarium:
+stellarium:
+stellarium:
+stellarium:
+stellarium:
 EOF
 
 # docs
 mkdir -p usr/doc/$PACKAGE-$VERSION
 
-for file in AUTHORS COPYING ChangeLog HISTORY INSTALL NEWS README TODO;do
+DOCS="ABOUT-NLS AUTHORS COPYING ChangeLog INSTALL NEWS README TODO"
+
+for file in $DOCS; do
   cp $CWD/$file* usr/doc/$PACKAGE-$VERSION/
 done
 
-makepkg -c y -l y $REPOS/$PACKAGE-$VERSION-$ARCH-$BUILD.tgz
+makepkg -c y -l y $REPOS/$PACKAGE-$VERSION-$ARCH-$BUILD.tgz || exit $ERROR_MKPKG
 
 if [ "$CLEANUP" == "yes" ]; then
   rm -rf $TMP

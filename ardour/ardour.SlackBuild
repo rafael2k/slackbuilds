@@ -35,6 +35,12 @@ SRC_DIR=${SRC:=$CWD}
 TMP=${TMP:=/tmp}
 REPOS=${REPOS:=$TMP}
 
+# -------  error codes for createpkg  --------------
+ERROR_WGET=31;      ERROR_MAKE=32;      ERROR_INSTALL=33
+ERROR_MD5=34;       ERROR_CONF=35;      ERROR_HELP=36
+ERROR_TAR=37;       ERROR_MKPKG=38      ERROR_GPP=39
+ERROR_PATCH=40
+
 if [ "$ARCH" == "x86_64" ]; then
   export LDFLAGS="-L/lib64 -L/usr/lib64"
   LIBDIR=/usr/lib64
@@ -57,7 +63,7 @@ else
 fi
 
 if [ "$RTOOL" == "wget" ] && [ ! -f "$SRC_DIR/$SRC" ]; then
-  wget "$URL" -O "$SRC_DIR/$SRC"
+  wget "$URL" -O "$SRC_DIR/$SRC" || exit $ERROR_WGET
 fi
 
 TMP="$TMP/$PACKAGE"
@@ -69,12 +75,12 @@ tar xvf$tarflag $SRC_DIR/$SRC
 cd $PACKAGE-$VERSION
 
 if [ -f "$CWD/$PACKAGE-$VERSION.diff" ]; then
-  patch -p1 < $CWD/$PACKAGE-$VERSION.diff
+  patch -p1 < $CWD/$PACKAGE-$VERSION.diff || exit $ERROR_PATCH
 fi
 
 mkdir -p $TMP/package-$PACKAGE
-scons PREFIX=$TMP/package-$PACKAGE KSI=yes
-scons install
+scons PREFIX=$TMP/package-$PACKAGE KSI=yes || exit $ERROR_CONF
+scons install || exit $ERROR_MAKE
 
 CWD="`pwd`"
 
@@ -115,7 +121,7 @@ for file in AUTHORS AUTHORS.es BUILD CONTRIBUTORS FAQ README TRANSLATORS; do
   cp $CWD/DOCUMENTATION/$file* usr/doc/$PACKAGE-$VERSION/
 done
 
-makepkg -c y -l y $REPOS/$PACKAGE-$VERSION-$ARCH-$BUILD.tgz
+makepkg -c y -l y $REPOS/$PACKAGE-$VERSION-$ARCH-$BUILD.tgz || exit $ERROR_MKPKG
 
 if [ "$CLEANUP" == "yes" ]; then
   rm -rf $TMP

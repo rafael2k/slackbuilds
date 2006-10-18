@@ -35,6 +35,12 @@ SRC_DIR=${SRC:=$CWD}
 TMP=${TMP:=/tmp}
 REPOS=${REPOS:=$TMP}
 
+# -------  error codes for createpkg  --------------
+ERROR_WGET=31;      ERROR_MAKE=32;      ERROR_INSTALL=33
+ERROR_MD5=34;       ERROR_CONF=35;      ERROR_HELP=36
+ERROR_TAR=37;       ERROR_MKPKG=38;     ERROR_GPG=39
+ERROR_PATCH=40;     ERROR_SVN=41;
+
 if [ "$ARCH" == "x86_64" ]; then
   LIBDIR=/usr/lib64
 else
@@ -44,26 +50,31 @@ fi
 SRC_DIR="$SRC_DIR/$PACKAGE"
 mkdir -p $SRC_DIR
 
-rm -rf $TMP/$PACKAGE
+TMP=$TMP/$PACKAGE
+rm -rf $TMP
+mkdir -p $TMP
 
-cd $TMP
-
-svn checkout svn://svn.skolelinux.org/cinelerra/trunk/hvirtual
-
-mv hvirtual cinelerra
-
-cd cinelerra
-
-if [ -f "$CWD/$PACKAGE-$VERSION.diff" ]; then
-  patch -p1 < $CWD/$PACKAGE-$VERSION.diff
+if [ -d "$SRC_DIR/cinelerra" ]; then
+  cd $SRC_DIR/cinelerra
+  svn update || exit $ERROR_SVN 
+else 
+  cd $SRC_DIR 
+  svn checkout svn://svn.skolelinux.org/cinelerra/trunk/hvirtual
+  mv hvirtual cinelerra
 fi
 
+cd $SRC_DIR
 VERSION=r"`svnversion cinelerra`"
+cd $SRC_DIR/cinelerra
 
-./autogen.sh
-./configure --prefix=/usr --libdir=$LIBDIR 
-make || exit 32
-make DESTDIR=$TMP/package-$PACKAGE install
+if [ -f "$CWD/$PACKAGE-$VERSION.diff" ]; then
+  patch -p1 < $CWD/$PACKAGE-$VERSION.diff || exit $ERROR_PATCH
+fi
+
+./autogen.sh || exit $ERROR_CONF
+./configure --prefix=/usr --libdir=$LIBDIR || exit $ERROR_CONF
+make || exit $ERROR_MAKE
+make DESTDIR=$TMP/package-$PACKAGE install || exit $ERROR_INSTALL
 
 CWD="`pwd`"
 
@@ -102,7 +113,7 @@ for file in AUTHORS COPYING ChangeLog INSTALL LICENSE NEWS README TODO;do
   cp $CWD/$file* usr/doc/$PACKAGE-$VERSION/
 done
 
-makepkg -c y -l y $REPOS/$PACKAGE-$VERSION-$ARCH-$BUILD.tgz
+makepkg -c y -l y $REPOS/$PACKAGE-$VERSION-$ARCH-$BUILD.tgz || exit $ERROR_MKPKG
 
 if [ "$CLEANUP" == "yes" ]; then
   rm -rf $TMP
