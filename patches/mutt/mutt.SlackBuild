@@ -1,0 +1,131 @@
+#!/bin/bash
+#
+# Build Mutt for Slackware (by volkerdi@slackware.com)
+# Small changes by rhatto
+#
+# For version 1.5.6 or 1.5.6i, uses de following
+# patches from http://www.woolridge.ca/mutt/
+#
+#   - confirm-crypt-hook
+#   - multiple-crypt-hook
+#   - crypt-autoselectkey
+#
+
+CWD="`pwd`"
+
+if [ -f "/etc/slackbuildrc" ]; then
+  source /etc/slackbuildrc
+fi
+
+if [ -f "~/.slackbuildrc" ]; then
+  source ~/.slackbuildrc
+fi
+
+PACKAGE="mutt"
+#VERSION=${VERSION:=1.5.6i}
+VERSION=${VERSION:=1.5.12}
+ARCH=${ARCH:=i486}
+BUILD=${BUILD:=1rha}
+TMP=${TMP:=/tmp}
+SRC_DIR=${SRC:=$CWD}
+REPOS=${REPOS:=$TMP}
+
+RTOOL="wget"
+PACKAGE_EXT="gz"
+SRC="$PACKAGE-$VERSION.tar.$PACKAGE_EXT"
+URL="ftp://ftp.mutt.org/mutt/devel/$SRC"
+
+SRC_DIR="$SRC_DIR/$PACKAGE"
+mkdir -p $SRC_DIR
+
+PATCH1="patch-1.5.6.dw.crypt-hook-both.1"
+PATCH1_URL="http://www.woolridge.org/mutt/patches/$PATCH1"
+PATCH2="patch-1.5.6.dw.crypt-autoselectkey.1"
+PATCH2_URL="http://www.woolridge.org/mutt/patches/$PATCH2"
+
+if [ "$PACKAGE_EXT" == "bz2" ]; then
+  tarflag="j"
+else
+  tarflag="z"
+fi
+
+if [ "$RTOOL" == "wget" ]; then
+  if [ ! -f "$SRC_DIR/$SRC" ]; then
+    wget "$URL" -O "$SRC_DIR/$SRC"
+  fi
+  if [ ! -f "$SRC_DIR/$PATCH1" ]; then
+    wget "$PATCH1_URL" -O "$SRC_DIR/$PATCH1"
+  fi
+  if [ ! -f "$SRC_DIR/$PATCH2" ]; then
+    wget "$PATCH2_URL" -O "$SRC_DIR/$PATCH2"
+  fi
+fi
+
+if [ "$ARCH" == "i486" ]; then
+  AOPTS="-march=i486 -mcpu=i686"
+fi
+
+if [ "$ARCH" == "x86_64" ]; then
+  LIBDIR=/usr/lib64
+else
+  LIBDIR=/usr/lib
+fi
+
+TMP="$TMP/$PACKAGE"
+PKG="$TMP/package-$PACKAGE"
+rm -rf $TMP
+mkdir -p $TMP
+cd $TMP
+
+rm -rf mutt-$VERSION
+tar xvf$tarflag $SRC_DIR/$SRC
+
+cd `basename mutt-$VERSION i`
+
+if [ "$VERSION" == "1.5.6" ] || [ "$VERSION" == "1.5.6i" ]; then
+  patch -p1 < $SRC_DIR/$PATCH1
+  patch -p1 < $SRC_DIR/$PATCH2
+fi
+
+chown -R root.root .
+
+CFLAGS="-O2 $AOPTS" ./configure \
+           --prefix=/usr \
+           --sysconfdir=/etc/mutt \
+           --with-mailpath=/var/spool/mail \
+           --enable-pop \
+           --enable-imap \
+           --with-ssl \
+           --enable-locales-fix \
+           --without-wc-funcs \
+           --libdir=$LIBDIR
+           $ARCH-slackware-linux
+
+make || exit 32
+make install DESTDIR=$PKG
+
+( cd $PKG
+  find . | xargs file | grep "executable" | grep ELF | cut -f 1 -d : | xargs strip --strip-unneeded 2> /dev/null
+  find . | xargs file | grep "shared object" | grep ELF | cut -f 1 -d : | xargs strip --strip-unneeded 2> /dev/null
+)
+
+chown -R root.bin $PKG/usr/bin
+gzip -9 $PKG/usr/man/man?/*
+
+mkdir -p $PKG/install
+cat $CWD/slack-desc > $PKG/install/slack-desc
+zcat $CWD/doinst.sh.gz > $PKG/install/doinst.sh
+
+# Don't mv the mutt docs directory, because mutt uses 'em.
+# Make a link instead.
+( cd $PKG/usr/doc ; rm -rf mutt-$VERSION ; ln -sf mutt mutt-$VERSION )
+
+mv $PKG/etc/mutt/Muttrc $PKG/etc/mutt/Muttrc.new
+
+cd $PKG
+makepkg -l y -c n $REPOS/mutt-$VERSION-$ARCH-$BUILD.tgz
+
+if [ "$CLEANUP" == "yes" ]; then
+  rm -rf $TMP
+fi
+

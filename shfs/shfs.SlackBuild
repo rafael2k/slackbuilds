@@ -1,0 +1,107 @@
+#!/bin/bash
+#
+# slackbuild script for shfs
+# by rhatto at riseup.net
+#
+
+CWD="`pwd`"
+
+if [ -f "/etc/slackbuildrc" ]; then
+  source /etc/slackbuildrc
+fi
+
+if [ -f "~/.slackbuildrc" ]; then
+  source ~/.slackbuildrc
+fi
+
+# default settings
+PACKAGE="shfs"
+ARCH=${ARCH:=i486}
+VERSION=${VERSION:=0.35}
+BUILD=${BUILD:=1rha}
+SRC_DIR=${SRC:=$CWD}
+TMP=${TMP:=/tmp}
+REPOS=${REPOS:=$TMP}
+
+RTOOL="wget"
+PACKAGE_EXT="gz"
+SRC="$PACKAGE-$VERSION.tar.$PACKAGE_EXT"
+URL="http://easynews.dl.sourceforge.net/sourceforge/shfs/$SRC"
+
+if [ "$PACKAGE_EXT" == "bz2" ]; then
+  tarflag="j"
+else
+  tarflag="z"
+fi
+
+SRC_DIR="$SRC_DIR/$PACKAGE"
+mkdir -p $SRC_DIR
+
+if [ "$RTOOL" == "wget" ] && [ ! -f "$SRC_DIR/$SRC" ]; then
+  wget "$URL" -O "$SRC_DIR/$SRC"
+fi
+
+TMP="$TMP/$PACKAGE"
+rm -rf $TMP
+mkdir -p $TMP
+cd $TMP
+
+tar xvf$tarflag $SRC_DIR/$SRC
+cd $PACKAGE-$VERSION
+
+make || exit 32
+
+CWD="`pwd`"
+
+cd $TMP/package-$PACKAGE
+
+mkdir -p lib/modules/`uname -r`/kernel/fs/shfs
+install -m644 -b -D shfs.ko lib/modules/`uname -r`/kernel/fs/shfs/shfs.ko
+
+mkdir -p usr/bin
+install -m755 -b -D shfsmount usr/bin/shfsmount
+install -m755 -b -D shfsumount usr/bin/shfsumount
+
+mkdir -p sbin
+ln -fs usr/bin/shfsmount sbin/mount.shfs
+
+mkdir -p usr/share/man/man8
+install -m644 -b -D shfsmount.8 usr/share/man/man8/shfsmount.8
+install -m644 -b -D shfsumount.8 usr/share/man/man8/shfsumount.8
+
+mkdir install
+cat << EOF > install/slack-desc
+# HOW TO EDIT THIS FILE:
+# The "handy ruler" below makes it easier to edit a package description.  Line
+# up the first '|' above the ':' following the base package name, and the '|'
+# on the right side marks the last column you can put a character in.  You must
+# make exactly 11 lines for the formatting to be correct.  It's also
+# customary to leave one space after the ':'.
+
+    |-----handy-ruler-----------------------------------------------------|
+shfs: shfs
+shfs:
+shfs: SHFS (sshfs) is a simple and easy-to-use Linux kernel module which
+shfs: allows you to mount remote filesystems using a plain shell (SSH)
+shfs: connection. It supports some nice features like file cache for
+shfs: access speedup, and a Perl server, etc.
+shfs:
+shfs:
+shfs:
+shfs:
+shfs:
+EOF
+
+# docs
+mkdir -p usr/doc/$PACKAGE-$VERSION
+
+for file in COPYING COPYRIGHT Changelog README TODO; do
+  cp $CWD/$file* usr/doc/$PACKAGE-$VERSION/
+done
+
+makepkg -c y -l y $REPOS/$PACKAGE-$VERSION-$ARCH-$BUILD.tgz
+
+if [ "$CLEANUP" == "yes" ]; then
+  rm -rf $TMP
+fi
+

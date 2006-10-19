@@ -1,0 +1,76 @@
+#!/bin/bash
+#
+# got it from ftp://ftp.slackware.com/pub/slackware/slackware-10.2/extra/source/libsafe-2.0-16/libsafe.SlackBuild
+# small changes by rhatto
+#
+
+CWD="`pwd`"
+
+if [ -f "/etc/slackbuildrc" ]; then
+  source /etc/slackbuildrc
+fi
+
+if [ -f "~/.slackbuildrc" ]; then
+  source ~/.slackbuildrc
+fi
+
+PACKAGE="libsafe"
+ARCH=${ARCH:=i486}
+BUILD=${BUILD:=1rha}
+TMP=${TMP:=/tmp}
+VERSION=2.0.16
+SRCPKG=2.0-16
+SRC_DIR=${SRC:=$CWD}
+REPOS=${REPOS:=$TMP}
+
+if [ "$ARCH" == "x86_64" ]; then
+  LIBDIR=lib64
+  DOINST="doinst64.sh"
+else
+  LIBDIR=lib
+  DOINST="doinst.sh"
+fi
+
+RTOOL="wget"
+SRC="$PACKAGE-$SRCPKG.tar.gz"
+URL="ftp://ftp.slackware.com/pub/slackware/slackware-10.2/extra/source/libsafe-$SRCPKG/$SRC"
+
+SRC_DIR="$SRC_DIR/$PACKAGE"
+mkdir -p $SRC_DIR
+
+if [ "$RTOOL" == "wget" ] && [ ! -f "$SRC_DIR/$SRC" ]; then
+  wget "$URL" -O "$SRC_DIR/$SRC"
+fi
+
+TMP="$TMP/$PACKAGE"
+PKG=$TMP/package-$PACKAGE
+rm -rf $TMP
+mkdir -p $TMP
+cd $TMP
+
+tar xzvf $SRC_DIR/$SRC
+cd libsafe-$SRCPKG
+
+chown -R root.root .
+find . -perm 775 -exec chmod 755 {} \;
+find . -perm 664 -exec chmod 644 {} \;
+make || exit 32
+mkdir -p $PKG/$LIBDIR/incoming
+cat src/libsafe.so.$VERSION > $PKG/$LIBDIR/incoming/libsafe.so.$VERSION
+chmod 755 $PKG/$LIBDIR/incoming/libsafe.so.$VERSION
+mkdir $PKG/install
+cat $CWD/$DOINST > $PKG/install/doinst.sh
+cat $CWD/slack-desc > $PKG/install/slack-desc
+mkdir -p $PKG/usr/doc/libsafe-$VERSION
+cp -a \
+  COPYING ChangeLog EMAIL_NOTIFICATION INSTALL README doc \
+  $PKG/usr/doc/libsafe-$VERSION
+mkdir -p $PKG/usr/man/man8
+cat doc/libsafe.8 | gzip -9c > $PKG/usr/man/man8/libsafe.8.gz
+cd $PKG
+makepkg -l y -c n $REPOS/$PACKAGE-$VERSION-$ARCH-$BUILD.tgz
+
+if [ "$CLEANUP" == "yes" ]; then
+  rm -rf $TMP
+fi
+

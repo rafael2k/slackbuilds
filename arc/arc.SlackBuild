@@ -1,0 +1,103 @@
+#!/bin/bash
+#
+# slackbuild script for arc
+# by rhatto at riseup.net
+#
+
+CWD="`pwd`"
+
+if [ -f "/etc/slackbuildrc" ]; then
+  source /etc/slackbuildrc
+fi
+
+if [ -f "~/.slackbuildrc" ]; then
+  source ~/.slackbuildrc
+fi
+
+# default settings
+PACKAGE="arc"
+VERSION=${VERSION:=5.21o}
+ARCH=${ARCH:=i486}
+BUILD=${BUILD:=1rha}
+TMP=${TMP:=tmp}
+SRC_DIR=${SRC:=$CWD}
+REPOS=${REPOS:=$TMP}
+
+if [ "$ARCH" == "x86_64" ]; then
+  LIBDIR=/usr/lib64
+else
+  LIBDIR=/usr/lib
+fi
+
+RTOOL="wget"
+PACKAGE_EXT="tgz"
+SRC="$PACKAGE-$VERSION.$PACKAGE_EXT"
+URL="http://easynews.dl.sourceforge.net/sourceforge/arc/$SRC"
+
+SRC_DIR="$SRC_DIR/$PACKAGE"
+mkdir -p $SRC_DIR
+
+if [ "$PACKAGE_EXT" == "bz2" ]; then
+  tarflag="j"
+else
+  tarflag="z"
+fi
+
+if [ "$RTOOL" == "wget" ] && [ ! -f "$SRC_DIR/$SRC" ]; then
+  wget "$URL" -O "$SRC_DIR/$SRC"
+fi
+
+TMP="$TMP/$PACKAGE"
+rm -rf $TMP
+mkdir -p $TMP
+cd $TMP
+
+tar xvf$tarflag $SRC_DIR/$SRC
+cd $PACKAGE-$VERSION
+make || exit 32
+strip --strip-unneeded arc
+
+CWD="`pwd`"
+
+mkdir -p $TMP/package-$PACKAGE
+cd $TMP/package-$PACKAGE
+
+mkdir -p usr/bin
+cp $CWD/arc usr/bin
+
+mkdir install
+cat << EOF > install/slack-desc
+# HOW TO EDIT THIS FILE:
+# The "handy ruler" below makes it easier to edit a package description.  Line
+# up the first '|' above the ':' following the base package name, and the '|'
+# on the right side marks the last column you can put a character in.  You must
+# make exactly 11 lines for the formatting to be correct.  It's also
+# customary to leave one space after the ':'.
+
+   |-----handy-ruler-----------------------------------------------------|
+arc: arc (creation and maintenance of file archives)
+arc:
+arc: ARC is used to create and maintain file archives. An archive is a
+arc: group of files collected together into one file in such a way that
+arc: the individual files may be recovered intact.
+arc:
+arc:
+arc:
+arc:
+arc:
+arc:
+EOF
+
+# docs
+mkdir -p usr/doc/$PACKAGE-$VERSION
+
+for file in Arc521.doc Arcinfo COPYING Changelog LICENSE PATCHLEVEL Readme Sysvarcstuf; do
+  cp $CWD/$file* usr/doc/$PACKAGE-$VERSION/
+done
+
+makepkg -c y -l y $REPOS/$PACKAGE-$VERSION-$ARCH-$BUILD.tgz
+
+if [ "$CLEANUP" == "yes" ]; then
+  rm -rf $TMP
+fi
+

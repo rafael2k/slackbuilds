@@ -1,0 +1,118 @@
+#!/bin/bash
+#
+# slackbuild script for ssmtp
+# by rhatto at riseup.net
+#
+
+CWD="`pwd`"
+
+if [ -f "/etc/slackbuildrc" ]; then
+  source /etc/slackbuildrc
+fi
+
+if [ -f "~/.slackbuildrc" ]; then
+  source ~/.slackbuildrc
+fi
+
+# default settings
+PACKAGE="ssmtp"
+ARCH=${ARCH:=i486}
+VERSION=${VERSION:=2.61}
+BUILD=${BUILD:=4rha}
+SRC_DIR=${SRC:=$CWD}
+TMP=${TMP:=/tmp}
+REPOS=${REPOS:=$TMP}
+
+if [ "$ARCH" == "x86_64" ]; then
+  LIBDIR=/usr/lib64
+else
+  LIBDIR=/usr/lib
+fi
+
+RTOOL="wget"
+PACKAGE_EXT="gz"
+SRC="$PACKAGE"_"$VERSION.orig.tar.$PACKAGE_EXT"
+URL="http://ftp.debian.org/debian/pool/main/s/ssmtp/$SRC"
+
+if [ "$PACKAGE_EXT" == "bz2" ]; then
+  tarflag="j"
+else
+  tarflag="z"
+fi
+
+SRC_DIR="$SRC_DIR/$PACKAGE"
+mkdir -p $SRC_DIR
+
+if [ "$RTOOL" == "wget" ] && [ ! -f "$SRC_DIR/$SRC" ]; then
+  wget "$URL" -O "$SRC_DIR/$SRC"
+fi
+
+TMP="$TMP/$PACKAGE"
+rm -rf $TMP
+mkdir -p $TMP/package-$PACKAGE
+cd $TMP
+
+tar xvf$tarflag $SRC_DIR/$SRC
+cd $PACKAGE-$VERSION
+./configure --prefix=/usr --sysconfdir=/etc --libdir=$LIBDIR
+make || exit 32
+
+CWD="`pwd`"
+
+cd $TMP/package-$PACKAGE
+
+mkdir -p usr/{sbin,man/man8}
+mkdir -p etc/ssmtp
+
+cp $CWD/ssmtp usr/sbin ; chmod 755 usr/sbin/ssmtp
+cp $CWD/ssmtp.8 usr/man/man8 ; chmod 644 usr/man/man8/ssmtp.8
+cp $CWD/ssmtp.conf etc/ssmtp/ssmtp.conf.new
+cp $CWD/revaliases etc/ssmtp/revaliases.conf.new
+
+strip --strip-unneeded usr/sbin/ssmtp
+
+mkdir install
+cat << EOF > install/slack-desc
+# HOW TO EDIT THIS FILE:
+# The "handy ruler" below makes it easier to edit a package description.  Line
+# up the first '|' above the ':' following the base package name, and the '|'
+# on the right side marks the last column you can put a character in.  You must
+# make exactly 11 lines for the formatting to be correct.  It's also
+# customary to leave one space after the ':'.
+
+     |-----handy-ruler-----------------------------------------------------|
+ssmtp: ssmtp (extremely simple MTA)
+ssmtp:
+ssmtp: This is sSMTP, a program that replaces sendmail on workstations
+ssmtp: that should send their mail via the departmental mailhub from which
+ssmtp: they pick up their mail (via pop, imap, rsmtp, pop_fetch, NFS... or
+ssmtp: the like).  This program accepts mail and sends it to the mailhub,
+ssmtp: optionally replacing the domain in the From: line with a different
+ssmtp: one.
+ssmtp:
+ssmtp:
+ssmtp:
+EOF
+
+# docs
+mkdir -p usr/doc/$PACKAGE-$VERSION
+
+for file in CHANGELOG_OLD COPYING INSTALL README TLS; do 
+  cp $CWD/$file* usr/doc/$PACKAGE-$VERSION/
+done
+
+# install script
+echo '( if [ ! -f "etc/ssmtp/ssmtp.conf" ]; then mv etc/ssmtp/ssmtp.conf.new etc/ssmtp/ssmtp.conf; fi )' > install/doinst.sh
+echo '( if [ ! -f "etc/ssmtp/revaliases" ]; then mv etc/ssmtp/revaliases.conf.new etc/ssmtp/revaliases; fi )' >> install/doinst.sh
+echo '( cd usr/man/man8 ; rm -rf sendmail.8.gz )' >> install/doinst.sh
+echo '( cd usr/man/man8 ; ln -sf .gz sendmail.8.gz )' >> install/doinst.sh
+echo '( cd usr/sbin ; rm -rf sendmail )' >> install/doinst.sh
+echo '( cd usr/sbin ; ln -sf ssmtp sendmail )' >> install/doinst.sh
+echo '( cd usr/lib ; ln -sf ../sbin/ssmtp sendmail )' >> install/doinst.sh
+
+makepkg -c y -l y $REPOS/$PACKAGE-$VERSION-$ARCH-$BUILD.tgz
+
+if [ "$CLEANUP" == "yes" ]; then
+  rm -rf $TMP
+fi
+
