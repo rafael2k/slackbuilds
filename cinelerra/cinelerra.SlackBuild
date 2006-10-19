@@ -39,7 +39,7 @@ REPOS=${REPOS:=$TMP}
 ERROR_WGET=31;      ERROR_MAKE=32;      ERROR_INSTALL=33
 ERROR_MD5=34;       ERROR_CONF=35;      ERROR_HELP=36
 ERROR_TAR=37;       ERROR_MKPKG=38;     ERROR_GPG=39
-ERROR_PATCH=40;     ERROR_SVN=41;
+ERROR_PATCH=40;     ERROR_VCS=41;
 
 if [ "$ARCH" == "x86_64" ]; then
   LIBDIR=/usr/lib64
@@ -56,7 +56,7 @@ mkdir -p $TMP
 
 if [ -d "$SRC_DIR/cinelerra" ]; then
   cd $SRC_DIR/cinelerra
-  svn update || exit $ERROR_SVN 
+  svn update || exit $ERROR_VCS 
 else 
   cd $SRC_DIR 
   svn checkout svn://svn.skolelinux.org/cinelerra/trunk/hvirtual
