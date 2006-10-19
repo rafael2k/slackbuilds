@@ -17,7 +17,7 @@ fi
 # default settings
 PACKAGE="libiconv"
 ARCH=${ARCH:=i486}
-VERSION=${VERSION:=1.9.2}
+VERSION=${VERSION:=1.11}
 BUILD=${BUILD:=2rha}
 SRC_DIR=${SRC:=$CWD}
 TMP=${TMP:=/tmp}
