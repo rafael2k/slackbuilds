@@ -1,0 +1,210 @@
+#!/bin/bash
+#
+# slackbuild script for mairix
+# by rhatto at riseup.net
+#
+
+if [ -s "slack-required" ]; then
+  echo Recomended and required packages for building mairix are:
+  cat slack-required | sed -e 's/^/\t/'
+  if [ "$INTERACT" != "no" ]; then
+    echo If you dont have those installed, press Ctrl-C. Otherwise, hit ENTER.
+    read crap
+  else
+    echo Sleeping 3 seconds...
+    sleep 3
+  fi
+fi
+
+CWD="`pwd`"
+
+if [ -f "/etc/slackbuildrc" ]; then
+  source /etc/slackbuildrc
+fi
+
+if [ -f "~/.slackbuildrc" ]; then
+  source ~/.slackbuildrc
+fi
+
+# default settings
+PACKAGE="mairix"
+ARCH=${ARCH:=i486}
+VERSION=${VERSION:=0.19}
+BUILD=${BUILD:=1rha}
+SRC_DIR=${SRC:=$CWD}
+TMP=${TMP:=/tmp}
+REPOS=${REPOS:=$TMP}
+
+if [ "$ARCH" == "x86_64" ]; then
+  export LDFLAGS="-L/lib64 -L/usr/lib64"
+  LIBDIR=/usr/lib64
+else
+  LIBDIR=/usr/lib
+fi
+
+# -------  error codes for createpkg  --------------
+ERROR_WGET=31;      ERROR_MAKE=32;      ERROR_INSTALL=33
+ERROR_MD5=34;       ERROR_CONF=35;      ERROR_HELP=36
+ERROR_TAR=37;       ERROR_MKPKG=38;     ERROR_GPG=39
+ERROR_PATCH=40
+
+RTOOL="wget"
+PACKAGE_EXT="gz"
+SRC="$PACKAGE-$VERSION.tar.$PACKAGE_EXT"
+URL="http://easynews.dl.sourceforge.net/sourceforge/mairix/$SRC"
+SIG="$PACKAGE-$VERSION-tar-gz-asc.txt"
+SIG_URL="http://www.rpcurnow.force9.co.uk/mairix/$SIG"
+
+gpg --import << EOF
+-----BEGIN PGP PUBLIC KEY BLOCK-----
+Version: GnuPG v1.2.3 (GNU/Linux)
+
+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
+iyEQhSCBS+wk6SoOgg==
+=yT3y
+-----END PGP PUBLIC KEY BLOCK-----
+EOF
+
+SRC_DIR="$SRC_DIR/$PACKAGE"
+mkdir -p $SRC_DIR
+
+if [ "$RTOOL" == "wget" ]; then
+  if [ ! -f "$SRC_DIR/$SRC" ]; then
+    wget "$URL" -O "$SRC_DIR/$SRC" || exit $ERROR_WGET
+  fi
+  if [ ! -f "$SRC_DIR/$SIG" ]; then
+    wget "$SIG_URL" -O "$SRC_DIR/$SIG" || exit $ERROR_WGET
+  fi
+fi
+
+gpg --verify $SRC_DIR/$SIG $SRC_DIR/$SRC || exit $ERROR_GPG
+
+TMP="$TMP/$PACKAGE"
+rm -rf $TMP
+mkdir -p $TMP
+cd $TMP
+
+tar xvf $SRC_DIR/$SRC || exit $ERROR_TAR
+cd $PACKAGE-$VERSION
+
+if [ -f "$CWD/$PACKAGE-$VERSION.diff" ]; then
+  patch -p1 < $CWD/$PACKAGE-$VERSION.diff || exit $ERROR_PATCH
+fi
+
+./configure --prefix=/usr --sysconfdir=/etc --libdir=$LIBDIR || exit $ERROR_CONF
+make || exit $ERROR_MAKE
+make DESTDIR=$TMP/package-$PACKAGE install || exit $ERROR_INSTALL
+
+CWD="`pwd`"
+
+cd $TMP/package-$PACKAGE
+
+find . | xargs file | grep "executable" | grep ELF | cut -f 1 -d : | xargs strip --strip-unneeded 2> /dev/null
+find . | xargs file | grep "shared object" | grep ELF | cut -f 1 -d : | xargs strip --strip-unneeded 2> /dev/null
+
+mkdir install
+cat << EOF > install/slack-desc
+# HOW TO EDIT THIS FILE:
+# The "handy ruler" below makes it easier to edit a package description.  Line
+# up the first '|' above the ':' following the base package name, and the '|'
+# on the right side marks the last column you can put a character in.  You must
+# make exactly 11 lines for the formatting to be correct.  It's also
+# customary to leave one space after the ':'.
+
+      |-----handy-ruler-----------------------------------------------------|
+mairix: mairix (index and search engine for mail folders)
+mairix:
+mairix: Mairix is a program for indexing and searching email messages stored
+mairix: in Maildir, MH or mbox folders.
+mairix:
+mairix:
+mairix:
+mairix:
+mairix:
+mairix:
+mairix:
+EOF
+
+# docs
+mkdir -p usr/doc/$PACKAGE-$VERSION
+
+DOCS="ACKNOWLEDGEMENTS COPYING INSTALL NEWS README"
+
+for file in $DOCS; do
+  cp $CWD/$file* usr/doc/$PACKAGE-$VERSION/
+done
+
+makepkg -c y -l y $REPOS/$PACKAGE-$VERSION-$ARCH-$BUILD.tgz || exit $ERROR_MKPKG
+
+if [ "$CLEANUP" == "yes" ]; then
+  rm -rf $TMP
+fi
+
