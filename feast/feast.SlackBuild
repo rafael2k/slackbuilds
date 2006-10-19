@@ -84,10 +84,10 @@ CWD="`pwd`"
 mkdir -p $TMP/package-$PACKAGE
 cd $TMP/package-$PACKAGE
 
-mkdir usr/bin
+mkdir -p usr/bin
 cp $CWD/feast usr/bin
 
-mkdir etc/feast
+mkdir -p etc/feast
 cp $CWD/feast.conf /etc/feast.conf.new
 
 find . | xargs file | grep "executable" | grep ELF | cut -f 1 -d : | xargs strip --strip-unneeded 2> /dev/null
