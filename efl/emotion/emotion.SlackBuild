@@ -46,19 +46,19 @@ fi
 ERROR_WGET=31;      ERROR_MAKE=32;      ERROR_INSTALL=33
 ERROR_MD5=34;       ERROR_CONF=35;      ERROR_HELP=36
 ERROR_TAR=37;       ERROR_MKPKG=38;     ERROR_GPG=39
-ERROR_PATCH=40;     ERROR_CVS=42
+ERROR_PATCH=40;     ERROR_VCS=41
 
 SRC_DIR="$SRC_DIR/efl"
 mkdir -p $SRC_DIR
 
 if [ -d "$SRC_DIR/e17/libs/emotion" ]; then
   cd $SRC_DIR/e17/libs/emotion
-  cvs update || exit $ERROR_CVS
+  cvs update || exit $ERROR_VCS
 else
   cd $SRC_DIR
   # echo "Please hit ENTER on passwd prompt..."
-  # cvs -d:pserver:anonymous@anoncvs.enlightenment.org:/var/cvs/e login || exit $ERROR_CVS
-  cvs -z3 -d:pserver:anonymous@anoncvs.enlightenment.org:/var/cvs/e co e17/libs/emotion || exit $ERROR_CVS
+  # cvs -d:pserver:anonymous@anoncvs.enlightenment.org:/var/cvs/e login || exit $ERROR_VCS
+  cvs -z3 -d:pserver:anonymous@anoncvs.enlightenment.org:/var/cvs/e co e17/libs/emotion || exit $ERROR_VCS
 fi
 
 TMP="$TMP/$PACKAGE"
