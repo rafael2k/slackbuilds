@@ -88,7 +88,7 @@ mkdir -p usr/bin
 cp $CWD/feast usr/bin
 
 mkdir -p etc/feast
-cp $CWD/feast.conf /etc/feast.conf.new
+cp $CWD/feast.conf etc/feast.conf.new
 
 find . | xargs file | grep "executable" | grep ELF | cut -f 1 -d : | xargs strip --strip-unneeded 2> /dev/null
 find . | xargs file | grep "shared object" | grep ELF | cut -f 1 -d : | xargs strip --strip-unneeded 2> /dev/null
