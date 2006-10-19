@@ -1,11 +1,11 @@
 #!/bin/bash
 #
-# slackbuild script for esmart
+# slackbuild script for engage
 # by rhatto at riseup.net
 #
 
 if [ -s "slack-required" ]; then
-  echo Recomended and required packages for building esmart are:
+  echo Recomended and required packages for building engage are:
   cat slack-required | sed -e 's/^/\t/'
   if [ "$INTERACT" != "no" ]; then
     echo If you dont have those installed, press Ctrl-C. Otherwise, hit ENTER.
@@ -27,7 +27,7 @@ if [ -f "~/.slackbuildrc" ]; then
 fi
 
 # default settings
-PACKAGE="esmart"
+PACKAGE="engage"
 ARCH=${ARCH:=i486}
 VERSION="`date +%Y%m%d`"
 BUILD=${BUILD:=1rha}
@@ -48,17 +48,17 @@ ERROR_MD5=34;       ERROR_CONF=35;      ERROR_HELP=36
 ERROR_TAR=37;       ERROR_MKPKG=38;     ERROR_GPG=39
 ERROR_PATCH=40;     ERROR_CVS=42
 
-SRC_DIR="$SRC_DIR/efl"
+SRC_DIR="$SRC_DIR/engage"
 mkdir -p $SRC_DIR
 
-if [ -d "$SRC_DIR/e17/libs/esmart" ]; then
-  cd $SRC_DIR/e17/libs/esmart
+if [ -d "$SRC_DIR/misc/engage" ]; then
+  cd $SRC_DIR/misc/engage
   cvs update || exit $ERROR_CVS
 else
   cd $SRC_DIR
   # echo "Please hit ENTER on passwd prompt..."
   # cvs -d:pserver:anonymous@anoncvs.enlightenment.org:/var/cvs/e login || exit $ERROR_CVS
-  cvs -z3 -d:pserver:anonymous@anoncvs.enlightenment.org:/var/cvs/e co e17/libs/esmart || exit $ERROR_CVS
+  cvs -z3 -d:pserver:anonymous@anoncvs.enlightenment.org:/var/cvs/e co misc/engage || exit $ERROR_CVS
 fi
 
 TMP="$TMP/$PACKAGE"
@@ -66,7 +66,7 @@ rm -rf $TMP
 mkdir -p $TMP
 cd $TMP
 
-cd $SRC_DIR/e17/libs/esmart
+cd $SRC_DIR/misc/engage
 
 make clean &> /dev/null
 ./autogen.sh --prefix=/usr --sysconfdir=/etc --libdir=$LIBDIR || exit $ERROR_CONF
@@ -90,17 +90,17 @@ cat << EOF > install/slack-desc
 # customary to leave one space after the ':'.
 
       |-----handy-ruler-----------------------------------------------------|
-esmart: esmart
-esmart: 
-esmart: 
-esmart: Esmart contains "smart" pre-built evas objects. It currently includes
-esmart: a thumbnail generator and a horizontal/vertical container.
-esmart: 
-esmart: 
-esmart:
-esmart:
-esmart:
-esmart:
+engage: engage
+engage: 
+engage: Dynamic iconbar
+engage: 
+engage: 
+engage: 
+engage: 
+engage: 
+engage:
+engage:
+engage:
 EOF
 
 # docs

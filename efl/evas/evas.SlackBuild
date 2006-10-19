@@ -51,7 +51,7 @@ ERROR_PATCH=40;     ERROR_CVS=42
 SRC_DIR="$SRC_DIR/efl"
 mkdir -p $SRC_DIR
 
-if [ -d "$SRC_DIR/libs/evas" ]; then
+if [ -d "$SRC_DIR/e17/libs/evas" ]; then
   cd $SRC_DIR/e17/libs/evas
   cvs update || exit $ERROR_CVS
 else

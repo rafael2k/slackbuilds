@@ -51,7 +51,7 @@ ERROR_PATCH=40;     ERROR_CVS=42
 SRC_DIR="$SRC_DIR/e17"
 mkdir -p $SRC_DIR
 
-if [ -d "$SRC_DIR/apps/entrance" ]; then
+if [ -d "$SRC_DIR/e17/apps/entrance" ]; then
   cd $SRC_DIR/e17/apps/entrance
   cvs update || exit $ERROR_CVS
 else
