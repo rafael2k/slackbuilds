@@ -1,0 +1,23 @@
+diff -Naur feast_03b.orig/Makefile feast_03b/Makefile
+--- feast_03b.orig/Makefile	2005-11-10 08:19:08.000000000 -0200
++++ feast_03b/Makefile	2006-10-19 18:43:57.000000000 -0200
+@@ -10,8 +10,8 @@
+ #
+ # To compile just type "make" and away you go.  
+ #
+-SILC_LIB      = /usr/local/silc/lib 
+-SILC_INCLUDES = /usr/local/silc/include
++SILC_LIB      = /usr/lib 
++SILC_INCLUDES = /usr/include
+ 
+ CFLAGS   = $(INCLUDES) $(SILC_COMMON_LIBS) $(LDFLAGS)
+ SOURCES  = src/feast.c src/feast_irc.c src/feast_silc.c src/irc_parser.c src/feast_config.c
+@@ -22,7 +22,7 @@
+ 	rm -f feast
+ 
+ feast: $(SOURCES)
+-	gcc -o feast $(SOURCES) -g -O2 -Wall -finline-functions -D_REENTRANT -I./ -I$(SILC_INCLUDES) -lcrypt -ldl -lpthread -L$(SILC_LIB) -lsilc -lsilcclient -lsilc
++	gcc -o feast $(SOURCES) -g -O2 -Wall -finline-functions -D_REENTRANT -I./ -I$(SILC_INCLUDES) -lcrypt -ldl -lpthread -L$(SILC_LIB) -lsilc -lsilcclient -lsilc -liconv
+ 
+ debug: clean $(SOURCES) 
+ 	gcc -o feast $(SOURCES) -g -O2 -Wall -DDEBUG -finline-functions -D_REENTRANT -I./ -I$(SILC_INCLUDES) -lcrypt -ldl -lpthread -L$(SILC_LIB) -lsilc -lsilcclient -lsilc
