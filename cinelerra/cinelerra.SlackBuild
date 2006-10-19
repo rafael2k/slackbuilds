@@ -59,7 +59,7 @@ if [ -d "$SRC_DIR/cinelerra" ]; then
   svn update || exit $ERROR_VCS 
 else 
   cd $SRC_DIR 
-  svn checkout svn://svn.skolelinux.org/cinelerra/trunk/hvirtual
+  svn checkout svn://svn.skolelinux.org/cinelerra/trunk/hvirtual || exit $EROR_VCS
   mv hvirtual cinelerra
 fi
 
