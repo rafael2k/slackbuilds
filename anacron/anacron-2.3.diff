@@ -1,0 +1,12 @@
+diff -Naur anacron-2.3.orig/gregor.c anacron-2.3/gregor.c
+--- anacron-2.3.orig/gregor.c	2000-06-22 19:50:40.000000000 -0300
++++ anacron-2.3/gregor.c	2006-10-19 16:18:29.000000000 -0200
+@@ -65,7 +65,7 @@
+ {
+     int dn;
+     int i;
+-    const int isleap; /* save three calls to leap() */
++    int isleap; /* save three calls to leap() */
+ 
+     /* Some validity checks */
+ 
