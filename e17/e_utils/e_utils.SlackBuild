@@ -1,11 +1,11 @@
 #!/bin/bash
 #
-# slackbuild script for entrance
+# slackbuild script for e_utils
 # by rhatto at riseup.net
 #
 
 if [ -s "slack-required" ]; then
-  echo Recomended and required packages for building entrance are:
+  echo Recomended and required packages for building e_utils are:
   cat slack-required | sed -e 's/^/\t/'
   if [ "$INTERACT" != "no" ]; then
     echo If you dont have those installed, press Ctrl-C. Otherwise, hit ENTER.
@@ -27,7 +27,7 @@ if [ -f "~/.slackbuildrc" ]; then
 fi
 
 # default settings
-PACKAGE="entrance"
+PACKAGE="e_utils"
 ARCH=${ARCH:=i486}
 VERSION="`date +%Y%m%d`"
 BUILD=${BUILD:=1rha}
@@ -51,14 +51,14 @@ ERROR_PATCH=40;     ERROR_CVS=42
 SRC_DIR="$SRC_DIR/e17"
 mkdir -p $SRC_DIR
 
-if [ -d "$SRC_DIR/apps/entrance" ]; then
-  cd $SRC_DIR/e17/apps/entrance
+if [ -d "$SRC_DIR/apps/e_utils" ]; then
+  cd $SRC_DIR/e17/apps/e_utils
   cvs update || exit $ERROR_CVS
 else
   cd $SRC_DIR
   # echo "Please hit ENTER on passwd prompt..."
   # cvs -d:pserver:anonymous@anoncvs.enlightenment.org:/var/cvs/e login || exit $ERROR_CVS
-  cvs -z3 -d:pserver:anonymous@anoncvs.enlightenment.org:/var/cvs/e co e17/apps/entrance || exit $ERROR_CVS
+  cvs -z3 -d:pserver:anonymous@anoncvs.enlightenment.org:/var/cvs/e co e17/apps/e_utils || exit $ERROR_CVS
 fi
 
 TMP="$TMP/$PACKAGE"
@@ -66,7 +66,7 @@ rm -rf $TMP
 mkdir -p $TMP
 cd $TMP
 
-cd $SRC_DIR/e17/apps/entrance
+cd $SRC_DIR/e17/apps/e_utils
 
 make clean &> /dev/null
 ./autogen.sh --prefix=/usr --sysconfdir=/etc --libdir=$LIBDIR || exit $ERROR_CONF
@@ -89,18 +89,18 @@ cat << EOF > install/slack-desc
 # make exactly 11 lines for the formatting to be correct.  It's also
 # customary to leave one space after the ':'.
 
-        |-----handy-ruler-----------------------------------------------------|
-entrance: entrance
-entrance:
-entrance: Entrance is the next generation of Elogin, a login/display manager
-entrance: for Linux XFree86 systems. It is designed to be extremely
-entrance: customizable and aesthetically attractive -- a refreshing relief
-entrance: from the traditional dull and boring interfaces of XDM and its
-entrance: descendants.
-entrance: 
-entrance:
-entrance:
-entrance:
+       |-----handy-ruler-----------------------------------------------------|
+e_utils: e_utils
+e_utils: 
+e_utils: A collection of utilities for Enlightenment 0.17
+e_utils: 
+e_utils: e17genmenu       (menu generator utility)
+e_utils: e17setroot       (background setting utility)
+e_utils: e_util_eapp_edit (eapp editing utility)
+e_utils: emblem           (graphical background selection utility)
+e_utils: entangle         (graphical menu editing utility)
+e_utils: exige            (run dialog box)
+e_utils: ethemes          (theme selector with preview)
 EOF
 
 # docs
