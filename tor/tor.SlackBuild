@@ -35,6 +35,12 @@ SRC_DIR=${SRC:=$CWD}
 TMP=${TMP:=/tmp}
 REPOS=${REPOS:=$TMP}
 
+# -------  error codes for createpkg  --------------
+ERROR_WGET=31;      ERROR_MAKE=32;      ERROR_INSTALL=33
+ERROR_MD5=34;       ERROR_CONF=35;      ERROR_HELP=36
+ERROR_TAR=37;       ERROR_MKPKG=38;     ERROR_GPG=39
+ERROR_PATCH=40
+
 if [ "$ARCH" == "x86_64" ]; then
   LIBDIR=/usr/lib64
 else
@@ -56,13 +62,13 @@ else
 fi
 
 if [ "$RTOOL" == "wget" ] && [ ! -f "$SRC_DIR/$SRC" ]; then
-  wget "$URL" -O "$SRC_DIR/$SRC"
-  wget "$URL.asc" -O "$SRC_DIR/$SRC.asc"
+  wget "$URL" -O "$SRC_DIR/$SRC" || exit $ERROR_WGET
+  wget "$URL.asc" -O "$SRC_DIR/$SRC.asc" || exit $ERROR_WGET
 fi
 
 gpg --keyserver subkeys.pgp.net --recv-keys 0x28988BF5
 gpg --keyserver subkeys.pgp.net --recv-keys 0x165733EA
-gpg --verify $SRC_DIR/$SRC.asc $SRC_DIR/$SRC || echo WARNING: Could not check signature or WRONG signature found.
+gpg --verify $SRC_DIR/$SRC.asc $SRC_DIR/$SRC || exit $ERROR_GPG
 sleep 3
 
 TMP="$TMP/$PACKAGE"
@@ -70,16 +76,16 @@ rm -rf $TMP
 mkdir -p $TMP
 cd $TMP
 
-tar xvf$tarflag $SRC_DIR/$SRC
+tar xvf$tarflag $SRC_DIR/$SRC || exit $ERROR_TAR
 cd $PACKAGE-$VERSION
 
 if [ -f "$CWD/$PACKAGE-$VERSION.diff" ]; then
-  patch -p1 < $CWD/$PACKAGE-$VERSION.diff
+  patch -p1 < $CWD/$PACKAGE-$VERSION.diff || exit $ERROR_PATCH
 fi
 
-./configure --prefix=/usr --sysconfdir=/etc --libdir=$LIBDIR
-make || exit 32
-make DESTDIR=$TMP/package-$PACKAGE install
+./configure --prefix=/usr --sysconfdir=/etc --libdir=$LIBDIR || exit $ERROR_CONF
+make || exit $ERROR_MAKE
+make DESTDIR=$TMP/package-$PACKAGE install || exit $ERROR_INSTALL
 
 mkdir $TMP/package-$PACKAGE/etc/rc.d
 cp $CWD/rc.tor.new $TMP/package-$PACKAGE/etc/rc.d
@@ -128,7 +134,7 @@ echo '( if [ ! -f "etc/rc.d/rc.tor" ]; then mv etc/rc.d/rc.tor.new etc/rc.d/rc.t
 echo '( if [ ! -f "etc/tor/torrc" ]; then mv etc/tor/torrc.sample etc/tor/torrc ; fi )' >> install/doinst.sh
 echo '( if [ ! -f "etc/tor/tor-tsocks.conf" ]; then mv etc/tor/tor-tsocks.conf.sample etc/tor/tor-tsocks.conf ; fi )' >> install/doinst.sh
 
-makepkg -c y -l y $REPOS/$PACKAGE-$VERSION-$ARCH-$BUILD.tgz
+makepkg -c y -l y $REPOS/$PACKAGE-$VERSION-$ARCH-$BUILD.tgz || exit $ERROR_MKPKG
 
 if [ "$CLEANUP" == "yes" ]; then
   rm -rf $TMP
