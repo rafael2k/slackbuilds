@@ -1,0 +1,64 @@
+diff -Naur camp-1.5.3455.orig/fork.c camp-1.5.3455/fork.c
+--- camp-1.5.3455.orig/fork.c	2002-03-19 19:36:04.000000000 -0300
++++ camp-1.5.3455/fork.c	2006-10-20 10:36:23.000000000 -0200
+@@ -86,7 +86,7 @@
+ 
+     default:
+       quitmode = 1;
+-      exit();     
++      exit(0);     
+       
+   }
+ }
+@@ -111,7 +111,7 @@
+    
+    if ( quitmode == 0 ) quitmode = 3; else
+      quitmode = 2;
+-   exit();
++   exit(0);
+    
+ }
+ 
+@@ -127,7 +127,7 @@
+    fd = fopen(PID_FILE, "r");
+    if ( !fd ) {
+       printf("No session to steal!\n");
+-      exit();
++      exit(0);
+    }
+    fscanf(fd, "%d\n", &oldpid);
+    fclose(fd);
+@@ -174,7 +174,7 @@
+    fd = fopen(buf, "r");
+    if ( !fd ) {
+       printf("No data found, can't steal!\n");
+-      exit();
++      exit(0);
+    }
+    fscanf(fd, "%d\n%d\n%d\n", &slavepid, &filenumber, &currentfile.frame);
+    fclose(fd);
+@@ -210,7 +210,7 @@
+    fd = fopen(PID_FILE, "r");
+    if ( !fd ) {
+       printf("No session to kill!\n");
+-      exit();
++      exit(0);
+    }
+    fscanf(fd, "%d\n", &oldpid);
+    fclose(fd);
+@@ -222,7 +222,7 @@
+    fd = fopen(buf, "r");
+    if ( !fd ) {
+       printf("No session to kill!\n");
+-      exit();
++      exit(0);
+    }
+    fscanf(fd, "%d\n", &oldpid);
+    fclose(fd);
+@@ -235,5 +235,5 @@
+    sprintf(buf, "%s/time.camp", TMP_DIR);
+    unlink(buf);
+    printf("done!\n");
+-   exit();
++   exit(0);
+ }
