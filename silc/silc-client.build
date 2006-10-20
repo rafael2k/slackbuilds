@@ -110,9 +110,13 @@ EOF
 
 mkdir -p /usr/doc/$PACKAGE-$VERSION
 
-for file in BSD CHANGES COPYING CREDITS GPL INSTALL README README.CVS README.MACOSX README.WIN32 TODO;do
+for file in BSD CHANGES COPYING CREDITS GPL INSTALL README README.CVS README.MACOSX README.WIN32 TODO; do
   cp $CWD/$file* /usr/doc/$PACKAGE-$VERSION/
 done
+
+# TODO: one should check in the source how to make that stop to being copied to the root folder
+rm /draft-riikonen*
+rm /COPYING /CHANGES /CREDITS /README /INSTALL /TODO
 
 if [ "$CLEANUP" == "yes" ]; then
   rm -rf $TMP
