@@ -2,4 +2,5 @@ scons
 raptor
 liblrdf
 ladspa
+libsamplerate
 jack
