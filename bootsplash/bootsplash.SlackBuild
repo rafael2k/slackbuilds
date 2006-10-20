@@ -71,7 +71,7 @@ if [ "$RTOOL" == "wget" ]; then
   fi
   for theme in $THEMES; do
     if [ ! -f "$SRC_DIR/$theme" ]; then
-      wget "$THEMES_URL/$theme" -O "$SRC/$theme" || exit $ERROR_WGET
+      wget "$THEMES_URL/$theme" -O "$SRC_DIR/$theme" || exit $ERROR_WGET
     fi
   done
 fi
