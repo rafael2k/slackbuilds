@@ -1,0 +1,163 @@
+#!/bin/bash
+#
+# slackbuild script for bootsplash
+# by rhatto at riseup.net
+#
+
+if [ -s "slack-required" ]; then
+  echo Recomended and required packages for building bootsplash are:
+  cat slack-required | sed -e 's/^/\t/'
+  if [ "$INTERACT" != "no" ]; then
+    echo If you dont have those installed, press Ctrl-C. Otherwise, hit ENTER.
+    read crap
+  else
+    echo Sleeping 3 seconds...
+    sleep 3
+  fi
+fi
+
+CWD="`pwd`"
+
+if [ -f "/etc/slackbuildrc" ]; then
+  source /etc/slackbuildrc
+fi
+
+if [ -f "~/.slackbuildrc" ]; then
+  source ~/.slackbuildrc
+fi
+
+# default settings
+PACKAGE="bootsplash"
+ARCH=${ARCH:=i486}
+VERSION=${VERSION:=3.1}
+BUILD=${BUILD:=1rha}
+SRC_DIR=${SRC:=$CWD}
+TMP=${TMP:=/tmp}
+REPOS=${REPOS:=$TMP}
+
+if [ "$ARCH" == "x86_64" ]; then
+  export LDFLAGS="-L/lib64 -L/usr/lib64"
+  LIBDIR=/usr/lib64
+else
+  LIBDIR=/usr/lib
+fi
+
+# -------  error codes for createpkg  --------------
+ERROR_WGET=31;      ERROR_MAKE=32;      ERROR_INSTALL=33
+ERROR_MD5=34;       ERROR_CONF=35;      ERROR_HELP=36
+ERROR_TAR=37;       ERROR_MKPKG=38;     ERROR_GPG=39
+ERROR_PATCH=40
+
+RTOOL="wget"
+PACKAGE_EXT="bz2"
+MD5="MD5SUMS"
+SRC="$PACKAGE-$VERSION.tar.$PACKAGE_EXT"
+URL="ftp://ftp.openbios.org/pub/bootsplash/rpm-sources/bootsplash/$SRC"
+MD5_URL="ftp://ftp.openbios.org/pub/bootsplash/rpm-sources/bootsplash/$MD5"
+
+THEMES="Theme-Slack-3D.tar.bz2 Theme-Slack-Black-Tux.tar.bz2 Theme-Slack.tar.bz2 Theme-Slack-Glass.tar.bz2"
+THEMES="$THEMES Theme-Slack-Gray-B.tar.bz2 Theme-Slackware.tar.bz2 Theme-SlackwareLinux.tar.bz2"
+THEMES_URL="http://www.bootsplash.de/files/themes/"
+
+SRC_DIR="$SRC_DIR/$PACKAGE"
+mkdir -p $SRC_DIR
+
+if [ "$RTOOL" == "wget" ]; then
+  if [ ! -f "$SRC_DIR/$SRC" ]; then
+    wget "$URL" -O "$SRC_DIR/$SRC" || exit $ERROR_WGET
+  fi
+  if [ ! -f "$SRC_DIR/$MD5" ]; then
+    wget "$MD5_URL" -O "$SRC_DIR/$MD5" || exit $ERROR_WGET
+  fi
+  for theme in $THEMES; do
+    if [ ! -f "$SRC_DIR/$theme" ]; then
+      wget "$THEMES_URL/$theme" -O "$SRC/$theme" || exit $ERROR_WGET
+    fi
+  done
+fi
+
+cd $SRC_DIR
+grep $SRC $MD5 > $SRC.md5
+md5sum $SRC | diff - $SRC.md5 || exit $ERROR_MD5
+
+TMP="$TMP/$PACKAGE"
+rm -rf $TMP
+mkdir -p $TMP
+cd $TMP
+
+tar xvf $SRC_DIR/$SRC || exit $ERROR_TAR
+cd $PACKAGE-$VERSION
+
+if [ -f "$CWD/$PACKAGE-$VERSION.diff" ]; then
+  patch -p1 < $CWD/$PACKAGE-$VERSION.diff || exit $ERROR_PATCH
+fi
+
+cd Utilities
+
+if [ "$ARCH" == "x86_64" ] then
+  sed -e 's/LIB      ?= lib/LIB      ?= lib64/' Makefile > Makefile.new
+  mv Makefile.new Makefile
+fi
+
+make || exit $ERROR_MAKE
+
+cd ..
+CWD="`pwd`"
+
+mkdir -p $TMP/package-$PACKAGE
+cd $TMP/package-$PACKAGE
+
+mkdir -p usr/bin usr/share/$PACKAGE/ etc/bootsplash/themes
+
+for binary in fbmngplay fbresolution fbtruetype splash splashpbm; do
+  cp $CWD/Utilities/$binary usr/bin
+done
+
+cp $CWD/Scripts/* usr/share/$PACKAGE
+
+for theme in $THEMES; do
+  ( cd etc/bootsplash/themes && tar xvf $SRC_DIR/$theme )
+done
+
+find . | xargs file | grep "executable" | grep ELF | cut -f 1 -d : | xargs strip --strip-unneeded 2> /dev/null
+find . | xargs file | grep "shared object" | grep ELF | cut -f 1 -d : | xargs strip --strip-unneeded 2> /dev/null
+
+mkdir install
+cat << EOF > install/slack-desc
+# HOW TO EDIT THIS FILE:
+# The "handy ruler" below makes it easier to edit a package description.  Line
+# up the first '|' above the ':' following the base package name, and the '|'
+# on the right side marks the last column you can put a character in.  You must
+# make exactly 11 lines for the formatting to be correct.  It's also
+# customary to leave one space after the ':'.
+
+          |-----handy-ruler-----------------------------------------------------|
+bootsplash: bootsplash (graphical boot process for the linux kernel)
+bootsplash:
+bootsplash: Linux graphical bootsplash allows you to use custom graphics during
+bootsplash: early system startup. It makes it possible to place a nice graphic
+bootsplash: behind or above the kernel boot messages. It hooks into the fbcon
+bootsplash: layer and, if activated, searches the initial ramdisk for a JPEG
+bootsplash: picture to show. On any output operations to the console, it takes
+bootsplash: care of painting a margin around your text and a background picture
+bootsplash: behind the text with a set of special cfb functions.
+bootsplash:
+bootsplash:
+EOF
+
+# docs
+mkdir -p usr/doc/$PACKAGE-$VERSION
+
+DOCS="COPYING README"
+
+for file in $DOCS; do
+  cp $CWD/Documentation/$file* usr/doc/$PACKAGE-$VERSION/ &> /dev/null
+  cp $CWD/Utilities/$file* usr/doc/$PACKAGE-$VERSION/ &> /dev/null
+done
+
+makepkg -c y -l y $REPOS/$PACKAGE-$VERSION-$ARCH-$BUILD.tgz || exit $ERROR_MKPKG
+
+if [ "$CLEANUP" == "yes" ]; then
+  rm -rf $TMP
+fi
+

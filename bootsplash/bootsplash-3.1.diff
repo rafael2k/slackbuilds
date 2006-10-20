@@ -1,0 +1,12 @@
+diff -Naur bootsplash-3.1.orig/Utilities/Makefile bootsplash-3.1/Utilities/Makefile
+--- bootsplash-3.1.orig/Utilities/Makefile	2004-02-19 13:42:11.000000000 -0300
++++ bootsplash-3.1/Utilities/Makefile	2006-10-20 11:03:07.000000000 -0200
+@@ -23,7 +23,7 @@
+ LIBSD_FT2    = -lfreetype -lm
+ 
+ LIBSS_MNG    = $(LIBDIR)/libmng-mini.a $(LIBDIR)/libz.a -lm
+-LIBSD_MNG    = -lmng -lz -lm
++LIBSD_MNG    = -lmng -lz -lm -ljpeg
+ 
+ CFLAGS   = -Os -Wall -I/usr/include/freetype2
+ 
