@@ -51,7 +51,6 @@ if [ "$RTOOL" == "wget" ] && [ ! -f "$SRC_DIR/$SRC" ]; then
 fi
 
 TMP="$TMP/$PACKAGE"
-rm -rf $TMP
 if [ ! -d "$TMP" ]; then
   mkdir -p $TMP
 fi
