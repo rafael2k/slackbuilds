@@ -1,7 +1,7 @@
 #
 # Automatically generated make config: don't edit
-# Linux kernel version: 2.6.15
-# Tue Oct 17 13:22:51 2006
+# Linux kernel version: 2.6.15-bs-rt
+# Fri Oct 20 19:28:55 2006
 #
 CONFIG_X86_64=y
 CONFIG_64BIT=y
@@ -45,6 +45,7 @@ CONFIG_INITRAMFS_SOURCE=""
 CONFIG_CC_OPTIMIZE_FOR_SIZE=y
 # CONFIG_EMBEDDED is not set
 CONFIG_KALLSYMS=y
+# CONFIG_KALLSYMS_ALL is not set
 # CONFIG_KALLSYMS_EXTRA_PASS is not set
 CONFIG_PRINTK=y
 CONFIG_BUG=y
@@ -145,7 +146,7 @@ CONFIG_PM_LEGACY=y
 # CONFIG_PM_DEBUG is not set
 CONFIG_SOFTWARE_SUSPEND=y
 CONFIG_PM_STD_PARTITION=""
-# CONFIG_SWSUSP_ENCRYPT is not set
+CONFIG_SWSUSP_ENCRYPT=y
 
 #
 # ACPI (Advanced Configuration and Power Interface) Support
@@ -210,6 +211,7 @@ CONFIG_PCI_MMCONFIG=y
 # CONFIG_PCIEPORTBUS is not set
 CONFIG_PCI_MSI=y
 # CONFIG_PCI_LEGACY_PROC is not set
+# CONFIG_PCI_DEBUG is not set
 
 #
 # PCCARD (PCMCIA/CardBus) support
@@ -465,6 +467,7 @@ CONFIG_NET_ESTIMATOR=y
 CONFIG_STANDALONE=y
 CONFIG_PREVENT_FIRMWARE_BUILD=y
 # CONFIG_FW_LOADER is not set
+# CONFIG_DEBUG_DRIVER is not set
 
 #
 # Connector - unified userspace <-> kernelspace linker
@@ -1613,8 +1616,22 @@ CONFIG_NLS_UTF8=y
 # Kernel hacking
 #
 # CONFIG_PRINTK_TIME is not set
-# CONFIG_DEBUG_KERNEL is not set
-CONFIG_LOG_BUF_SHIFT=14
+CONFIG_DEBUG_KERNEL=y
+CONFIG_MAGIC_SYSRQ=y
+CONFIG_LOG_BUF_SHIFT=17
+CONFIG_DETECT_SOFTLOCKUP=y
+# CONFIG_SCHEDSTATS is not set
+# CONFIG_DEBUG_SLAB is not set
+CONFIG_DEBUG_PREEMPT=y
+# CONFIG_DEBUG_SPINLOCK is not set
+# CONFIG_DEBUG_SPINLOCK_SLEEP is not set
+# CONFIG_DEBUG_KOBJECT is not set
+# CONFIG_DEBUG_INFO is not set
+# CONFIG_DEBUG_FS is not set
+# CONFIG_DEBUG_VM is not set
+# CONFIG_FRAME_POINTER is not set
+# CONFIG_RCU_TORTURE_TEST is not set
+# CONFIG_INIT_DEBUG is not set
 
 #
 # Security options
