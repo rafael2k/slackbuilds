@@ -107,6 +107,8 @@ make modules_install
 
 # make the package
 
+CWD="`pwd`"
+
 PKG="$TMP/package-$PACKAGE"
 
 mkdir -p $PKG/{install,boot,lib/modules,usr/doc}
