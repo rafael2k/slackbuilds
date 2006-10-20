@@ -1,0 +1,14 @@
+diff -Naur libgphoto2-2.2.1.orig/packaging/generic/print-camera-list.c libgphoto2-2.2.1/packaging/generic/print-camera-list.c
+--- libgphoto2-2.2.1.orig/packaging/generic/print-camera-list.c	2006-04-18 22:54:05.000000000 -0300
++++ libgphoto2-2.2.1/packaging/generic/print-camera-list.c	2006-10-20 15:30:00.000000000 -0200
+@@ -48,8 +48,8 @@
+ #include <time.h>
+ #include <string.h>
+ 
+-#include <gphoto2/gphoto2-camera.h>
+-#include <gphoto2/gphoto2-port-log.h>
++#include <libgphoto2/gphoto2-camera.h>
++#include <libgphoto2_port/libgphoto2_port/gphoto2-port-log.h>
+ 
+ #ifndef TRUE
+ #define TRUE  (0==0)
