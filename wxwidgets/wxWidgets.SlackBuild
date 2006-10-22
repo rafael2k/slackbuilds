@@ -30,7 +30,7 @@ fi
 PACKAGE="wxWidgets"
 ARCH=${ARCH:=i486}
 VERSION=${VERSION:=2.6.3}
-BUILD=${BUILD:=1rd}
+BUILD=${BUILD:=2rd}
 SRC_DIR=${SRC:=$CWD}
 TMP=${TMP:=/tmp}
 REPOS=${REPOS:=$TMP}
@@ -72,6 +72,12 @@ if [ -f "$CWD/$PACKAGE-$VERSION.diff" ]; then
 fi
 
 ./configure --prefix=/usr --sysconfdir=/etc --libdir=$LIBDIR --with-docdir=/usr/doc/$PACKAGE-$VERSION --enable-unicode --enable-config || exit $ERROR_CONF
+make || exit $ERROR_MAKE
+make DESTDIR=$TMP/package-$PACKAGE install || exit $ERROR_INSTALL
+
+make clean
+
+./configure --prefix=/usr --sysconfdir=/etc --libdir=$LIBDIR --with-docdir=/usr/doc/$PACKAGE-$VERSION --enable-config || exit $ERROR_CONF
 make || exit $ERROR_MAKE
 make DESTDIR=$TMP/package-$PACKAGE install || exit $ERROR_INSTALL
 
