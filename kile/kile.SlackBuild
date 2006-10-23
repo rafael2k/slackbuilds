@@ -24,7 +24,8 @@ EXTENSION=`echo $SRC_ORIG | sed 's/\(.*\)-\(.*\)\.\(.*\..*\)$/\3/'`
 # -------  Códigos de erro para o createpkg  --------------
 ERROR_WGET=31;      ERROR_MAKE=32;      ERROR_INSTALL=33
 ERROR_MD5=34;       ERROR_CONF=35;      ERROR_HELP=36
-ERROR_TAR=37;       ERROR_MKPKG=38
+ERROR_TAR=37;       ERROR_MKPKG=38;	ERROR_GPG=39
+ERROR_PATCH=40;     ERROR_VCS=41
 
 # ---------  Inicializa variáveis de entrada  -------------
 PACKAGE=`echo $SRC_ORIG | sed 's/\(.*\)-\(.*\)\.\(.*\..*\)$/\1/'`
