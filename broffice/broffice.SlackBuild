@@ -2,7 +2,7 @@
 #
 # slackbuild for kile, by Rudson R. Alves
 # requires: none
-# tested: broffice-2.0.3
+# tested: broffice-2.0.4
 
 CWD=`pwd`
 
@@ -16,7 +16,7 @@ fi
 # --------  Variáveis de controle de versão  --------------
 # Nome da fonte para a qual o slackbuild foi construído e
 # o seu md5sum
-SRC_ORIG="broffice.org.2.0.3.rpm.tar.bz2"
+SRC_ORIG="broffice.org.2.0.4.rpm.tar.bz2"
 MD5_ORIG="fcba4254c0f5bec5499aea71ae40e715"
 VERSION_ORIG=`echo $SRC_ORIG | sed 's/.*\.org\.\([0-9]\.[0-9]\.[0-9]\)\.rpm.*$/\1/'`
 EXTENSION=`echo $SRC_ORIG | sed 's/.*\.rpm\.\(.*\..*\)$/\1/'`
@@ -24,7 +24,8 @@ EXTENSION=`echo $SRC_ORIG | sed 's/.*\.rpm\.\(.*\..*\)$/\1/'`
 # -------  Códigos de erro para o createpkg  --------------
 ERROR_WGET=31;      ERROR_MAKE=32;      ERROR_INSTALL=33
 ERROR_MD5=34;       ERROR_CONF=35;      ERROR_HELP=36
-ERROR_TAR=37;       ERROR_MKPKG=38
+ERROR_TAR=37;       ERROR_MKPKG=38;     ERROR_GPG=39
+ERROR_PATCH=40;     ERROR_VCS=41
 
 # ---------  Inicializa variáveis de entrada  -------------
 PACKAGE=`echo $SRC_ORIG | sed 's/\(.*\)\.org\..*$/\1/'`
