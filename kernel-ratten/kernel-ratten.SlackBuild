@@ -27,7 +27,7 @@ fi
 CWD="`pwd`"
 
 PACKAGE="kernel-ratten"
-KERNEL_VERSION="2.6.15"
+KERNEL_VERSION="2.6.18.1"
 EXTRAVERSION=""
 ARCH="x86_64"
 BUILD="1rha"
