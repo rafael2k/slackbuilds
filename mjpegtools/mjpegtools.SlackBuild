@@ -67,11 +67,15 @@ cd $TMP
 tar xvf$tarflag $SRC_DIR/$SRC
 cd $PACKAGE-$VERSION
 
-./configure --prefix=/usr --sysconfdir=/etc --libdir=$LIBDIR --with-docdir=/usr/doc/$PACKAGE-$VERSION
+if [ "$ARCH" == "powerpc" ]; then
+  patch -p0 < $CWD/$PACKAGE-powerpc.diff
+fi
 
 if [ -f "$CWD/$PACKAGE-$VERSION.diff" ]; then
   patch -p0 < $CWD/$PACKAGE-$VERSION.diff
 fi
+
+./configure --prefix=/usr --sysconfdir=/etc --libdir=$LIBDIR --with-docdir=/usr/doc/$PACKAGE-$VERSION
 
 make || exit 32
 make DESTDIR=$TMP/package-$PACKAGE install

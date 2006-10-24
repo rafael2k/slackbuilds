@@ -1,0 +1,11 @@
+--- configure.orig	2006-10-17 07:55:24.000000000 +0000
++++ configure	2006-10-17 07:56:56.000000000 +0000
+@@ -27077,6 +27077,8 @@
+     fi
+     rm -f conftest*;
+ 
++have_altivec=false
++
+     if test x$have_altivec = xtrue
+     then
+       CFLAGS="$CFLAGS ${ALTIVEC_CFLAGS}"
