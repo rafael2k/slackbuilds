@@ -1,7 +1,7 @@
 #
 # Automatically generated make config: don't edit
 # Linux kernel version: 2.6.18.1
-# Tue Oct 24 19:45:12 2006
+# Tue Oct 24 20:24:37 2006
 #
 CONFIG_X86_64=y
 CONFIG_64BIT=y
@@ -1322,8 +1322,8 @@ CONFIG_SND_ICE1712=m
 # CONFIG_SND_RME9652 is not set
 # CONFIG_SND_SONICVIBES is not set
 # CONFIG_SND_TRIDENT is not set
-CONFIG_SND_VIA82XX=m
-CONFIG_SND_VIA82XX_MODEM=m
+# CONFIG_SND_VIA82XX is not set
+# CONFIG_SND_VIA82XX_MODEM is not set
 # CONFIG_SND_VX222 is not set
 # CONFIG_SND_YMFPCI is not set
 
