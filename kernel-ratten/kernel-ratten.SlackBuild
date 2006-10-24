@@ -93,7 +93,7 @@ cp $CWD/config-$KERNEL_VERSION linux-$KERNEL_VERSION/.config
 cd linux-$KERNEL_VERSION
 
 if [ ! -z "$EXTRAVERSION" ] && [ ! -z "$PATCHSET" ]; then
-  sed -e "s/^EXTRAVERSION =*$/EXTRAVERSION = \.$EXTRAVERSION-$PATCHSET/" Makefile > Makefile.tmp
+  sed -e "s/^EXTRAVERSION =.*$/EXTRAVERSION = \.$EXTRAVERSION-$PATCHSET/" Makefile > Makefile.tmp
 elif [ ! -z "$PATCHSET" ]; then
   sed -e "s/^EXTRAVERSION =*$/EXTRAVERSION = -$PATCHSET/" Makefile > Makefile.tmp
 fi
