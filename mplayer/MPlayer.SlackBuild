@@ -29,7 +29,7 @@ fi
 # default settings
 PACKAGE="MPlayer"
 ARCH=${ARCH:=i486}
-VERSION=${VERSION:=1.0pre8}
+VERSION=${VERSION:=1.0rc1}
 BUILD=${BUILD:=1rha}
 SRC_DIR=${SRC:=$CWD}
 TMP=${TMP:=/tmp}
@@ -73,7 +73,7 @@ cd $TMP
 tar xvf$tarflag $SRC_DIR/$SRC
 cd $PACKAGE-$VERSION
 
-if [ "$ARCH" == "i386" ]; then
+if [ "$ARCH" == "i486" ]; then
   EXTRA_ARGS="--enable-win32 --enable-qtx"
 fi 
 
