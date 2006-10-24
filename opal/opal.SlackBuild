@@ -29,7 +29,7 @@ fi
 # default settings
 PACKAGE="opal"
 ARCH=${ARCH:=i486}
-VERSION=${VERSION:=2.2.2}
+VERSION=${VERSION:=2.2.3}
 BUILD=${BUILD:=1rd}
 SRC_DIR=${SRC:=$CWD}
 TMP=${TMP:=/tmp}
