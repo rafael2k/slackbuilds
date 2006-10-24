@@ -87,8 +87,9 @@ cd $TMP/package-$PACKAGE
 find . | xargs file | grep "executable" | grep ELF | cut -f 1 -d : | xargs strip --strip-unneeded 2> /dev/null
 find . | xargs file | grep "shared object" | grep ELF | cut -f 1 -d : | xargs strip --strip-unneeded 2> /dev/null
 
-( cd usr/bin && rm wx-config )
-( cd usr/bin && ln -sf /usr/lib64/wx/config/gtk2-unicode-release-2.6 wx-config )
+# do we really need that??
+# ( cd usr/bin && rm wx-config )
+# ( cd usr/bin && ln -sf $LIBDIR/wx/config/gtk2-unicode-release-2.6 wx-config )
 
 mkdir install
 cat << EOF > install/slack-desc
