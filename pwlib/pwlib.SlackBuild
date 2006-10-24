@@ -29,7 +29,7 @@ fi
 # default settings
 PACKAGE="pwlib"
 ARCH=${ARCH:=i486}
-VERSION=${VERSION:=1.10.1}
+VERSION=${VERSION:=1.10.2}
 BUILD=${BUILD:=1rd}
 SRC_DIR=${SRC:=$CWD}
 TMP=${TMP:=/tmp}
