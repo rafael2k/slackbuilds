@@ -1,0 +1,26 @@
+Index: quicktime/ffmpeg/libavcodec/bswap.h
+===================================================================
+--- quicktime/ffmpeg/libavcodec/bswap.h	(revision 945)
++++ quicktime/ffmpeg/libavcodec/bswap.h	(working copy)
+@@ -10,6 +10,8 @@
+ #include <byteswap.h>
+ #else
+ 
++#undef ARCH_X86
++
+ #ifdef ARCH_X86_64
+ #  define LEGACY_REGS "=Q"
+ #else
+Index: quicktime/ffmpeg/libavcodec/bitstream.h
+===================================================================
+--- quicktime/ffmpeg/libavcodec/bitstream.h	(revision 945)
++++ quicktime/ffmpeg/libavcodec/bitstream.h	(working copy)
+@@ -14,6 +14,8 @@
+ //#define A32_BITSTREAM_READER
+ #define LIBMPEG2_BITSTREAM_READER_HACK //add BERO
+  
++#undef ARCH_X86
++
+ extern const uint8_t ff_reverse[256];
+ 
+ #if defined(ARCH_X86) || defined(ARCH_X86_64)

@@ -71,6 +71,10 @@ if [ -f "$CWD/$PACKAGE-$VERSION.diff" ]; then
   patch -p1 < $CWD/$PACKAGE-$VERSION.diff || exit $ERROR_PATCH
 fi
 
+if [ "$ARCH" == "powerpc" ]; then
+  patch -p0 < $CWD/$PACKAGE-powerpc.diff || exit $ERROR_PATCH
+fi
+
 ./autogen.sh || exit $ERROR_CONF
 ./configure --prefix=/usr --libdir=$LIBDIR || exit $ERROR_CONF
 make || exit $ERROR_MAKE
