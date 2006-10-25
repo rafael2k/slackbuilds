@@ -53,7 +53,7 @@ PACKAGE_EXT="bz2"
 SRC="alsa-tools-$VERSION.tar.$PACKAGE_EXT"
 URL="ftp://ftp.alsa-project.org/pub/tools/$SRC"
 
-SRC_DIR="$SRC_DIR/$PACKAGE"
+SRC_DIR="$SRC_DIR/alsa-tools"
 mkdir -p $SRC_DIR
 
 if [ "$RTOOL" == "wget" ] && [ ! -f "$SRC_DIR/$SRC" ]; then
