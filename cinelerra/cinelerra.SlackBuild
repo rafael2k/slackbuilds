@@ -67,7 +67,7 @@ cd $SRC_DIR/cinelerra
 VERSION=r"`svnversion cinelerra`"
 
 if [ -f "$CWD/$PACKAGE-$VERSION.diff" ]; then
-  patch -p1 < $CWD/$PACKAGE-$VERSION.diff || exit $ERROR_PATCH
+  patch -p0 < $CWD/$PACKAGE-$VERSION.diff || exit $ERROR_PATCH
 fi
 
 if [ "$ARCH" == "powerpc" ]; then
