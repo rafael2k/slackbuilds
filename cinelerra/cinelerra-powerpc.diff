@@ -1,26 +1,15 @@
-Index: quicktime/ffmpeg/libavcodec/bswap.h
+Index: quicktime/ffmpeg/avconfig.h
 ===================================================================
---- quicktime/ffmpeg/libavcodec/bswap.h	(revision 945)
-+++ quicktime/ffmpeg/libavcodec/bswap.h	(working copy)
-@@ -10,6 +10,8 @@
- #include <byteswap.h>
- #else
- 
-+#undef ARCH_X86
-+
- #ifdef ARCH_X86_64
- #  define LEGACY_REGS "=Q"
- #else
-Index: quicktime/ffmpeg/libavcodec/bitstream.h
-===================================================================
---- quicktime/ffmpeg/libavcodec/bitstream.h	(revision 945)
-+++ quicktime/ffmpeg/libavcodec/bitstream.h	(working copy)
-@@ -14,6 +14,8 @@
- //#define A32_BITSTREAM_READER
- #define LIBMPEG2_BITSTREAM_READER_HACK //add BERO
-  
-+#undef ARCH_X86
-+
- extern const uint8_t ff_reverse[256];
- 
- #if defined(ARCH_X86) || defined(ARCH_X86_64)
+--- quicktime/ffmpeg/avconfig.h	(revision 946)
++++ quicktime/ffmpeg/avconfig.h	(working copy)
+@@ -1,7 +1,7 @@
+ #define FFMPEG_CONFIGURATION " "
+-#define ARCH_X86 1
+-#define TUNECPU generic
+-#define __CPU__ 586
++#define ARCH_POWERPC 1 
++#define TUNECPU ppc750
++#define __CPU__ powerpc
+ #define HAVE_LOCALTIME_R 1
+ #define HAVE_LRINTF 1
+ #define HAVE_VHOOK 1
