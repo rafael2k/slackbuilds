@@ -78,6 +78,7 @@ if [ "$RTOOL" == "wget" ]; then
 fi
 
 TMP="$TMP/$PACKAGE"
+rm -rf $TMP
 mkdir -p $TMP
 cd $TMP
 
