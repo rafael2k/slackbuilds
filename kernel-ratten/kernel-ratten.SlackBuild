@@ -27,16 +27,16 @@ fi
 CWD="`pwd`"
 
 PACKAGE="kernel-ratten"
-KERNEL_VERSION="2.6.16"
-EXTRAVERSION="29"
-ARCH="x86_64"
-BUILD="1rha"
 PATCHSET="bs-rt"
-PATCH_VERSION="3.1.6-2.6.15"
-REALTIME_PATCH="rt-lsm-0.8.7-kernel.patch"
+ARCH="x86_64"
+SPLASH="/etc/bootsplash/themes/Slack-Black-Tux/config/bootsplash-1024x768.cfg"
+BUILD=${BUILD:=1rha}
+KERNEL_VERSION=${KERNEL_VERSION:=2.6.18}
+EXTRAVERSION=${EXTRAVERSION:=1}
+PATCH_VERSION=${PATCH_VERSION:=3.1.6-2.6.15}
+REALTIME_PATCH=${REALTIME_PATCH:=rt-lsm-0.8.7-kernel.patch}
 TMP=${TMP:=/tmp}
 SRC_DIR=${SRC:=$CWD}
-SPLASH="/etc/bootsplash/themes/Slack-Black-Tux/config/bootsplash-1024x768.cfg"
 REPOS=${REPOS:=$TMP}
 
 # -------  error codes for createpkg  --------------
