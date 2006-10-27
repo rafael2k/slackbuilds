@@ -64,7 +64,7 @@ fi
 
 # ----------------  Download fontes  ----------------------
 # Fonte a ser compilada, com o path
-SOURCE=$SRC_DIR/$SRC
+SOURCE=$SRC_DIR/$PACKAGE/$SRC
 mkdir -p $SRC_DIR/$PACKAGE 2>/dev/null
 # Verifica existência do pacote em $SRC em $SRC_DIR
 if [ ! -e $SOURCE ]; then
@@ -79,7 +79,7 @@ fi
 
 # ------------------  Checa md5sum  -----------------------
 if [ "$SRC_ORIG" = "$SRC" -o "$MD5" != "$MD5_ORIG" -a "$MD5" != "no" ]; then
-    SUM=`md5sum $SRC_DIR/$SRC | awk '{print $1}'`
+    SUM=`md5sum $SOURCE | awk '{print $1}'`
     if [ "$SUM" != "$MD5" ]; then
         echo -e "\n\n\033[01;31m MD5SUM error: run Slackbuild again \n\033[m"
         echo -e "\033[01;31m Remove $PACKAGE from $SRC_DIR and start Slackbuild again or use MD5=\"no\" \n\033[m"
