@@ -69,10 +69,11 @@ fi
 # ----------------  Download fontes  ----------------------
 # Fonte a ser compilada, com o path
 SOURCE=$SRC_DIR/$SRC
+mkdir -p $SRC_DIR/qemu 2>/dev/null
 # Verifica existência do pacote em $SRC em $SRC_DIR
 if [ ! -e $SOURCE ]; then
     echo -e "\n\n\033[01;32m Download $PACKAGE \n\033[m"
-    wget "$URL" -P "$SRC_DIR/"
+    wget "$URL" -P "$SRC_DIR/qemu"
     # Verifica se o
     if [ $? -ne 0 ]; then
         echo -e "\n\n\033[01;31m No such source file in $URL\n\033[m"
