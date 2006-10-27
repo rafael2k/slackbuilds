@@ -17,7 +17,7 @@ fi
 # Nome da fonte para a qual o slackbuild foi construído e
 # o seu md5sum
 SRC_ORIG="broffice.org.2.0.4.rpm.tar.bz2"
-MD5_ORIG="fcba4254c0f5bec5499aea71ae40e715"
+MD5_ORIG="3b78ddd41c7f8da098ec36f78642613f"
 VERSION_ORIG=`echo $SRC_ORIG | sed 's/.*\.org\.\([0-9]\.[0-9]\.[0-9]\)\.rpm.*$/\1/'`
 EXTENSION=`echo $SRC_ORIG | sed 's/.*\.rpm\.\(.*\..*\)$/\1/'`
 
@@ -29,7 +29,7 @@ ERROR_PATCH=40;     ERROR_VCS=41
 
 # ---------  Inicializa variáveis de entrada  -------------
 PACKAGE=`echo $SRC_ORIG | sed 's/\(.*\)\.org\..*$/\1/'`
-ARCH=${ARCH:=i468}
+ARCH="i686"
 SRC_DIR=${SRC:=$CWD}
 VERSION=${VERSION:=$VERSION_ORIG}
 SRC=$PACKAGE.org.$VERSION.rpm.$EXTENSION
@@ -39,7 +39,7 @@ REPOS=${REPOS:=$TMP}
 PREFIX=${PREFIX:=/opt/kde}
 OPTCONF=${OPTCONF:=""}
 MD5=${MD5:=$MD5_ORIG}
-URL=${URL:="http://ftp.unicamp.br/pub/broffice/stable/2.0.3/$SRC"}
+URL=${URL:="http://ftp.unicamp.br/pub/broffice/stable/$VERSION/$SRC"}
 
 # ----------------  SlackBuild Help  ----------------------
 if [ "$1" = "--help" -o "$1" = "help" ]; then
@@ -181,7 +181,7 @@ cat << EOF > install/slack-desc
 # leave one space after the ':'.
 
         |-----handy-ruler------------------------------------------------------|
-broffice: BrOffice.org Versão 2.0.3
+broffice: BrOffice.org Versão $VERSION
 broffice:
 broffice: Pacote do BrOffice construído a partir do pacote rpm pelo
 broffice: broffice.Slackbuild.
