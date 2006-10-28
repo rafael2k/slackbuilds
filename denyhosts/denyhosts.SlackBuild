@@ -16,7 +16,7 @@ fi
 # default settings
 PACKAGE="denyhosts"
 VERSION=${VERSION:=2.5}
-ARCH="noarch"
+ARCH=${ARCH:=i486}
 BUILD=${BUILD:=1rha}
 SRC_DIR=${SRC:=$CWD}
 TMP=${TMP:=/tmp}
