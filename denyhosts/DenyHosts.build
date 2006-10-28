@@ -18,7 +18,7 @@ if [ -f "~/.slackbuildrc" ]; then
 fi
 
 # default settings
-PACKAGE="DenyHosts"
+PACKAGE="denyhosts"
 VERSION=${VERSION:=2.5}
 ARCH="noarch"
 BUILD=${BUILD:=1rha}
