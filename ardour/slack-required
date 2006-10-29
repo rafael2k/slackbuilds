@@ -3,4 +3,5 @@ raptor
 liblrdf
 ladspa
 libsamplerate
+libsndfile
 jack
