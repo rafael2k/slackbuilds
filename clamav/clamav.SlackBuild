@@ -123,7 +123,6 @@ echo '( if ! grep -qe "^clamav:" etc/group; then echo creating group clamav... ;
 echo '( if ! grep -qe "^clamav:" etc/passwd; then echo creating user clamav... ; chroot . /usr/sbin/useradd clamav -g clamav; fi )' >> install/doinst.sh
 echo '( if [ ! -f "etc/clamd.conf" ]; then mv etc/clamd.conf.new etc/clamd.conf; fi )' >> install/doinst.sh
 echo '( if [ ! -f "etc/freshclam.conf" ]; then mv etc/freshclam.conf.new etc/freshclam.conf; fi )' >> install/doinst.sh
-echo '( mkdir -p var/log/munin var/run/munin var/munin )' >> install/doinst.sh
 
 makepkg -c y -l y $REPOS/$PACKAGE-$VERSION-$ARCH-$BUILD.tgz
 

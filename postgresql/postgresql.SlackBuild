@@ -83,13 +83,19 @@ if [ -f "$CWD/$PACKAGE-$VERSION.diff" ]; then
   patch -p1 < $CWD/$PACKAGE-$VERSION.diff || exit $ERROR_PATCH
 fi
 
-./configure --prefix=/usr --sysconfdir=/etc --libdir=$LIBDIR || exit $ERROR_CONF
+./configure --prefix=/usr --sysconfdir=/etc --libdir=$LIBDIR --enable-thread-safety || exit $ERROR_CONF
 make || exit $ERROR_MAKE
 make DESTDIR=$TMP/package-$PACKAGE install || exit $ERROR_INSTALL
 
 CWD="`pwd`"
 
 cd $TMP/package-$PACKAGE
+
+mkdir -p etc/rc.d
+sed -e 's/\/usr\/local\/pgsql\/data/\/var\/lib\/pgsql\/data/' \
+    -e 's/\/usr\/local\/pgsql/\/usr/' $CWD/contrib/start-scripts/linux > etc/rc.d/rc.postgresql.new
+
+chmod 755 etc/rc.d/rc.postgresql.new
 
 find . | xargs file | grep "executable" | grep ELF | cut -f 1 -d : | xargs strip --strip-unneeded 2> /dev/null
 find . | xargs file | grep "shared object" | grep ELF | cut -f 1 -d : | xargs strip --strip-unneeded 2> /dev/null
@@ -125,6 +131,11 @@ DOCS="COPYRIGHT HISTORY INSTALL README"
 for file in $DOCS; do
   cp $CWD/$file* usr/doc/$PACKAGE-$VERSION/
 done
+
+# install script
+echo '( if ! grep -qe "^postgres:" etc/group; then echo creating group postgres... ; chroot . /usr/sbin/groupadd postgres; fi )' >> install/doinst.sh
+echo '( if ! grep -qe "^postgres:" etc/passwd; then echo creating user postgres... ; chroot . /usr/sbin/useradd postgres -g postgres; fi )' >> install/doinst.sh
+echo '( if [ ! -f "etc/rc.d/rc.postgresql" ]; then mv etc/rc.d/rc.postgresql.new etc/rc.d/rc.postgresql; fi )' >> install/doinst.sh
 
 makepkg -c y -l y $REPOS/$PACKAGE-$VERSION-$ARCH-$BUILD.tgz || exit $ERROR_MKPKG
 
