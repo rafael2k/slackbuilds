@@ -151,11 +151,31 @@ if [ $? -ne 0 ]; then
     exit $ERROR_INSTALL
 fi
 
-# ---------------  Cria links  ----------------------
+# ------------  Cria links e instala manuais  -------------
+# Links
 mkdir -p $PKG/usr/bin
 for i in convcal fdf2fit grconvert xmgrace; do
     ln -s $PREFIX/$PACKAGE/bin/$i /usr/bin/$i
 done
+# Manuais
+mkdir -p $PKG/man/man1
+cp $PKG_DIR/doc/*.1 $PKG/man/man1/
+gzip $PKG/man/man1/*
+# Cria grace.desktop
+mkdir -p $PKG/usr/share/applications
+cat << EOF_KDE > $PKG/usr/share/applications/Grace.desktop
+[Desktop Entry]
+Encoding=UTF-8
+Categories=Graphics;
+Exec=xmgrace
+Icon=$PREFIX/$PACKAGE/doc/mygraph.png
+StartupNotify=true
+Terminal=false
+Type=Application
+Name=Grace
+GenericName=Grace
+Comment=
+EOF_KDE
 
 # -----------------  Stripa código  -----------------------
 cd $PKG
