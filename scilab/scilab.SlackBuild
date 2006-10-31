@@ -168,7 +168,7 @@ ln -s $LIBDIR/$PACKAGE-$VERSION/bin/intersci $PKG/$PREFIX/bin/intersci 2>/dev/nu
 
 # Correção no index.html
 (
-    cd $PKG/$LIBDIR/scilab-4.0/man/eng/
+    cd $PKG/$LIBDIR/$PACKAGE-$VERSION/man/eng/
     eval "sed 's,${PKG_SRC},${PREFIX}/lib,g' index.htm > index.htm.new"
     mv index.htm.new index.htm
     cd ../fr
@@ -179,12 +179,11 @@ ln -s $LIBDIR/$PACKAGE-$VERSION/bin/intersci $PKG/$PREFIX/bin/intersci 2>/dev/nu
 # Correção do script scilab
 (
     pwd
-    cd $PKG/$LIBDIR/scilab-4.0/bin/
-    sed 's,^SCI=\".*$,SCI=\"/usr/lib/scilab-4.0\",' scilab > scilab.new
+    cd $PKG/$LIBDIR/$PACKAGE-$VERSION/bin/
+    eval "sed 's,^SCI=\\\".*$,SCI=\\\"/usr/lib/$PACKAGE-$VERSION\\\",' scilab > scilab.new"
     cp scilab.new scilab
-    exit
 )
-exit
+
 # Cria Scilab.desktop
 mkdir -p $PKG/usr/share/applications/ 2>/dev/null
 cat << EOF_KDE > $PKG/usr/share/applications/Scilab.desktop
