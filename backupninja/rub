@@ -100,31 +100,29 @@ getconf service
 
 function rotate {
 
-  # TODO: force to an absolute path
-
   if [[ "$2" < 4 ]]; then
     error "Rotate: minimum of 4 rotations"
     exit 1
   fi
 
   if [ -d $1.$2 ]; then
-    $nice $mv $1.$2 $1.tmp
+    $nice $mv /$1.$2 /$1.tmp
   fi
 
   for ((n=`echo "$2 - 1" | bc`; n >= 0; n--)); do
     if [ -d $1.$n ]; then
       dest=`echo "$n + 1" | bc`
-      $nice $mv $1.$n $1.$dest
-      $touch $1.$dest
+      $nice $mv /$1.$n /$1.$dest
+      $touch /$1.$dest
     fi
   done
 
   if [ -d $1.tmp ]; then
-    $nice $mv $1.tmp $1.0
+    $nice $mv /$1.tmp /$1.0
   fi
 
   if [ -d $1.1 ]; then
-    $nice $cp -alf $1.1/. $1.0
+    $nice $cp -alf /$1.1/. /$1.0
   fi
 
 }
@@ -257,18 +255,17 @@ if [ "$vservers_are_available" == "yes" ]; then
   mkdir -p $backupdir/$VROOTDIR
   chmod 000 $backupdir/$VROOTDIR
 
-  for candidate in `ls $VROOTDIR`; do
+  for candidate in $found_vservers; do
+    candidate="`basename $candidate`"
     found_excluded_vserver="0"
-    if [ "$candidate" != "lost+found" ]; then
-      for excluded_vserver in $exclude_vserver; do
-        if [ "$excluded_vserver" == "$candidate" ]; then
-          found_excluded_vserver="1"
-          break
-        fi
-      done
-      if [ "$found_excluded_vserver" == "0" ]; then
-        include="$include $VROOTDIR/$candidate"
+    for excluded_vserver in $exclude_vserver; do
+      if [ "$excluded_vserver" == "$candidate" ]; then
+        found_excluded_vserver="1"
+        break
       fi
+    done
+    if [ "$found_excluded_vserver" == "0" ]; then
+      include="$include $VROOTDIR/$candidate"
     fi
   done
 fi

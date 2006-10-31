@@ -17,7 +17,7 @@ fi
 # default settings
 PACKAGE="backupninja"
 ARCH="noarch"
-VERSION=${VERSION:=0.9.3}
+VERSION=${VERSION:=0.9.4}
 BUILD=${BUILD:=5rha}
 SRC_DIR=${SRC:=$CWD}
 TMP=${TMP:=/tmp}
