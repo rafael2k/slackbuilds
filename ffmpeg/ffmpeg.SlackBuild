@@ -68,7 +68,14 @@ cd $TMP
 svn checkout svn://svn.mplayerhq.hu/ffmpeg/trunk $PACKAGE
 cd $PACKAGE
 
-./configure --prefix=/usr --libdir=$LIBDIR --enable-shared --enable-pthreads --enable-mp3lame --enable-libogg --enable-vorbis --enable-gpl
+export EXTRA_AC_FLAGS=""
+
+if [ "$ARCH" == "powerpc" ]; then
+  export EXTRA_AC_FLAGS="--disable-altivec"
+fi
+
+
+./configure --prefix=/usr --libdir=$LIBDIR $EXTRA_AC_FLAGS --enable-shared --enable-pthreads --enable-mp3lame --enable-libogg --enable-vorbis --enable-pp --enable-gpl
 make || exit 32
 make DESTDIR=$TMP/package-$PACKAGE install
 
