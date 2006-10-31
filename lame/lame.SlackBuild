@@ -26,7 +26,6 @@ ERROR_MD5=34;       ERROR_CONF=35;      ERROR_HELP=36
 ERROR_TAR=37;       ERROR_MKPKG=38;     ERROR_GPG=39
 ERROR_PATCH=40;     ERROR_VCS=41
 
-
 # ---------  Inicializa variáveis de entrada  -------------
 PACKAGE=`echo $SRC_ORIG | sed 's/\(.*\)-\(.*\)\.\(.*\..*\)$/\1/'`
 ARCH=${ARCH:=i468}
@@ -69,11 +68,11 @@ fi
 
 # ----------------  Download fontes  ----------------------
 # Fonte a ser compilada, com o path
-SOURCE=$SRC_DIR/$SRC
+SOURCE=$SRC_DIR/$PACKAGE/$SRC
 # Verifica existência do pacote $SRC em $SRC_DIR
 if [ ! -e $SOURCE ]; then
     echo -e "\n\n\033[01;32m Download $PACKAGE \n\033[m"
-    wget "$URL" -P "$SRC_DIR/"
+    wget "$URL" -P "$SRC_DIR/$PACKAGE/"
     # Verifica se o
     if [ $? -ne 0 ]; then
         echo -e "\n\n\033[01;31m No such source file in $URL\n\033[m"
@@ -83,7 +82,7 @@ fi
 
 # ------------------  Checa md5sum  -----------------------
 if [ "$SRC_ORIG" = "$SRC" -o "$MD5" != "$MD5_ORIG" -a "$MD5" != "no" ]; then
-    SUM=`md5sum $SRC_DIR/$SRC | awk '{print $1}'`
+    SUM=`md5sum $SOURCE | awk '{print $1}'`
     if [ "$SUM" != "$MD5" ]; then
         echo -e "\n\n\033[01;31m MD5SUM error: run Slackbuild again \n\033[m"
         echo -e "\033[01;31m Remove $PACKAGE from $SRC_DIR and start Slackbuild again or use MD5=\"no\" \n\033[m"
