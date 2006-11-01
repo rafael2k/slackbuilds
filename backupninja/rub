@@ -13,7 +13,7 @@
 #   [general]
 #   log = rsync log file
 #   partition = partition where the backup lives
-#   fsck = set to 1 if fsck should run on $partition after the backup is made
+#   fscheck = set to 1 if fsck should run on $partition after the backup is made
 #   read_only = set to 1 if $partition is mounted read-only
 #   mountpoint = backup partition mountpoint or backup main folder
 #   backupdir = folder relative do $mountpoint where the backup should be stored
@@ -40,7 +40,7 @@
 #   initscripts = absolute path where scripts are located
 #   service = script name to be stoped at the begining of the backup and started at its end
 #
-# You can also specify some system comands:
+# You can also specify some system comands if you don't want the default system values:
 #
 #   [system]
 #   rm = rm command
@@ -65,7 +65,7 @@ getconf fsck fsck
 setsection general
 getconf log /var/log/backupninja-rub.log
 getconf partition
-getconf fsck
+getconf fscheck
 getconf read_only
 getconf mountpoint
 getconf backupdir
@@ -319,7 +319,7 @@ fi
 
 # check partition for errors
 
-if [ "$fsck" == "1" ] || [ "$fsck" == "yes" ]; then
+if [ "$fscheck" == "1" ] || [ "$fscheck" == "yes" ]; then
   umount $mountpoint
   if (($?)); then
     warning "Could not umount $mountpoint to run fsck"
