@@ -87,7 +87,7 @@ fi
 
 cd $TMP
 rm -rf Python-$VERSION
-tar xjvf $CWD/Python-$VERSION.tar.bz2 || exit $ERROR_TAR
+tar xjvf $SRC_DIR/Python-$VERSION.tar.bz2 || exit $ERROR_TAR
 cd Python-$VERSION
 chown -R root:root .
 find . -type d -exec chmod 755 {} \;
