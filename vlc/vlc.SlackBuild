@@ -30,7 +30,7 @@ fi
 PACKAGE="vlc"
 ARCH=${ARCH:=i486}
 VERSION=${VERSION:=0.8.5}
-BUILD=${BUILD:=1rha}
+BUILD=${BUILD:=1rd}
 SRC_DIR=${SRC:=$CWD}
 TMP=${TMP:=/tmp}
 REPOS=${REPOS:=$TMP}
