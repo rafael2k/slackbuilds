@@ -97,7 +97,6 @@ find . -type d -name CVS -exec rm -r {} \;
 
 if [ "$ARCH" == "x86_64" ]; then
   zcat $CWD/Python-2.3.3-dirs.patch.gz | patch -p0 --verbose || exit $ERROR_PATCH # thanks suse
-  #zcat $CWD/Python-2.4c1-multilib.patch.gz | patch -p1 --verbose || exit $ERROR_PATCH  # ditto
 fi
 
 if [ -f "$CWD/$PACKAGE-$VERSION.diff" ]; then
