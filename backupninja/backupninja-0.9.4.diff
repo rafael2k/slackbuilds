@@ -54,3 +54,14 @@ diff -Naur backupninja-0.9.4.orig/handlers/pgsql backupninja-0.9.4/handlers/pgsq
             fi
  	fi
  	debug "$execstr"
+diff -Naur backupninja-0.9.4.orig/src/backupninja.in backupninja-0.9.4/src/backupninja.in
+--- backupninja-0.9.4.orig/src/backupninja.in	2006-10-07 01:45:20.000000000 -0300
++++ backupninja-0.9.4/src/backupninja.in	2006-11-02 17:45:38.000000000 -0200
+@@ -442,6 +442,7 @@
+ getconf MYSQLDUMP /usr/bin/mysqldump
+ getconf PGSQLDUMP /usr/bin/pg_dump
+ getconf PGSQLDUMPALL /usr/bin/pg_dumpall
++getconf PGSQLUSER postgres
+ getconf GZIP /bin/gzip
+ getconf RSYNC /usr/bin/rsync
+ getconf admingroup root
