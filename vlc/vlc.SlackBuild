@@ -73,7 +73,7 @@ if [ -f "$CWD/$PACKAGE-$VERSION.diff" ]; then
 fi
 
 # h264 free implementation is unstable and changing a lot...
-./configure --prefix=/usr --disable-x264 --libdir=$LIBDIR 
+./configure --prefix=/usr --enable-theora --disable-x264 --libdir=$LIBDIR 
 make || exit 32
 make DESTDIR=$TMP/package-$PACKAGE install
 
