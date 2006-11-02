@@ -43,7 +43,7 @@ ERROR_PATCH=40
 
 RTOOL="wget"
 PACKAGE_EXT="bz2"
-SRC="$PACKAGE-$VERSION.tar.$PACKAGE_EXT"
+SRC="Python-$VERSION.tar.$PACKAGE_EXT"
 URL="http://www.python.org/ftp/python/$VERSION/$SRC"
 HTML="html-2.4.4.tar.bz2"
 HTML_URL="http://www.python.org/ftp/python/doc/$VERSION/$HTML"
