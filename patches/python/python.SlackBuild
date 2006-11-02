@@ -142,7 +142,7 @@ cp -a README $PKG/usr/doc/python-$VERSION
 cp -a Misc $PKG/usr/doc/python-$VERSION
 ( cd $PKG/usr/doc/python-$VERSION ; mkdir html )
 ( cd $PKG/usr/doc/python-$VERSION/html
-  tar xjvf $CWD/html-$VERSION.tar.bz2
+  tar xjvf $SRC_DIR/html-$VERSION.tar.bz2
   chown -R root:root .
 )
 ( cd $PKG/usr/bin
