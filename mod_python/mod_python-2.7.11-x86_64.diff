@@ -1,0 +1,32 @@
+diff -Naur mod_python-2.7.11.orig/Makefile.in mod_python-2.7.11/Makefile.in
+--- mod_python-2.7.11.orig/Makefile.in	2000-12-06 01:05:37.000000000 -0200
++++ mod_python-2.7.11/Makefile.in	2006-11-02 22:56:24.000000000 -0200
+@@ -115,7 +115,7 @@
+ 
+ install_py_lib:
+ 	$(INSTALL) -d $(PY_STD_LIB)/site-packages/mod_python
+-	@for f in `ls lib/python/mod_python/*.py`; \
++	@for f in `ls lib64/python/mod_python/*.py`; \
+ 	do \
+ 		$(INSTALL) $$f $(PY_STD_LIB)/site-packages/mod_python; \
+ 	done
+diff -Naur mod_python-2.7.11.orig/configure mod_python-2.7.11/configure
+--- mod_python-2.7.11.orig/configure	2001-06-11 16:16:25.000000000 -0300
++++ mod_python-2.7.11/configure	2006-11-02 22:56:38.000000000 -0200
+@@ -1348,14 +1348,14 @@
+ 
+ # this is where the Python libraries will get installed
+ 
+-PY_STD_LIB=${PyEXEC_INSTALLDIR}/lib/python${PyVERSION}
++PY_STD_LIB=${PyEXEC_INSTALLDIR}/lib64/python${PyVERSION}
+ 
+ # set python std library variable
+ echo $ac_n "checking what libraries Python was linked with""... $ac_c" 1>&6
+ echo "configure:1356: checking what libraries Python was linked with" >&5
+ 
+ if test -z "$PYTHON_SRC"; then
+-  PyLIBP=${PyEXEC_INSTALLDIR}/lib/python${PyVERSION}
++  PyLIBP=${PyEXEC_INSTALLDIR}/lib64/python${PyVERSION}
+   PyLIBPL=${PyLIBP}/config
+   PyPYTHONLIBS=${PyLIBPL}/libpython${PyVERSION}.a
+   PyLIBS=`grep "^LIB[SMC]=" ${PyLIBPL}/Makefile | cut -f2 -d= | tr '\011\012\015' '   '`
