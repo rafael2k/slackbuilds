@@ -122,7 +122,7 @@ if [ -r $IMAPLIBDIR/$LIB/c-client.a ]; then
   ls -l $IMAPLIBDIR/$LIB/c-client.a
   sleep 5
 else
-  ( cd $CWD/../pine ; ./pine.SlackBuild )
+  ( cd $CWD/../pine ; CLEANUP=no ./pine.SlackBuild )
   ( cd $TMP/pine${PINE}/imap/c-client
     strip -g c-client.a
     mkdir -p $IMAPLIBDIR/$LIB
