@@ -8,6 +8,18 @@
 # Use this script if you want a cvs snapshot.
 #
 
+if [ -s "slack-required" ]; then
+  echo Recomended and required packages for building cairo are:
+  cat slack-required | sed -e 's/^/\t/'
+  if [ "$INTERACT" != "no" ]; then
+    echo If you dont have those installed, press Ctrl-C. Otherwise, hit ENTER.
+    read crap
+  else
+    echo Sleeping 3 seconds...
+    sleep 3
+  fi
+fi
+
 CWD="`pwd`"
 
 if [ -f "/etc/slackbuildrc" ]; then
@@ -24,6 +36,12 @@ SNAP_VERSION=${SNAP_VERSION:=200606181830}
 PINE=${PINE:=4.64}
 ARCH=${ARCH:=i486}
 BUILD=${BUILD:=1rha}
+
+# -------  error codes for createpkg  --------------
+ERROR_WGET=31;      ERROR_MAKE=32;      ERROR_INSTALL=33
+ERROR_MD5=34;       ERROR_CONF=35;      ERROR_HELP=36
+ERROR_TAR=37;       ERROR_MKPKG=38;     ERROR_GPG=39
+ERROR_PATCH=40
 
 TMP=${TMP:=/tmp}
 PKG=$TMP/package-php
@@ -62,7 +80,7 @@ if [ "$RTOOL" == "wget" ]; then
     mkdir -p $SRC_DIR/pear-4.4.2-bad-md5sums
     for pear in $TAR $GETOPT $TEMPLATE; do
       if [ ! -f "$SRC_DIR/pear-4.4.2-bad-md5sums/$pear" ]; then
-        wget "$PEAR/$pear" -O "$SRC_DIR/pear-4.4.2-bad-md5sums/$pear"
+        wget "$PEAR/$pear" -O "$SRC_DIR/pear-4.4.2-bad-md5sums/$pear" || exit $ERROR_WGET
       fi
     done
   else
@@ -71,7 +89,7 @@ if [ "$RTOOL" == "wget" ]; then
 
   for pear in $pearlist; do
     if [ ! -f "$SRC_DIR/pear/$pear" ]; then
-      wget "$PEAR/$pear" -O "$SRC_DIR/pear/$pear"
+      wget "$PEAR/$pear" -O "$SRC_DIR/pear/$pear" || exit $ERROR_WGET
     fi
   done
 
@@ -170,7 +188,7 @@ CFLAGS="$SLKCFLAGS" \
   --with-tsrm-pthreads \
   --enable-shared \
   --disable-debug \
-  --with-zlib=/usr $ADD_FLAGS
+  --with-zlib=/usr $ADD_FLAGS || exit $ERROR_CONF
   # --with-mod_charset    # only for Russian patched Apache
   # --with-readline=/usr  # this is only for the CGI version
   # --with-ttf            # this links with the shlib, need X for that
@@ -190,7 +208,7 @@ mkdir -p $PKG/etc/apache
 cat /etc/apache/httpd.conf.default > $PKG/etc/apache/httpd.conf
 cd $TMP
 rm -rf php-$SNAP_VERSION
-tar xjvf $SRC_DIR/$SRC
+tar xjvf $SRC_DIR/$SRC || exit $ERROR_TAR
 
 # Add missing(?) PEAR modules back:
 ( cd php4-STABLE-$SNAP_VERSION/pear/packages
@@ -230,19 +248,19 @@ find . -name "*.orig" -exec rm {} \;
 # Patch ini files:
 
 if [ "$ARCH" == "x86_64" ]; then
-  zcat $CWD/php.ini-x86_64.diff.gz | patch -p1 --verbose --backup --suffix=.orig
+  zcat $CWD/php.ini-x86_64.diff.gz | patch -p1 --verbose --backup --suffix=.orig || exit $ERROR_PATCH
   # Fix an issue introduced in PHP 4.4.1 that breaks SquirrelMail and
   # probably some other PHP applications:
   #zcat $CWD/php.squirrel.diff.gz | patch -p1 --verbose || exit
 else
-  zcat $CWD/php.ini.diff.gz | patch -p1 --verbose --backup --suffix=.orig
+  zcat $CWD/php.ini.diff.gz | patch -p1 --verbose --backup --suffix=.orig || exit $ERROR_PATCH
 fi
 
 # Make the Apache module version of PHP:
 echo "***START APACHE MODULE***"
-php_configure --disable-static --with-apxs=/usr/sbin/apxs
-make -j3
-make install INSTALL_ROOT=$PKG
+php_configure --disable-static --with-apxs=/usr/sbin/apxs || exit $ERROR_CONF
+make -j3 || exit $ERROR_MAKE
+make install INSTALL_ROOT=$PKG || exit $ERROR_INSTALL
 make distclean
 echo "***END APACHE MODULE***"
 
@@ -250,9 +268,9 @@ echo "***END APACHE MODULE***"
 chmod 755 $PKG/usr/bin/pear
 
 # Make the standalone interpreter:
-php_configure --enable-force-cgi-redirect --enable-fastcgi --enable-pcntl --enable-sigchild
-make -j3
-make install-cli INSTALL_ROOT=$PKG
+php_configure --enable-force-cgi-redirect --enable-fastcgi --enable-pcntl --enable-sigchild || exit $ERROR_CONF
+make -j3 || exit $ERROR_MAKE
+make install-cli INSTALL_ROOT=$PKG || exit $ERROR_INSTALL
 chmod 755 $PKG/usr/bin/php
 chown root.bin $PKG/usr/bin/php
 
@@ -307,5 +325,9 @@ cat $CWD/slack-desc > $PKG/install/slack-desc
 #fi
 
 cd $PKG
-makepkg -l y -c n $TMP/php-$SNAP_VERSION-$ARCH-$BUILD.tgz
+makepkg -l y -c n $TMP/php-$SNAP_VERSION-$ARCH-$BUILD.tgz || exit $ERROR_MKPKG
+
+if [ "$CLEANUP" == "yes" ]; then
+  rm -rf $TMP
+fi
 
