@@ -4,7 +4,17 @@
 # small changes by rhatto
 #
 
-# Set initial variables:
+if [ -s "slack-required" ]; then
+  echo Recomended and required packages for building cairo are:
+  cat slack-required | sed -e 's/^/\t/'
+  if [ "$INTERACT" != "no" ]; then
+    echo If you dont have those installed, press Ctrl-C. Otherwise, hit ENTER.
+    read crap
+  else
+    echo Sleeping 3 seconds...
+    sleep 3
+  fi
+fi
 
 CWD="`pwd`"
 
@@ -22,6 +32,12 @@ PINEPGP=${PINEPGP:=0.18.0}
 ARCH=${ARCH:=i486}
 PINEBUILD=${BUILD:=1rha}
 IMAPDBUILD=${BUILD:=1rha}
+
+# -------  error codes for createpkg  --------------
+ERROR_WGET=31;      ERROR_MAKE=32;      ERROR_INSTALL=33
+ERROR_MD5=34;       ERROR_CONF=35;      ERROR_HELP=36
+ERROR_TAR=37;       ERROR_MKPKG=38;     ERROR_GPG=39
+ERROR_PATCH=40
 
 TMP=${TMP:=/tmp}
 SRC_DIR=${SRC:=$CWD}
@@ -46,11 +62,11 @@ mkdir -p $SRC_DIR
 if [ "$RTOOL" == "wget" ]; then
 
   if [ ! -f "$SRC_DIR/$SRC" ]; then
-    wget "$URL" -O "$SRC_DIR/$SRC"
+    wget "$URL" -O "$SRC_DIR/$SRC" || exit $ERROR_WGET
   fi
 
   if [ ! -f "$SRC_DIR/$PGP" ]; then
-    wget "$PGP_URL" -O "$SRC_DIR/$PGP"
+    wget "$PGP_URL" -O "$SRC_DIR/$PGP" || exit $ERROR_WGET
   fi
 
 fi
@@ -63,9 +79,9 @@ mkdir -p $PKG1 $PKG2
 
 # Explode the package framework:
 cd $PKG1
-explodepkg $CWD/_pine.tar.gz
+explodepkg $CWD/_pine.tar.gz || exit $ERROR_TAR
 cd $PKG2
-explodepkg $CWD/_imapd.tar.gz
+explodepkg $CWD/_imapd.tar.gz || exit $ERROR_TAR
 
 echo "+==========+"
 echo "| pine$VERSION |"
@@ -76,13 +92,13 @@ tar xjvf $SRC_DIR/$SRC
 cd pine$VERSION
 
 if [ "$ARCH" == "x86_64" ]; then
- ( cd imap/src/osdep/unix; zcat $CWD/fpic.diff.gz | patch -p0 --verbose -E || exit )
+ ( cd imap/src/osdep/unix; zcat $CWD/fpic.diff.gz | patch -p0 --verbose -E || exit $ERROR_PATCH )
 fi
 
-zcat $CWD/pine-slackware.config.diff.gz | patch -p1 --backup --verbose -E || exit
+zcat $CWD/pine-slackware.config.diff.gz | patch -p1 --backup --verbose -E || exit $ERROR_PATCH
 
 # Set default debug level to 0:
-zcat $CWD/pine.debug.diff.gz | patch -p1 --backup --verbose -E || exit
+zcat $CWD/pine.debug.diff.gz | patch -p1 --backup --verbose -E || exit $ERROR_PATCH
 echo "#define PASSFILE        \".pine.pwd\"" >> pine/osdep/os-lnx.h
 # Remove ~ files:
 find . -name "*~" | xargs rm --verbose
@@ -134,9 +150,9 @@ cd $TMP
 tar xzvf $SRC_DIR/pinepgp-$PINEPGP.tar.gz
 cd pinepgp-$PINEPGP
 chown -R root.root .
-./configure --prefix=/usr
-make || exit 32
-make install DESTDIR=$PKG1
+./configure --prefix=/usr || exit $ERROR_CONF
+make || exit $ERROR_MAKE
+make install DESTDIR=$PKG1 || exit $ERROR_INSTALL
 chown root.bin $PKG1/usr/bin/*
 mkdir -p $PKG1/usr/doc/pinepgp-$PINEPGP
 cp -a COPYING README $PKG1/usr/doc/pinepgp-$PINEPGP 
@@ -144,9 +160,9 @@ chmod 644 $PKG1/usr/doc/pinepgp-$PINEPGP/*
 
 # Build the package:
 cd $PKG1
-makepkg -l y -c n $REPOS/pine-$VERSION-$ARCH-$PINEBUILD.tgz
+makepkg -l y -c n $REPOS/pine-$VERSION-$ARCH-$PINEBUILD.tgz || exit $ERROR_MKPKG
 cd $PKG2
-makepkg -l y -c n $REPOS/imapd-$VERSION-$ARCH-$IMAPDBUILD.tgz
+makepkg -l y -c n $REPOS/imapd-$VERSION-$ARCH-$IMAPDBUILD.tgz || exit $ERROR_MKPKG
 
 # Clean up the extra stuff:
 if [ "$CLEANUP" == "yes" ]; then
