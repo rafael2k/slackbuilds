@@ -4,6 +4,18 @@
 # by rhatto at riseup.net
 #
 
+if [ -s "slack-required" ]; then
+  echo Recomended and required packages for building cairo are:
+  cat slack-required | sed -e 's/^/\t/'
+  if [ "$INTERACT" != "no" ]; then
+    echo If you dont have those installed, press Ctrl-C. Otherwise, hit ENTER.
+    read crap
+  else
+    echo Sleeping 3 seconds...
+    sleep 3
+  fi
+fi
+
 CWD="`pwd`"
 
 if [ -f "/etc/slackbuildrc" ]; then
@@ -16,12 +28,18 @@ fi
 
 # default settings
 PACKAGE="clamav"
-VERSION=${VERSION:=0.88.5}
+VERSION=${VERSION:=0.88.6}
 ARCH=${ARCH:=i486}
 BUILD=${BUILD:=1rha}
 TMP=${TMP:=/tmp}
 SRC_DIR=${SRC:=$CWD}
 REPOS=${REPOS:=$TMP}
+
+# -------  error codes for createpkg  --------------
+ERROR_WGET=31;      ERROR_MAKE=32;      ERROR_INSTALL=33
+ERROR_MD5=34;       ERROR_CONF=35;      ERROR_HELP=36
+ERROR_TAR=37;       ERROR_MKPKG=38;     ERROR_GPG=39
+ERROR_PATCH=40
 
 if ! grep -qe "^$PACKAGE:" /etc/passwd || ! grep -qe "^$PACKAGE:" /etc/group; then
   echo "WARNING: user and/or group $PACKAGE does not exist"
@@ -50,16 +68,20 @@ fi
 SRC_DIR="$SRC_DIR/$PACKAGE"
 mkdir -p $SRC_DIR
 
-if [ "$RTOOL" == "wget" ] && [ ! -f "$SRC_DIR/$SRC" ]; then
-  wget "$URL" -O "$SRC_DIR/$SRC"
-  wget "$URL.sig" -O "$SRC_DIR/$SRC.sig"
+if [ "$RTOOL" == "wget" ]; then
+  if [ ! -f "$SRC_DIR/$SRC" ]; then
+    wget "$URL" -O "$SRC_DIR/$SRC" || exit $ERROR_WGET
+  fi
+  if [ ! -f "$SRC_DIR/$SRC.sig" ]; then
+    wget "$URL.sig" -O "$SRC_DIR/$SRC.sig" || exit $ERROR_WGET
+  fi
 fi
 
 if [ ! -f "$SRC_DIR/$PACKAGE-key.asc" ]; then
-  wget "$KEY" -O "$SRC_DIR/$PACKAGE-key.asc" && gpg --import $SRC_DIR/$PACKAGE-key.asc
+  wget "$KEY" -O "$SRC_DIR/$PACKAGE-key.asc" && gpg --import $SRC_DIR/$PACKAGE-key.asc || exit $ERROR_WGET
 fi
 
-gpg --verify $SRC_DIR/$SRC.sig $SRC_DIR/$SRC || echo WARNING: Could not check signature or WRONG signature found.
+gpg --verify $SRC_DIR/$SRC.sig $SRC_DIR/$SRC || exit $ERROR_GPG
 sleep 3
 
 if [ "$ARCH" == "x86_64" ]; then
@@ -73,11 +95,11 @@ rm -rf $TMP
 mkdir -p $TMP
 cd $TMP
 
-tar xvf$tarflag $SRC_DIR/$PACKAGE-$VERSION.tar.$PACKAGE_EXT
+tar xvf$tarflag $SRC_DIR/$PACKAGE-$VERSION.tar.$PACKAGE_EXT || exit $ERROR_TAR
 cd $PACKAGE-$VERSION
-./configure --prefix=/usr --sysconfdir=/etc --libdir=$LIBDIR
-make || exit 32
-make DESTDIR=$TMP/package-$PACKAGE install
+./configure --prefix=/usr --sysconfdir=/etc --libdir=$LIBDIR || exit $ERROR_CONF
+make || exit $ERROR_MAKE
+make DESTDIR=$TMP/package-$PACKAGE install || exit $ERROR_INSTALL
 
 CWD="`pwd`"
 
@@ -124,7 +146,7 @@ echo '( if ! grep -qe "^clamav:" etc/passwd; then echo creating user clamav... ;
 echo '( if [ ! -f "etc/clamd.conf" ]; then mv etc/clamd.conf.new etc/clamd.conf; fi )' >> install/doinst.sh
 echo '( if [ ! -f "etc/freshclam.conf" ]; then mv etc/freshclam.conf.new etc/freshclam.conf; fi )' >> install/doinst.sh
 
-makepkg -c y -l y $REPOS/$PACKAGE-$VERSION-$ARCH-$BUILD.tgz
+makepkg -c y -l y $REPOS/$PACKAGE-$VERSION-$ARCH-$BUILD.tgz || exit $ERROR_MKPKG
 
 if [ "$CLEANUP" == "yes" ]; then
   rm -rf $TMP
