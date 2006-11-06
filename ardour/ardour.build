@@ -69,8 +69,7 @@ if [ -f "$CWD/$PACKAGE-$VERSION.diff" ]; then
   patch -p1 < $CWD/$PACKAGE-$VERSION.diff || exit $ERROR_PATCH
 fi
 
-mkdir -p $TMP/package-$PACKAGE
-scons KSI=yes || exit $ERROR_MAKE
+scons PREFIX=/usr KSI=yes || exit $ERROR_MAKE
 scons install || exit $ERROR_INSTALL
 
 CWD="`pwd`"
