@@ -237,7 +237,7 @@ cp $PKG_DIR/{Changelog,LICENSE,README} $PKG_DOC
 
 # ---------------  Constroi o pacote  ---------------------
 echo -e "\n\n\033[01;32m makepkg -c y -l y $REPOS/$PACKAGE-$VERSION-$ARCH-$BUILD.tgz \n\033[m"
-makepkg -c y -l y $REPOS/$PACKAGE-$VERSION_$KVERSION-$ARCH-$BUILD.tgz
+makepkg -c y -l y $REPOS/$PACKAGE-$VERSION"_"$KVERSION-$ARCH-$BUILD.tgz
 if [ $? -ne 0 ]; then
     exit $ERROR_MKPKG
 fi
