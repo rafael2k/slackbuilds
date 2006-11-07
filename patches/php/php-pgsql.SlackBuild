@@ -5,11 +5,12 @@
 # Modified for PHP 4+ by volkerdi@slackware.com
 #
 # Small changes by rhatto
+# This script is used to build a php with postgresql support
 #
 
-if [ -s "slack-required" ]; then
+if [ -s "php-pgsql.slack-required" ]; then
   echo Recomended and required packages for building cairo are:
-  cat slack-required | sed -e 's/^/\t/'
+  cat php-pgsql.slack-required | sed -e 's/^/\t/'
   if [ "$INTERACT" != "no" ]; then
     echo If you dont have those installed, press Ctrl-C. Otherwise, hit ENTER.
     read crap
@@ -30,6 +31,7 @@ if [ -f "~/.slackbuildrc" ]; then
 fi
 
 PACKAGE="php"
+PACKAGE_NAME="php-pgsql" # this is beacuse we're build with pgsql support
 VERSION=${VERSION:=4.4.4}
 PINE=${PINE:=4.64}
 ARCH=${ARCH:=i486}
@@ -191,6 +193,7 @@ CFLAGS="$SLKCFLAGS" \
   --with-tsrm-pthreads \
   --enable-shared \
   --disable-debug \
+  --with-pgsql \
   --with-zlib=/usr $ADD_FLAGS || exit $ERROR_CONF
   # --with-mod_charset    # only for Russian patched Apache
   # --with-readline=/usr  # this is only for the CGI version
@@ -324,7 +327,7 @@ gzip -9 $PKG/usr/man/man?/*.?
 
 mkdir -p $PKG/install
 zcat $CWD/doinst.sh.gz > $PKG/install/doinst.sh
-cat $CWD/slack-desc > $PKG/install/slack-desc
+cat $CWD/$PACKAGE_NAME-slack-desc > $PKG/install/slack-desc
 
 if [ -d "$IMAPLIBDIR" ]; then
   ( cd $IMAPLIBDIR && rm -rf * )
@@ -332,7 +335,7 @@ if [ -d "$IMAPLIBDIR" ]; then
 fi
 
 cd $PKG
-makepkg -l y -c n $REPOS/php-$VERSION-$ARCH-$BUILD.tgz || exit $ERROR_MKPKG
+makepkg -l y -c n $REPOS/$PACKAGE_NAME-$VERSION-$ARCH-$BUILD.tgz || exit $ERROR_MKPKG
 
 if [ "$CLEANUP" == "yes" ]; then
   rm -rf $TMP

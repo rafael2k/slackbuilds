@@ -189,7 +189,6 @@ CFLAGS="$SLKCFLAGS" \
   --with-tsrm-pthreads \
   --enable-shared \
   --disable-debug \
-  --with-pgsql \
   --with-zlib=/usr $ADD_FLAGS || exit $ERROR_CONF
   # --with-mod_charset    # only for Russian patched Apache
   # --with-readline=/usr  # this is only for the CGI version
