@@ -20,7 +20,7 @@ fi
 # default settings
 PACKAGE="moin"
 VERSION=${VERSION:=1.5.6}
-ARCH="noarch"
+ARCH=${ARCH:=i486}
 BUILD=${BUILD:=1rha}
 SRC_DIR=${SRC:=$CWD}
 TMP=${TMP:=/tmp}
