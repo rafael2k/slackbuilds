@@ -1,0 +1,45 @@
+#!/bin/bash
+#
+# SlackBuild script to call mixxx.build with correct settings
+#
+
+if [ -s "slack-required" ]; then
+  echo Recomended and required packages for building mixxx are:
+  cat slack-required | sed -e 's/^/\t/'
+  if [ "$INTERACT" != "no" ]; then
+    echo If you dont have those installed, press Ctrl-C. Otherwise, hit ENTER.
+    read crap
+  else
+    echo Sleeping 3 seconds...
+    sleep 3
+  fi
+fi
+
+CWD="`pwd`"
+
+if [ -f "/etc/slackbuildrc" ]; then
+  source /etc/slackbuildrc
+fi
+
+if [ -f "~/.slackbuildrc" ]; then
+  source ~/.slackbuildrc
+fi
+
+# default settings
+PACKAGE="mixxx"
+VERSION=${VERSION:=1.4.2}
+ARCH="${ARCH:=i486}"
+BUILD=${BUILD:=1rha}
+SRC_DIR=${SRC:=$CWD}
+TMP=${TMP:=/tmp}
+REPOS=${REPOS:=$TMP}
+
+rm -rf $TMP/$PACKAGE
+mkdir -p $SRC_DIR/$PACKAGE $TMP/$PACKAGE
+
+slacktrack -b $REPOS -x $TMP,$SRC_DIR,/dev -jefkzp "$PACKAGE-$VERSION-$ARCH-$BUILD.tgz" "./$PACKAGE.build"
+
+if [ "$CLEANUP" == "yes" ]; then
+  rm -rf $TMP/$PACKAGE
+fi
+
