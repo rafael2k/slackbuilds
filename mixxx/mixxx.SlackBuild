@@ -93,8 +93,8 @@ find . | xargs file | grep "executable" | grep ELF | cut -f 1 -d : | xargs strip
 find . | xargs file | grep "shared object" | grep ELF | cut -f 1 -d : | xargs strip --strip-unneeded 2> /dev/null
 
 
-mkdir /install
-cat << EOF > /install/slack-desc
+mkdir install
+cat << EOF > install/slack-desc
 # HOW TO EDIT THIS FILE:
 # The "handy ruler" below makes it easier to edit a package description.  Line
 # up the first '|' above the ':' following the base package name, and the '|'
