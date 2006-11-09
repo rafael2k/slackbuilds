@@ -1,8 +1,8 @@
 #!/bin/bash
 #
-# slackbuild for qemu, by Rudson R. Alves
+# slackbuild for dvdauthor, by Rudson R. Alves
 # requires: none
-# tested: qemu-0.8.2
+# tested: dvdauthor-0.6.11
 
 CWD=`pwd`
 
@@ -16,15 +16,15 @@ fi
 # --------  Variáveis de controle de versão  --------------
 # Nome da fonte para a qual o slackbuild foi construído e
 # o seu md5sum
-SRC_ORIG="qemu-0.8.2.tar.gz"
-MD5_ORIG="5b3a89eb2f256a8a6f3bb07f7b3f1b07"
+SRC_ORIG="dvdauthor-0.6.11.tar.gz"
+MD5_ORIG="d2c45879e4cfb95d410bf603af891e07"
 VERSION_ORIG=`echo $SRC_ORIG | sed 's/\(.*\)-\(.*\)\.\(.*\..*\)$/\2/'`
 EXTENSION=`echo $SRC_ORIG | sed 's/\(.*\)-\(.*\)\.\(.*\..*\)$/\3/'`
 
 # -------  Códigos de erro para o createpkg  --------------
 ERROR_WGET=31;      ERROR_MAKE=32;      ERROR_INSTALL=33
 ERROR_MD5=34;       ERROR_CONF=35;      ERROR_HELP=36
-ERROR_TAR=37;       ERROR_MKPKG=38;     ERROR_GPG=39
+ERROR_TAR=37;       ERROR_MKPKG=38;	ERROR_GPG=39
 ERROR_PATCH=40;     ERROR_VCS=41
 
 # ---------  Inicializa variáveis de entrada  -------------
@@ -37,9 +37,9 @@ BUILD=${BUILD:=1rud}
 TMP=${TMP:=/tmp}
 REPOS=${REPOS:=$TMP}
 PREFIX=${PREFIX:=/usr}
-OPTCONF=${OPTCONF:="--enable-alsa"}
+OPTCONF=${OPTCONF:=""}
 MD5=${MD5:=$MD5_ORIG}
-URL=${URL:="http://fabrice.bellard.free.fr/qemu/$SRC"}
+URL=${URL:="http://superb-west.dl.sourceforge.net/sourceforge/dvdauthor/$SRC"}
 
 # ----------------  SlackBuild Help  ----------------------
 if [ "$1" = "--help" -o "$1" = "help" ]; then
@@ -68,7 +68,7 @@ SOURCE=$SRC_DIR/$PACKAGE/$SRC
 # Verifica existência do pacote em $SRC em $SRC_DIR
 if [ ! -e $SOURCE ]; then
     echo -e "\n\n\033[01;32m Download $PACKAGE \n\033[m"
-    wget "$URL" -P "$SRC_DIR/$PACKAGE/"
+    wget "$URL" -P "$SRC_DIR/$PACKAGE"
     # Verifica se o
     if [ $? -ne 0 ]; then
         echo -e "\n\n\033[01;31m No such source file in $URL\n\033[m"
@@ -82,13 +82,13 @@ if [ "$SRC_ORIG" = "$SRC" -o "$MD5" != "$MD5_ORIG" -a "$MD5" != "no" ]; then
     if [ "$SUM" != "$MD5" ]; then
         echo -e "\n\n\033[01;31m MD5SUM error: run Slackbuild again \n\033[m"
         echo -e "\033[01;31m Remove $PACKAGE from $SRC_DIR and start Slackbuild again or use MD5=\"no\" \n\033[m"
-        exit $ERROR_MD5
+        exit 0
     fi
     echo -e "\n\n\033[01;32m Md5sum Ok \n\033[m"
 fi
 
 # -----------------  ARCH e LIBDIR  -----------------------
-# Define LIBDIR
+# Libdir, para arch x86_64
 LIBDIR=$PREFIX/lib
 # Seleciona flags para o compilador
 if [ "$ARCH" = "i386" ]; then
@@ -130,8 +130,8 @@ if [ $? -ne 0 -o "$OPTCONF" = "--help" ]; then
 fi
 
 # ----------------  Compila programa  ---------------------
-echo -e "\n\n\033[01;32m make all \n\033[m"
-make
+echo -e "\n\n\033[01;32m make -j3 \n\033[m"
+make -j3
 if [ $? -ne 0 ]; then
     echo -e "\n\n\033[01;31m Build error \n\033[m"
     exit $ERROR_MAKE
@@ -146,11 +146,7 @@ mkdir -p $PKG
 # ---------------  Instala programa  ----------------------
 # Instala programa em diretório temporário
 echo -e "\n\n\033[01;32m make install DESTDIR=$PKG \n\033[m"
-make install prefix=$PKG/$PREFIX \
-             bindir=$PKG/$PREFIX/bin \
-             mandir=$PKG/$PREFIX/man \
-             datadir=$PKG/$PREFIX/share/qemu \
-             docdir=$PKG/$PREFIX/doc/qemu-$VERSION
+make install DESTDIR=$PKG
 if [ $? -ne 0 ]; then
     echo -e "\n\n\033[01;31m Install error \n\033[m"
     exit $ERROR_INSTALL
@@ -166,7 +162,7 @@ find . | xargs file | grep "shared object" | grep ELF | cut -f 1 -d : | xargs st
 
 # ----------------  Cria slack-desc  ----------------------
 mkdir $PKG/install
-cat << EOF > $PKG/install/slack-desc
+cat << EOF > install/slack-desc
 # HOW TO EDIT THIS FILE:
 # The "handy ruler" below makes it easier to edit a package description.  Line
 # up the first '|' above the ':' following the base package name, and the '|' on
@@ -174,25 +170,24 @@ cat << EOF > $PKG/install/slack-desc
 # exactly 11 lines for the formatting to be correct.  It's also customary to
 # leave one space after the ':'.
 
-     |--------handy-ruler------------------------------------------------------|
-qemu: QEMU package by Rudson R. Alves <rudsonalves[a]yahoo.com.br>
-qemu:
-qemu: QEMU is a FAST! processor emulator using dynamic translation to achieve
-qemu: good emulation speed.
-qemu:
-qemu: QEMU has two operating modes:
-qemu:  * Full system emulation. In this mode, QEMU emulates a full system
-qemu:    (for  example  a  PC),  including  one  or  several processors and
-qemu:    various  peripherals.
-qemu:  * User mode emulation (Linux host only). In this mode, QEMU can
-qemu:    launch Linux processes compiled for one CPU on another CPU.
+          |----handy-ruler------------------------------------------------------|
+dvdauthor: dvdauthor.SlackBuild by Rudson R. Alves
+dvdauthor:
+dvdauthor: dvdauthor is a program that will generate a DVD movie from a valid
+dvdauthor: mpeg2 stream that should play when you put it in a DVD player.
+dvdauthor:
+dvdauthor: To start you need mpeg files that contain the necessary DVD VOB
+dvdauthor: packets.  These can be generated by passing '-f 8' to mplex.  See
+dvdauthor: the included utility makevob.
+dvdauthor:
+dvdauthor:
 EOF
 
 # -----------------  Documentações  -----------------------
 # Criar diretório de documentação
 PKG_DOC=$PKG/usr/doc/$PACKAGE-$VERSION
 mkdir -p $PKG_DOC
-cp $PKG_DIR/{COPYING,COPYING.LIB,Changelog,LICENSE,README,README.distrib,TODO,VERSION} $PKG_DOC
+cp $PKG_DIR/{AUTHORS,COPYING,ChangeLog,INSTALL,NEWS,README,TODO} $PKG_DOC
 
 # ---------------  Constroi o pacote  ---------------------
 echo -e "\n\n\033[01;32m makepkg -c y -l y $REPOS/$PACKAGE-$VERSION-$ARCH-$BUILD.tgz \n\033[m"

@@ -156,6 +156,9 @@ if [ $? -ne 0 ]; then
     exit $ERROR_INSTALL
 fi
 
+# ------------------- gzip manuais ------------------------
+gzip -r $PKG/$PREFIX/man/*
+
 # -----------------  Stripa código  -----------------------
 cd $PKG
 find . | xargs file | grep "executable" | grep ELF | cut -f 1 -d : | xargs strip --strip-unneeded 2> /dev/null

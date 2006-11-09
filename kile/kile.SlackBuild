@@ -64,7 +64,7 @@ fi
 
 # ----------------  Download fontes  ----------------------
 # Fonte a ser compilada, com o path
-SOURCE=$SRC_DIR/$PACKGE/$SRC
+SOURCE=$SRC_DIR/$PACKAGE/$SRC
 # Verifica existência do pacote em $SRC em $SRC_DIR
 if [ ! -e $SOURCE ]; then
     echo -e "\n\n\033[01;32m Download $PACKAGE \n\033[m"
@@ -184,7 +184,7 @@ EOF
 # Criar diretório de documentação
 PKG_DOC=$PKG/usr/doc/$PACKAGE-$VERSION
 mkdir -p $PKG_DOC
-cp $PKG_SRC/{API,COPYING,ChangeLog,DEFINES,HACKING,INSTALL,LICENSE,README,README.WINGTK,STYLEGUIDE,TODO,USAGE} $PKG_DOC
+cp $PKG_DIR/{API,COPYING,ChangeLog,DEFINES,HACKING,INSTALL,LICENSE,README,README.WINGTK,STYLEGUIDE,TODO,USAGE} $PKG_DOC
 
 # ---------------  Constroi o pacote  ---------------------
 echo -e "\n\n\033[01;32m makepkg -c y -l y $REPOS/$PACKAGE-$VERSION-$ARCH-$BUILD.tgz \n\033[m"

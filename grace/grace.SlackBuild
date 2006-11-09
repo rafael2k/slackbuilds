@@ -157,10 +157,12 @@ mkdir -p $PKG/usr/bin
 for i in convcal fdf2fit grconvert xmgrace; do
     ln -s $PREFIX/$PACKAGE/bin/$i /usr/bin/$i
 done
+
 # Manuais
-mkdir -p $PKG/man/man1
-cp $PKG_DIR/doc/*.1 $PKG/man/man1/
-gzip $PKG/man/man1/*
+mkdir -p $PKG/usr/man/man1
+cp $PKG_DIR/doc/*.1 $PKG/usr/man/man1/
+gzip $PKG/usr/man/man1/*
+
 # Cria grace.desktop
 mkdir -p $PKG/usr/share/applications
 cat << EOF_KDE > $PKG/usr/share/applications/Grace.desktop
