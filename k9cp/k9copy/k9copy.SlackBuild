@@ -34,10 +34,11 @@ PACKAGE=$PACKAGE_ORIG
 ARCH=${ARCH:=i468}
 SRC_DIR=${SRC:=$CWD}
 if [ "$VERSION" != "" ]; then
-    VERSION_ORIG=`echo $VERSION | sed -r 's/(.*)-(.*)$/\1/'`
     REVISION=`echo $VERSION | sed -r 's/(.*)-(.*)$/\2/'`
+    VERSION=`echo $VERSION | sed -r 's/(.*)-(.*)$/\1/'`
+else
+    VERSION=$VERSION_ORIG
 fi
-VERSION=$VERSION_ORIG
 SRC=$PACKAGE-$VERSION-$REVISION.$EXTENSION
 BUILD=${BUILD:=1rud}
 TMP=${TMP:=/tmp}
