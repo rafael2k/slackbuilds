@@ -123,7 +123,7 @@ cd $PKG_DIR
 # --------------  Configura programa  ---------------------
 # Configura programa
 echo -e "\n\n\033[01;32m CFLAGS=\"$SLKCFLAGS\" ./configure --prefix=$PREFIX --libdir=$LIBDIR $OPTCONF \n\033[m"
-CFLAGS="$SLKCFLAGS" ./configure --prefix=$PREFIX --libdir=$LIBDIR $OPTCONF
+CFLAGS="$SLKCFLAGS" ./configure --prefix=$PREFIX --libdir=$LIBDIR $OPTCONF --with-libdvdcss
 if [ $? -ne 0 -o "$OPTCONF" = "--help" ]; then
     echo -e "\n\n\033[01;31m Configure error \n\033[m"
     exit $ERROR_CONF
