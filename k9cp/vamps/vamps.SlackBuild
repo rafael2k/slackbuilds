@@ -39,7 +39,7 @@ REPOS=${REPOS:=$TMP}
 PREFIX=${PREFIX:=/usr}
 OPTCONF=${OPTCONF:=""}
 MD5=${MD5:=$MD5_ORIG}
-URL=${URL:="http://download.videolan.org/pub/libdvdplay/$VERSION/$SRC"}
+URL=${URL:="http://ufpr.dl.sourceforge.net/sourceforge/vamps/$SRC"}
 
 # ----------------  SlackBuild Help  ----------------------
 if [ "$1" = "--help" -o "$1" = "help" ]; then

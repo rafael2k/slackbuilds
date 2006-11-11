@@ -46,7 +46,7 @@ REPOS=${REPOS:=$TMP}
 PREFIX=${PREFIX:=/opt/kde}
 OPTCONF=${OPTCONF:=""}
 MD5=${MD5:=$MD5_ORIG}
-URL=${URL:="http://.../$SRC"}
+URL=${URL:="http://ufpr.dl.sourceforge.net/sourceforge/k9copy/$SRC"}
 
 # ----------------  SlackBuild Help  ----------------------
 if [ "$1" = "--help" -o "$1" = "help" ]; then
