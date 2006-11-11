@@ -19,7 +19,7 @@ fi
 CWD="`pwd`"
 
 if [ -f ~/.slackbuildrc ]; then
-  source /root/.slackbuildrc
+  source ~/.slackbuildrc
 elif [ -f /etc/slackbuildrc ]; then
   source /etc/slackbuildrc
 fi
