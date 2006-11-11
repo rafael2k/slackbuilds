@@ -20,8 +20,8 @@ SRC_ORIG="digikam-0.9.0-beta3.tar.bz2"
 MD5_ORIG="4b6ecbe86ba258818b56257dbc851560"
 PACKAGE_ORIG=`echo $SRC_ORIG | sed -r 's/(.*)-(.*)-(.*)\.(.*\..*)$/\1/'`
 VERSION_ORIG=`echo $SRC_ORIG | sed -r 's/(.*)-(.*)-(.*)\.(.*\..*)$/\2/'`
-REVISION=`echo $SRC_ORIG | sed -r 's/(.*)-(.*)-(.*)\.(.*\..*)$/\3/'`
-EXTENSION=`echo $SRC_ORIG | sed -r 's/(.*)-(.*)-(.*)\.(.*\..*)$/\4/'`
+    REVISION=`echo $SRC_ORIG | sed -r 's/(.*)-(.*)-(.*)\.(.*\..*)$/\3/'`
+   EXTENSION=`echo $SRC_ORIG | sed -r 's/(.*)-(.*)-(.*)\.(.*\..*)$/\4/'`
 
 # -------  Códigos de erro para o createpkg  --------------
 ERROR_WGET=31;      ERROR_MAKE=32;      ERROR_INSTALL=33

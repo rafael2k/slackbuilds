@@ -18,8 +18,9 @@ fi
 # o seu md5sum
 SRC_ORIG="broffice.org.2.0.4.rpm.tar.bz2"
 MD5_ORIG="3b78ddd41c7f8da098ec36f78642613f"
-VERSION_ORIG=`echo $SRC_ORIG | sed 's/.*\.org\.\([0-9]\.[0-9]\.[0-9]\)\.rpm.*$/\1/'`
-EXTENSION=`echo $SRC_ORIG | sed 's/.*\.rpm\.\(.*\..*\)$/\1/'`
+PACKAGE_ORIG=`echo $SRC_ORIG | sed -r 's/(.*)\.org\.(.*)\.rpm\.(.*)$/\1/'`
+VERSION_ORIG=`echo $SRC_ORIG | sed -r 's/(.*)\.org\.(.*)\.rpm\.(.*)$/\2/'`
+   EXTENSION=`echo $SRC_ORIG | sed -r 's/(.*)\.org\.(.*)\.rpm\.(.*)$/\3/'`
 
 # -------  Códigos de erro para o createpkg  --------------
 ERROR_WGET=31;      ERROR_MAKE=32;      ERROR_INSTALL=33
@@ -28,7 +29,7 @@ ERROR_TAR=37;       ERROR_MKPKG=38;     ERROR_GPG=39
 ERROR_PATCH=40;     ERROR_VCS=41
 
 # ---------  Inicializa variáveis de entrada  -------------
-PACKAGE=`echo $SRC_ORIG | sed 's/\(.*\)\.org\..*$/\1/'`
+PACKAGE=$PACKAGE_ORIG
 ARCH="i686"
 SRC_DIR=${SRC:=$CWD}
 VERSION=${VERSION:=$VERSION_ORIG}

@@ -18,8 +18,9 @@ fi
 # o seu md5sum
 SRC_ORIG="dvdauthor-0.6.11.tar.gz"
 MD5_ORIG="d2c45879e4cfb95d410bf603af891e07"
-VERSION_ORIG=`echo $SRC_ORIG | sed 's/\(.*\)-\(.*\)\.\(.*\..*\)$/\2/'`
-EXTENSION=`echo $SRC_ORIG | sed 's/\(.*\)-\(.*\)\.\(.*\..*\)$/\3/'`
+PACKAGE_ORIG=`echo $SRC_ORIG | sed -r 's/(.*)-(.*)\.(.*\..*)$/\1/'`
+VERSION_ORIG=`echo $SRC_ORIG | sed -r 's/(.*)-(.*)\.(.*\..*)$/\2/'`
+   EXTENSION=`echo $SRC_ORIG | sed -r 's/(.*)-(.*)\.(.*\..*)$/\3/'`
 
 # -------  Códigos de erro para o createpkg  --------------
 ERROR_WGET=31;      ERROR_MAKE=32;      ERROR_INSTALL=33
@@ -28,7 +29,7 @@ ERROR_TAR=37;       ERROR_MKPKG=38;	ERROR_GPG=39
 ERROR_PATCH=40;     ERROR_VCS=41
 
 # ---------  Inicializa variáveis de entrada  -------------
-PACKAGE=`echo $SRC_ORIG | sed 's/\(.*\)-\(.*\)\.\(.*\..*\)$/\1/'`
+PACKAGE=$PACKAGE_ORIG
 ARCH=${ARCH:=i468}
 SRC_DIR=${SRC:=$CWD}
 VERSION=${VERSION:=$VERSION_ORIG}
