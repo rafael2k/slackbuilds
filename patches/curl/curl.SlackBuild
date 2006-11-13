@@ -10,8 +10,8 @@ if [ -f "/etc/slackbuildrc" ]; then
   source /etc/slackbuildrc
 fi
 
-if [ -f "~/.slackbuildrc" ]; then
-  source ~/.slackbuildrc
+if [ -f "/root/.slackbuildrc" ]; then
+  source /root/.slackbuildrc
 fi
 
 PACKAGE="curl"
