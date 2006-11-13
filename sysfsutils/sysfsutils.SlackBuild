@@ -1,6 +1,7 @@
 #!/bin/bash
 #
-# slackbuild script for backupninja
+# slackbuild script for sysfsutils
+# rhatto at riseup.net | gpl
 #
 
 CWD="`pwd`"
