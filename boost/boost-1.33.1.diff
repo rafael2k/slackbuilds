@@ -1,0 +1,19 @@
+--- Makefile.orig	2006-11-14 13:34:02.000000000 -0200
++++ Makefile	2006-11-14 14:54:23.000000000 -0200
+@@ -1,10 +1,12 @@
+ BJAM=./tools/build/jam_src/bin.linuxx86/bjam
+ TOOLSET=gcc
+ BJAM_CONFIG= -sPYTHON_ROOT=/usr -sPYTHON_VERSION=2.4
+-PREFIX=/usr
+-EPREFIX=/usr
+-LIBDIR=/usr/lib
+-INCLUDEDIR=/usr/include
++DESTDIR=${DESTDIR:=/tmp/package-boost}
++LIBDIR=${LIBDIR:=/usr/lib}
++PREFIX=${DESTDIR}/usr
++EPREFIX=${DESTDIR}/usr
++LIBDIR=${DESTDIR}${LIBDIR}
++INCLUDEDIR=${DESTDIR}/usr/include
+ LIBS=
+ 
+ all: .dummy
