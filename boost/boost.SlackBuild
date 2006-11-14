@@ -118,7 +118,11 @@ for file in LICENSE_1_0.txt README; do
   cp $CWD/$file* usr/doc/$PACKAGE-$VERSION/
 done
 
-ln -s usr/include/boost-${VERSION2}/boost usr/include/boost
+# Warning: hardcoded version!!
+cat << EOF > install/doinst.sh
+( cd /usr/include ; rm boost )
+( cd /usr/include ; ln -sf /usr/include/boost-1_33_1/boost boost )
+EOF
 
 makepkg -c y -l y $REPOS/$PACKAGE-$VERSION-$ARCH-$BUILD.tgz
 
