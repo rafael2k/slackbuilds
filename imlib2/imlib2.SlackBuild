@@ -2,7 +2,7 @@
 #
 # slackbuild for imlib2, by Rudson R. Alves
 # requires: none
-# tested: imlib2-1.0.6
+# tested: imlib2-1.3.0
 
 CWD=`pwd`
 
@@ -16,8 +16,8 @@ fi
 # --------  Variáveis de controle de versão  --------------
 # Nome da fonte para a qual o slackbuild foi construído e
 # o seu md5sum
-SRC_ORIG="imlib2-1.0.6.tar.gz"
-MD5_ORIG="e3475376bf27347c47c7a9ffb49bdb96"
+SRC_ORIG="imlib2-1.3.0.tar.gz"
+MD5_ORIG="00b724fc6d2dcfa3045bb6a554bb2c8a"
 PACKAGE_ORIG=`echo $SRC_ORIG | sed -r 's/(.*)-(.*)\.(.*\..*)$/\1/'`
 VERSION_ORIG=`echo $SRC_ORIG | sed -r 's/(.*)-(.*)\.(.*\..*)$/\2/'`
    EXTENSION=`echo $SRC_ORIG | sed -r 's/(.*)-(.*)\.(.*\..*)$/\3/'`
@@ -38,9 +38,9 @@ BUILD=${BUILD:=1rud}
 TMP=${TMP:=/tmp}
 REPOS=${REPOS:=$TMP}
 PREFIX=${PREFIX:=/usr}
-OPTCONF=${OPTCONF:="--with-x"}
+OPTCONF=${OPTCONF:=""}
 MD5=${MD5:=$MD5_ORIG}
-URL=${URL:="http://superb-east.dl.sourceforge.net/sourceforge/enlightenment/$SRC"}
+URL=${URL:="http://ufpr.dl.sourceforge.net/sourceforge/enlightenment/$SRC"}
 
 # ----------------  SlackBuild Help  ----------------------
 if [ "$1" = "--help" -o "$1" = "help" ]; then
