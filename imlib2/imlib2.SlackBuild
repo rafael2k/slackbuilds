@@ -17,7 +17,7 @@ fi
 # Nome da fonte para a qual o slackbuild foi construído e
 # o seu md5sum
 SRC_ORIG="imlib2-1.0.6.tar.gz"
-MD5_ORIG="8cbbb8b6e8126b0840a19e7e3b8fef8a"
+MD5_ORIG="e3475376bf27347c47c7a9ffb49bdb96"
 PACKAGE_ORIG=`echo $SRC_ORIG | sed -r 's/(.*)-(.*)\.(.*\..*)$/\1/'`
 VERSION_ORIG=`echo $SRC_ORIG | sed -r 's/(.*)-(.*)\.(.*\..*)$/\2/'`
    EXTENSION=`echo $SRC_ORIG | sed -r 's/(.*)-(.*)\.(.*\..*)$/\3/'`
@@ -40,7 +40,7 @@ REPOS=${REPOS:=$TMP}
 PREFIX=${PREFIX:=/usr}
 OPTCONF=${OPTCONF:="--with-x"}
 MD5=${MD5:=$MD5_ORIG}
-URL=${URL:="http://freshmeat.net/redir/imlib2/4386/url_tgz/$SRC"}
+URL=${URL:="http://superb-east.dl.sourceforge.net/sourceforge/enlightenment/$SRC"}
 
 # ----------------  SlackBuild Help  ----------------------
 if [ "$1" = "--help" -o "$1" = "help" ]; then
@@ -124,8 +124,7 @@ cd $PKG_DIR
 # --------------  Configura programa  ---------------------
 # Configura programa
 echo -e "\n\n\033[01;32m CFLAGS=\"$SLKCFLAGS\" ./configure --prefix=$PREFIX --libdir=$LIBDIR $OPTCONF \n\033[m"
-CFLAGS="$SLKCFLAGS" ./configure --prefix=$PREFIX --libdir=$LIBDIR $OPTCONF $ARCH-slac
-kware-linux
+CFLAGS="$SLKCFLAGS" ./configure --prefix=$PREFIX --libdir=$LIBDIR $OPTCONF $ARCH-slackware-linux
 if [ $? -ne 0 -o "$OPTCONF" = "--help" ]; then
     echo -e "\n\n\033[01;31m Configure error \n\033[m"
     exit $ERROR_CONF

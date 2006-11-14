@@ -2,7 +2,7 @@
 #
 # slackbuild for libkexif, by Rudson R. Alves
 # requires: none
-# tested: libkexif-0.2.2
+# tested: libkexif-0.2.5
 
 CWD=`pwd`
 
@@ -16,8 +16,8 @@ fi
 # --------  Variáveis de controle de versão  --------------
 # Nome da fonte para a qual o slackbuild foi construído e
 # o seu md5sum
-SRC_ORIG="libkexif-0.2.2.tar.bz2"
-MD5_ORIG="..."
+SRC_ORIG="libkexif-0.2.5.tar.bz2"
+MD5_ORIG="a2b933b80deabe57d8515583236ae6ff"
 PACKAGE_ORIG=`echo $SRC_ORIG | sed -r 's/(.*)-(.*)\.(.*\..*)$/\1/'`
 VERSION_ORIG=`echo $SRC_ORIG | sed -r 's/(.*)-(.*)\.(.*\..*)$/\2/'`
    EXTENSION=`echo $SRC_ORIG | sed -r 's/(.*)-(.*)\.(.*\..*)$/\3/'`
@@ -25,7 +25,7 @@ VERSION_ORIG=`echo $SRC_ORIG | sed -r 's/(.*)-(.*)\.(.*\..*)$/\2/'`
 # -------  Códigos de erro para o createpkg  --------------
 ERROR_WGET=31;      ERROR_MAKE=32;      ERROR_INSTALL=33
 ERROR_MD5=34;       ERROR_CONF=35;      ERROR_HELP=36
-ERROR_TAR=37;       ERROR_MKPKG=38;	ERROR_GPG=39
+ERROR_TAR=37;       ERROR_MKPKG=38;     ERROR_GPG=39
 ERROR_PATCH=40;     ERROR_VCS=41
 
 # ---------  Inicializa variáveis de entrada  -------------
@@ -40,7 +40,7 @@ REPOS=${REPOS:=$TMP}
 PREFIX=${PREFIX:=/opt/kde}
 OPTCONF=${OPTCONF:=""}
 MD5=${MD5:=$MD5_ORIG}
-URL=${URL:="http://.../$SRC"}
+URL=${URL:="http://ufpr.dl.sourceforge.net/sourceforge/kipi/$SRC"}
 
 # ----------------  SlackBuild Help  ----------------------
 if [ "$1" = "--help" -o "$1" = "help" ]; then
@@ -102,7 +102,7 @@ elif [ "$ARCH" = "s390" ]; then
     SLKCFLAGS="-O2"
 elif [ "$ARCH" = "x86_64" ]; then
     SLKCFLAGS="-O2"
-    LIBDIR="$PREFIX/lib64"
+#    LIBDIR="$PREFIX/lib64"
 fi
 
 # --------------  Desempacota fontes  ---------------------
@@ -124,7 +124,8 @@ cd $PKG_DIR
 # --------------  Configura programa  ---------------------
 # Configura programa
 echo -e "\n\n\033[01;32m CFLAGS=\"$SLKCFLAGS\" ./configure --prefix=$PREFIX --libdir=$LIBDIR $OPTCONF \n\033[m"
-CFLAGS="$SLKCFLAGS" ./configure --prefix=$PREFIX --libdir=$LIBDIR $OPTCONF
+
+CFLAGS="$SLKCFLAGS" ./configure --prefix=$PREFIX $OPTCONF --libdir=$LIBDIR
 if [ $? -ne 0 -o "$OPTCONF" = "--help" ]; then
     echo -e "\n\n\033[01;31m Configure error \n\033[m"
     exit $ERROR_CONF
@@ -185,7 +186,7 @@ EOF
 # Criar diretório de documentação
 PKG_DOC=$PKG/usr/doc/$PACKAGE-$VERSION
 mkdir -p $PKG_DOC
-cp $PKG_DIR/{AUTHORS,COPYING,ChangeLog,INSTALL,README} $PKG_DOC
+cp $PKG_DIR/{AUTHORS,COPYING,ChangeLog,INSTALL,NEWS,PACKAGING,README,RELEASE.rev} $PKG_DOC
 
 # ---------------  Constroi o pacote  ---------------------
 echo -e "\n\n\033[01;32m makepkg -c y -l y $REPOS/$PACKAGE-$VERSION-$ARCH-$BUILD.tgz \n\033[m"
