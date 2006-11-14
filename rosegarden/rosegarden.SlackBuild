@@ -78,7 +78,7 @@ fi
 export CPLUS_INCLUDE_PATH=$LIBDIR/qt/include
 export QTDIR=$LIBDIR/qt      
 export KDEDIR=/opt/kde
-export PKG_CONFIG_PATH=$PKG_CONFIG_PATH:/opt/kde/lib/pkgconfig
+export PKG_CONFIG_PATH=$PKG_CONFIG_PATH:$KDELIBDIR/pkgconfig
 export PATH=$PATH:/opt/kde/bin
 export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$KDELIBDIR
 
