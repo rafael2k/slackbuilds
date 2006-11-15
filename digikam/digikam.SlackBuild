@@ -43,7 +43,7 @@ SRC=$PACKAGE-$VERSION-$REVISION.$EXTENSION
 BUILD=${BUILD:=1rud}
 TMP=${TMP:=/tmp}
 REPOS=${REPOS:=$TMP}
-PREFIX=${PREFIX:=/usr}
+PREFIX=${PREFIX:=/opt/kde}
 OPTCONF=${OPTCONF:=""}
 MD5=${MD5:=$MD5_ORIG}
 URL=${URL:="http://ufpr.dl.sourceforge.net/sourceforge/digikam/$SRC"}
