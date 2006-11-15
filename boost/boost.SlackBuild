@@ -71,7 +71,7 @@ cd $TMP
 tar xvf$tarflag $SRC_DIR/$SRC
 cd ${PACKAGE}_${VERSION2}
 
-./configure --prefix=/usr --libdir=$LIBDIR 
+./configure --prefix=/usr --libdir=$LIBDIR --with-libraries=all
 
 if [ -f "$CWD/$PACKAGE-$VERSION.diff" ]; then
   patch -p0 < $CWD/$PACKAGE-$VERSION.diff
