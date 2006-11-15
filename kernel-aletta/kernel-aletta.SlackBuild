@@ -14,12 +14,12 @@ if [ -f "/root/.slackbuildrc" ]; then
 fi
 
 PACKAGE="kernel-aletta"
-KERNEL_VERSION="2.6.16"
-EXTRAVERSION="27"
+KERNEL_VERSION="2.6.18"
+EXTRAVERSION="2"
 ARCH="i386"
 BUILD="1rha"
-PATCHSET="vs2.0.2-rc22"
-PATCH_VERSION="2.6.16.20-$PATCHSET"
+PATCHSET="vs2.0.2.2-rc6" # previous was vs2.0.2-rc22
+PATCH_VERSION="$KERNEL_VERSION-$PATCHSET"
 TMP=${TMP:=/tmp}
 SRC_DIR=${SRC:=$CWD}
 REPOS=${REPOS:=$TMP}
