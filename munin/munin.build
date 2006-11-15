@@ -107,7 +107,7 @@ make install-node install-node-plugins
 cp $CWD/plugins/* /usr/lib/munin/plugins/
 chmod 755 /usr/lib/munin/plugins/*
 
-mkdir -p /etc/munin/plugin{s,conf-d}
+mkdir -p /etc/munin/plugin{s,-conf.d}
 mv /etc/munin/munin.conf /etc/munin/munin.conf.sample
 mv /etc/munin-node.conf /etc/munin-node.conf.sample
 
