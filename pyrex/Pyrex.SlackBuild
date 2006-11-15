@@ -9,9 +9,9 @@ if [ -s "slack-required" ]; then
   if [ "$INTERACT" != "no" ]; then
     echo If you dont have those installed, press Ctrl-C. Otherwise, hit ENTER.
     read crap
-  else
-    echo Sleeping 3 seconds...
-    sleep 3
+#  else
+#    echo Sleeping 3 seconds...
+#    sleep 3
   fi
 fi
 
