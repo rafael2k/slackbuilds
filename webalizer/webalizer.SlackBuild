@@ -33,12 +33,10 @@
 # Set initial variables:
 CWD="`pwd`"
 
-if [ -f "/etc/slackbuildrc" ]; then
+if [ -f ~/.slackbuildrc ]; then
+  source ~/.slackbuildrc
+elif [ -f /etc/slackbuildrc ]; then
   source /etc/slackbuildrc
-fi
-
-if [ -f "/root/.slackbuildrc" ]; then
-  source /root/.slackbuildrc
 fi
 
 # change STATIC to anything other than "yes" to enable dynamic build.
