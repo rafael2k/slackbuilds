@@ -1,7 +1,7 @@
 #!/bin/bash
 #
 # slackbuild script for boost
-# by boost at riseup.net
+# by rafael at riseup.net
 #
 
 if [ -s "slack-required" ]; then
@@ -35,98 +35,12 @@ SRC_DIR=${SRC:=$CWD}
 TMP=${TMP:=/tmp}
 REPOS=${REPOS:=$TMP}
 
-# Warning: hardcoded version!!
-VERSION2=1_33_1
+rm -rf $TMP/$PACKAGE
+mkdir -p $SRC_DIR/$PACKAGE $TMP/$PACKAGE
 
-if [ "$ARCH" == "x86_64" ]; then
-  export LDFLAGS="-L/lib64 -L/usr/lib64"
-  LIBDIR=/usr/lib64
-else
-  LIBDIR=/usr/lib
-fi
-
-RTOOL="wget"
-PACKAGE_EXT="bz2"
-SRC="${PACKAGE}_${VERSION2}.tar.$PACKAGE_EXT"
-URL="http://ufpr.dl.sourceforge.net/sourceforge/boost/$SRC"
-
-SRC_DIR="$SRC_DIR/$PACKAGE"
-mkdir -p $SRC_DIR
-
-if [ "$PACKAGE_EXT" == "bz2" ]; then
-  tarflag="j"
-else
-  tarflag="z"
-fi
-
-if [ "$RTOOL" == "wget" ] && [ ! -f "$SRC_DIR/$SRC" ]; then
-  wget "$URL" -O "$SRC_DIR/$SRC"
-fi
-
-TMP="$TMP/$PACKAGE"
-rm -rf $TMP
-mkdir -p $TMP
-cd $TMP
-
-tar xvf$tarflag $SRC_DIR/$SRC
-cd ${PACKAGE}_${VERSION2}
-
-./configure --prefix=/usr --libdir=$LIBDIR --with-libraries=all
-
-if [ -f "$CWD/$PACKAGE-$VERSION.diff" ]; then
-  patch -p0 < $CWD/$PACKAGE-$VERSION.diff
-fi
-
-
-make || exit 32
-make DESTDIR=$TMP/package-$PACKAGE LIBDIR=$LIBDIR install
-
-CWD="`pwd`"
-
-cd $TMP/package-$PACKAGE
-
-find . | xargs file | grep "executable" | grep ELF | cut -f 1 -d : | xargs strip --strip-unneeded 2> /dev/null
-find . | xargs file | grep "shared object" | grep ELF | cut -f 1 -d : | xargs strip --strip-unneeded 2> /dev/null
-
-mkdir install
-cat << EOF > install/slack-desc
-# HOW TO EDIT THIS FILE:
-# The "handy ruler" below makes it easier to edit a package description.  Line
-# up the first '|' above the ':' following the base package name, and the '|'
-# on the right side marks the last column you can put a character in.  You must
-# make exactly 11 lines for the formatting to be correct.  It's also
-# customary to leave one space after the ':'.
-
-     |-----handy-ruler-----------------------------------------------------|
-boost: boost
-boost:
-boost: Boost provides free peer-reviewed portable C++ source libraries.
-boost: 
-boost: We emphasize libraries that work well with the C++ Standard Library. 
-boost: Boost libraries are intended to be widely useful, and usable across 
-boost: a broad spectrum of applications.
-boost:
-boost:
-boost: http://www.boost.org/
-boost:
-EOF
-
-# docs
-mkdir -p usr/doc/$PACKAGE-$VERSION
-
-for file in LICENSE_1_0.txt README; do
-  cp $CWD/$file* usr/doc/$PACKAGE-$VERSION/
-done
-
-# Warning: hardcoded version!!
-cat << EOF > install/doinst.sh
-( cd /usr/include ; rm boost )
-( cd /usr/include ; ln -sf /usr/include/boost-1_33_1/boost boost )
-EOF
-
-makepkg -c y -l y $REPOS/$PACKAGE-$VERSION-$ARCH-$BUILD.tgz
+slacktrack -b $REPOS -x $TMP,$SRC_DIR,/dev -jefkzp "$PACKAGE-$VERSION-$ARCH-$BUILD.tgz" "./$PACKAGE.build"
 
 if [ "$CLEANUP" == "yes" ]; then
-  rm -rf $TMP
+  rm -rf $TMP/$PACKAGE
 fi
 
