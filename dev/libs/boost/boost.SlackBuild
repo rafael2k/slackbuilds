@@ -10,9 +10,9 @@ if [ -s "slack-required" ]; then
   if [ "$INTERACT" != "no" ]; then
     echo If you dont have those installed, press Ctrl-C. Otherwise, hit ENTER.
     read crap
-#  else
-#    echo Sleeping 3 seconds...
-#    sleep 3
+  else
+    echo Sleeping 3 seconds...
+    sleep 3
   fi
 fi
 
@@ -39,6 +39,41 @@ rm -rf $TMP/$PACKAGE
 mkdir -p $SRC_DIR/$PACKAGE $TMP/$PACKAGE
 
 slacktrack -b $REPOS -x $TMP,$SRC_DIR,/dev -jefkzp "$PACKAGE-$VERSION-$ARCH-$BUILD.tgz" "./$PACKAGE.build"
+
+# doinst fix
+rm -rf $TMP/package-$PACKAGE
+mkdir $TMP/package-$PACKAGE
+cd $TMP/package-$PACKAGE
+explodepkg $TMP/$PACKAGE-$VERSION-$ARCH-$BUILD.tgz
+
+if [ -f "$CWD/$PACKAGE-$VERSION.diff" ]; then
+  patch -p0 < $CWD/$PACKAGE-$VERSION.diff
+fi
+
+cat << EOF > install/slack-desc
+# HOW TO EDIT THIS FILE:
+# The "handy ruler" below makes it easier to edit a package description.  Line
+# up the first '|' above the ':' following the base package name, and the '|'
+# on the right side marks the last column you can put a character in.  You must
+# make exactly 11 lines for the formatting to be correct.  It's also
+# customary to leave one space after the ':'.
+
+     |-----handy-ruler-----------------------------------------------------|
+boost: boost
+boost:
+boost: Boost provides free peer-reviewed portable C++ source libraries.
+boost: 
+boost: We emphasize libraries that work well with the C++ Standard Library. 
+boost: Boost libraries are intended to be widely useful, and usable across 
+boost: a broad spectrum of applications.
+boost:
+boost:
+boost: http://www.boost.org/
+boost:
+EOF
+
+
+makepkg -c y -l y $REPOS/$PACKAGE-$VERSION-$ARCH-$BUILD.tgz
 
 if [ "$CLEANUP" == "yes" ]; then
   rm -rf $TMP/$PACKAGE
