@@ -15,7 +15,7 @@ PACKAGE="kernel-aletta"
 KERNEL_VERSION="2.6.18"
 EXTRAVERSION="2"
 ARCH="i386"
-BUILD="1rha"
+BUILD="2rha"
 PATCHSET="vs2.0.2.2-rc6" # previous was vs2.0.2-rc22
 TMP=${TMP:=/tmp}
 SRC_DIR=${SRC:=$CWD}
