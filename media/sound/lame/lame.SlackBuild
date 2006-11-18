@@ -31,7 +31,7 @@ ERROR_PATCH=40;     ERROR_VCS=41
 
 # ---------  Inicializa variáveis de entrada  -------------
 PACKAGE=$PACKAGE_ORIG
-ARCH=${ARCH:=i468}
+ARCH=${ARCH:=i486}
 SRC_DIR=${SRC:=$CWD}
 if [ "$VERSION" != "" ]; then
     # Constroi nome do pacote

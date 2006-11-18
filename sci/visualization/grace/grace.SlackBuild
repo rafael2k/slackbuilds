@@ -29,7 +29,7 @@ ERROR_PATCH=40;     ERROR_VCS=41
 
 # ---------  Inicializa variáveis de entrada  -------------
 PACKAGE=$PACKAGE_ORIG
-ARCH=${ARCH:=i468}
+ARCH=${ARCH:=i486}
 VERSION=$VERSION_ORIG
 SRC_DIR=${SRC:=$CWD}
 SRC=$PACKAGE-$VERSION.$EXTENSION
