@@ -6,9 +6,9 @@
 
 CWD=`pwd`
 
-if [ -e "/root/.slackbuildrc" ]; then
-  source /root/.slackbuildrc
-elif [ -e "/etc/slackbuildrc" ]; then
+if [ -e ~/.slackbuildrc ]; then
+  source ~/.slackbuildrc
+elif [ -e /etc/slackbuildrc ]; then
   source /etc/slackbuildrc
 fi
 

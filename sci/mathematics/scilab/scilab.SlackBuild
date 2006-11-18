@@ -6,9 +6,9 @@
 
 CWD=`pwd`
 
-if [ -e "/root/.slackbuildrc" ]; then
-  source /root/.slackbuildrc
-elif [ -e "/etc/slackbuildrc" ]; then
+if [ -e ~/.slackbuildrc ]; then
+  source ~/.slackbuildrc
+elif [ -e /etc/slackbuildrc ]; then
   source /etc/slackbuildrc
 fi
 
@@ -26,7 +26,7 @@ ERROR_WGET=31;      ERROR_MAKE=32;      ERROR_INSTALL=33
 ERROR_MD5=34;       ERROR_CONF=35;      ERROR_HELP=36
 ERROR_TAR=37;       ERROR_MKPKG=38;     ERROR_GPG=39
 ERROR_PATCH=40;     ERROR_VCS=41
-
+"
 # ---------  Inicializa variáveis de entrada  -------------
 PACKAGE=$PACKAGE_ORIG
 ARCH=${ARCH:=i486}

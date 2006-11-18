@@ -7,9 +7,9 @@
 CWD=`pwd`
 
 # ----  Inicializa variáveis com o slackbuild  ------------
-if [ -e "/root/.slackbuildrc" ]; then
-  source /root/.slackbuildrc
-elif [ -e "/etc/slackbuildrc" ]; then
+if [ -e ~/.slackbuildrc ]; then
+  source ~/.slackbuildrc
+elif [ -e /etc/slackbuildrc ]; then
   source /etc/slackbuildrc
 fi
 
@@ -31,7 +31,7 @@ ERROR_PATCH=40;     ERROR_VCS=41
 # ---------  Inicializa variáveis de entrada  -------------
 PACKAGE=$PACKAGE_ORIG
 ARCH=${ARCH:=i486}
-SRC_DIR=${SRC:=$CWD}
+SRC_DIR=${SRC:/root=$CWD}
 VERSION=${VERSION:=$VERSION_ORIG}
 SRC=${PACKAGE}_staticQT-$VERSION-generic.$EXTENSION
 BUILD=${BUILD:=1rud}
