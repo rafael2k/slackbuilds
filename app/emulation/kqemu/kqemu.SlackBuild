@@ -50,27 +50,6 @@ MD5=${MD5:=$MD5_ORIG}
 URL=${URL:="http://fabrice.bellard.free.fr/qemu/$SRC"}
 KVERSION=`uname -r | tr - _ `
 
-# ----------------  SlackBuild Help  ----------------------
-if [ "$1" = "--help" -o "$1" = "help" ]; then
-    echo -e "\033[01;32m
-Use: var1=\"value 1\" var2=\"value 2\" ... <package>.SlackBuild
-where:
-    ARCH=machine arch (i386, i486, i686, ...)
-    VERSION=package version
-    BUILD=package build version (default 1rud)
-    SRC=source name of package
-    SRC_DIR=source directory (default $PWD)
-    TMP=temporary directory (default /tmp)
-    REPOS=repository directory
-    PREFIX=prefix from install package
-    OPTCONF=options to pass from ./configure. To configure
-            help, use OPTCONF=\"--help\"
-    MD5=md5sum from package source
-    URL=url from package source
-\033[m"
-    exit $ERROR_HELP
-fi
-
 # ----------------  Download fontes  ----------------------
 # Fonte a ser compilada, com o path
 SOURCE=$SRC_DIR/qemu/$SRC

@@ -26,7 +26,7 @@ ERROR_WGET=31;      ERROR_MAKE=32;      ERROR_INSTALL=33
 ERROR_MD5=34;       ERROR_CONF=35;      ERROR_HELP=36
 ERROR_TAR=37;       ERROR_MKPKG=38;     ERROR_GPG=39
 ERROR_PATCH=40;     ERROR_VCS=41
-"
+
 # ---------  Inicializa variáveis de entrada  -------------
 PACKAGE=$PACKAGE_ORIG
 ARCH=${ARCH:=i486}
@@ -40,27 +40,6 @@ PREFIX=${PREFIX:=/usr}
 OPTCONF=${OPTCONF:=""}
 MD5=${MD5:=$MD5_ORIG}
 URL=${URL:="http://www.scilab.org/download/stable/$SRC"}
-
-# ----------------  SlackBuild Help  ----------------------
-if [ "$1" = "--help" -o "$1" = "help" ]; then
-    echo -e "\033[01;32m
-Use: var1=\"value 1\" var2=\"value 2\" ... <package>.SlackBuild
-where:
-    ARCH=machine arch (i386, i486, i686, ...)
-    VERSION=package version
-    BUILD=package build version (default 1rud)
-    SRC=source name of package
-    SRC_DIR=source directory (default $PWD)
-    TMP=temporary directory (default /tmp)
-    REPOS=repository directory
-    PREFIX=prefix from install package
-    OPTCONF=options to pass from ./configure. To configure
-            help, use OPTCONF=\"--help\"
-    MD5=md5sum from package source
-    URL=url from package source
-\033[m"
-    exit $ERROR_HELP
-fi
 
 # ----------------  Download fontes  ----------------------
 # Fonte a ser compilada, com o path
