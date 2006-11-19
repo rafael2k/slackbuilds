@@ -21,6 +21,12 @@ SRC_DIR=${SRC:=$CWD}
 TMP=${TMP:=/tmp}
 REPOS=${REPOS:=$TMP}
 
+# -------  error codes for createpkg  --------------
+ERROR_WGET=31;      ERROR_MAKE=32;      ERROR_INSTALL=33
+ERROR_MD5=34;       ERROR_CONF=35;      ERROR_HELP=36
+ERROR_TAR=37;       ERROR_MKPKG=38;     ERROR_GPG=39
+ERROR_PATCH=40
+
 if [ "$ARCH" == "x86_64" ]; then
   LIBDIR=/usr/lib64
 else
@@ -42,7 +48,7 @@ else
 fi
 
 if [ "$RTOOL" == "wget" ] && [ ! -f "$SRC_DIR/$SRC" ]; then
-  wget "$URL" -O "$SRC_DIR/$SRC"
+  wget "$URL" -O "$SRC_DIR/$SRC" || exit $ERROR_WGET
 fi
 
 TMP="$TMP/$PACKAGE"
@@ -50,17 +56,17 @@ rm -rf $TMP
 mkdir -p $TMP
 cd $TMP
 
-tar xvf$tarflag $SRC_DIR/$SRC
+tar xvf$tarflag $SRC_DIR/$SRC || exit $ERROR_TAR
 cd $PACKAGE-$VERSION
 
 if [ -f "$CWD/$PACKAGE-$VERSION.diff" ]; then
-  patch -p1 < $CWD/$PACKAGE-$VERSION.diff
+  patch -p1 < $CWD/$PACKAGE-$VERSION.diff || exit $ERROR_WGET
 fi
 
-./autogen.sh
-./configure --prefix=/usr --sysconfdir=/etc --libdir=$LIBDIR
-make || exit 32
-make DESTDIR=$TMP/package-$PACKAGE install
+./autogen.sh || exit $ERROR_CONF
+./configure --prefix=/usr --sysconfdir=/etc --libdir=$LIBDIR || exit $ERROR_CONF
+make || exit $ERROR_MAKE
+make DESTDIR=$TMP/package-$PACKAGE install || exit $ERROR_INSTALL
 
 cp $CWD/rub $TMP/package-$PACKAGE/usr/share/$PACKAGE/
 rm -rf $TMP/package-$PACKAGE/etc/cron.d
@@ -108,7 +114,7 @@ done
 # install script
 echo '( if [ ! -f "etc/backupninja.conf" ]; then mv etc/backupninja.conf.new etc/backupninja.conf; fi )' > install/doinst.sh
 
-makepkg -c y -l y $REPOS/$PACKAGE-$VERSION-$ARCH-$BUILD.tgz
+makepkg -c y -l y $REPOS/$PACKAGE-$VERSION-$ARCH-$BUILD.tgz || exit $ERROR_MKPKG
 
 if [ "$CLEANUP" == "yes" ]; then
   rm -rf $TMP
