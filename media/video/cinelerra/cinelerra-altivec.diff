@@ -19,7 +19,7 @@ Index: quicktime/ffmpeg/libavcodec/ppc/Makefile.am
 @@ -1,15 +1,27 @@
  noinst_LTLIBRARIES = libavcodecppc.la
  
-+experimental code for altivec:
++# experimental code for altivec:
 +## if TARGET_ALTIVEC
 +ALTIVEC_FLAGS = -maltivec -mabi=altivec -DHAVE_ALTIVEC
 +ALTIVEC_FILES = dsputil_altivec.c dsputil_h264_altivec.c fft_altivec.c gmc_altivec.c fdct_altivec.c idct_altivec.c mpegvideo_altivec.c 
