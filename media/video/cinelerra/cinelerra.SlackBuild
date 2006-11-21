@@ -72,7 +72,7 @@ if [ "$ARCH" == "i586" ]; then
   EXTRA_ACFLAGS=" --enable-mmx"
 fi
 
-if [ "HAVE_ALTIVEC" == "true" ]; then
+if [ "$HAVE_ALTIVEC" == "true" ]; then
   EXTRA_ACFLAGS=" --enable-altivec"
   if [ -f "$CWD/$PACKAGE-altivec.diff"]; then
     patch -p0 < $CWD/$PACKAGE-altivec.diff || exit $ERROR_PATCH
