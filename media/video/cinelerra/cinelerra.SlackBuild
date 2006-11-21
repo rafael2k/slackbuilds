@@ -72,6 +72,13 @@ if [ "$ARCH" == "i586" ]; then
   EXTRA_ACFLAGS=" --enable-mmx"
 fi
 
+if [ "HAVE_ALTIVEC" == "true" ]; then
+  EXTRA_ACFLAGS=" --enable-altivec"
+  if [ -f "$CWD/$PACKAGE-altivec.diff"]; then
+    patch -p0 < $CWD/$PACKAGE-altivec.diff || exit $ERROR_PATCH
+  fi 
+fi
+
 ./autogen.sh || exit $ERROR_CONF
 ./configure --prefix=/usr --libdir=$LIBDIR $EXTRA_ACFLAGS || exit $ERROR_CONF
 make || exit $ERROR_MAKE

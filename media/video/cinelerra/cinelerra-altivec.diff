@@ -1,0 +1,49 @@
+Index: quicktime/ffmpeg/libavcodec/Makefile.am
+===================================================================
+--- quicktime/ffmpeg/libavcodec/Makefile.am	(revision 958)
++++ quicktime/ffmpeg/libavcodec/Makefile.am	(working copy)
+@@ -11,6 +11,9 @@
+ if TARGET_ARCH_POWERPC
+ MM_DIR = ppc
+ MM_LIB = ppc/libavcodecppc.la
++## if TARGET_ALTIVEC
++MM_FLAGS = -DHAVE_ALTIVEC -maltivec -mabi=altivec
++## endif
+ endif
+ 
+ SUBDIRS = $(MM_DIR)
+Index: quicktime/ffmpeg/libavcodec/ppc/Makefile.am
+===================================================================
+--- quicktime/ffmpeg/libavcodec/ppc/Makefile.am	(revision 958)
++++ quicktime/ffmpeg/libavcodec/ppc/Makefile.am	(working copy)
+@@ -1,15 +1,27 @@
+ noinst_LTLIBRARIES = libavcodecppc.la
+ 
++experimental code for altivec:
++## if TARGET_ALTIVEC
++ALTIVEC_FLAGS = -maltivec -mabi=altivec -DHAVE_ALTIVEC
++ALTIVEC_FILES = dsputil_altivec.c dsputil_h264_altivec.c fft_altivec.c gmc_altivec.c fdct_altivec.c idct_altivec.c mpegvideo_altivec.c 
++## else
++## ALTIVEC_FLAGS = 
++## ALTIVEC_FILES = 
++## endif
++
++
+ # special options needed due to scarcity of registers
+ AM_CFLAGS = \
+ 	$(LARGEFILE_CFLAGS) \
+ 	$(CPU_CFLAGS) \
++	$(ALTIVEC_FLAGS) \
+ 	-O3 -prefer-non-pic \
+ 	-D_GNU_SOURCE -DHAVE_AV_CONFIG_H -I$(srcdir)/../..
+ 
+ libavcodecppc_la_SOURCES = \
+-	dsputil_ppc.c mpegvideo_ppc.c
++	dsputil_ppc.c mpegvideo_ppc.c \
++	$(ALTIVEC_FILES)
+ 
+-EXTRA_DIST = dsputil_ppc.c \
+-	mpegvideo_ppc.c
++EXTRA_DIST = dsputil_h264_template_altivec.c \
++	dsputil_altivec.h dsputil_ppc.h
+ 
