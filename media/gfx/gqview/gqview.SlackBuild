@@ -27,7 +27,7 @@ fi
 # default settings
 PACKAGE="gqview"
 ARCH=${ARCH:=i486}
-VERSION=${VERSION:=2.0.2}
+VERSION=${VERSION:=2.0.3}
 BUILD=${BUILD:=1rha}
 SRC_DIR=${SRC:=$CWD}
 TMP=${TMP:=/tmp}
