@@ -16,8 +16,8 @@ fi
 # --------  Variáveis de controle de versão  --------------
 # Nome da fonte para a qual o slackbuild foi construído e
 # o seu md5sum
-SRC_ORIG="wine-0.9.25.tar.bz2"
-MD5_ORIG="83651d82ada4b06cfead5c535bcbdd6e"
+SRC_ORIG="wine-0.9.26.tar.bz2"
+MD5_ORIG="4a3a41e0ac26417a7ad981b89b0c10ce"
 PACKAGE_ORIG=`echo $SRC_ORIG | sed 's/\(.*\)-\(.*\)\.\(.*\..*\)$/\1/'`
 VERSION_ORIG=`echo $SRC_ORIG | sed 's/\(.*\)-\(.*\)\.\(.*\..*\)$/\2/'`
 EXTENSION=`echo $SRC_ORIG | sed 's/\(.*\)-\(.*\)\.\(.*\..*\)$/\3/'`
