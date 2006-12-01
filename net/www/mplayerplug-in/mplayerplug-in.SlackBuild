@@ -75,7 +75,7 @@ cd $TMP
 tar xvf $SRC_DIR/$GECKO || exit $ERROR_TAR
 
 tar xvf $SRC_DIR/$SRC || exit $ERROR_TAR
-cd $PACKAGE-$VERSION
+cd $PACKAGE
 
 if [ -f "$CWD/$PACKAGE-$VERSION.diff" ]; then
   patch -p1 < $CWD/$PACKAGE-$VERSION.diff || exit $ERROR_PATCH
