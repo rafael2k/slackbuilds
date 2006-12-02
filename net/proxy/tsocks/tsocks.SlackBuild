@@ -27,7 +27,7 @@ fi
 # default settings
 PACKAGE="tsocks"
 ARCH=${ARCH:=i486}
-VERSION=${VERSION:=1.7}
+VERSION=${VERSION:=1.8beta5}
 BUILD=${BUILD:=1rha}
 SRC_DIR=${SRC:=$CWD}
 TMP=${TMP:=/tmp}
@@ -64,7 +64,12 @@ mkdir -p $TMP
 cd $TMP
 
 tar xvf $SRC_DIR/$SRC || exit $ERROR_TAR
-cd $PACKAGE-$VERSION
+
+if echo $VERSION | grep -q "beta"; then
+  cd $PACKAGE-`echo $VERSION | sed -e 's/beta.*//'`
+else
+  cd $PACKAGE-$VERSION
+fi
 
 if [ -f "$CWD/$PACKAGE-$VERSION.diff" ]; then
   patch -p1 < $CWD/$PACKAGE-$VERSION.diff || exit $ERROR_PATCH
