@@ -47,24 +47,13 @@ URL=${URL:="http://superb-west.dl.sourceforge.net/sourceforge/kipi/$SRC"}
 SOURCE=$SRC_DIR/$PACKAGE/$SRC
 # Verifica existência do pacote em $SRC em $SRC_DIR
 if [ ! -e $SOURCE ]; then
-    echo -e "\n\n\033[01;32m Download $PACKAGE \n\033[m"
-    wget "$URL" -P "$SRC_DIR/$PACKAGE"
-    # Verifica se o
-    if [ $? -ne 0 ]; then
-        echo -e "\n\n\033[01;31m No such source file in $URL\n\033[m"
-        exit $ERROR_WGET
-    fi
+    wget "$URL" -P "$SRC_DIR/$PACKAGE" || exit $ERROR_WGET
 fi
 
 # ------------------  Checa md5sum  -----------------------
 if [ "$SRC_ORIG" = "$SRC" -o "$MD5" != "$MD5_ORIG" -a "$MD5" != "no" ]; then
     SUM=`md5sum $SOURCE | awk '{print $1}'`
-    if [ "$SUM" != "$MD5" ]; then
-        echo -e "\n\n\033[01;31m MD5SUM error: run Slackbuild again \n\033[m"
-        echo -e "\033[01;31m Remove $PACKAGE from $SRC_DIR and start Slackbuild again or use MD5=\"no\" \n\033[m"
-        exit 0
-    fi
-    echo -e "\n\n\033[01;32m Md5sum Ok \n\033[m"
+    [ "$SUM" != "$MD5" ] && exit $ERROR_MD5
 fi
 
 # -----------------  ARCH e LIBDIR  -----------------------
@@ -90,11 +79,8 @@ PKG_SRC=$TMP/$PACKAGE-source
 rm -rf $PKG_SRC 2>/dev/null
 mkdir -p $PKG_SRC
 # Desempacota $SOURCE em $TMP/$PACKAGE-source
-tar xvf $SOURCE -C $PKG_SRC
-if [ $? -ne 0 ]; then
-    echo -e "\n\n\033[01;31m $SOURCE file error \n\033[m"
-    exit $ERROR_TAR
-fi
+tar xvf $SOURCE -C $PKG_SRC || exit $ERROR_TAR
+
 # Pega o nome do diretório das fontes independente de sua
 # estrutura (package-version...)
 PKG_DIR="$PKG_SRC/$( ls $PKG_SRC/ )"
@@ -102,20 +88,10 @@ cd $PKG_DIR
 
 # --------------  Configura programa  ---------------------
 # Configura programa
-echo -e "\n\n\033[01;32m CFLAGS=\"$SLKCFLAGS\" ./configure --prefix=$PREFIX --libdir=$LIBDIR $OPTCONF \n\033[m"
-CFLAGS="$SLKCFLAGS" ./configure --prefix=$PREFIX --libdir=$LIBDIR $OPTCONF
-if [ $? -ne 0 -o "$OPTCONF" = "--help" ]; then
-    echo -e "\n\n\033[01;31m Configure error \n\033[m"
-    exit $ERROR_CONF
-fi
+CFLAGS="$SLKCFLAGS" ./configure --prefix=$PREFIX --libdir=$LIBDIR $OPTCONF || exit $ERROR_CONF
 
 # ----------------  Compila programa  ---------------------
-echo -e "\n\n\033[01;32m make -j3 \n\033[m"
-make -j3
-if [ $? -ne 0 ]; then
-    echo -e "\n\n\033[01;31m Build error \n\033[m"
-    exit $ERROR_MAKE
-fi
+make -j3 || exit $ERROR_MAKE
 
 # -------------  Diretório Temporário  --------------------
 # Cria diretório temporário para construção do pacote
@@ -125,12 +101,7 @@ mkdir -p $PKG
 
 # ---------------  Instala programa  ----------------------
 # Instala programa em diretório temporário
-echo -e "\n\n\033[01;32m make install DESTDIR=$PKG \n\033[m"
-make install DESTDIR=$PKG
-if [ $? -ne 0 ]; then
-    echo -e "\n\n\033[01;31m Install error \n\033[m"
-    exit $ERROR_INSTALL
-fi
+make install DESTDIR=$PKG || exit $ERROR_INSTALL
 
 # -----------------  Stripa código  -----------------------
 cd $PKG
@@ -167,14 +138,9 @@ mkdir -p $PKG_DOC
 cp $PKG_DIR/{AUTHORS,COPYING,ChangeLog,INSTALL,NEWS,README,README.rev,TODO} $PKG_DOC
 
 # ---------------  Constroi o pacote  ---------------------
-echo -e "\n\n\033[01;32m makepkg -c y -l y $REPOS/$PACKAGE-$VERSION-$ARCH-$BUILD.tgz \n\033[m"
-makepkg -c y -l y $REPOS/$PACKAGE-$VERSION-$ARCH-$BUILD.tgz
-if [ $? -ne 0 ]; then
-    exit $ERROR_MKPKG
-fi
+makepkg -c y -l y $REPOS/$PACKAGE-$VERSION-$ARCH-$BUILD.tgz || exit $ERROR_MKPKG
 
 # -----------  Remove arquivos temporários  ---------------
 if [ "$CLEANUP" = "yes" ]; then
-    echo -e "\n\n\033[01;32m Remove files... \n\033[m"
     rm -rf $PKG $PKG_SRC
 fi

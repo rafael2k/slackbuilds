@@ -47,24 +47,13 @@ URL=${URL:="http://www.skype.com/go/getskype-linux-static"}
 SOURCE=$SRC_DIR/$PACKAGE/$SRC
 # Verifica existência do pacote em $SRC em $SRC_DIR
 if [ ! -e $SOURCE ]; then
-    echo -e "\n\n\033[01;32m Download $SRC \n\033[m"
-    wget "$URL" -P "$SRC_DIR/$PACKAGE/"
-    # Verifica se o
-    if [ $? -ne 0 ]; then
-        echo -e "\n\n\033[01;31m No such source file in $URL\n\033[m"
-        exit $ERROR_WGET
-    fi
+    wget "$URL" -P "$SRC_DIR/$PACKAGE/" || exit $ERROR_WGET
 fi
 
 # ------------------  Checa md5sum  -----------------------
 if [ "$SRC_ORIG" = "$SRC" -o "$MD5" != "$MD5_ORIG" -a "$MD5" != "no" ]; then
     SUM=`md5sum $SOURCE | awk '{print $1}'`
-    if [ "$SUM" != "$MD5" ]; then
-        echo -e "\n\n\033[01;31m MD5SUM error: run Slackbuild again \n\033[m"
-        echo -e "\033[01;31m Remove $PACKAGE from $SRC_DIR and start Slackbuild again or use MD5=\"no\" \n\033[m"
-        exit $ERROR_MD5
-    fi
-    echo -e "\n\n\033[01;32m Md5sum Ok \n\033[m"
+    [ "$SUM" != "$MD5" ] && exit $ERROR_MD5
 fi
 
 # --------------  Desempacota fontes  ---------------------
@@ -73,11 +62,7 @@ PKG=$TMP/$PACKAGE
 rm -rf $PKG 2>/dev/null
 mkdir -p $PKG/opt
 # Desempacota $SOURCE em $TMP/$PACKAGE-source
-tar xvf $SOURCE -C $PKG/opt
-if [ $? -ne 0 ]; then
-    echo -e "\n\n\033[01;31m $SOURCE file error \n\033[m"
-    exit $ERROR_TAR
-fi
+tar xvf $SOURCE -C $PKG/opt || exit $ERROR_TAR
 
 mkdir -p $PKG/usr/share/applications/
 cd $PKG/opt/
@@ -137,14 +122,9 @@ mkdir -p $PKG_DOC
 cp $SKYPE_DIR/{LICENSE,README} $PKG_DOC
 
 # ---------------  Constroi o pacote  ---------------------
-echo -e "\n\n\033[01;32m makepkg -c y -l y $REPOS/$PACKAGE-$VERSION-$ARCH-$BUILD.tgz \n\033[m"
-makepkg -c y -l y $REPOS/$PACKAGE-$VERSION-$ARCH-$BUILD.tgz
-if [ $? -ne 0 ]; then
-    exit $ERROR_MKPKG
-fi
+makepkg -c y -l y $REPOS/$PACKAGE-$VERSION-$ARCH-$BUILD.tgz || exit $ERROR_MKPKG
 
 # -----------  Remove arquivos temporários  ---------------
 if [ "$CLEANUP" = "yes" ]; then
-    echo -e "\n\n\033[01;32m Remove files... \n\033[m"
     rm -rf $PKG $PKG_SRC
 fi

@@ -48,24 +48,13 @@ SOURCE=$SRC_DIR/$PACKAGE/$SRC
 mkdir -p $SRC_DIR/$PACKAGE 2>/dev/null
 # Verifica existência do pacote em $SRC em $SRC_DIR
 if [ ! -e $SOURCE ]; then
-    echo -e "\n\n\033[01;32m Download $PACKAGE \n\033[m"
-    wget "$URL" -P "$SRC_DIR/$PACKAGE"
-    # Verifica se o
-    if [ $? -ne 0 ]; then
-        echo -e "\n\n\033[01;31m No such source file in $URL\n\033[m"
-        exit $ERROR_WGET
-    fi
+    wget "$URL" -P "$SRC_DIR/$PACKAGE" || exit $ERROR_WGET
 fi
 
 # ------------------  Checa md5sum  -----------------------
 if [ "$SRC_ORIG" = "$SRC" -o "$MD5" != "$MD5_ORIG" -a "$MD5" != "no" ]; then
     SUM=`md5sum $SOURCE | awk '{print $1}'`
-    if [ "$SUM" != "$MD5" ]; then
-        echo -e "\n\n\033[01;31m MD5SUM error: run Slackbuild again \n\033[m"
-        echo -e "\033[01;31m Remove $PACKAGE from $SRC_DIR and start Slackbuild again or use MD5=\"no\" \n\033[m"
-        exit $ERROR_MD5
-    fi
-    echo -e "\n\n\033[01;32m Md5sum Ok \n\033[m"
+    [ "$SUM" != "$MD5" ] && exit $ERROR_MD5
 fi
 
 # --------------  Desempacota fontes  ---------------------
@@ -74,28 +63,22 @@ PKG_SRC=$TMP/$PACKAGE-source
 rm -rf $PKG_SRC 2>/dev/null
 mkdir -p $PKG_SRC
 # Desempacota $SOURCE em $TMP/$PACKAGE-source
-tar xvf $SOURCE -C $PKG_SRC
-if [ $? -ne 0 ]; then
-    echo -e "\n\n\033[01;31m $SOURCE file error \n\033[m"
-    exit $ERROR_TAR
-fi
+tar xvf $SOURCE -C $PKG_SRC || exit $ERROR_TAR
+
 # Pega o nome do diretório das fontes independente de sua
 # estrutura (package-version...)
 PKG_DIR="$PKG_SRC"
 cd $PKG_DIR/RPMS
 # Converte pacotes rpm para tgz
-echo -e "\n\n\033[01;32m Converte rpm packages \n\033[m"
 ALLPKGS=$( ls *.rpm | wc -l )
 j=1
 for i in *.rpm; do
-    echo -e "\033[01;33m [$j of $ALLPKGS] Convert $i...\033[m"
     rpm2tgz $i
     let j++
 done
 rm *.rpm 2>/dev/null
 # Converte links do KDE
 cd desktop-integration
-echo -e "\033[01;33m Convert broffice.org-suse-menus...\033[m"
 rpm2tgz broffice.org-suse-menus*.rpm
 rm *.rpm *.deb 2>/dev/null
 
@@ -105,14 +88,11 @@ rm -rf $PKG 2>/dev/null
 mkdir -p $PKG
 
 # Instala arquivos em $PKG_VERSION
-echo -e "\n\n\033[01;32m Install packages \n\033[m"
-echo -e "\033[01;33m Install broffice.org-suse-menus...\033[m"
-tar xvf $( ls *.tgz ) -C $PKG
+tar xvf $( ls *.tgz ) -C $PKG || exit $ERROR_TAR
 cd ..
 j=1
 for i in *.tgz; do
-    echo -e "\033[01;33m [$j of $ALLPKGS] Install $i...\033[m"
-    tar xvf $i -C $PKG
+    tar xvf $i -C $PKG || exit $ERROR_TAR
     rm $i
     let j++
 done
@@ -182,14 +162,9 @@ cp $PKG_SRC/licenses/* $PKG_DOC
 cp $PKG_SRC/readmes/* $PKG_DOC
 
 # ---------------  Constroi o pacote  ---------------------
-echo -e "\n\n\033[01;32m makepkg -c y -l y $REPOS/$PACKAGE-$VERSION-$ARCH-$BUILD.tgz \n\033[m"
-makepkg -c y -l y $REPOS/$PACKAGE-$VERSION-$ARCH-$BUILD.tgz
-if [ $? -ne 0 ]; then
-    exit $ERROR_MKPKG
-fi
+makepkg -c y -l y $REPOS/$PACKAGE-$VERSION-$ARCH-$BUILD.tgz || exit $ERROR_MKPKG
 
 # -----------  Remove arquivos temporários  ---------------
 if [ "$CLEANUP" = "yes" ]; then
-    echo -e "\n\n\033[01;32m Remove files... \n\033[m"
     rm -rf $PKG $PKG_SRC
 fi
