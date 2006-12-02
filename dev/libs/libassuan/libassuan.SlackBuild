@@ -58,7 +58,7 @@ mkdir -p $REPOS
 
 # Import (minimized) signing key from
 # http://www.gnupg.org/(en)/signature_key.html
-gpg --import << EOGPG
+gpg --import << EOGPG || exit $ERROR_GPG
 -----BEGIN PGP PUBLIC KEY BLOCK-----
 
 mI4EQ7f6xwEEANCZGXorXMkDKpNsRnf+ZhqHOPmDcEKPDkplcCL2PFACN7QaK4Re
