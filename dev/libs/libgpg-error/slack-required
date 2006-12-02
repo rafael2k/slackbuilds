@@ -1,1 +1,2 @@
-glibc-solibs >= 2.3.5-i486-5
+glibc >= 2.1
+bison >= 1.26

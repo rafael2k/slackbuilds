@@ -1,113 +1,143 @@
 #!/bin/bash
 #
-# slackbuild for libgpg-error from
-# http://www.slacky.it/download/libraries/libgpg-error/1.3/src/libgpg-error.SlackBuild
+# SlackBuild for libgpg-error:
+# http://www.gnupg.org/(en)/related_software/libgpg-error/
 #
-# Heavily based on the Slackware 10.2 SlackBuild
-# http://www.gnupg.org/(en)/download/index.html
-#
-# small changes by rhatto
+# Author: Luis ( luis at riseup d0t net )
+# Required binaries: gpg, wget
 #
 
-CWD="`pwd`"
+CWD=`pwd`
 
+# Look for slackbuildrc
 if [ -f ~/.slackbuildrc ]; then
   source ~/.slackbuildrc
 elif [ -f /etc/slackbuildrc ]; then
   source /etc/slackbuildrc
 fi
 
-# default settings
+# Set variables
 PACKAGE="libgpg-error"
 ARCH=${ARCH:=i486}
 VERSION=${VERSION:=1.4}
-BUILD=${BUILD:=1rha}
-SRC_DIR=${SRC:=$CWD}
+BUILD=${BUILD:=1ls}
+SRC_DIR=${SRC_DIR:=$CWD}
 TMP=${TMP:=/tmp}
+PKG=${PKG:=$TMP/package-$PACKAGE}
 REPOS=${REPOS:=$TMP}
+PREFIX=${PREFIX:=/usr}
 
-if [ "$ARCH" == "x86_64" ]; then
-  LIBDIR=/usr/lib64
-else
-  LIBDIR=/usr/lib
-fi
+# Set system libraries' path and optmization flags based on $ARCH
+LIBDIR=$PREFIX/lib
 
-RTOOL="wget"
-PACKAGE_EXT="bz2"
-SRC="$PACKAGE-$VERSION.tar.$PACKAGE_EXT"
-#KEY="http://..."
-SRC="$PACKAGE-$VERSION.tar.$PACKAGE_EXT"
-URL="http://ftp.gnupg.org/GnuPG/libgpg-error/$SRC"
-
-if [ "$PACKAGE_EXT" == "bz2" ]; then
-  tarflag="j"
-else
-  tarflag="z"
-fi
-
-SRC_DIR="$SRC_DIR/$PACKAGE"
-mkdir -p $SRC_DIR
-
-if [ "$RTOOL" == "wget" ] && [ ! -f "$SRC_DIR/$SRC" ]; then
-  wget "$URL" -O "$SRC_DIR/$SRC"
-  wget "$URL.sig" -O "$SRC_DIR/$SRC.sig"
-fi
-
-# TODO: signature checking
-#if [ ! -f "$SRC_DIR/$PACKAGE-key.asc" ]; then
-#  wget "$KEY" -O "$SRC_DIR/$PACKAGE-key.asc" && gpg --import $SRC_DIR/$PACKAGE-key.asc
-#fi
-
-gpg --verify $SRC_DIR/$SRC.sig $SRC || echo WARNING: Could not check signature or WRONG signature found.
-
-NAME="$PACKAGE"
-
-if [ "$ARCH" = "i486" ]; then
-  SLKCFLAGS="-O2 -march=i486 -mcpu=i686"
+if [ "$ARCH" = "i386" ]; then
+  SLKCFLAGS="-O2 -march=i386 -mtune=i686"
+elif [ "$ARCH" = "i486" ]; then
+  SLKCFLAGS="-O2 -march=i486 -mtune=i686"
 elif [ "$ARCH" = "i686" ]; then
-  SLKCFLAGS="-O2 -march=i686 -mcpu=i686"
+  SLKCFLAGS="-O2 -march=i686"
+elif [ "$ARCH" = "s390" ]; then
+  SLKCFLAGS="-O2"
 elif [ "$ARCH" = "x86_64" ]; then
   SLKCFLAGS="-O2"
+  LIBDIR="$PREFIX/lib64"
 fi
 
-TMP="$TMP/$PACKAGE"
-PKG=$TMP/package-libgpg-error
-rm -rf $TMP
+# Set error codes (used by createpkg)
+ERROR_WGET=31;      ERROR_MAKE=32;      ERROR_INSTALL=33
+ERROR_MD5=34;       ERROR_CONF=35;      ERROR_HELP=36
+ERROR_TAR=37;       ERROR_MKPKG=38;     ERROR_GPG=39
+ERROR_PATCH=40
+
+# Clean up any leftovers of previous builds
+rm -rf $PACKAGE-$VERSION
+rm -rf $PKG
+mkdir -p $SRC_DIR
 mkdir -p $PKG
+mkdir -p $REPOS
 
-cd $TMP
+# Import (minimized) signing key from
+# http://www.gnupg.org/(en)/signature_key.html
+gpg --import << EOGPG
+-----BEGIN PGP PUBLIC KEY BLOCK-----
 
-tar xvf$tarflag $SRC_DIR/$NAME-$VERSION.tar.bz2
-cd $NAME-$VERSION
-chown -R root.root .
+mI4EQ7f6xwEEANCZGXorXMkDKpNsRnf+ZhqHOPmDcEKPDkplcCL2PFACN7QaK4Re
+oWvZ4mqmVOL3ZXU51zFNI9aD3JAIToET2jr2hGYWFExdBf9eaYgBeXZGUOnbJl1V
+JDzWDGU6ZHNpwPiAAgYjpsoBgZCxbl7x0VtYukjc9vIkR/1GXGC4v9ohACCBVlCZ
+tCZXZXJuZXIgS29jaCAoZGlzdCBzaWcpIDxkZDlqbkBnbnUub3JnPoi8BBMBAgAm
+BQJDt/rIAhsDBQkFo5qABgsJCAcDAgQVAggDBBYCAwECHgECF4AACgkQU7Yg0Bzg
+xjB5owQAh0MO0kuQ7hM6AKj8YK4bRGapHBmeIniaer9Y6vwXgErfDUci7BUQTxXo
+FFTgKHHzBz39bzeStyQgTm5plGaOEJcJayIr07DaeBtcC/dMoVUJswybKMFtP7fU
+z05PRKjChvxrWzhe/Yn6BAmPF+6YxQo2W98rzq0THS5wKJjXmHw=
+=3fgc
+-----END PGP PUBLIC KEY BLOCK-----
+EOGPG
+
+# Dowload source and its signature, if necessary
+SRC="$PACKAGE-$VERSION.tar.bz2"
+URL="http://ftp.gnupg.org/GnuPG/libgpg-error/$SRC"
+
+if [ ! -f "$SRC_DIR/$SRC" ]; then
+  wget "$URL" -O "$SRC_DIR/$SRC" || exit $ERROR_WGET
+fi
+if [ ! -f "$SRC_DIR/$SRC.sig" ]; then
+  wget "$URL.sig" -O "$SRC_DIR/$SRC.sig" || exit $ERROR_WGET
+fi
+
+# Check source's signature
+gpg --verify $SRC_DIR/$SRC.sig $SRC_DIR/$SRC || exit $ERROR_GPG
+
+# Untar, configure, compile and install
+tar --no-same-owner --no-same-permissions -xvf $SRC_DIR/$SRC || exit $ERROR_TAR
+cd $PACKAGE-$VERSION
 CFLAGS="$SLKCFLAGS" \
-./configure --prefix=/usr --libdir=$LIBDIR \
---disable-static \
---program-prefix="" \
---program-suffix="" \
-$ARCH-slackware-linux
-make || exit 32
-make install DESTDIR=$PKG
-mkdir -p $PKG/usr/doc/$NAME-$VERSION
-cp -a ABOUT-NLS AUTHORS ChangeLog COPYING* INSTALL NEWS README $PKG/usr/doc/$NAME-$VERSION
+  ./configure \
+  --prefix=$PREFIX --libdir=$LIBDIR || exit $ERROR_CONF
+make || exit $ERROR_MAKE
+make install DESTDIR=$PKG || exit $ERROR_INSTALL
 
+# Strip binaries
 ( cd $PKG
-  find . | xargs file | grep "executable" | grep ELF | cut -f 1 -d : | xargs strip --strip-unneeded 2> /dev/null
-  find . | xargs file | grep "shared object" | grep ELF | cut -f 1 -d : | xargs strip --strip-unneeded 2> /dev/null
+  find . | xargs file | grep "executable" | grep ELF | cut -f 1 -d : | \
+    xargs strip --strip-unneeded 2> /dev/null
+  find . | xargs file | grep "shared object" | grep ELF | cut -f 1 -d : | \
+    xargs strip --strip-unneeded 2> /dev/null
 )
 
-chown -R root.bin $PKG/usr/bin
+# Install documentation
+DOCS="ABOUT-NLS AUTHORS ChangeLog COPYING* INSTALL NEWS README"
+mkdir -p $PKG/$PREFIX/doc/$PACKAGE-$VERSION
+cp -a $DOCS $PKG/$PREFIX/doc/$PACKAGE-$VERSION
+
+# Add slack-desc file
 mkdir -p $PKG/install
-cat $CWD/slack-desc > $PKG/install/slack-desc
-cat $CWD/slack-desc > $PKG/usr/doc/$NAME-$VERSION/slack-desc
-cat $CWD/$NAME.SlackBuild > $PKG/usr/doc/$NAME-$VERSION/$NAME.SlackBuild
-echo 'chroot . /sbin/ldconfig' > $PKG/install/doinst.sh
+cat << EOF > $PKG/install/slack-desc
+# HOW TO EDIT THIS FILE:
+# The "handy ruler" below makes it easier to edit a package description.  Line
+# up the first '|' above the ':' following the base package name, and the '|'
+# on the right side marks the last column you can put a character in.  You must
+# make exactly 11 lines for the formatting to be correct.  It's also
+# customary to leave one space after the ':'.
+
+            |-----handy-ruler--------------------------------------------------|
+libgpg-error: libgpg-error
+libgpg-error:
+libgpg-error: Libgpg-error is a small library that defines common error values
+libgpg-error: for all GnuPG components. Among these are GPG, GPGSM, GPGME,
+libgpg-error: GPG-Agent, libgcrypt, Libksba, DirMngr, Pinentry, SmartCard
+libgpg-error: Daemon and possibly more in the future.
+libgpg-error:
+libgpg-error: For more information,
+libgpg-error: http://www.gnupg.org/(en)/related_software/libgpg-error/
+libgpg-error:
+libgpg-error:
+EOF
+
+# Build the package
 cd $PKG
-# requiredbuilder -v -y -s $CWD $PKG
+makepkg -l y -c n $REPOS/$PACKAGE-$VERSION-$ARCH-$BUILD.tgz || exit $ERROR_MKPKG
 
-makepkg -l y -c n $REPOS/$NAME-$VERSION-$ARCH-$BUILD.tgz
-
+# Delete build directory, if requested
 if [ "$CLEANUP" == "yes" ]; then
-  rm -rf $TMP
+  rm -rf $PKG
 fi
-

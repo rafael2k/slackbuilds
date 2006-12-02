@@ -1,7 +1,7 @@
 #!/bin/bash
 #
-# SlackBuild for libgcrypt:
-# http://directory.fsf.org/security/libgcrypt.html
+# SlackBuild for libassuan:
+# http://www.gnupg.org/(en)/related_software/libassuan/
 #
 # Author: Luis ( luis at riseup d0t net )
 # Required binaries: gpg, gzip, wget
@@ -17,9 +17,9 @@ elif [ -f /etc/slackbuildrc ]; then
 fi
 
 # Set variables
-PACKAGE="libgcrypt"
+PACKAGE="libassuan"
 ARCH=${ARCH:=i486}
-VERSION=${VERSION:=1.2.3}
+VERSION=${VERSION:=1.0.1}
 BUILD=${BUILD:=1ls}
 SRC_DIR=${SRC_DIR:=$CWD}
 TMP=${TMP:=/tmp}
@@ -75,7 +75,7 @@ EOGPG
 
 # Dowload source and its signature, if necessary
 SRC="$PACKAGE-$VERSION.tar.bz2"
-URL="ftp://ftp.gnupg.org/gcrypt/libgcrypt/$SRC"
+URL="ftp://ftp.gnupg.org/gcrypt/libassuan/$SRC"
 
 if [ ! -f "$SRC_DIR/$SRC" ]; then
   wget "$URL" -O "$SRC_DIR/$SRC" || exit $ERROR_WGET
@@ -92,8 +92,7 @@ tar --no-same-owner --no-same-permissions -xvf $SRC_DIR/$SRC || exit $ERROR_TAR
 cd $PACKAGE-$VERSION
 CFLAGS="$SLKCFLAGS" \
   ./configure \
-  --prefix=$PREFIX --libdir=$LIBDIR \
-  --enable-m-guard --enable-noexecstack || exit $ERROR_CONF
+  --prefix=$PREFIX --libdir=$LIBDIR || exit $ERROR_CONF
 make || exit $ERROR_MAKE
 make install DESTDIR=$PKG || exit $ERROR_INSTALL
 
@@ -106,11 +105,12 @@ make install DESTDIR=$PKG || exit $ERROR_INSTALL
 )
 
 # Compress info pages
+mv -f $PKG/$PREFIX/share/info $PKG/$PREFIX/
 rm -rf $PKG/$PREFIX/info/dir
 gzip -9 $PKG/$PREFIX/info/*
 
 # Install documentation
-DOCS="AUTHORS BUGS COPYING* ChangeLog INSTALL NEWS README* THANKS TODO VERSION"
+DOCS="AUTHORS COPYING* ChangeLog INSTALL NEWS README* THANKS TODO VERSION"
 mkdir -p $PKG/$PREFIX/doc/$PACKAGE-$VERSION
 cp -a $DOCS $PKG/$PREFIX/doc/$PACKAGE-$VERSION
 
@@ -125,17 +125,17 @@ cat << EOF > $PKG/install/slack-desc
 # customary to leave one space after the ':'.
 
          |-----handy-ruler-----------------------------------------------------|
-libgcrypt: libgcrypt (Cryptographic library)
-libgcrypt:
-libgcrypt: Libgcrypt is a general purpose cryptographic library based on the
-libgcrypt: code from GnuPG. It provides functions for all cryptographic
-libgcrypt: building blocks: symmetric ciphers, hash algorithms, MACs, public
-libgcrypt: key algorithms, large integer functions, random numbers and a lot
-libgcrypt: of supporting functions.
-libgcrypt:
-libgcrypt: For more information,
-libgcrypt: http://directory.fsf.org/security/libgcrypt.html
-libgcrypt:
+libassuan: libassuan
+libassuan:
+libassuan: Libassuan is a small library implementing the so-called Assuan
+libassuan: protocol. This protocol is used for IPC between most newer GnuPG
+libassuan: components. Both, server and client side functions are provided.
+libassuan:
+libassuan: For more information,
+libassuan: http://www.gnupg.org/(en)/related_software/libassuan/
+libassuan:
+libassuan:
+libassuan:
 EOF
 
 # Build the package
