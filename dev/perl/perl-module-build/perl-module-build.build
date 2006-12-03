@@ -75,10 +75,10 @@ cd $FILE_NAME-$VERSION
 # config and install!
 mkdir -p /install
 
-perl Makefile.PL
-make
-make test
-make install
+perl Build.PL
+Build
+Build test
+Build install
 
 # make the package
 
