@@ -53,7 +53,7 @@ fi
 RTOOL="wget"
 PACKAGE_EXT="gz"
 SRC="$PACKAGE-$VERSION.tar.$PACKAGE_EXT"
-SRC="`echo $NAME | sed -e 's/::/-/g'-$VERSION.tar.gz`"
+SRC="`echo $NAME | sed -e 's/::/-/g'`-$VERSION.tar.gz"
 URL="http://search.cpan.org/CPAN/authors/id/P/PM/PMQS/$SRC"
 URL="http://savannah.nongnu.org/download/perl-compress-zlib/$SRC"
 
