@@ -13,7 +13,7 @@ fi
 
 # default settings
 PACKAGE="perl-module-build"
-VERSION=${VERSION:=0.2805}
+VERSION=${VERSION:=0.2805_01}
 ARCH=${ARCH:=i386}
 BUILD=${BUILD:=1rha}
 SRC_DIR=${SRC:=$CWD}
