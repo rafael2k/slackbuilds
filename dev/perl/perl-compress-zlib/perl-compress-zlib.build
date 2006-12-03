@@ -2,10 +2,6 @@
 #
 # build script for perl-compress-zlib
 # by rhatto at riseup.net by rhatto | gpl
-# build it with slacktrack, example:
-#
-#   ARCH=x86_64 slacktrack -jefkzp "perl-compress-zlib-2.001-x86_64-1rha.tgz" "./perl-compress-zlib.build"
-# 
 
 CWD="`pwd`"
 
