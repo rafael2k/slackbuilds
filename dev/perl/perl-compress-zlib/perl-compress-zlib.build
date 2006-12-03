@@ -53,7 +53,8 @@ fi
 RTOOL="wget"
 PACKAGE_EXT="gz"
 SRC="$PACKAGE-$VERSION.tar.$PACKAGE_EXT"
-SRC="`echo $NAME | sed -e 's/::/-/g'`-$VERSION.tar.gz"
+FILE_NAME="`echo $NAME | sed -e 's/::/-/g'`"
+SRC="$FILE_NAME-$VERSION.tar.gz"
 URL="http://search.cpan.org/CPAN/authors/id/P/PM/PMQS/$SRC"
 
 SRC_DIR="$SRC_DIR/$PACKAGE"
@@ -73,7 +74,7 @@ if [ ! -d "$TMP" ]; then
 fi
 
 tar xvf $SRC_DIR/$SRC || exit $ERROR_TAR
-cd $PACKAGE-$VERSION
+cd $FILE_NAME-$VERSION
 
 # config and install!
 mkdir -p /install
