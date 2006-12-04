@@ -76,7 +76,7 @@ cd $FILE_NAME-$VERSION
 # config and install!
 mkdir -p /install
 
-perl Makefile.PL
+perl Makefile.PL -n
 make
 make test
 make install DESTDIR=$TMP/package-$PACKAGE
@@ -105,12 +105,12 @@ cat << EOF > install/slack-desc
                 |-----handy-ruler-----------------------------------------------------|
 perl-libwww-perl: perl-libwww-perl
 perl-libwww-perl:
-perl-libwww-perl:
-perl-libwww-perl:
-perl-libwww-perl:
-perl-libwww-perl:
-perl-libwww-perl:
-perl-libwww-perl:
+perl-libwww-perl: The libwww-perl collection is a set of Perl modules which provides
+perl-libwww-perl: a simple and consistent application programming interface to the
+perl-libwww-perl: World-Wide Web. The main focus of the library is to provide classes
+perl-libwww-perl: and functions that allow you to write WWW clients. The library also
+perl-libwww-perl: contain modules that are of more general use and even classes that
+perl-libwww-perl: help you implement simple HTTP servers.
 perl-libwww-perl:
 perl-libwww-perl:
 perl-libwww-perl:
