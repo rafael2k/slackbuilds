@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# SlackBuild script for perl-libint-perl
+# SlackBuild script for perl-libintl-perl
 # by rhatto at riseup.net by rhatto | gpl
 
 CWD="`pwd`"
@@ -26,7 +26,7 @@ if [ -f "~/.slackbuildrc" ]; then
 fi
 
 # default settings
-NAME="libint-perl"
+NAME="libintl-perl"
 PACKAGE="perl-`echo $NAME | sed -e 's/::/-/g' | tr '[:upper:]' '[:lower:]'`"
 TMP=${TMP:=/tmp}
 VERSION=${VERSION:=1.16}
@@ -102,18 +102,18 @@ cat << EOF > install/slack-desc
 # make exactly 11 lines for the formatting to be correct.  It's also
 # customary to leave one space after the ':'.
 
-                |-----handy-ruler-----------------------------------------------------|
-perl-libint-perl: perl-libint-perl
-perl-libint-perl:
-perl-libint-perl: The package libintl-perl is an internationalization library for Perl
-perl-libint-perl: that aims to be compatible with the Uniforum message translations
-perl-libint-perl: system as implemented for example in GNU gettext.
-perl-libint-perl:
-perl-libint-perl:
-perl-libint-perl:
-perl-libint-perl:
-perl-libint-perl:
-perl-libint-perl:
+                 |-----handy-ruler-----------------------------------------------------|
+perl-libintl-perl: perl-libintl-perl
+perl-libintl-perl:
+perl-libintl-perl: The package libintll-perl is an internationalization library for Perl
+perl-libintl-perl: that aims to be compatible with the Uniforum message translations
+perl-libintl-perl: system as implemented for example in GNU gettext.
+perl-libintl-perl:
+perl-libintl-perl:
+perl-libintl-perl:
+perl-libintl-perl:
+perl-libintl-perl:
+perl-libintl-perl:
 EOF
 
 # docs
