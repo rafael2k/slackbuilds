@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# build script for perl-module-build
+# SlackBuild script for perl-module-build
 # by rhatto at riseup.net by rhatto | gpl
 
 CWD="`pwd`"
@@ -78,11 +78,20 @@ mkdir -p /install
 perl Makefile.PL
 make
 make test
-make install
+make install DESTDIR=$TMP/package-$PACKAGE
 
 # make the package
 
-cat << EOF > /install/slack-desc
+cd $TMP/package-$PACKAGE
+
+# we need to fix .packlist
+string="`echo $TMP/package-$PACKAGE | sed -e 's/\//\\\\\//g'`"
+find . -name .packlist -exec sed -e "s/$string//g" {} \; > packlist
+find . -name .packlist -exec mv packlist {} \;
+
+mkdir install
+
+cat << EOF > install/slack-desc
 # HOW TO EDIT THIS FILE:
 # The "handy ruler" below makes it easier to edit a package description.  Line
 # up the first '|' above the ':' following the base package name, and the '|'
@@ -103,4 +112,15 @@ perl-module-build:
 perl-module-build:
 perl-module-build:
 EOF
+
+# docs
+mkdir -p usr/doc/$PACKAGE-$VERSION
+DOCS="Changes README SIGNATURE"
+cp -a $CWD/$DOCS  usr/doc/$PACKAGE-$VERSION/
+
+makepkg -c y -l y $REPOS/$PACKAGE-$VERSION-$ARCH-$BUILD.tgz || exit $ERROR_MKPKG
+
+if [ "$CLEANUP" == "yes" ]; then
+  rm -rf $TMP
+fi
 
