@@ -47,14 +47,14 @@ fi
 ERROR_WGET=31;      ERROR_MAKE=32;      ERROR_INSTALL=33
 ERROR_MD5=34;       ERROR_CONF=35;      ERROR_HELP=36
 ERROR_TAR=37;       ERROR_MKPKG=38;     ERROR_GPG=39
-ERROR_PATCH=40
+ERROR_PATCH=40;     ERROR_VCS=41;       ERROR_MKDIR=42
 
 # Clean up any leftovers of previous builds
-rm -rf $PACKAGE-$VERSION
-rm -rf $PKG
-mkdir -p $SRC_DIR
-mkdir -p $PKG
-mkdir -p $REPOS
+rm -rf $PACKAGE-$VERSION 2> /dev/null
+rm -rf $PKG 2> /dev/null
+mkdir -p $SRC_DIR || exit $ERROR_MKDIR
+mkdir -p $PKG || exit $ERROR_MKDIR
+mkdir -p $REPOS || exit $ERROR_MKDIR
 
 # Import (minimized) signing key from
 # http://www.gnupg.org/(en)/signature_key.html
@@ -106,16 +106,16 @@ make install DESTDIR=$PKG || exit $ERROR_INSTALL
 
 # Compress info pages
 mv -f $PKG/$PREFIX/share/info $PKG/$PREFIX/
-rm -rf $PKG/$PREFIX/info/dir
+rm -f $PKG/$PREFIX/info/dir
 gzip -9 $PKG/$PREFIX/info/*
 
 # Install documentation
 DOCS="AUTHORS COPYING ChangeLog INSTALL NEWS README THANKS TODO VERSION"
-mkdir -p $PKG/$PREFIX/doc/$PACKAGE-$VERSION
+mkdir -p $PKG/$PREFIX/doc/$PACKAGE-$VERSION || exit $ERROR_MKDIR
 cp -a $DOCS $PKG/$PREFIX/doc/$PACKAGE-$VERSION
 
 # Add slack-desc file
-mkdir -p $PKG/install
+mkdir -p $PKG/install || exit $ERROR_MKDIR
 cat << EOF > $PKG/install/slack-desc
 # HOW TO EDIT THIS FILE:
 # The "handy ruler" below makes it easier to edit a package description.  Line
@@ -144,5 +144,5 @@ makepkg -l y -c n $REPOS/$PACKAGE-$VERSION-$ARCH-$BUILD.tgz || exit $ERROR_MKPKG
 
 # Delete build directory, if requested
 if [ "$CLEANUP" == "yes" ]; then
-  rm -rf $PKG
+  rm -rf $PKG $CWD/$PACKAGE-$VERSION
 fi
