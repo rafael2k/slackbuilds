@@ -1,0 +1,129 @@
+#!/bin/bash
+#
+# SlackBuild script for perl-authen-sasl
+# by rhatto at riseup.net by rhatto | gpl
+
+CWD="`pwd`"
+
+if [ -s "slack-required" ]; then
+  echo Recomended and required packages for building ekiga are:
+  cat slack-required | sed -e 's/^/\t/'
+  if [ "$INTERACT" != "no" ]; then
+    echo If you dont have those installed, press Ctrl-C. Otherwise, hit ENTER.
+    read crap
+#  else
+#    echo Sleeping 3 seconds...
+#    sleep 3
+  fi
+fi
+
+if [ -f "/etc/slackbuildrc" ]; then
+  source /etc/slackbuildrc
+fi
+
+if [ -f "~/.slackbuildrc" ]; then
+  source ~/.slackbuildrc
+fi
+
+# default settings
+NAME="Authen::SASL"
+PACKAGE="perl-`echo $NAME | sed -e 's/::/-/g' | tr '[:upper:]' '[:lower:]'`"
+TMP=${TMP:=/tmp}
+VERSION=${VERSION:=2.10}
+ARCH=${ARCH:=i386}
+BUILD=${BUILD:=1rha}
+SRC_DIR=${SRC:=$CWD}
+REPOS=${REPOS:=$TMP}
+
+# -------  error codes for createpkg  --------------
+ERROR_WGET=31;      ERROR_MAKE=32;      ERROR_INSTALL=33
+ERROR_MD5=34;       ERROR_CONF=35;      ERROR_HELP=36
+ERROR_TAR=37;       ERROR_MKPKG=38;     ERROR_GPG=39
+ERROR_PATCH=40
+
+if [ "$ARCH" == "x86_64" ]; then
+  LIBDIR=/usr/lib64
+else
+  LIBDIR=/usr/lib
+fi
+
+RTOOL="wget"
+PACKAGE_EXT="gz"
+SRC="$PACKAGE-$VERSION.tar.$PACKAGE_EXT"
+FILE_NAME="`echo $NAME | sed -e 's/::/-/g'`"
+SRC="$FILE_NAME-$VERSION.tar.gz"
+URL="http://search.cpan.org/CPAN/authors/id/G/GB/GBARR/$SRC"
+
+SRC_DIR="$SRC_DIR/$PACKAGE"
+
+if [ ! -d "$SRC_DIR" ]; then
+  mkdir -p $SRC_DIR
+fi
+
+if [ "$RTOOL" == "wget" ] && [ ! -f "$SRC_DIR/$SRC" ]; then
+  wget "$URL" -O "$SRC_DIR/$SRC" || exit $ERROR_WGET
+fi
+
+TMP="$TMP/$PACKAGE"
+
+if [ ! -d "$TMP" ]; then
+  mkdir -p $TMP
+fi
+
+tar xvf $SRC_DIR/$SRC || exit $ERROR_TAR
+cd $FILE_NAME-$VERSION
+
+# config and install!
+mkdir -p /install
+
+perl Makefile.PL
+make
+make test
+make install DESTDIR=$TMP/package-$PACKAGE
+
+# make the package
+
+cd $TMP/package-$PACKAGE
+
+# we need to fix .packlist
+string="`echo $TMP/package-$PACKAGE | sed -e 's/\//\\\\\//g'`"
+for file in `find -name .packlist`; do
+  sed -e "s/^$string//g" $file > $file.tmp
+  mv $file.tmp $file
+done
+
+mkdir install
+
+cat << EOF > install/slack-desc
+# HOW TO EDIT THIS FILE:
+# The "handy ruler" below makes it easier to edit a package description.  Line
+# up the first '|' above the ':' following the base package name, and the '|'
+# on the right side marks the last column you can put a character in.  You must
+# make exactly 11 lines for the formatting to be correct.  It's also
+# customary to leave one space after the ':'.
+
+                |-----handy-ruler-----------------------------------------------------|
+perl-authen-sasl: perl-authen-sasl (Perl SASL Authentication framework)
+perl-authen-sasl:
+perl-authen-sasl:
+perl-authen-sasl:
+perl-authen-sasl:
+perl-authen-sasl:
+perl-authen-sasl:
+perl-authen-sasl:
+perl-authen-sasl:
+perl-authen-sasl:
+perl-authen-sasl:
+EOF
+
+# docs
+mkdir -p usr/doc/$PACKAGE-$VERSION
+DOCS="Changes README SIGNATURE"
+cp -a $CWD/$DOCS  usr/doc/$PACKAGE-$VERSION/
+
+makepkg -c y -l y $REPOS/$PACKAGE-$VERSION-$ARCH-$BUILD.tgz || exit $ERROR_MKPKG
+
+if [ "$CLEANUP" == "yes" ]; then
+  rm -rf $TMP
+fi
+
