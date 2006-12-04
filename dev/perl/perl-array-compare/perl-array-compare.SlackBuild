@@ -1,0 +1,30 @@
+#!/bin/bash
+#
+# SlackBuild script to call perl-array-compare.build with correct settings
+#
+
+CWD="`pwd`"
+
+if [ -f ~/.slackbuildrc ]; then
+  source ~/.slackbuildrc
+elif [ -f /etc/slackbuildrc ]; then
+  source /etc/slackbuildrc
+fi
+
+# default settings
+PACKAGE="perl-array-compare"
+VERSION=${VERSION:=1.13}
+ARCH=${ARCH:=i386}
+BUILD=${BUILD:=1rha}
+SRC_DIR=${SRC:=$CWD}
+TMP=${TMP:=/tmp}
+REPOS=${REPOS:=$TMP}
+
+rm -rf $TMP/$PACKAGE
+mkdir -p $SRC_DIR/$PACKAGE $TMP/$PACKAGE $REPOS
+
+slacktrack -b $REPOS -x $TMP,$SRC_DIR,/dev -jefkzp "$PACKAGE-$VERSION-$ARCH-$BUILD.tgz" "./$PACKAGE.build"
+
+if [ "$CLEANUP" == "yes" ]; then
+  rm -rf $TMP/$PACKAGE
+fi
