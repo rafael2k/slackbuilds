@@ -26,7 +26,7 @@ if [ -f "~/.slackbuildrc" ]; then
 fi
 
 # default settings
-NAME="Regexp-Common"
+NAME="Regexp::Common"
 PACKAGE="perl-`echo $NAME | sed -e 's/::/-/g' | tr '[:upper:]' '[:lower:]'`"
 TMP=${TMP:=/tmp}
 VERSION=${VERSION:=2.120}
