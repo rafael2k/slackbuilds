@@ -71,7 +71,8 @@ if [ ! -d "$TMP" ]; then
 fi
 
 tar xvf $SRC_DIR/$SRC || exit $ERROR_TAR
-cd $FILE_NAME-$VERSION
+#cd $FILE_NAME-$VERSION
+cd $FILE_NAME*
 
 # config and install!
 mkdir -p /install
