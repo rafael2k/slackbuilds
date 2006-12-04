@@ -29,7 +29,7 @@ fi
 NAME="Array::Compare"
 PACKAGE="perl-`echo $NAME | sed -e 's/::/-/g' | tr '[:upper:]' '[:lower:]'`"
 TMP=${TMP:=/tmp}
-VERSION=${VERSION:=2.001}
+VERSION=${VERSION:=1.13}
 ARCH=${ARCH:=i386}
 BUILD=${BUILD:=1rha}
 SRC_DIR=${SRC:=$CWD}
