@@ -1,6 +1,5 @@
 perl-uri
 perl-mime-base64
 perl-html-parser
-perl-libnet
 perl-digest-md5
 perl-compress-zlib
