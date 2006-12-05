@@ -13,7 +13,7 @@ fi
 
 # default settings
 PACKAGE="MHonArc"
-VERSION=${VERSION:=2.6.15}
+VERSION=${VERSION:=2.6.16}
 ARCH="noarch"
 BUILD=${BUILD:=1rha}
 SRC_DIR=${SRC:=$CWD}

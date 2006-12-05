@@ -21,7 +21,7 @@ fi
 PACKAGE="MHonArc"
 ARCH="noarch"
 TMP=${TMP:=/tmp}
-VERSION=${VERSION:=2.6.15}
+VERSION=${VERSION:=2.6.16}
 ARCH=${ARCH:=i386}
 BUILD=${BUILD:=1rha}
 SRC_DIR=${SRC:=$CWD}
