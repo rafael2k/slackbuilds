@@ -2,10 +2,18 @@
 #
 # slackbuild script for mod_fastcgi
 #
-# you'll need the following perl modules to run postgrey:
-#
-# cpan2tgz --install Net::Server IO::Multiplex BerkeleyDB Digest::SHA1
-#
+
+if [ -s "slack-required" ]; then
+  echo Recomended and required packages for building postgrey are:
+  cat slack-required | sed -e 's/^/\t/'
+  if [ "$INTERACT" != "no" ]; then
+    echo If you dont have those installed, press Ctrl-C. Otherwise, hit ENTER.
+    read crap
+#  else
+#    echo Sleeping 3 seconds...
+#    sleep 3
+  fi
+fi
 
 CWD="`pwd`"
 
@@ -24,22 +32,22 @@ TMP=${TMP:=/tmp}
 SRC_DIR=${SRC:=$CWD}
 REPOS=${REPOS:=$TMP}
 
+# -------  error codes for createpkg  --------------
+ERROR_WGET=31;      ERROR_MAKE=32;      ERROR_INSTALL=33
+ERROR_MD5=34;       ERROR_CONF=35;      ERROR_HELP=36
+ERROR_TAR=37;       ERROR_MKPKG=38;     ERROR_GPG=39
+ERROR_PATCH=40
+
 RTOOL="wget"
 PACKAGE_EXT="gz"
 SRC="$PACKAGE-$VERSION.tar.$PACKAGE_EXT"
 URL="http://isg.ee.ethz.ch/tools/postgrey/pub/$SRC"
 
-if [ "$PACKAGE_EXT" == "bz2" ]; then
-  tarflag="j"
-else
-  tarflag="z"
-fi
-
 SRC_DIR="$SRC_DIR/$PACKAGE"
 mkdir -p $SRC_DIR
 
 if [ "$RTOOL" == "wget" ] && [ ! -f "$SRC_DIR/$SRC" ]; then
-  wget "$URL" -O "$SRC_DIR/$SRC"
+  wget "$URL" -O "$SRC_DIR/$SRC" || exit $ERROR_WGET
 fi
 
 TMP="$TMP/$PACKAGE"
@@ -47,7 +55,7 @@ rm -rf $TMP
 mkdir -p $TMP
 cd $TMP
 
-tar xvf$tarflag $SRC_DIR/$SRC
+tar xvf $SRC_DIR/$SRC || exit $ERROR_TAR
 cd $PACKAGE-$VERSION
 
 CWD="`pwd`"
@@ -99,7 +107,7 @@ done
 echo '( if [ ! -f "etc/postfix/postgrey_whitelist_recipients" ]; then mv etc/postfix/postgrey_whitelist_recipients.new etc/postfix/postgrey_whitelist_recipients; fi )' > install/doinst.sh
 echo '( if [ ! -f "etc/postfix/postgrey_whitelist_clients" ]; then mv etc/postfix/postgrey_whitelist_clients.new etc/postfix/postgrey_whitelist_clients; fi )' >> install/doinst.sh
 
-makepkg -c y -l y $REPOS/$PACKAGE-$VERSION-$ARCH-$BUILD.tgz
+makepkg -c y -l y $REPOS/$PACKAGE-$VERSION-$ARCH-$BUILD.tgz || exit $ERROR_MKPKG
 
 if [ "$CLEANUP" == "yes" ]; then
   rm -rf $TMP
