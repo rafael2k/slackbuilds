@@ -50,7 +50,7 @@ fi
 RTOOL="wget"
 PACKAGE_EXT="gz"
 SRC="$PACKAGE-$VERSION.tar.$PACKAGE_EXT"
-FILE_NAME="`echo $NAME | sed -e 's/::/-/g'`"
+FILE_NAME="perl-`echo $NAME | sed -e 's/::/-/g'`"
 SRC="$FILE_NAME-$VERSION.tar.gz"
 URL="http://search.cpan.org/CPAN/authors/id/G/GB/GBARR/$SRC"
 
