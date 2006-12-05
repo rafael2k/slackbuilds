@@ -80,7 +80,7 @@ if [ "$RTOOL" == "wget" ]; then
  fi
 fi
 
-gpg --import <<EOFGPG
+gpg --import << EOGPG
 -----BEGIN PGP PUBLIC KEY BLOCK-----
 Version: PGPfreeware 5.0i for non-commercial use
 
@@ -187,9 +187,9 @@ NWhTtvrKuvR/M/nvqTpFf8lp0SiF/ZVVeGCaSmS1Eoyp1dk76qPRCl6RcI6bTv2F
 NT2RRKl3v4t4iEXnEjiyS6irzd2b
 =o1uH
 -----END PGP PUBLIC KEY BLOCK-----
-EOFGPG 
+EOGPG 
 
-# gpg --verify $SRC_DIR/$SRC.sig $SRC_DIR/$SRC || exit $ERROR_GPG
+gpg --verify $SRC_DIR/$SRC.sig $SRC_DIR/$SRC || exit $ERROR_GPG
 
 rm -rf ${PKGDIR}
 mkdir -p ${PKGDIR}
