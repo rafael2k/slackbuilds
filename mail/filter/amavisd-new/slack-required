@@ -4,7 +4,7 @@ perl-archive-tar
 perl-io-stringy
 perl-mailtools
 perl-mime-tools
-perl-convet-tnef
+perl-convert-tnef
 perl-convert-uulib
 perl-mime-base64
 perl-mime-parser
