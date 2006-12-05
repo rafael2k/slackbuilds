@@ -34,5 +34,6 @@ perl-xml-namespacesupport
 perl-xml-sax
 perl-fcgi
 perl-db_file
+perl-io-socket-ssl
 MHonArc
 mod_fastcgi
