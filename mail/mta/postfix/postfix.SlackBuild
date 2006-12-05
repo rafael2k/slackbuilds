@@ -73,7 +73,7 @@ if [ "$RTOOL" == "wget" ]; then
    wget "$URL" -O "$SRC_DIR/$SRC" || exit $ERROR_WGET
  fi
  if [ ! -f "$SRC_DIR/$VDA" ]; then
-   wget "$VDA_URL" -O "$SRC_DIR/$VDA" || exit $ERROR_WGET
+   wget "$VDA_URL" -O "$SRC_DIR/$VDA" # || exit $ERROR_WGET
  fi
  if [ ! -f "$SRC_DIR/$SRC.sig" ]; then
    wget "$URL.sig" -O "$SRC_DIR/$SRC.sig" || exit $ERROR_WGET
