@@ -27,7 +27,7 @@ fi
 
 # default settings
 NAME="Net::SSLeay"
-PACKAGE="perl-`echo $NAME | sed -e 's/::/-/g' | tr '[:upper:]' '[:lower:]'`.pm"
+PACKAGE="perl-`echo $NAME | sed -e 's/::/_/g' | tr '[:upper:]' '[:lower:]'`.pm"
 TMP=${TMP:=/tmp}
 VERSION=${VERSION:=1.30}
 ARCH=${ARCH:=i386}
