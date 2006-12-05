@@ -107,8 +107,8 @@ sympa: a complete Web interface for both the user and the administrator.
 sympa: It is internationalized. Sites can customize Web and mail templates,
 sympa: authentication backends, and authorization scenarios. Dynamic mailing
 sympa: lists can use multiple backends (LDAP, SQL, files, lists, or others).
-sympa: Sympa is the only S/MIME enabled mailing list software, and it provides
-sympa: both authentication and encryption.
+sympa: Sympa is the only S/MIME enabled mailing list software, and it
+sympa: provides both authentication and encryption.
 sympa:
 EOF
 
@@ -134,9 +134,10 @@ echo '( touch /var/log/sympa)' >> install/doinst.sh
 makepkg -c y -l y $REPOS/$PACKAGE-$VERSION-$ARCH-$BUILD.tgz || exit $ERROR_MKPKG
 
 echo "Package creation complete. PLEASE check if everything is fine."
-echo "Log files at $TMP/package-$PACKAGE/install.log"
 
 if [ "$CLEANUP" == "yes" ]; then
   rm -rf $TMP
+else
+  echo "Log files at $TMP/package-$PACKAGE/install.log"
 fi
 
