@@ -3,32 +3,17 @@
 # original script from http://www.slacky.it/download/network/tool/postfix/2.2.10/src/postfix.SlackBuild
 # changes by rhatto at riseup.net
 #
-# TODO: atualizar para o postfix 2.3.0
-#       slack-required
-#       arrumar pasta de construcao
-#
 
-cat << EOECHO
-To build postfix with full capabilities (pcre, mysql, sasl, tls, ldap, vda and
-postfix-anon support, first build/install the following packages:
-
-  db3 and/or db4
-  libgpg-error
-  libgcrypt
-  courier-authlib
-  courier-imap
-  gnutls
-  cyrus-sasl
-  openldap-client
-
-EOECHO
-
-if [ "$INTERACT" != "no" ]; then
-  echo "Hit ENTER do continue, Crtl-C to abort"
-  read crap
-else
-  echo sleeping 3 seconds...
-  sleep 3
+if [ -s "slack-required" ]; then
+  echo Recomended and required packages for building postfix are:
+  cat slack-required | sed -e 's/^/\t/'
+  if [ "$INTERACT" != "no" ]; then
+    echo If you dont have those installed, press Ctrl-C. Otherwise, hit ENTER.
+    read crap
+#  else
+#    echo Sleeping 3 seconds...
+#    sleep 3
+  fi
 fi
 
 CWD=`pwd`
@@ -42,11 +27,17 @@ fi
 # default settings
 PACKAGE=postfix
 ARCH=${ARCH:=i486}
-VERSION=${VERSION:=2.2.11}
+VERSION=${VERSION:=2.3.4}
 BUILD=${BUILD:=2rha}
 SRC_DIR=${SRC:=$CWD}
 TMP=${TMP:=/tmp}
 REPOS=${REPOS:=$TMP}
+
+# -------  error codes for createpkg  --------------
+ERROR_WGET=31;      ERROR_MAKE=32;      ERROR_INSTALL=33
+ERROR_MD5=34;       ERROR_CONF=35;      ERROR_HELP=36
+ERROR_TAR=37;       ERROR_MKPKG=38;     ERROR_GPG=39
+ERROR_PATCH=40
 
 if [ "$ARCH" == "x86_64" ]; then
   LIBDIR=/usr/lib64
@@ -79,13 +70,13 @@ mkdir -p $SRC_DIR
 # download sources
 if [ "$RTOOL" == "wget" ]; then
  if [ ! -f "$SRC_DIR/$SRC" ]; then
-   wget "$URL" -O "$SRC_DIR/$SRC"
+   wget "$URL" -O "$SRC_DIR/$SRC" || exit $ERROR_WGET
  fi
  if [ ! -f "$SRC_DIR/$VDA" ]; then
-   wget "$VDA_URL" -O "$SRC_DIR/$VDA"
+   wget "$VDA_URL" -O "$SRC_DIR/$VDA" || exit $ERROR_WGET
  fi
  if [ ! -f "$SRC_DIR/$SRC.sig" ]; then
-   wget "$URL.sig" -O "$SRC_DIR/$SRC.sig"
+   wget "$URL.sig" -O "$SRC_DIR/$SRC.sig" || exit $ERROR_WGET
  fi
 fi
 
@@ -96,7 +87,7 @@ cd  ${PKGDIR}
 # install scripts
 
 if [ -e ${CWD}/script_${NAME}.tgz ]; then
-  tar zxvf ${CWD}/script_${NAME}.tgz
+  tar zxvf ${CWD}/script_${NAME}.tgz || exit $ERROR_TAR
 else
   mkdir -v install
 fi
@@ -109,7 +100,7 @@ fi
 
 cd  ${TMP}
 rm -rf ${NAME}-${VERSION}  ${SOURCEDIR}
-tar xzvf $SRC_DIR/${NAME}-$VERSION.tar.gz
+tar xzvf $SRC_DIR/${NAME}-$VERSION.tar.gz || exit $ERROR_TAR
 # Patch
 
 if [ -f "$SRC_DIR/$VDA" ]; then
@@ -132,9 +123,9 @@ sleep 1
 # db3 explicit
 # make -f Makefile.init makefiles CCARGS="-DUSE_SASL_AUTH -I/usr/include/sasl/ -DHAS_MYSQL -I/usr/include/mysql/ -I/usr/include -DHAS_LDAP -DUSE_TLS -I/usr/include/gnutls/ -DHAS_PCRE -I/usr/include -DHAS_DB -I/usr/include/db3" AUXLIBS="-L/usr/lib -lsasl2 -L/usr/lib/mysql/ -lmysqlclient -lz -lm -L/usr/lib -lssl -lcrypto -L/usr/lib -lpcre -L/usr/lib -lldap -L/usr/lib -llber -L/usr/include/db3 -ldb3"
 
-make -f Makefile.init makefiles CCARGS="-DUSE_SASL_AUTH -I/usr/include/sasl/ -DHAS_MYSQL -I/usr/include/mysql/ -I/usr/include -DHAS_LDAP -DUSE_TLS -I/usr/include/gnutls/ -DHAS_PCRE -I/usr/include" AUXLIBS="-L/usr/lib -lsasl2 -L/usr/lib/mysql/ -lmysqlclient -lz -lm -L/usr/lib -lssl -lcrypto -L/usr/lib -lpcre -L/usr/lib -lldap -L/usr/lib -llber"
+make -f Makefile.init makefiles CCARGS="-DUSE_SASL_AUTH -I/usr/include/sasl/ -DHAS_MYSQL -I/usr/include/mysql/ -I/usr/include -DHAS_LDAP -DUSE_TLS -I/usr/include/gnutls/ -DHAS_PCRE -I/usr/include" AUXLIBS="-L/usr/lib -lsasl2 -L/usr/lib/mysql/ -lmysqlclient -lz -lm -L/usr/lib -lssl -lcrypto -L/usr/lib -lpcre -L/usr/lib -lldap -L/usr/lib -llber" || exit $ERROR_CONF
 
-make || exit 32
+make || exit $ERROR_MAKE
 sleep 1
 
 sh postfix-install						\
@@ -153,7 +144,7 @@ sh postfix-install						\
  mailq_path=/usr/sbin/mailq					\
  mail_owner=postfix						\
  setgid_group=postdrop						\
- -non-interactive
+ -non-interactive || exit $ERROR_INSTALL
 
 cd  ${PKGDIR}/etc/postfix 
 
@@ -182,7 +173,7 @@ find ${PKGDIR}/bin ${PKGDIR}/sbin ${PKGDIR}/usr/bin ${PKGDIR}/usr/sbin -type f |
 # Build the package:
 cd $PKGDIR
 #requiredbuilder -v -y -s $CWD $PKGDIR
-/sbin/makepkg -l n -c n --prepend $REPOS/${NAME}-${VERSION}-${ARCH}-${BUILD}.tgz
+/sbin/makepkg -l n -c n --prepend $REPOS/${NAME}-${VERSION}-${ARCH}-${BUILD}.tgz || exit $ERROR_MKPKG
 
 # Clean up the extra stuff:
 if [ "$CLEANUP" == "yes" ]; then

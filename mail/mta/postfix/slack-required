@@ -3,3 +3,10 @@ mysql >= 4.1.14-i486-1
 openssl >= 0.9.7g-i486-2 | openssl-solibs >= 0.9.7g-i486-2
 pcre >= 6.4-i486-1
 zlib >= 1.2.3-i486-1
+libgpg-error
+libgcrypt
+courier-authlib
+courier-imap
+gnutls
+cyrus-sasl
+openldap-client
