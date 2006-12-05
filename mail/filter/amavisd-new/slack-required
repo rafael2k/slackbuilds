@@ -1,6 +1,6 @@
 perl-compress-zlib
 perl-io-zlib
-per-archive-tar
+perl-archive-tar
 perl-io-stringy
 perl-mailtools
 perl-mime-tools
