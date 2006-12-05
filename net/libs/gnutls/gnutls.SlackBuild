@@ -56,7 +56,7 @@ TARGET="$ARCH"
 NAME="$PACKAGE"
 PACKAGE_EXT="bz2"
 SRC="$PACKAGE-$VERSION.tar.$PACKAGE_EXT"
-URL="http://www.mirrors.wiretapped.net/security/network-security/$PACKAGE/$SRC"
+URL="ftp://ftp.gnupg.org/gcrypt/alpha/$PACKAGE/$SRC"
 
 SRC_DIR="$SRC_DIR/$PACKAGE"
 mkdir -p $SRC_DIR
