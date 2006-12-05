@@ -72,9 +72,9 @@ if [ "$RTOOL" == "wget" ]; then
  if [ ! -f "$SRC_DIR/$SRC" ]; then
    wget "$URL" -O "$SRC_DIR/$SRC" || exit $ERROR_WGET
  fi
- if [ ! -f "$SRC_DIR/$VDA" ]; then
-   wget "$VDA_URL" -O "$SRC_DIR/$VDA" # || exit $ERROR_WGET
- fi
+# if [ ! -f "$SRC_DIR/$VDA" ]; then
+#   wget "$VDA_URL" -O "$SRC_DIR/$VDA" # || exit $ERROR_WGET
+# fi
  if [ ! -f "$SRC_DIR/$SRC.sig" ]; then
    wget "$URL.sig" -O "$SRC_DIR/$SRC.sig" || exit $ERROR_WGET
  fi
@@ -142,7 +142,7 @@ rm -rf ${NAME}-${VERSION}  ${SOURCEDIR}
 tar xzvf $SRC_DIR/${NAME}-$VERSION.tar.gz || exit $ERROR_TAR
 # Patch
 
-if [ -f "$SRC_DIR/$VDA" ]; then
+if [ -s "$SRC_DIR/$VDA" ]; then
   gzip -dc $SRC_DIR/$VDA | patch -p0
 fi
 
