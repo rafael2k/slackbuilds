@@ -4,28 +4,16 @@
 # by rhatto at riseup.net
 #
 
-cat << EOCAT
-You'll need the following perl modules to run amavisd-new:
-
-  cpan2tgz --no-recursive Compress::Zlib IO::Zlib Archive::Tar Archive::Zip Compress::Zlib       \\
-                          IO::Stringy Mail::Field Mail::Header Mail::Internet MIME::Body         \\
-                          Convert::TNEF Convert::UUlib MIME::Base64 MIME::Parser                 \\
-                          Net::Server Net::SMTP Digest::MD5 Time::HiRes Unix::Syslog BerkeleyDB
-
-Optional:
-
-  cpan2tgz --no-recursive Digest::SHA1 HTML::Tagset HTML::Parser     \\
-                          Mail::SpamAssassin DBD::mSQL Convert::ASN1 \\
-                          Net::LDAP Authen::SASL Mail::ClamAV SAVI
-
-EOCAT
-
-if [ "$INTERACT" != "no" ]; then
-  echo "Hit ENTER do continue, Crtl-C to abort"
-  read crap
-else
-  echo sleeping 3 seconds...
-  sleep 3
+if [ -s "slack-required" ]; then
+  echo Recomended and required packages for building cairo are:
+  cat slack-required | sed -e 's/^/\t/'
+  if [ "$INTERACT" != "no" ]; then
+    echo If you dont have those installed, press Ctrl-C. Otherwise, hit ENTER.
+    read crap
+#  else
+#    echo Sleeping 3 seconds...
+#    sleep 3
+  fi
 fi
 
 CWD="`pwd`"
@@ -39,11 +27,17 @@ fi
 # default settings
 PACKAGE="amavisd-new"
 ARCH="noarch"
-VERSION=${VERSION:=2.4.1}
+VERSION=${VERSION:=2.4.4}
 BUILD=${BUILD:=1rha}
 TMP=${TMP:=/tmp}
 SRC_DIR=${SRC:=/tmp}
 REPOS=${REPOS:=$TMP}
+
+# -------  error codes for createpkg  --------------
+ERROR_WGET=31;      ERROR_MAKE=32;      ERROR_INSTALL=33
+ERROR_MD5=34;       ERROR_CONF=35;      ERROR_HELP=36
+ERROR_TAR=37;       ERROR_MKPKG=38;     ERROR_GPG=39
+ERROR_PATCH=40
 
 if [ "$ARCH" == "x86_64" ]; then
   LIBDIR=/usr/lib64
@@ -56,17 +50,11 @@ PACKAGE_EXT="gz"
 SRC="$PACKAGE-$VERSION.tar.$PACKAGE_EXT"
 URL="http://www.ijs.si/software/amavisd/$SRC"
 
-if [ "$PACKAGE_EXT" == "bz2" ]; then
-  tarflag="j"
-else
-  tarflag="z"
-fi
-
 SRC_DIR="$SRC_DIR/$PACKAGE"
 mkdir -p $SRC_DIR
 
 if [ "$RTOOL" == "wget" ] && [ ! -f "$SRC_DIR/$SRC" ]; then
-  wget "$URL" -O "$SRC_DIR/$SRC"
+  wget "$URL" -O "$SRC_DIR/$SRC" || exit $ERROR_WGET
 fi
 
 TMP="$TMP/$PACKAGE"
@@ -77,7 +65,7 @@ rm -rf package-$PACKAGE
 mkdir package-$PACKAGE
 cd package-$PACKAGE
 
-tar xvf$tarflag $SRC_DIR/$SRC
+tar xvf $SRC_DIR/$SRC || exit $ERROR_TAR
 cd $PACKAGE-$VERSION
 
 CWD="`pwd`"
@@ -141,7 +129,7 @@ echo '( chroot . /usr/bin/chmod -R 750 /var/amavis )' >> install/doinst.sh
 echo '( if [ ! -f "etc/amavisd.conf" ]; then mv etc/amavisd.conf.new etc/amavisd.conf; fi )' >> install/doinst.sh
 echo '( if [ ! -f "etc/rc.d/rc.amavisd" ]; then mv etc/rc.d/rc.amavisd.new etc/rc.d/rc.amavisd; fi )' >> install/doinst.sh
 
-makepkg -c y -l y $REPOS/$PACKAGE-$VERSION-$ARCH-$BUILD.tgz
+makepkg -c y -l y $REPOS/$PACKAGE-$VERSION-$ARCH-$BUILD.tgz || exit $ERROR_MKPKG
 
 if [ "$CLEANUP" == "yes" ]; then
   rm -rf $TMP
