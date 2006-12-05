@@ -7,7 +7,6 @@ perl-mime-tools
 perl-convert-tnef
 perl-convert-uulib
 perl-mime-base64
-perl-mime-parser
 perl-net-server
 perl-digest-md5
 perl-time-hires
