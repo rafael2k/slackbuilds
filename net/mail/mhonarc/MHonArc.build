@@ -2,9 +2,6 @@
 #
 # build script for MHonArc
 # by rhatto at riseup.net by rhatto | gpl
-# build it with slacktrack, example:
-#
-#   slacktrack -jefkzp "MHonArc-2.6.15-noarch-1rha.tgz" "./MHonArc.build"
 # 
 
 CWD="`pwd`"
@@ -26,6 +23,12 @@ ARCH=${ARCH:=i386}
 BUILD=${BUILD:=1rha}
 SRC_DIR=${SRC:=$CWD}
 PREFIX="/usr/local"
+
+# -------  error codes for createpkg  --------------
+ERROR_WGET=31;      ERROR_MAKE=32;      ERROR_INSTALL=33
+ERROR_MD5=34;       ERROR_CONF=35;      ERROR_HELP=36
+ERROR_TAR=37;       ERROR_MKPKG=38;     ERROR_GPG=39
+ERROR_PATCH=40
 
 RTOOL="wget"
 PACKAGE_EXT="gz"
@@ -74,17 +77,11 @@ fi
 
 if [ "$RTOOL" == "wget" ] && [ ! -f "$SRC_DIR/$SRC" ]; then
  rm -f $SRC_DIR/$SRC $SRC_DIR/$SRC.sig
- wget "$URL" -O "$SRC_DIR/$SRC"
- wget "$URL.sig" -O "$SRC_DIR/$SRC.sig"
+ wget "$URL" -O "$SRC_DIR/$SRC" || exit $ERROR_WGET
+ wget "$URL.sig" -O "$SRC_DIR/$SRC.sig" || exit $ERROR_WGET
 fi
 
-gpg --verify $SRC_DIR/$SRC.asc $SRC_DIR/$SRC || echo WARNING: Could not check signature or WRONG signature found.
-
-if [ "$PACKAGE_EXT" == "bz2" ]; then
-  tarflag="j"
-else
-  tarflag="z"
-fi
+gpg --verify $SRC_DIR/$SRC.asc $SRC_DIR/$SRC || exit $ERROR_GPG
 
 TMP="$TMP/$PACKAGE"
 
@@ -94,10 +91,10 @@ fi
 
 cd $TMP
 
-tar xvf$tarflag $SRC_DIR/$SRC
+tar xvf $SRC_DIR/$SRC || exit $ERROR_TAR
 cd $PACKAGE-$VERSION
 
-perl install.me -batch
+perl install.me -batch || exit $ERROR_INSTALL
 
 mkdir -p /usr/doc/$PACKAGE
 

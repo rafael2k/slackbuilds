@@ -33,6 +33,12 @@ SRC_DIR=${SRC:=$CWD}
 TMP=${TMP:=/tmp}
 REPOS=${REPOS:=$TMP}
 
+# -------  error codes for createpkg  --------------
+ERROR_WGET=31;      ERROR_MAKE=32;      ERROR_INSTALL=33
+ERROR_MD5=34;       ERROR_CONF=35;      ERROR_HELP=36
+ERROR_TAR=37;       ERROR_MKPKG=38;     ERROR_GPG=39
+ERROR_PATCH=40
+
 if ! grep -qe "^$PACKAGE:" /etc/passwd || ! grep -qe "^$PACKAGE:" /etc/group; then
   echo "WARNING: user and/or group $PACKAGE does not exist"
   echo "Create it manually with \"groupadd $PACKAGE ; useradd $PACKAGE -g $PACKAGE\" and run this script again."
@@ -50,17 +56,11 @@ PACKAGE_EXT="gz"
 SRC="$PACKAGE-$VERSION.tar.$PACKAGE_EXT"
 URL="http://www.sympa.org/distribution/$SRC"
 
-if [ "$PACKAGE_EXT" == "bz2" ]; then
-  tarflag="j"
-else
-  tarflag="z"
-fi
-
 SRC_DIR="$SRC_DIR/$PACKAGE"
 mkdir -p $SRC_DIR
 
 if [ "$RTOOL" == "wget" ] && [ ! -f "$SRC_DIR/$SRC" ]; then
-  wget "$URL" -O "$SRC_DIR/$SRC"
+  wget "$URL" -O "$SRC_DIR/$SRC" || exit $ERROR_WGET
 fi
 
 TMP="$TMP/$PACKAGE"
@@ -68,12 +68,12 @@ rm -rf $TMP
 mkdir -p $TMP
 cd $TMP
 
-tar xvf$tarflag $SRC_DIR/$SRC
+tar xvf $SRC_DIR/$SRC || exit $ERROR_TAR
 cd $PACKAGE-$VERSION
 ./configure --with-initdir=/etc/rc.d/ --prefix=/usr/local/sympa --with-confdir=/usr/local/sympa/conf \
-            --with-etcdir=/usr/local/sympa/etc
-make || exit 32
-make DESTDIR=$TMP/package-$PACKAGE install | tee $TMP/package-$PACKAGE/install.log
+            --with-etcdir=/usr/local/sympa/etc || exit $ERROR_CONF
+make || exit $ERROR_MAKE
+make DESTDIR=$TMP/package-$PACKAGE install | tee $TMP/package-$PACKAGE/install.log || exit $ERROR_INSTALL
 
 CWD="`pwd`"
 
@@ -131,9 +131,9 @@ echo '( chroot . /usr/bin/chown -R sympa.sympa /usr/local/sympa /var/mail/sympa 
 echo '( touch /var/log/sympa)' >> install/doinst.sh
 # echo '( chmod +s /usr/local/sympa/bin/queue )' >> install/doinst.sh
 
-makepkg -c y -l y $REPOS/$PACKAGE-$VERSION-$ARCH-$BUILD.tgz
+makepkg -c y -l y $REPOS/$PACKAGE-$VERSION-$ARCH-$BUILD.tgz || exit $ERROR_MKPKG
 
-echo "Package creation complete. PLEASE check if everything was ok."
+echo "Package creation complete. PLEASE check if everything is fine."
 echo "Log files at $TMP/package-$PACKAGE/install.log"
 
 if [ "$CLEANUP" == "yes" ]; then
