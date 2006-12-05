@@ -1,0 +1,113 @@
+#!/usr/bin/perl -w
+# -*- perl -*-
+# Wildcard plugin to monitor QoS queues.
+#
+# Requirements:
+# 	- tc program installed and in path
+#
+# Parameters supported:
+#
+# 	config
+# 	autoconf
+# 	suggest
+#
+# Configurable variables
+#
+# 	tc                - Override default program
+# 	ignore_queue<n>   - Queue with handle <n> (ex ignore_queue0 for root queue) not be plotted
+#       label_name<n>     - Queue with handle <n> as define label
+#
+# $Log$
+# Revision 1.1  2006/03/05 17:11:36  fra519
+#
+#
+# Magic markers:
+#%# family=manual
+#%# capabilities=autoconf suggest
+
+use strict;
+
+my $TC = $ENV{'tc'} || 'tc';
+
+if ($ARGV[0] and $ARGV[0] eq 'suggest') {
+  my $text = `egrep '^ *(eth|wlan|ath|ra)[0-9]+:' /proc/net/dev | cut -f1 -d:`;
+  print $text;
+  exit;
+}
+
+$0 =~ /qos_(.+)*$/;
+my $IFACE = $1;
+exit 2 unless defined $IFACE;
+
+if ( exists $ARGV[0] and $ARGV[0] eq 'autoconf' ) {
+  # Now see if "tc" can run
+  my $text = `$TC qdisc show dev $IFACE`;
+  if ($?) {
+    if ($? == -1) {
+      print "no (program $TC not found)\n";
+    } else {
+      print "no (program $TC died)\n";
+    }
+    exit 1;
+  }
+  print "yes\n";
+  exit 0;
+}
+
+my %queues;
+my $qdisc;
+my $queue;
+my $handle;
+my $one;
+my $sent;
+
+open(TEXT, "$TC -s qdisc show dev $IFACE|");
+while (! eof(TEXT)) {
+  ($qdisc, $queue, $handle) = split(" ", <TEXT>);
+  if ($qdisc eq "backlog") {
+    ($qdisc, $queue, $handle) = split(" ", <TEXT>);
+  }
+  ($one, $sent) = split(" ", <TEXT>);
+  $handle =~ s/://;
+  $queues{$handle} = {
+    queue => $queue,
+    handle => $handle,
+    sent => $sent
+  };
+}
+
+if ( exists $ARGV[0] and $ARGV[0] eq 'config' ) {
+  print "graph_title QoS queue on $IFACE\n";
+  print "graph_args --base 1000\n";
+  print "graph_vlabel bits per \${graph_period}\n";
+  print "graph_category network\n";
+  print "graph_info This graph shows the QoS queue of the $IFACE network interface.\n";
+  print "graph_order ";
+  foreach my $key (sort by_handle keys %queues) {
+    print $queues{$key}->{queue},$queues{$key}->{handle}, " ";
+  }
+  print "\n";
+  foreach my $key (sort by_handle keys %queues) {
+    print $queues{$key}->{queue},$queues{$key}->{handle}, ".label ";
+    if (exists $ENV{"label_name$queues{$key}->{handle}"}) {
+      print $ENV{"label_name$queues{$key}->{handle}"};
+    } else {
+      print $queues{$key}->{queue},$queues{$key}->{handle};
+    }
+    print "\n";
+    print $queues{$key}->{queue},$queues{$key}->{handle}, ".type COUNTER\n";
+    print $queues{$key}->{queue},$queues{$key}->{handle}, ".graph no\n" if exists $ENV{"ignore_queue$queues{$key}->{handle}"};
+    print $queues{$key}->{queue},$queues{$key}->{handle}, ".cdef ", $queues{$key}->{queue},$queues{$key}->{handle}, ",8,*\n";
+  }
+  exit 0;
+}
+
+sub by_handle {
+  return $a cmp $b;
+}
+
+foreach my $key (sort by_handle keys %queues) {
+  print $queues{$key}->{queue},$queues{$key}->{handle}, ".value ",$queues{$key}->{sent}, "\n";
+}
+#
+# vim:syntax=perl

@@ -2,9 +2,6 @@
 #
 # build script for munin
 # by rhatto at riseup.net by rhatto | gpl
-# build it with slacktrack, example:
-#
-#   ARCH=x86_64 slacktrack -jefkzp "munin-1.2.4-x86_64-2rha.tgz" "./munin.build"
 # 
 
 #
@@ -25,10 +22,16 @@ fi
 # default settings
 PACKAGE="munin"
 TMP=${TMP:=/tmp}
-VERSION=${VERSION:=1.2.4}
+VERSION=${VERSION:=1.2.5}
 ARCH=${ARCH:=i386}
 BUILD=${BUILD:=3rha}
 SRC_DIR=${SRC:=$CWD}
+
+# -------  error codes for createpkg  --------------
+ERROR_WGET=31;      ERROR_MAKE=32;      ERROR_INSTALL=33
+ERROR_MD5=34;       ERROR_CONF=35;      ERROR_HELP=36
+ERROR_TAR=37;       ERROR_MKPKG=38;     ERROR_GPG=39
+ERROR_PATCH=40
 
 if ! grep -qe "^$PACKAGE:" /etc/passwd || ! grep -qe "^$PACKAGE:" /etc/group; then
   echo "WARNING: user and/or group $PACKAGE does not exist"
@@ -41,10 +44,12 @@ Attention: be sure that theres no munin installed on this system, otherwiser ins
 procedure will fail to copy plugins to their right place. Please uninstall any munin packages
 before continue.
 
-Hit enter to proceed.
 EOCAT
 
-read garbage
+if [ "$INTERACT" != "no" ]; then
+  echo Hit enter to proceed.
+  read garbage
+fi
 
 if [ "$ARCH" == "x86_64" ]; then
   LIBDIR=/usr/lib64
@@ -65,13 +70,7 @@ fi
 
 if [ "$RTOOL" == "wget" ] && [ ! -f "$SRC_DIR/$SRC" ]; then
  rm -f $SRC_DIR/$SRC
- wget "$URL" -O "$SRC_DIR/$SRC"
-fi
-
-if [ "$PACKAGE_EXT" == "bz2" ]; then
-  tarflag="j"
-else
-  tarflag="z"
+ wget "$URL" -O "$SRC_DIR/$SRC" || exit $ERROR_WGET
 fi
 
 TMP="$TMP/$PACKAGE"
@@ -82,7 +81,7 @@ fi
 
 cd $TMP
 
-tar xvf$tarflag $SRC_DIR/$SRC
+tar xvf $SRC_DIR/$SRC || exit $ERROR_TAR
 cd $PACKAGE-$VERSION
 
 # config and install!
@@ -98,9 +97,9 @@ sed -e 's/PREFIX     = $(DESTDIR)\/opt\/munin/PREFIX     = $(DESTDIR)\/usr/' \
 
 mv Makefile.config.new Makefile.config
 
-make install-main
-make install-doc install-man
-make install-node install-node-plugins
+make install-main || exit $ERROR_INSTALL
+make install-doc install-man || exit $ERROR_INSTALL
+make install-node install-node-plugins || exit $ERROR_INSTALL
 
 # make the package
 
