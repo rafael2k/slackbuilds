@@ -2,3 +2,4 @@ perl-digest-sha1
 perl-html-parser
 perl-mime-base64
 perl-db_file
+perl-net-dns
