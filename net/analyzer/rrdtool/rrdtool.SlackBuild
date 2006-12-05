@@ -23,16 +23,21 @@
 #
 # -----------------------------------------------------------------------------
 
+if [ -s "slack-required" ]; then
+  echo Recomended and required packages for building cairo are:
+  cat slack-required | sed -e 's/^/\t/'
+  if [ "$INTERACT" != "no" ]; then
+    echo If you dont have those installed, press Ctrl-C. Otherwise, hit ENTER.
+    read crap
+#  else
+#    echo Sleeping 3 seconds...
+#    sleep 3
+  fi
+fi
+
 # --- INIT ---
 # Set initial variables:
 CWD=`pwd`
-
-cat << EOCAT
-You'll need the following packages:
-
-  freetype
-
-EOCAT
 
 if [ "$INTERACT" != "no" ]; then
   echo "Hit ENTER do continue, Crtl-C to abort"
@@ -57,6 +62,12 @@ SRC_DIR=${SRC:=$CWD}
 TMP=${TMP:=/tmp}
 REPOS=${REPOS:=$TMP}
 
+# -------  error codes for createpkg  --------------
+ERROR_WGET=31;      ERROR_MAKE=32;      ERROR_INSTALL=33
+ERROR_MD5=34;       ERROR_CONF=35;      ERROR_HELP=36
+ERROR_TAR=37;       ERROR_MKPKG=38;     ERROR_GPG=39
+ERROR_PATCH=40
+
 if [ "$ARCH" == "x86_64" ]; then
   export LDFLAGS="-L/lib64 -L/usr/lib64"
   LIBDIR=/usr/lib64
@@ -71,7 +82,7 @@ SRC_DIR="$SRC_DIR/$PACKAGE"
 mkdir -p $SRC_DIR
 
 if [ ! -f "$SRC_DIR/$SRC" ]; then
- wget "$URL" -O "$SRC_DIR/$SRC"
+ wget "$URL" -O "$SRC_DIR/$SRC" || exit $ERROR_WGET
 fi
 
 if [ "$ARCH" = "i386" ]; then
@@ -108,7 +119,7 @@ cd $PKG
 
 # Explode the package framework:
 if [ -f $CWD/_$PRGNAM.tar.gz ]; then
-  explodepkg $CWD/_$PRGNAM.tar.gz
+  explodepkg $CWD/_$PRGNAM.tar.gz || exit $ERROR_TAR
 fi
 
 cd $TMP
@@ -116,7 +127,7 @@ cd $TMP
 # --- TARBALL EXTRACTION,PATCH,MODIFY ---
 
 echo "Extracting the program tarball for $PRGNAM..."
-tar -xzvf $SRC_DIR/${PRGNAM}-${VERSION}.tar.gz
+tar xvf $SRC_DIR/${PRGNAM}-${VERSION}.tar.gz || exit $ERROR_TAR
 
 cd ${PRGNAM}-${VERSION}
 chown -R root.root .
@@ -133,8 +144,8 @@ export CPPFLAGS CFLAGS
             --sysconfdir=/etc \
             --libdir=$LIBDIR \
             --enable-perl-site-install \
-            2>&1 | tee $TMP/configure-${PRGNAM}.log
-make 2>&1 | tee $TMP/make-${PRGNAM}.log
+            2>&1 | tee $TMP/configure-${PRGNAM}.log || exit $ERROR_CONF
+make 2>&1 | tee $TMP/make-${PRGNAM}.log || exit $ERROR_MAKE
 
 #
 # Install all the needed stuff to the package dir
@@ -142,9 +153,9 @@ make 2>&1 | tee $TMP/make-${PRGNAM}.log
 # Use installwatch if available:
 which installwatch > /dev/null 2>&1
 if [ $? == 0 ]; then
-  installwatch -o $TMP/install-${PRGNAM}.log make DESTDIR=$PKG install
+  installwatch -o $TMP/install-${PRGNAM}.log make DESTDIR=$PKG install || exit $ERROR_INSTALL
 else
-  make DESTDIR=$PKG install 2>&1 |tee $TMP/install-${PRGNAM}.log
+  make DESTDIR=$PKG install 2>&1 |tee $TMP/install-${PRGNAM}.log || exit $ERROR_INSTALL
 fi
 
 # unneeded perl stuff
@@ -232,7 +243,7 @@ cd $PKG
 # mv usr/lib/perl usr/lib/perl5
 
 makepkg --linkadd y --chown n $REPOS/${PRGNAM}-${VERSION}-${ARCH}-${BUILD}.tgz \
-  2>&1 | tee $TMP/makepkg-${PRGNAM}.log
+  2>&1 | tee $TMP/makepkg-${PRGNAM}.log || exit $ERROR_MKPKG
 #(cd $REPOS && md5sum ${PRGNAM}-${VERSION}-${ARCH}-${BUILD}.tgz > ${PRGNAM}-${VERSION}-${ARCH}-${BUILD}.tgz.md5)
 #cat $PKG/install/slack-desc | grep "^${PRGNAM}" > $REPOS/${PRGNAM}-${VERSION}-${ARCH}-${BUILD}.txt
 
