@@ -10,6 +10,7 @@ perl-digest-md5
 perl-digest-sha1
 perl-file-homedir
 perl-html-parser
+perl-html-tagset
 perl-io-stringy
 perl-libintl-perl
 perl-libwww-perl
@@ -27,7 +28,6 @@ perl-test-simple
 perl-test-warn
 perl-tree-dag_node
 perl-uri
-perl-url-tagset
 perl-xml-libxml
 perl-xml-libxml-common
 perl-xml-namespacesupport
