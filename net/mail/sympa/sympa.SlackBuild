@@ -4,29 +4,16 @@
 # by rhatto at riseup.net
 #
 
-cat << EOECHO
-You'll need at least the following perl modules to build Sympa:
-
-  cpan2tgz --no-recursive Compress::Zlib Archive::Zip Sub::Uplevel Test::Builder::Tester Test::Exception    \\
-  Module::Build Array::Compare Tree::DAG_Node Test::Warn Test::Simple Crypt::CipherSaber DBD::mysql         \\
-  Digest::MD5 File::Spec IO::Scalar IO::Stringy URI HTML::Tagset HTML::Parser LWP Locale::TextDomain        \\
-  Mail::Field Mail::Header Mail::Internet MIME::Tools Mail::Internet Regexp::Common File::HomeDir AppConfig \\
-  Template XML::NamespaceSupport XML::SAX XML::LibXML::Common XML::LibXML Net::SSLeay IO::Socket            \\
-  Convert::ASN1 Digest::SHA1 Digest::HMAC_MD5 Authen::SASL Digest::MD5 Net::LDAP SOAP::Lite FCGI
-
-And the following packages:
-
-  MHonarc
-  mod_fastcgi
-
-EOECHO
-
-if [ "$INTERACT" != "no" ]; then
-  echo Type ENTER you you have those installed, otherwise hit Ctrl-C and install them.
-  read crap
-else
-  echo sleeping 3 seconds...
-  sleep 3
+if [ -s "slack-required" ]; then
+  echo Recomended and required packages for building cairo are:
+  cat slack-required | sed -e 's/^/\t/'
+  if [ "$INTERACT" != "no" ]; then
+    echo If you dont have those installed, press Ctrl-C. Otherwise, hit ENTER.
+    read crap
+#  else
+#    echo Sleeping 3 seconds...
+#    sleep 3
+  fi
 fi
 
 CWD="`pwd`"
@@ -39,7 +26,7 @@ fi
 
 # default settings
 PACKAGE="sympa"
-VERSION=${VERSION:=5.2.1}
+VERSION=${VERSION:=5.2.3}
 ARCH=${ARCH:=i486}
 BUILD=${BUILD:=1rha}
 SRC_DIR=${SRC:=$CWD}
