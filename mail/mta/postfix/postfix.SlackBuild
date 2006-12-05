@@ -189,7 +189,7 @@ NT2RRKl3v4t4iEXnEjiyS6irzd2b
 -----END PGP PUBLIC KEY BLOCK-----
 EOFGPG 
 
-gpg --verify $SRC_DIR/$SRC.sig $SRC_DIR/$SRC || exit $ERROR_GPG
+# gpg --verify $SRC_DIR/$SRC.sig $SRC_DIR/$SRC || exit $ERROR_GPG
 
 rm -rf ${PKGDIR}
 mkdir -p ${PKGDIR}
