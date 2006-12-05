@@ -63,7 +63,7 @@ if [ ! -f "$SRC_DIR/$PACKAGE-key.asc" ]; then
   wget "$KEY" -O "$SRC_DIR/$PACKAGE-key.asc" && gpg --import $SRC_DIR/$PACKAGE-key.asc || exit $ERROR_WGET
 fi
 
-gpg --verify $SRC_DIR/$SRC.sig $SRC || exit $ERROR_GPG
+gpg --verify $SRC_DIR/$SRC.sig $SRC_DIR/$SRC || exit $ERROR_GPG
 
 TMP="$TMP/$PACKAGE"
 rm -rf $TMP
