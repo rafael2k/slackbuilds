@@ -4,6 +4,18 @@
 # by rhatto at riseup.net
 #
 
+if [ -s "slack-required" ]; then
+  echo Recomended and required packages for building openldap are:
+  cat slack-required | sed -e 's/^/\t/'
+  if [ "$INTERACT" != "no" ]; then
+    echo If you dont have those installed, press Ctrl-C. Otherwise, hit ENTER.
+    read crap
+#  else
+#    echo Sleeping 3 seconds...
+#    sleep 3
+  fi
+fi
+
 CWD="`pwd`"
 
 if [ -f ~/.slackbuildrc ]; then
@@ -15,11 +27,17 @@ fi
 # default settings
 PACKAGE="openldap"
 ARCH=${ARCH:=i486}
-VERSION=${VERSION:=2.3.24}
+VERSION=${VERSION:=2.3.27}
 BUILD=${BUILD:=1rha}
 SRC_DIR=${SRC:=$CWD}
 TMP=${TMP:=/tmp}
 REPOS=${REPOS:=$TMP}
+
+# -------  error codes for createpkg  --------------
+ERROR_WGET=31;      ERROR_MAKE=32;      ERROR_INSTALL=33
+ERROR_MD5=34;       ERROR_CONF=35;      ERROR_HELP=36
+ERROR_TAR=37;       ERROR_MKPKG=38;     ERROR_GPG=39
+ERROR_PATCH=40
 
 if [ "$ARCH" == "x86_64" ]; then
   LIBDIR=/usr/lib64
@@ -35,17 +53,11 @@ SRC="$PACKAGE-$VERSION.$PACKAGE_EXT"
 #URL="ftp://ftp.openldap.org/pub/OpenLDAP/openldap-release/$SRC"
 URL="http://public.planetmirror.com/pub/openldap/openldap-release/$SRC"
 
-if [ "$PACKAGE_EXT" == "bz2" ]; then
-  tarflag="j"
-else
-  tarflag="z"
-fi
-
 SRC_DIR="$SRC_DIR/$PACKAGE"
 mkdir -p $SRC_DIR
 
 if [ "$RTOOL" == "wget" ] && [ ! -f "$SRC_DIR/$SRC" ]; then
-  wget "$URL" -O "$SRC_DIR/$SRC"
+  wget "$URL" -O "$SRC_DIR/$SRC" || exit $ERROR_WGET
 fi
 
 if [ "$ARCH" == "x86_64" ]; then
@@ -59,7 +71,7 @@ rm -rf $TMP
 mkdir -p $TMP
 cd $TMP
 
-tar xvf$tarflag $SRC_DIR/$SRC
+tar xvf $SRC_DIR/$SRC
 cd $PACKAGE-$VERSION
 
 # otherwise will not work
@@ -70,10 +82,10 @@ fi
 
 ln -sf /usr/include/db4/db.h /usr/include/db.h
 
-./configure --prefix=/usr --sysconfdir=/etc --libdir=$LIBDIR
+./configure --prefix=/usr --sysconfdir=/etc --libdir=$LIBDIR || exit $ERROR_CONF
 make depend
-make || exit 32
-make DESTDIR=$TMP/package-$PACKAGE install
+make || exit $ERROR_MAKE
+make DESTDIR=$TMP/package-$PACKAGE install || exit $ERROR_INSTALL
 
 # fix your system
 if [ ! -f "$DBINC" ]; then
@@ -127,7 +139,7 @@ done
 echo '( if [ ! -f "etc/openldap/ldap.conf" ]; then mv etc/openldap/ldap.conf.new etc/openldap/ldap.conf; fi )' > install/doinst.sh
 echo '( if [ ! -f "etc/openldap/slapd.conf" ]; then mv etc/openldap/slapd.conf.new etc/openldap/slapd.conf; fi )' >> install/doinst.sh
 
-makepkg -c y -l y $REPOS/$PACKAGE-$VERSION-$ARCH-$BUILD.tgz
+makepkg -c y -l y $REPOS/$PACKAGE-$VERSION-$ARCH-$BUILD.tgz || exit $ERROR_MKPKG
 
 if [ "$CLEANUP" == "yes" ]; then
   rm -rf $TMP

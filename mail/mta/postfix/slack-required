@@ -5,8 +5,6 @@ pcre >= 6.4-i486-1
 zlib >= 1.2.3-i486-1
 libgpg-error
 libgcrypt
-courier-authlib
-courier-imap
 gnutls
 cyrus-sasl
 openldap-client
