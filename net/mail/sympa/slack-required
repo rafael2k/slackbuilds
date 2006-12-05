@@ -32,5 +32,6 @@ perl-xml-libxml
 perl-xml-libxml-common
 perl-xml-namespacesupport
 perl-xml-sax
+perl-fcgi
 MHonArc
 mod_fastcgi
