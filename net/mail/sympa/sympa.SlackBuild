@@ -28,7 +28,7 @@ fi
 PACKAGE="sympa"
 VERSION=${VERSION:=5.2.3}
 ARCH=${ARCH:=i486}
-BUILD=${BUILD:=1rha}
+BUILD=${BUILD:=2rha}
 SRC_DIR=${SRC:=$CWD}
 TMP=${TMP:=/tmp}
 REPOS=${REPOS:=$TMP}
@@ -73,7 +73,7 @@ cd $PACKAGE-$VERSION
 ./configure --with-initdir=/etc/rc.d/ --prefix=/usr/local/sympa --with-confdir=/usr/local/sympa/conf \
             --with-etcdir=/usr/local/sympa/etc || exit $ERROR_CONF
 make || exit $ERROR_MAKE
-make DESTDIR=$TMP/package-$PACKAGE install | tee $TMP/package-$PACKAGE/install.log || exit $ERROR_INSTALL
+make DESTDIR=$TMP/package-$PACKAGE install | tee $TMP/install.log || exit $ERROR_INSTALL
 
 CWD="`pwd`"
 
@@ -138,6 +138,6 @@ echo "Package creation complete. PLEASE check if everything is fine."
 if [ "$CLEANUP" == "yes" ]; then
   rm -rf $TMP
 else
-  echo "Log files at $TMP/package-$PACKAGE/install.log"
+  echo "Log files at $TMP/install.log"
 fi
 
