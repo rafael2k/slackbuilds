@@ -13,8 +13,8 @@ fi
 
 # default settings
 PACKAGE="munin"
-VERSION=${VERSION:=1.2.4}
-ARCH="noarch"
+VERSION=${VERSION:=1.2.5}
+ARCH=${ARCH:=i386}
 BUILD=${BUILD:=3rha}
 SRC_DIR=${SRC:=$CWD}
 TMP=${TMP:=/tmp}
