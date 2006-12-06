@@ -35,5 +35,7 @@ perl-xml-sax
 perl-fcgi
 perl-db_file
 perl-io-socket-ssl
+perl-io-compress-base
+perl-compress-raw-zlib
 MHonArc
 mod_fastcgi
