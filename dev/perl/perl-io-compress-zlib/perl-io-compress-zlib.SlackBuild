@@ -29,7 +29,7 @@ fi
 NAME="IO::Compress::Zlib"
 PACKAGE="perl-`echo $NAME | sed -e 's/::/-/g' | tr '[:upper:]' '[:lower:]'`"
 TMP=${TMP:=/tmp}
-VERSION=${VERSION:=2.0001}
+VERSION=${VERSION:=2.001}
 ARCH=${ARCH:=i386}
 BUILD=${BUILD:=1rha}
 SRC_DIR=${SRC:=$CWD}
