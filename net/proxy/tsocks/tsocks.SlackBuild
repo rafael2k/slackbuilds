@@ -28,7 +28,7 @@ fi
 PACKAGE="tsocks"
 ARCH=${ARCH:=i486}
 VERSION=${VERSION:=1.8beta5}
-BUILD=${BUILD:=1rha}
+BUILD=${BUILD:=2rha}
 SRC_DIR=${SRC:=$CWD}
 TMP=${TMP:=/tmp}
 REPOS=${REPOS:=$TMP}
@@ -75,6 +75,10 @@ if [ -f "$CWD/$PACKAGE-$VERSION.diff" ]; then
   patch -p1 < $CWD/$PACKAGE-$VERSION.diff || exit $ERROR_PATCH
 fi
 
+if [ -f "$CWD/$PACKAGE-$VERSION-$ARCH.diff" ]; then
+  patch -p1 < $CWD/$PACKAGE-$VERSION-$ARCH.diff || exit $ERROR_PATCH
+fi
+
 ./configure --prefix=/usr --sysconfdir=/etc --libdir=$LIBDIR || exit $ERROR_CONF
 make || exit $ERROR_MAKE
 make DESTDIR=$TMP/package-$PACKAGE install || exit $ERROR_INSTALL
@@ -95,7 +99,7 @@ cat << EOF > install/slack-desc
 # make exactly 11 lines for the formatting to be correct.  It's also
 # customary to leave one space after the ':'.
 
-     |-----handy-ruler-----------------------------------------------------|
+      |-----handy-ruler-----------------------------------------------------|
 tsocks: tsocks (a transparent SOCKS proxying library)
 tsocks:
 tsocks: tsocks' role is to allow these non SOCKS aware applications (e.g
