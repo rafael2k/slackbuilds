@@ -26,22 +26,22 @@ TMP=${TMP:=/tmp}
 SRC_DIR=${SRC:=$CWD}
 REPOS=${REPOS:=$TMP}
 
+# -------  error codes for createpkg  --------------
+ERROR_WGET=31;      ERROR_MAKE=32;      ERROR_INSTALL=33
+ERROR_MD5=34;       ERROR_CONF=35;      ERROR_HELP=36
+ERROR_TAR=37;       ERROR_MKPKG=38;     ERROR_GPG=39
+ERROR_PATCH=40
+
 RTOOL="wget"
 PACKAGE_EXT="bz2"
 SRC="$PACKAGE-$VERSION.tar.$PACKAGE_EXT"
 URL="http://downloads.xiph.org/releases/theora/$SRC"
 
-if [ "$PACKAGE_EXT" == "bz2" ]; then
-  tarflag="j"
-else
-  tarflag="z"
-fi
-
 SRC_DIR="$SRC_DIR/$PACKAGE"
 mkdir -p $SRC_DIR
 
 if [ "$RTOOL" == "wget" ] && [ ! -f "$SRC_DIR/$SRC" ]; then
-  wget "$URL" -O "$SRC_DIR/$SRC"
+  wget "$URL" -O "$SRC_DIR/$SRC" || exit $ERROR_WGET
 fi
 
 if [ "$ARCH" = "i486" ]; then
@@ -74,17 +74,25 @@ cd $TMP
 NAME="$PACKAGE"
 PKG=$TMP/package-$PACKAGE
 
-tar xvf$tarflag $SRC_DIR/$SRC
+tar xvf $SRC_DIR/$SRC || exit $ERROR_TAR
 cd $NAME-$VERSION
 chown -R root.root .
+
+if [ -f "$CWD/$PACKAGE-$VERSION.diff" ]; then
+  patch -p1 < $CWD/$PACKAGE-$VERSION.diff || exit $ERROR_PATCH
+fi
+
+if [ -f "$CWD/$PACKAGE-$VERSION-$ARCH.diff" ]; then
+  patch -p1 < $CWD/$PACKAGE-$VERSION-$ARCH.diff || exit $ERROR_PATCH
+fi
 
 find . -perm 777 -exec chmod 755 {} \;
 
 CFLAGS="$SLKCFLAGS" CXXFLAGS="$SLKCFLAGS" \
-./configure --prefix=/usr --disable-static --libdir=$LIBDIR --program-prefix="" --program-suffix="" $TARGET-slackware-linux
+./configure --prefix=/usr --disable-static --libdir=$LIBDIR --program-prefix="" --program-suffix="" $TARGET-slackware-linux || exit $ERROR_CONF
 
-make || exit 32
-make install DESTDIR=$PKG
+make || exit $ERROR_MAKE
+make install DESTDIR=$PKG || exit $ERROR_INSTALL
 
 mkdir -p $PKG/usr/doc/$NAME-$VERSION
 mv $PKG/usr/share/doc/$NAME-$VERSION/* $PKG/usr/doc/$NAME-$VERSION
@@ -124,7 +132,7 @@ cd $PKG
 
 echo 'chroot . /sbin/ldconfig' > install/doinst.sh
 
-makepkg -l y -c n $REPOS/$NAME-$VERSION-$ARCH-$BUILD.tgz
+makepkg -l y -c n $REPOS/$NAME-$VERSION-$ARCH-$BUILD.tgz || exit $ERROR_MKPKG
 
 if [ "$CLEANUP" == "yes" ]; then
   rm -rf $TMP
