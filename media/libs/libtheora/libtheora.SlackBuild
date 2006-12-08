@@ -21,7 +21,7 @@ PACKAGE="libtheora"
 VERSION=${VERSION:=1.0alpha7}
 ARCH=${ARCH:-i486}
 TARGET=${TARGET:=$ARCH}
-BUILD=${BUILD:=1rha}
+BUILD=${BUILD:=2rha}
 TMP=${TMP:=/tmp}
 SRC_DIR=${SRC:=$CWD}
 REPOS=${REPOS:=$TMP}
