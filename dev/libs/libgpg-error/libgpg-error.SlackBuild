@@ -4,7 +4,6 @@
 # http://www.gnupg.org/(en)/related_software/libgpg-error/
 #
 # Author: Luis ( luis at riseup d0t net )
-# Required binaries: gpg, wget
 #
 
 CWD=`pwd`

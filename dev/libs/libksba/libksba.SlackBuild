@@ -4,7 +4,6 @@
 # http://www.gnupg.org/(en)/related_software/libksba/
 #
 # Author: Luis ( luis at riseup d0t net )
-# Required binaries: gpg, gzip, wget
 #
 
 CWD=`pwd`

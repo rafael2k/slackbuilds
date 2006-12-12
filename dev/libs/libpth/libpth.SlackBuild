@@ -4,7 +4,6 @@
 # http://www.gnu.org/software/pth/
 #
 # Author: Luis ( luis at riseup d0t net )
-# Required binaries: gpg, gzip, wget
 #
 
 CWD=`pwd`
