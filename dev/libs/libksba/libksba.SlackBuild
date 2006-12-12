@@ -92,7 +92,8 @@ tar --no-same-owner --no-same-permissions -xvf $SRC_DIR/$SRC || exit $ERROR_TAR
 cd $PACKAGE-$VERSION
 CFLAGS="$SLKCFLAGS" \
   ./configure \
-  --prefix=$PREFIX --libdir=$LIBDIR || exit $ERROR_CONF
+  --prefix=$PREFIX --libdir=$LIBDIR \
+  --infodir=$PREFIX/info --mandir=$PREFIX/man || exit $ERROR_CONF
 make || exit $ERROR_MAKE
 make install DESTDIR=$PKG || exit $ERROR_INSTALL
 
@@ -105,7 +106,6 @@ make install DESTDIR=$PKG || exit $ERROR_INSTALL
 )
 
 # Compress info pages
-mv -f $PKG/$PREFIX/share/info $PKG/$PREFIX/
 rm -f $PKG/$PREFIX/info/dir
 gzip -9 $PKG/$PREFIX/info/*
 

@@ -94,6 +94,7 @@ cd $SRC_NAME-$VERSION
 CFLAGS="$SLKCFLAGS" \
   ./configure \
   --prefix=$PREFIX --libdir=$LIBDIR \
+  --infodir=$PREFIX/info --mandir=$PREFIX/man \
   --enable-static-rnd=linux --enable-noexecstack || exit $ERROR_CONF
 make || exit $ERROR_MAKE
 make install DESTDIR=$PKG || exit $ERROR_INSTALL
@@ -110,20 +111,20 @@ make install DESTDIR=$PKG || exit $ERROR_INSTALL
 chmod 4755 $PKG/$PREFIX/bin/{gpg2,gpgv2,gpg-agent,gpgsm}
 
 # Compress info and man pages
-mv -f $PKG/$PREFIX/share/info $PKG/$PREFIX/
-mv -f $PKG/$PREFIX/share/man $PKG/$PREFIX/
 mv -f $PKG/$PREFIX/share/gnupg $PKG/$PREFIX/share/gnupg2
 rm -f $PKG/$PREFIX/info/dir
 gzip -9 $PKG/$PREFIX/info/*
 gzip -9 $PKG/$PREFIX/man/*/*
 
 # Install documentation
-DOCS="ABOUT-NLS AUTHORS COPYING ChangeLog INSTALL NEWS README* THANKS TODO VERSION"
+DOCS="ABOUT-NLS AUTHORS COPYING ChangeLog INSTALL NEWS README* THANKS TODO \
+     VERSION doc/DETAILS doc/HACKING doc/KEYSERVER doc/OpenPGP doc/TRANSLATE \
+     doc/examples doc/*.png"
 mkdir -p $PKG/$PREFIX/doc/$PKG_NAME-$VERSION || exit $ERROR_MKDIR
 cp -a $DOCS $PKG/$PREFIX/doc/$PKG_NAME-$VERSION
 ( cd $PKG/$PREFIX/doc/$PKG_NAME-$VERSION
-  ln -sf /$PREFIX/share/$PKG_NAME/FAQ .
-  ln -sf /$PREFIX/share/$PKG_NAME/faq.html .
+  ln -sf $PREFIX/share/$PKG_NAME/FAQ .
+  ln -sf $PREFIX/share/$PKG_NAME/faq.html .
 )
 
 # Add slack-desc file
