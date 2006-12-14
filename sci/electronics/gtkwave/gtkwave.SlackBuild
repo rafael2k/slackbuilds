@@ -69,13 +69,17 @@ fi
 
 # Check if GTKWave should be built for GTK+-2.x (default,
 #+if both are available) or 1.x
-if [ -d /etc/gtk-2.0 ]; then
+pkg-config gtk+-2.0 --libs
+if [ $? == 0 ]; then
   GTK_VERSION=2
-elif [ -d /etc/gtk ]; then
-  GTK_VERSION=1
 else
-  echo "ERROR: GTKWave requires either GTK+-1.x or 2.x"
-  exit 1
+  gtk-config --libs
+  if [ $? == 0 ]; then
+    GTK_VERSION=1
+  else
+    echo "ERROR: GTKWave requires either GTK+-1.x or 2.x"
+    exit 1
+  fi
 fi
 
 # Untar, configure, compile and install
