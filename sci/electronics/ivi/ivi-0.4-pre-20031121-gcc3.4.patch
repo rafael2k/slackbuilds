@@ -1,0 +1,46 @@
+diff -urN ../tmp-orig/ivi-0.4.pre.20031121/src/common/BitVector.cc ./src/common/BitVector.cc
+--- ../tmp-orig/ivi-0.4.pre.20031121/src/common/BitVector.cc	2003-11-21 02:57:51.000000000 +0100
++++ ./src/common/BitVector.cc	2004-09-24 14:37:04.375516976 +0200
+@@ -793,7 +793,8 @@
+     Uint32    isTyped  = (flags & Radix_Typed)?1:0;
+ 
+     Uint32    ii;
+-    Int32     i, x, idx = 0, mbits = in.length(), init, final;
++    Int32     i, x, mbits = in.length(), init, final;
++    Uint32    idx  = 0;
+     Uint32    comp  = 0;
+     Uint32    num_z = 0, num_x = 0;
+     Char      ch, tmpb[256];
+@@ -923,7 +924,7 @@
+         }
+         for (i=vlen-1; i>=0; i--) {
+             zero_suppress = write_digits(tmp_arr[i],
+-                    out, (Uint32)idx, zero_suppress);
++                    out, idx, zero_suppress);
+         }
+ 
+         if (zero_suppress) {
+diff -urN ../tmp-orig/ivi-0.4.pre.20031121/src/common/HashTable.h ./src/common/HashTable.h
+--- ../tmp-orig/ivi-0.4.pre.20031121/src/common/HashTable.h	2003-11-21 02:57:51.000000000 +0100
++++ ./src/common/HashTable.h	2004-09-24 14:35:25.715515576 +0200
+@@ -83,7 +83,7 @@
+     Uint32    size
+     )
+ {
+-    entries = new eType*[size];
++    this->entries = new eType*[size];
+     numEntries = size;
+ 
+     memset(syms, 0, sizeof(eType *)*numEntries);
+diff -urN ../tmp-orig/ivi-0.4.pre.20031121/src/common/MenuMgr.cc ./src/common/MenuMgr.cc
+--- ../tmp-orig/ivi-0.4.pre.20031121/src/common/MenuMgr.cc	2003-11-21 02:57:51.000000000 +0100
++++ ./src/common/MenuMgr.cc	2004-09-24 17:06:33.965931968 +0200
+@@ -247,7 +247,7 @@
+         }
+ 
+         cmd_list << buf;
+-        cmd_list << "-underline" << (ptr-ch_str);
++        cmd_list << "-underline" << (Int32)(ptr-ch_str);
+     } else {
+         cmd_list << ch_str;
+     }
