@@ -93,7 +93,7 @@ gpg --verify $SRC_DIR/$SRC.sig $SRC_DIR/$SRC || exit $ERROR_GPG
 # Untar, patch, configure, compile and install
 tar --no-same-owner --no-same-permissions -xvf $SRC_DIR/$SRC || exit $ERROR_TAR
 cd $PKG_SRC/g10
-patch -p0 < $CWD/filter-context-20-small.diff || exit $ERROR_PATCH
+patch -Np0 < $CWD/filter-context-20-small.diff || exit $ERROR_PATCH
 cd ..
 CFLAGS="$SLKCFLAGS" \
   CXXFLAGS="$SLKCFLAGS" \
