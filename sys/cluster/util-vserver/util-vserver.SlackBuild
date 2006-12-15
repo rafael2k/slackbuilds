@@ -61,10 +61,10 @@ mkdir -p $SRC_DIR
 
 if [ "$RTOOL" == "wget" ] && [ ! -f "$SRC_DIR/$SRC" ]; then
   wget "$URL" -O "$SRC_DIR/$SRC" || exit $ERROR_WGET
-  wget "$URL.sig" -O "$SRC_DIR/$SRC.sig" || exit $ERROR_WGET
+  wget "$URL.asc" -O "$SRC_DIR/$SRC.asc" || exit $ERROR_WGET
 fi
 
-gpg --verify $SRC_DIR/$SRC.sig $SRC || echo WARNING: Could not check signature or WRONG signature found.
+gpg --verify $SRC_DIR/$SRC.asc $SRC || exit $ERROR_GPG
 
 TMP="$TMP/$PACKAGE"
 rm -rf $TMP
