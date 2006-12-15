@@ -3,23 +3,16 @@
 # slackbuild for util-vserver
 #
 
-cat << EOCAT
-Check if you have the following stuff installed:
-
-  beecrypt
-  vlan
-  iproute2
-  iptables 
-  modutils
-
-EOCAT
-
-if [ "$INTERACT" != "no" ]; then
-  echo "Hit ENTER do continue, Crtl-C to abort"
-  read crap
-else
-  echo sleeping 3 seconds...
-  sleep 3
+if [ -s "slack-required" ]; then
+  echo Recomended and required packages for building cairo are:
+  cat slack-required | sed -e 's/^/\t/'
+  if [ "$INTERACT" != "no" ]; then
+    echo If you dont have those installed, press Ctrl-C. Otherwise, hit ENTER.
+    read crap
+#  else
+#    echo Sleeping 3 seconds...
+#    sleep 3
+  fi
 fi
 
 CWD="`pwd`"
@@ -38,6 +31,12 @@ BUILD=${BUILD:=1rha}
 SRC_DIR=${SRC:=$CWD}
 TMP=${TMP:=/tmp}
 REPOS=${REPOS:=$TMP}
+
+# -------  error codes for createpkg  --------------
+ERROR_WGET=31;      ERROR_MAKE=32;      ERROR_INSTALL=33
+ERROR_MD5=34;       ERROR_CONF=35;      ERROR_HELP=36
+ERROR_TAR=37;       ERROR_MKPKG=38;     ERROR_GPG=39
+ERROR_PATCH=40
 
 if [ "$ARCH" == "x86_64" ]; then
   LIBDIR=/usr/lib64
@@ -61,8 +60,8 @@ SRC_DIR="$SRC_DIR/$PACKAGE"
 mkdir -p $SRC_DIR
 
 if [ "$RTOOL" == "wget" ] && [ ! -f "$SRC_DIR/$SRC" ]; then
-  wget "$URL" -O "$SRC_DIR/$SRC"
-  wget "$URL.sig" -O "$SRC_DIR/$SRC.sig"
+  wget "$URL" -O "$SRC_DIR/$SRC" || exit $ERROR_WGET
+  wget "$URL.sig" -O "$SRC_DIR/$SRC.sig" || exit $ERROR_WGET
 fi
 
 gpg --verify $SRC_DIR/$SRC.sig $SRC || echo WARNING: Could not check signature or WRONG signature found.
@@ -72,11 +71,11 @@ rm -rf $TMP
 mkdir -p $TMP/package-$PACKAGE
 cd $TMP
 
-tar xvf$tarflag $SRC_DIR/$SRC
+tar xvf$tarflag $SRC_DIR/$SRC || exit $ERROR_TAR
 cd $PACKAGE-$VERSION
-./configure --prefix=/usr --sysconfdir=/etc --libdir=$LIBDIR --with-initrddir=/etc/rc.d --localstatedir=/var
-make || exit 32
-make DESTDIR=$TMP/package-$PACKAGE install
+./configure --prefix=/usr --sysconfdir=/etc --libdir=$LIBDIR --with-initrddir=/etc/rc.d --localstatedir=/var || exit $ERROR_CONF
+make || exit $ERROR_MAKE
+make DESTDIR=$TMP/package-$PACKAGE install || exit $ERROR_INSTALL
 
 CWD="`pwd`"
 
@@ -121,7 +120,7 @@ done
 # install script
 echo '( if [ ! -f "etc/vservers.conf" ]; then mv etc/vservers.conf.new etc/vservers.conf; fi )' > install/doinst.sh
 
-makepkg -c y -l y $REPOS/$PACKAGE-$VERSION-$ARCH-$BUILD.tgz
+makepkg -c y -l y $REPOS/$PACKAGE-$VERSION-$ARCH-$BUILD.tgz || exit $ERROR_MKPKG
 
 if [ "$CLEANUP" == "yes" ]; then
   rm -rf $TMP
