@@ -1,0 +1,51 @@
+Description: Less verbose initialization script for microcode_ctl
+Author: Luis ( luis at riseup d0t net )
+
+--- microcode_ctl-1.14.orig/etc/rc.d/rc.microcode_ctl.new   2006-06-28 11:51:31.000000000 -0300
++++ microcode_ctl-1.14.new/etc/rc.d/rc.microcode_ctl.new    2006-11-18 21:51:30.000000000 -0200
+@@ -93,7 +93,6 @@
+ 	echo -n "OK"
+ 	$SETCOLOR_NORMAL
+ 	echo -n "  ]"
+-	echo -ne "\r"
+ 	echo ""
+ }
+ 
+@@ -104,7 +103,6 @@
+ 	echo -n "FAILED"
+ 	$SETCOLOR_NORMAL
+ 	echo -n "]"
+-	echo -ne "\r"
+ 	echo ""
+ }
+ 
+@@ -114,12 +112,8 @@
+ {
+ 	if [ $RETVAL -eq 0 ];
+ 	then
+-		echo
+-		echo -n "$0($$)"
+ 		echo_success
+ 	else
+-		echo
+-		echo -n "$0($$)"
+ 		echo_failure
+ 	fi
+ 
+@@ -132,7 +126,7 @@
+ function doit ()
+ {
+ 	if [ "$VERBOSE" != no ] ; then
+-		echo "Applying Intel IA32 Microcode update... "
++		echo -n "Applying Intel IA32 Microcode update... "
+ 	fi
+ 
+ 	$START $PROGRAM $ARGUMENTS
+@@ -150,7 +144,6 @@
+ 			echo "$0: This kernel doesn't appear to have microcode device support?"
+ 		fi
+ 	fi
+-	echo
+ }
+ 
+ 
