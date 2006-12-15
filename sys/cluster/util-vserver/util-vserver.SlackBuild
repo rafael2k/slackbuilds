@@ -64,7 +64,7 @@ if [ "$RTOOL" == "wget" ] && [ ! -f "$SRC_DIR/$SRC" ]; then
   wget "$URL.asc" -O "$SRC_DIR/$SRC.asc" || exit $ERROR_WGET
 fi
 
-gpg --verify $SRC_DIR/$SRC.asc $SRC || exit $ERROR_GPG
+gpg --verify $SRC_DIR/$SRC.asc $SRC_DIR/$SRC || exit $ERROR_GPG
 
 TMP="$TMP/$PACKAGE"
 rm -rf $TMP
