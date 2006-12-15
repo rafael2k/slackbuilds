@@ -33,7 +33,7 @@ fi
 # default settings
 PACKAGE="util-vserver"
 ARCH=${ARCH:=i486}
-VERSION=${VERSION:=0.30.210}
+VERSION=${VERSION:=0.30.212}
 BUILD=${BUILD:=1rha}
 SRC_DIR=${SRC:=$CWD}
 TMP=${TMP:=/tmp}
