@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# SlackBuild for gnupg2 (GNU Privacy Guard v2):
+# SlackBuild for gnupg2 (GNU Privacy Guard v2)
 # http://www.gnupg.org/
 #
 # Author: Luis ( luis at riseup d0t net )
@@ -25,15 +25,16 @@ SRC_DIR=${SRC_DIR:=$CWD}
 TMP=${TMP:=/tmp}
 PKG=${PKG:=$TMP/package-$PKG_NAME}
 REPOS=${REPOS:=$TMP}
-PREFIX=${PREFIX:=/usr}
+PREFIX=${PREFIX:=/usr/local}
+PKG_SRC=$SRC_NAME-$VERSION
 
 # Set system libraries' path and optmization flags based on $ARCH
 LIBDIR=$PREFIX/lib
 
 if [ "$ARCH" = "i386" ]; then
-  SLKCFLAGS="-O2 -march=i386 -mtune=i686"
+  SLKCFLAGS="-O2 -march=i386 -mcpu=i686"
 elif [ "$ARCH" = "i486" ]; then
-  SLKCFLAGS="-O2 -march=i486 -mtune=i686"
+  SLKCFLAGS="-O2 -march=i486 -mcpu=i686"
 elif [ "$ARCH" = "i686" ]; then
   SLKCFLAGS="-O2 -march=i686"
 elif [ "$ARCH" = "s390" ]; then
@@ -50,15 +51,17 @@ ERROR_TAR=37;       ERROR_MKPKG=38;     ERROR_GPG=39
 ERROR_PATCH=40;     ERROR_VCS=41;       ERROR_MKDIR=42
 
 # Clean up any leftovers of previous builds
-rm -rf $SRC_NAME-$VERSION 2> /dev/null
+rm -rf $PKG_SRC 2> /dev/null
 rm -rf $PKG 2> /dev/null
+
+# Create directories, if necessary
 mkdir -p $SRC_DIR || exit $ERROR_MKDIR
 mkdir -p $PKG || exit $ERROR_MKDIR
 mkdir -p $REPOS || exit $ERROR_MKDIR
 
 # Import (minimized) signing key from
 # http://www.gnupg.org/(en)/signature_key.html
-gpg --import << EOGPG || exit $ERROR_GPG
+gpg --import << EOKEY || exit $ERROR_GPG
 -----BEGIN PGP PUBLIC KEY BLOCK-----
 
 mI4EQ7f6xwEEANCZGXorXMkDKpNsRnf+ZhqHOPmDcEKPDkplcCL2PFACN7QaK4Re
@@ -71,10 +74,10 @@ FFTgKHHzBz39bzeStyQgTm5plGaOEJcJayIr07DaeBtcC/dMoVUJswybKMFtP7fU
 z05PRKjChvxrWzhe/Yn6BAmPF+6YxQo2W98rzq0THS5wKJjXmHw=
 =3fgc
 -----END PGP PUBLIC KEY BLOCK-----
-EOGPG
+EOKEY
 
 # Dowload source and its signature, if necessary
-SRC="$SRC_NAME-$VERSION.tar.bz2"
+SRC="$PKG_SRC.tar.bz2"
 URL="ftp://ftp.gnupg.org/gcrypt/gnupg/$SRC"
 
 if [ ! -f "$SRC_DIR/$SRC" ]; then
@@ -87,10 +90,13 @@ fi
 # Check source's signature
 gpg --verify $SRC_DIR/$SRC.sig $SRC_DIR/$SRC || exit $ERROR_GPG
 
-# Untar, configure, compile and install
+# Untar, patch, configure, compile and install
 tar --no-same-owner --no-same-permissions -xvf $SRC_DIR/$SRC || exit $ERROR_TAR
-cd $SRC_NAME-$VERSION
+cd $PKG_SRC/g10
+patch -p0 < $CWD/filter-context-20-small.diff || exit $ERROR_PATCH
+cd ..
 CFLAGS="$SLKCFLAGS" \
+  CXXFLAGS="$SLKCFLAGS" \
   ./configure \
   --prefix=$PREFIX --libdir=$LIBDIR \
   --infodir=$PREFIX/info --mandir=$PREFIX/man \
@@ -106,16 +112,36 @@ make install DESTDIR=$PKG || exit $ERROR_INSTALL
     xargs strip --strip-unneeded 2> /dev/null
 )
 
+# Avoid overwriting share/gnupg/ files, from the original gnupg package
+mv -f $PKG/$PREFIX/share/gnupg $PKG/$PREFIX/share/gnupg2
+
 # Install gpg2, gpgv2, gpg-agent, and gpgsm already suid root
 chmod 4755 $PKG/$PREFIX/bin/{gpg2,gpgv2,gpg-agent,gpgsm}
 
-# Compress info and man pages
-mv -f $PKG/$PREFIX/share/gnupg $PKG/$PREFIX/share/gnupg2
-rm -f $PKG/$PREFIX/info/dir
-gzip -9 $PKG/$PREFIX/info/*
-gzip -9 $PKG/$PREFIX/man/*/*
+# Compress and link manpages, if any
+if [ -d $PKG/$PREFIX/man ]; then
+  ( cd $PKG/$PREFIX/man
+    for manpagedir in $(find . -type d -name "man*") ; do
+      ( cd $manpagedir
+        for eachpage in $( find . -type l -maxdepth 1) ; do
+          ln -s $( readlink $eachpage ).gz $eachpage.gz
+          rm $eachpage
+        done
+        gzip -9 *.?
+      )
+    done
+  )
+fi
 
-# Install documentation
+# Compress info files, if any
+if [ -d $PKG/$PREFIX/info ]; then
+  ( cd $PKG/$PREFIX/info
+    rm -f dir
+    gzip -9 *
+  )
+fi
+
+# Install documentation and examples
 DOCS="ABOUT-NLS AUTHORS COPYING ChangeLog INSTALL NEWS README* THANKS TODO \
      VERSION doc/DETAILS doc/HACKING doc/KEYSERVER doc/OpenPGP doc/TRANSLATE \
      doc/examples doc/*.png"
@@ -126,9 +152,9 @@ cp -a $DOCS $PKG/$PREFIX/doc/$PKG_NAME-$VERSION
   ln -sf $PREFIX/share/$PKG_NAME/faq.html .
 )
 
-# Add slack-desc file
+# Add package description (slack-desc)
 mkdir -p $PKG/install || exit $ERROR_MKDIR
-cat << EOF > $PKG/install/slack-desc
+cat << EODESC > $PKG/install/slack-desc
 # HOW TO EDIT THIS FILE:
 # The "handy ruler" below makes it easier to edit a package description.  Line
 # up the first '|' above the ':' following the base package name, and the '|'
@@ -148,13 +174,13 @@ gnupg2: standards.
 gnupg2:
 gnupg2: For more information, http://www.gnupg.org/
 gnupg2:
-EOF
+EODESC
 
 # Build the package
 cd $PKG
 makepkg -l y -c n $REPOS/$PKG_NAME-$VERSION-$ARCH-$BUILD.tgz || exit $ERROR_MKPKG
 
-# Delete build directory, if requested
+# Delete source and build directories, if requested
 if [ "$CLEANUP" == "yes" ]; then
-  rm -rf $PKG $CWD/$PACKAGE-$VERSION
+  rm -rf $CWD/$PKG_SRC $PKG
 fi

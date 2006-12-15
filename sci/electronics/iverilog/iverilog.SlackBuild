@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# SlackBuild for Icarus Verilog
+# SlackBuild for iverilog (Icarus Verilog)
 # http://www.icarus.com/eda/verilog/
 #
 # Author: Luis ( luis at riseup d0t net )
@@ -25,7 +25,7 @@ SRC_DIR=${SRC_DIR:=$CWD}
 TMP=${TMP:=/tmp}
 PKG=${PKG:=$TMP/package-$PKG_NAME}
 REPOS=${REPOS:=$TMP}
-PREFIX=${PREFIX:=/usr}
+PREFIX=${PREFIX:=/usr/local}
 PKG_SRC=$SRC_NAME-$VERSION
 
 # Set system libraries' path and optmization flags based on $ARCH
@@ -51,8 +51,8 @@ ERROR_TAR=37;       ERROR_MKPKG=38;     ERROR_GPG=39
 ERROR_PATCH=40;     ERROR_VCS=41;       ERROR_MKDIR=42
 
 # Clean up any leftovers of previous builds
-rm -rf $PKG_SRC 2>/dev/null
-rm -rf $PKG 2>/dev/null
+rm -rf $PKG_SRC 2> /dev/null
+rm -rf $PKG 2> /dev/null
 
 # Create directories, if necessary
 mkdir -p $SRC_DIR || exit $ERROR_MKDIR
@@ -113,9 +113,9 @@ mkdir -p $PKG/$PREFIX/doc/$PKG_NAME-$VERSION/vvp || exit $ERROR_MKDIR
 cp -a COPYING INSTALL *.txt examples $PKG/$PREFIX/doc/$PKG_NAME-$VERSION
 cp -a vvp/*.txt vvp/examples $PKG/$PREFIX/doc/$PKG_NAME-$VERSION/vvp
 
-# Add slack-desc file
+# Add package description (slack-desc)
 mkdir -p $PKG/install || exit $ERROR_MKDIR
-cat << EOF > $PKG/install/slack-desc
+cat << EODESC > $PKG/install/slack-desc
 # HOW TO EDIT THIS FILE:
 # The "handy ruler" below makes it easier to edit a package description.  Line
 # up the first '|' above the ':' following the base package name, and the '|'
@@ -135,7 +135,7 @@ iverilog:
 iverilog:
 iverilog:
 iverilog:
-EOF
+EODESC
 
 # Build the package
 cd $PKG

@@ -25,7 +25,7 @@ SRC_DIR=${SRC_DIR:=$CWD}
 TMP=${TMP:=/tmp}
 PKG=${PKG:=$TMP/package-$PKG_NAME}
 REPOS=${REPOS:=$TMP}
-PREFIX=${PREFIX:=/usr}
+PREFIX=${PREFIX:=/usr/local}
 PKG_SRC=$SRC_NAME-$VERSION
 
 # Set system libraries' path and optmization flags based on $ARCH
@@ -51,8 +51,8 @@ ERROR_TAR=37;       ERROR_MKPKG=38;     ERROR_GPG=39
 ERROR_PATCH=40;     ERROR_VCS=41;       ERROR_MKDIR=42
 
 # Clean up any leftovers of previous builds
-rm -rf $PKG_SRC 2>/dev/null
-rm -rf $PKG 2>/dev/null
+rm -rf $PKG_SRC 2> /dev/null
+rm -rf $PKG 2> /dev/null
 
 # Create directories, if necessary
 mkdir -p $SRC_DIR || exit $ERROR_MKDIR
@@ -124,13 +124,13 @@ if [ -d $PKG/$PREFIX/info ]; then
 fi
 
 # Install documentation and examples
-DOCS="*.TXT examples doc/gtkwave.odt"
+DOCS="*.TXT doc/gtkwave.odt examples"
 mkdir -p $PKG/$PREFIX/doc/$PKG_NAME-$VERSION || exit $ERROR_MKDIR
 cp -a $DOCS $PKG/$PREFIX/doc/$PKG_NAME-$VERSION
 
-# Add slack-desc file
+# Add package description (slack-desc)
 mkdir -p $PKG/install || exit $ERROR_MKDIR
-cat << EOF > $PKG/install/slack-desc
+cat << EODESC > $PKG/install/slack-desc
 # HOW TO EDIT THIS FILE:
 # The "handy ruler" below makes it easier to edit a package description.  Line
 # up the first '|' above the ':' following the base package name, and the '|'
@@ -150,7 +150,7 @@ gtkwave:
 gtkwave:
 gtkwave:
 gtkwave:
-EOF
+EODESC
 
 # Build the package
 cd $PKG
