@@ -48,7 +48,7 @@ RTOOL="wget"
 PACKAGE_EXT="bz2"
 SRC="$PACKAGE-$VERSION.tar.$PACKAGE_EXT"
 SRC="$PACKAGE-$VERSION.tar.$PACKAGE_EXT"
-URL="http://ftp.linux-vserver.org/pub/utils/util-vserver/%SRC"
+URL="http://ftp.linux-vserver.org/pub/utils/util-vserver/$SRC"
 
 if [ "$PACKAGE_EXT" == "bz2" ]; then
   tarflag="j"
