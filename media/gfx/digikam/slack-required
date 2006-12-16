@@ -1,7 +1,8 @@
 sqlite
 exiv2
-libgphoto2
-libkipi
+libpng
 lcms
 libtiff
-libpng
+mjpegtools
+libgphoto2
+libkipi
