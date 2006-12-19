@@ -96,7 +96,7 @@ find . | xargs file | grep "shared object" | grep ELF | cut -f 1 -d : | xargs st
 
 # fix
 rm -f usr/local/sympa/bin/etc/web_tt2/authorization_reject.tt2
-cp ../mail_tt2/authorization_reject.tt2 authorization_reject.tt2
+cp usr/local/sympa/bin/etc/mail_tt2/authorization_reject.tt2 usr/local/sympa/bin/etc/web_tt2/authorization_reject.tt2
 
 mkdir install
 cat << EOF > install/slack-desc
