@@ -28,7 +28,7 @@ fi
 PACKAGE="sympa"
 VERSION=${VERSION:=5.3a.10}
 ARCH=${ARCH:=i486}
-BUILD=${BUILD:=2rha}
+BUILD=${BUILD:=1rha}
 SRC_DIR=${SRC:=$CWD}
 TMP=${TMP:=/tmp}
 REPOS=${REPOS:=$TMP}
@@ -95,7 +95,7 @@ find . | xargs file | grep "executable" | grep ELF | cut -f 1 -d : | xargs strip
 find . | xargs file | grep "shared object" | grep ELF | cut -f 1 -d : | xargs strip --strip-unneeded 2> /dev/null
 
 # symlink fix
-ln -sf usr/local/sympa/bin/etc/mail_tt2/authorization_reject.tt2 usr/local/sympa/bin/etc/web_tt2/authorization_reject.tt2
+( cd usr/local/sympa/bin/etc/web_tt2/ && ln -s ../mail_tt2/authorization_reject.tt2 authorization_reject.tt2 )
 
 mkdir install
 cat << EOF > install/slack-desc
