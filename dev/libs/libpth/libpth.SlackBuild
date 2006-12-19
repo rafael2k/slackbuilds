@@ -25,7 +25,7 @@ SRC_DIR=${SRC_DIR:=$CWD}
 TMP=${TMP:=/tmp}
 PKG=${PKG:=$TMP/package-$PKG_NAME}
 REPOS=${REPOS:=$TMP}
-PREFIX=${PREFIX:=/usr/local}
+PREFIX=${PREFIX:=/usr}
 PKG_SRC=$SRC_NAME-$VERSION
 
 # Set system libraries' path and optmization flags based on $ARCH
