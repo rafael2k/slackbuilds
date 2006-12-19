@@ -70,6 +70,11 @@ cd $TMP
 
 tar xvf $SRC_DIR/$SRC || exit $ERROR_TAR
 cd $PACKAGE-$VERSION
+
+if [ -f "$CWD/$PACKAGE-$VERSION.diff" ]; then
+  patch -p1 < $CWD/$PACKAGE-$VERSION.diff || exit $ERROR_PATCH
+fi
+
 ./configure --with-initdir=/etc/rc.d/ --prefix=/usr/local/sympa --with-confdir=/usr/local/sympa/conf \
             --with-etcdir=/usr/local/sympa/etc || exit $ERROR_CONF
 make || exit $ERROR_MAKE
@@ -88,6 +93,9 @@ mkdir -p var/mail/sympa
 
 find . | xargs file | grep "executable" | grep ELF | cut -f 1 -d : | xargs strip --strip-unneeded 2> /dev/null
 find . | xargs file | grep "shared object" | grep ELF | cut -f 1 -d : | xargs strip --strip-unneeded 2> /dev/null
+
+# symlink fix
+ln -sf usr/local/sympa/bin/etc/mail_tt2/authorization_reject.tt2 usr/local/sympa/bin/etc/web_tt2/authorization_reject.tt2
 
 mkdir install
 cat << EOF > install/slack-desc

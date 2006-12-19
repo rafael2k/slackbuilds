@@ -1,0 +1,9 @@
+diff -Naur sympa-5.3a.10.orig/web_tt2/rss.tt2 sympa-5.3a.10/web_tt2/rss.tt2
+--- sympa-5.3a.10.orig/web_tt2/rss.tt2	2006-11-03 11:43:20.000000000 -0200
++++ sympa-5.3a.10/web_tt2/rss.tt2	2006-12-19 11:48:41.000000000 -0200
+@@ -1,4 +1,4 @@
+-<?xml version="1.0" encoding="[%|loc%]_charset_[%END%]"?>
++<?xml version="1.0" encoding="utf-8"?>
+ <rss version="2.0" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+  <channel>
+   <title>[% title_clear_txt %] :
