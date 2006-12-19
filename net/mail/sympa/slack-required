@@ -17,6 +17,7 @@ perl-libwww-perl
 perl-mailtools
 perl-mime-base64
 perl-mime-tools
+perl-mime-charset
 perl-module-build
 perl-net_ssleay.pm
 perl-pathtools
