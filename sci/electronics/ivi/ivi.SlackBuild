@@ -68,8 +68,8 @@ if [ ! -f "$SRC_DIR/$SRC" ]; then
 fi
 
 # Untar, patch, configure, compile and install
-tar --no-same-owner --no-same-permissions -xvf $SRC_DIR/$SRC || exit $ERROR_TAR
-cd $PKG_SRC
+tar --no-same-owner --no-same-permissions -xvf $SRC_DIR/$SRC -C $SRC_DIR || exit $ERROR_TAR
+cd $SRC_DIR/$PKG_SRC
 patch -Np1 < $CWD/ivi-0.4-pre-20031121-gcc3.4.patch || exit $ERROR_PATCH
 CFLAGS="$SLKCFLAGS" \
   CXXFLAGS="$SLKCFLAGS" \
@@ -151,5 +151,5 @@ makepkg -l y -c n $REPOS/$PKG_NAME-$VERSION-$ARCH-$BUILD.tgz || exit $ERROR_MKPK
 
 # Delete source and build directories, if requested
 if [ "$CLEANUP" == "yes" ]; then
-  rm -rf $CWD/$PKG_SRC $PKG
+  rm -rf $SRC_DIR/$PKG_SRC $PKG
 fi

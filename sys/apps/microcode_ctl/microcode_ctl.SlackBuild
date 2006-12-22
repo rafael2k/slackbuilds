@@ -68,8 +68,8 @@ if [ ! -f "$SRC_DIR/$SRC" ]; then
 fi
 
 # Untar, compile and install
-tar --no-same-owner --no-same-permissions -xvf $SRC_DIR/$SRC || exit $ERROR_TAR
-cd $PKG_SRC
+tar --no-same-owner --no-same-permissions -xvf $SRC_DIR/$SRC -C $SRC_DIR || exit $ERROR_TAR
+cd $SRC_DIR/$PKG_SRC
 make all || exit $ERROR_MAKE
 if [ ! -c /dev/cpu/microcode ]; then
   make device || exit $ERROR_MAKE
@@ -171,5 +171,5 @@ makepkg -l y -c n $REPOS/$PKG_NAME-$VERSION-$ARCH-$BUILD.tgz || exit $ERROR_MKPK
 
 # Delete source and build directories, if requested
 if [ "$CLEANUP" == "yes" ]; then
-  rm -rf $CWD/$PKG_SRC $PKG
+  rm -rf $SRC_DIR/$PKG_SRC $PKG
 fi

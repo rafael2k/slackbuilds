@@ -182,5 +182,5 @@ makepkg -l y -c n $REPOS/$PKG_NAME-$VERSION-$ARCH-$BUILD.tgz || exit $ERROR_MKPK
 
 # Delete source and build directories, if requested
 if [ "$CLEANUP" == "yes" ]; then
-  rm -rf $CWD/$PKG_SRC $PKG
+  rm -rf $SRC_DIR/$PKG_SRC $PKG
 fi
