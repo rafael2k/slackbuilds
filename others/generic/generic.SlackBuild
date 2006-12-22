@@ -1,7 +1,7 @@
 ################################################
 ## Generic template for SlackBuilds
 ##
-## Version 0.2.2 - Luis
+## Version 0.2.3 - Luis
 ##
 ################################################
 #!/bin/bash
@@ -86,8 +86,8 @@ fi
 gpg --verify $SRC_DIR/$SRC.sig $SRC_DIR/$SRC || exit $ERROR_GPG
 
 # Untar, patch, configure, compile and install
-tar --no-same-owner --no-same-permissions -xvf $SRC_DIR/$SRC || exit $ERROR_TAR
-cd $PKG_SRC
+tar --no-same-owner --no-same-permissions -xvf $SRC_DIR/$SRC -C $SRC_DIR || exit $ERROR_TAR
+cd $SRC_DIR/$PKG_SRC
 patch -Np[[NUMBER OF PREFIX SLASHES TO STRIP]] < $CWD/[[PATCH FILE]]
 CFLAGS="$SLKCFLAGS" \
   CXXFLAGS="$SLKCFLAGS" \
@@ -156,5 +156,5 @@ makepkg -l y -c n $REPOS/$PKG_NAME-$VERSION-$ARCH-$BUILD.tgz || exit $ERROR_MKPK
 
 # Delete source and build directories, if requested
 if [ "$CLEANUP" == "yes" ]; then
-  rm -rf $CWD/$PKG_SRC $PKG
+  rm -rf $SRC_DIR/$PKG_SRC $PKG
 fi
