@@ -50,7 +50,6 @@ RTOOL="wget"
 PACKAGE_EXT="gz"
 SRC="$PACKAGE-$VERSION.tar.$PACKAGE_EXT"
 URL="http://cvs2svn.tigris.org/files/documents/1462/34574/$SRC"
-URL="http://cvs2svngraphics.org/releases/$SRC"
 
 SRC_DIR="$SRC_DIR/$PACKAGE"
 mkdir -p $SRC_DIR
