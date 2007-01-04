@@ -1,8 +1,19 @@
 #!/bin/bash
 #
 # slackbuild for lm_sensors
-# requires: kernel-source-2.6, kernel-headers-2.6
 #
+
+if [ -s "slack-required" ]; then
+  echo Recomended and required packages for building cairo are:
+  cat slack-required | sed -e 's/^/\t/'
+  if [ "$INTERACT" != "no" ]; then
+    echo If you dont have those installed, press Ctrl-C. Otherwise, hit ENTER.
+    read crap
+#  else
+#    echo Sleeping 3 seconds...
+#    sleep 3
+  fi
+fi
 
 CWD=`pwd`
 
@@ -21,6 +32,12 @@ BUILD=${BUILD:=3rha}
 SRC_DIR=${SRC:=$CWD}
 TMP=${TMP:=/tmp}
 REPOS=${REPOS:=$TMP}
+
+# -------  error codes for createpkg  --------------
+ERROR_WGET=31;      ERROR_MAKE=32;      ERROR_INSTALL=33
+ERROR_MD5=34;       ERROR_CONF=35;      ERROR_HELP=36
+ERROR_TAR=37;       ERROR_MKPKG=38;     ERROR_GPG=39
+ERROR_PATCH=40
 
 PACKAGE_EXT="gz"
 SRC="$PACKAGE-$VERSION.tar.$PACKAGE_EXT"
@@ -85,21 +102,15 @@ elif [ "$ARCH" = "x86_64" ]; then
   SLKCFLAGS="-O2"
 fi
 
-if [ "$PACKAGE_EXT" == "bz2" ]; then
-  tarflag="j"
-else
-  tarflag="z"
-fi
-
 SRC_DIR="$SRC_DIR/$PACKAGE"
 mkdir -p $SRC_DIR
 
 if [ "$RTOOL" == "wget" ] && [ ! -f "$SRC_DIR/$SRC" ]; then
- wget "$URL" -O "$SRC_DIR/$SRC"
- wget "$URL.asc" -O "$SRC_DIR/$SRC.asc"
+ wget "$URL" -O "$SRC_DIR/$SRC" || exit $ERROR_WGET
+ wget "$URL.asc" -O "$SRC_DIR/$SRC.asc" || exit $ERROR_WGET
 fi
 
-gpg --verify $SRC_DIR/$SRC.asc $SRC_DIR/$SRC || echo WARNING: Could not check signature or WRONG signature found.
+gpg --verify $SRC_DIR/$SRC.asc $SRC_DIR/$SRC || exit $ERROR_GPG
 
 TMP="$TMP/$PACKAGE"
 rm -rf $TMP
@@ -108,7 +119,7 @@ cd $TMP
 
 rm -rf $PACKAGE-$VERSION $PACKAGE-$VERSION-$ARCH-$BUILD.tgz
 
-tar xvf$tarflag $SRC_DIR/$PACKAGE-$VERSION.tar.$PACKAGE_EXT
+tar xvf $SRC_DIR/$PACKAGE-$VERSION.tar.$PACKAGE_EXT || exit $ERROR_TAR
 cd $PACKAGE-$VERSION
 
 sed -e 's/^I2C_HEADERS := \/usr\/local\/include/I2C_HEADERS := \/usr\/include/' \
@@ -120,8 +131,8 @@ else
   mv Makefile.new Makefile
 fi
 
-make user
-make DESTDIR=$TMP/package-$PACKAGE user_install
+make user || exit $ERROR_MAKE
+make DESTDIR=$TMP/package-$PACKAGE user_install || exit $ERROR_INSTALL
 
 CWD="`pwd`"
 
@@ -160,7 +171,7 @@ mv etc/sensors.conf etc/sensors.conf.new
 mkdir -p usr/doc/$PACKAGE-$VERSION
 cp $CWD/{BACKGROUND,BUGS,CHANGES,CONTRIBUTORS,COPYING,INSTALL,QUICKSTART,README,README.thinkpad,TODO} usr/doc/$PACKAGE-$VERSION/
 
-makepkg -c y -l y $REPOS/$PACKAGE-$VERSION-$ARCH-$BUILD.tgz
+makepkg -c y -l y $REPOS/$PACKAGE-$VERSION-$ARCH-$BUILD.tgz || exit $ERROR_MKPKG
 
 if [ "$CLEANUP" == "yes" ]; then
   rm -rf $TMP
