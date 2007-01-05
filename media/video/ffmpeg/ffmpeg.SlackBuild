@@ -65,6 +65,9 @@ cd $TMP
 
 svn checkout svn://svn.mplayerhq.hu/ffmpeg/trunk $PACKAGE
 cd $PACKAGE
+# we need that to compile 05/01/2007 ffmpeg.... 
+# may be we should remove that in any future
+svn checkout svn://svn.mplayerhq.hu/mplayer/trunk/libswscale
 
 export EXTRA_AC_FLAGS=""
 
