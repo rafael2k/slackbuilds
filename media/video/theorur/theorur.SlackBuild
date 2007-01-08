@@ -27,7 +27,7 @@ fi
 # default settings
 PACKAGE="theorur"
 ARCH=${ARCH:=i486}
-VERSION=${VERSION:=0.5.1}
+VERSION=${VERSION:=0.5.2}
 BUILD=${BUILD:=1rd}
 SRC_DIR=${SRC:=$CWD}
 TMP=${TMP:=/tmp}
