@@ -14,7 +14,7 @@ fi
 # default settings
 PRGNAM="azureus"
 PACKAGE="$PRGNAM"
-VERSION=${VERSION:=2.5.0.0}
+VERSION=${VERSION:=2.5.0.2}
 ARCH=${ARCH:=i486}
 BUILD=${BUILD:=1rha}
 TMP=${TMP:=/tmp}
