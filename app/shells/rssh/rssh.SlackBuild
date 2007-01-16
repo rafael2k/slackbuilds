@@ -135,7 +135,7 @@ EOGPG
 
 fi
 
-gpg --verify $SRC.sig $SRC || exit $ERROR_GPG
+gpg --verify $SRC_DIR/$SRC.sig $SRC_DIR/$SRC || exit $ERROR_GPG
 
 TMP="$TMP/$PACKAGE"
 rm -rf $TMP
