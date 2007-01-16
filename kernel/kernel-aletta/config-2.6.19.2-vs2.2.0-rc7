@@ -1,7 +1,7 @@
 #
 # Automatically generated make config: don't edit
-# Linux kernel version: 2.6.19.1-vs2.2.0-rc5
-# Fri Dec 15 23:40:45 2006
+# Linux kernel version: 2.6.19.2-vs2.2.0-rc7
+# Tue Jan 16 12:16:42 2007
 #
 CONFIG_X86_32=y
 CONFIG_GENERIC_TIME=y
@@ -1519,6 +1519,7 @@ CONFIG_VSERVER_LEGACY=y
 # CONFIG_VSERVER_LEGACY_VERSION is not set
 CONFIG_VSERVER_DYNAMIC_IDS=y
 CONFIG_VSERVER_LEGACYNET=y
+# CONFIG_VSERVER_REMAP_SADDR is not set
 CONFIG_VSERVER_COWBL=y
 CONFIG_VSERVER_VTIME=y
 CONFIG_VSERVER_PROC_SECURE=y
