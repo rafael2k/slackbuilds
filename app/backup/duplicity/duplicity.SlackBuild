@@ -3,6 +3,18 @@
 # SlackBuild script to call duplicity.build with correct settings
 #
 
+if [ -s "slack-required" ]; then
+  echo Recomended and required packages for building duplicity are:
+  cat slack-required | sed -e 's/^/\t/'
+  if [ "$INTERACT" != "no" ]; then
+    echo If you dont have those installed, press Ctrl-C. Otherwise, hit ENTER.
+    read crap
+#  else
+#    echo Sleeping 3 seconds...
+#    sleep 3
+  fi
+fi
+
 CWD="`pwd`"
 
 if [ -f ~/.slackbuildrc ]; then

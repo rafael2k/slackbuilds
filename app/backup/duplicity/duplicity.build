@@ -7,13 +7,6 @@
 #   ARCH=x86_64 slacktrack -jefkzp "duplicity-0.4.2-x86_64-1rha.tgz" "./duplicity.build"
 # 
 
-cat << EOCAT
-You'll need to have following package installed:
-
-  librsync
-
-EOCAT
-
 if [ "$INTERACT" != "no" ]; then
   echo "Hit ENTER do continue, Crtl-C to abort"
   read crap
@@ -40,6 +33,12 @@ ARCH=${ARCH:=i386}
 BUILD=${BUILD:=1rha}
 SRC_DIR=${SRC:=$CWD}
 
+# -------  error codes for createpkg  --------------
+ERROR_WGET=31;      ERROR_MAKE=32;      ERROR_INSTALL=33
+ERROR_MD5=34;       ERROR_CONF=35;      ERROR_HELP=36
+ERROR_TAR=37;       ERROR_MKPKG=38      ERROR_GPP=39
+ERROR_PATCH=40
+
 if [ "$ARCH" == "x86_64" ]; then
   LIBDIR=/usr/lib64
 else
@@ -58,13 +57,7 @@ if [ ! -d "$SRC_DIR" ]; then
 fi
 
 if [ "$RTOOL" == "wget" ] && [ ! -f "$SRC_DIR/$SRC" ]; then
- wget "$URL" -O "$SRC_DIR/$SRC"
-fi
-
-if [ "$PACKAGE_EXT" == "bz2" ]; then
-  tarflag="j"
-else
-  tarflag="z"
+ wget "$URL" -O "$SRC_DIR/$SRC" || exit $ERROR_WGET
 fi
 
 TMP="$TMP/$PACKAGE"
@@ -75,13 +68,13 @@ fi
 
 cd $TMP
 
-tar xvf$tarflag $SRC_DIR/$SRC
+tar xvf $SRC_DIR/$SRC || exit $ERROR_TAR
 cd $PACKAGE-$VERSION
 
 # config and install!
 mkdir -p /install
 
-python setup.py install --prefix=/usr/
+python setup.py install --prefix=/usr/ || exit $ERROR_INSTALL
 
 # make the package
 
