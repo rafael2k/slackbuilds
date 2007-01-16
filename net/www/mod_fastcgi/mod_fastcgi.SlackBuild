@@ -32,12 +32,6 @@ PACKAGE_EXT="gz"
 SRC="$PACKAGE-$VERSION.tar.$PACKAGE_EXT"
 URL="http://fastcgi.com/dist/$SRC"
 
-if [ "$PACKAGE_EXT" == "bz2" ]; then
-  tarflag="j"
-else
-  tarflag="z"
-fi
-
 SRC_DIR="$SRC_DIR/$PACKAGE"
 mkdir -p $SRC_DIR
 
@@ -45,21 +39,22 @@ if [ "$RTOOL" == "wget" ] && [ ! -f "$SRC_DIR/$SRC" ]; then
   wget "$URL" -O "$SRC_DIR/$SRC"
 fi
 
+TMP="$TMP/$PACKAGE"
+rm -rf $TMP
+mkdir -p $TMP
 cd $TMP
+
 rm -rf package-$PACKAGE
 mkdir package-$PACKAGE
 cd package-$PACKAGE
 
-tar xvf$tarflag $SRC_DIR/$SRC
+tar xvf $SRC_DIR/$SRC
 cd $PACKAGE-$VERSION
 
 apxs -o mod_fastcgi.so -c *.c
 
 CWD="`pwd`"
 
-TMP="$TMP/$PACKAGE"
-rm -rf $TMP
-mkdir -p $TMP
 cd $TMP
 
 mkdir -p usr/libexec/apache
