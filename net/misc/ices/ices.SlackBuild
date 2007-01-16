@@ -4,6 +4,18 @@
 # based on http://www.slackware.com/~alien/slackbuilds/icecast/build/ices.SlackBuild
 # 
 
+if [ -s "slack-required" ]; then
+  echo Recomended and required packages for building ices are:
+  cat slack-required | sed -e 's/^/\t/'
+  if [ "$INTERACT" != "no" ]; then
+    echo If you dont have those installed, press Ctrl-C. Otherwise, hit ENTER.
+    read crap
+#  else
+#    echo Sleeping 3 seconds...
+#    sleep 3
+  fi
+fi
+
 CWD=`pwd`
 
 if [ -f ~/.slackbuildrc ]; then
@@ -21,6 +33,12 @@ SRC_DIR=${SRC:=$CWD}
 TMP=${TMP:=/tmp}
 REPOS=${REPOS:=$TMP}
 
+# -------  error codes for createpkg  --------------
+ERROR_WGET=31;      ERROR_MAKE=32;      ERROR_INSTALL=33
+ERROR_MD5=34;       ERROR_CONF=35;      ERROR_HELP=36
+ERROR_TAR=37;       ERROR_MKPKG=38;     ERROR_GPG=39
+ERROR_PATCH=40
+
 if [ "$ARCH" == "x86_64" ]; then
   LIBDIR=/usr/lib64
 else
@@ -33,17 +51,11 @@ PACKAGE_EXT="bz2"
 SRC="$PACKAGE-$VERSION.tar.$PACKAGE_EXT"
 URL="http://downloads.us.xiph.org/releases/$PACKAGE/$SRC"
 
-if [ "$PACKAGE_EXT" == "bz2" ]; then
-  tarflag="j"
-else
-  tarflag="z"
-fi
-
 SRC_DIR="$SRC_DIR/$PACKAGE"
 mkdir -p $SRC_DIR
 
 if [ "$RTOOL" == "wget" ] && [ ! -f "$SRC_DIR/$SRC" ]; then
-  wget "$URL" -O "$SRC_DIR/$SRC"
+  wget "$URL" -O "$SRC_DIR/$SRC" || exit $ERROR_WGET
 fi
 
 TMP="$TMP/$PACKAGE"
@@ -52,23 +64,23 @@ rm -rf $TMP
 mkdir -p $PKG
 cd $TMP
 
-tar xvpf$tarflag $SRC_DIR/$SRC
+tar xvpf $SRC_DIR/$SRC || exit $ERROR_TAR
 cd $PRGNAM-$VERSION
 
 ./configure --prefix=/usr --localstatedir=/var \
             --sysconfdir=/usr/share/icecast/etc \
-            --libdir=$LIBDIR 
+            --libdir=$LIBDIR || exit $ERROR_CONF
 
-make || exit 32
+make || exit $ERROR_MAKE
 
 # Install all the needed stuff to the package dir
 # Use installwatch if available:
-which installwatch > /dev/null 2>&1
-if [ $? == 0 ]; then
-  installwatch -o $TMP/install-${PRGNAM}.log make DESTDIR=$PKG install
-else
-  make DESTDIR=$PKG install 2>&1 | tee $TMP/install-${PRGNAM}.log
-fi
+# which installwatch > /dev/null 2>&1
+# if [ $? == 0 ]; then
+#   installwatch -o $TMP/install-${PRGNAM}.log make DESTDIR=$PKG install
+# else
+make DESTDIR=$PKG install || exit $ERROR_INSTALL
+# fi
 
 # Copy the documentation
 mkdir -p $PKG/usr/doc/$PRGNAM-$VERSION
@@ -77,7 +89,7 @@ chmod -R -w $PKG/usr/doc/$PRGNAM-$VERSION
 
 # --- PACKAGE DESCRIPTION ---
 mkdir -p $PKG/install
-cat $CWD/ices.slack-desc > $PKG/install/slack-desc
+cat $CWD/slack-desc > $PKG/install/slack-desc
 
 # --- BUILDING ---
 
@@ -87,10 +99,10 @@ cd $PKG
 find . | xargs file | grep "executable" | grep ELF | cut -f 1 -d : | xargs strip --strip-unneeded 2> /dev/null
 find . | xargs file | grep "shared object" | grep ELF | cut -f 1 -d : | xargs strip --strip-unneeded 2> /dev/null
 
-makepkg --linkadd y --chown y $REPOS/$PRGNAM-$VERSION-$ARCH-$BUILD.tgz
+makepkg --linkadd y --chown y $REPOS/$PRGNAM-$VERSION-$ARCH-$BUILD.tgz || exit $ERROR_MKPKG
 
 #(cd $REPOS && md5sum $PRGNAM-$VERSION-$ARCH-$BUILD.tgz > $REPOS-$VERSION-$ARCH-$BUILD.tgz.md5)
-#cat $CWD/${PRGNAM}.slack-desc | grep "^${PRGNAM}" > $REPOS/$PRGNAM-$VERSION-$ARCH-$BUILD.txt
+#cat $CWD/slack-desc | grep "^${PRGNAM}" > $REPOS/$PRGNAM-$VERSION-$ARCH-$BUILD.txt
 
 # --- CLEANUP ---
 

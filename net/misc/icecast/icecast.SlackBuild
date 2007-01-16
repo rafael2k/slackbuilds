@@ -37,23 +37,16 @@
 # ---------------------------------------------------------------------------
 #
 
-cat << EOCAT
-Recomended and required packages for building icecast are:
-
-  libtheora
-  libogg
-  libxml2
-  speex
-  curl
-
-EOCAT
-
-if [ "$INTERACT" != "no" ]; then
-  echo If you dont have those installed, press Ctrl-C. Otherwise, hit ENTER.
-  read crap
-else
-  echo sleeping 3 seconds...
-  sleep 3
+if [ -s "slack-required" ]; then
+  echo Recomended and required packages for building icecast are:
+  cat slack-required | sed -e 's/^/\t/'
+  if [ "$INTERACT" != "no" ]; then
+    echo If you dont have those installed, press Ctrl-C. Otherwise, hit ENTER.
+    read crap
+#  else
+#    echo Sleeping 3 seconds...
+#    sleep 3
+  fi
 fi
 
 # Set initial variables:
@@ -75,13 +68,11 @@ TMP=${TMP:=/tmp}
 SRC_DIR=${SRC:=$CWD}
 REPOS=${REPOS:=$TMP}
 
-if [ -f "/etc/slackbuildrc" ]; then
-  source /etc/slackbuildrc
-fi
-
-if [ -f "/root/.slackbuildrc" ]; then
-  source /root/.slackbuildrc
-fi
+# -------  error codes for createpkg  --------------
+ERROR_WGET=31;      ERROR_MAKE=32;      ERROR_INSTALL=33
+ERROR_MD5=34;       ERROR_CONF=35;      ERROR_HELP=36
+ERROR_TAR=37;       ERROR_MKPKG=38;     ERROR_GPG=39
+ERROR_PATCH=40
 
 if [ "$ARCH" == "x86_64" ]; then
   LIBDIR=/usr/lib64
@@ -99,17 +90,8 @@ else
   URL="http://downloads.xiph.org/releases/$PACKAGE/$SRC"
 fi
 
-if [ "$PACKAGE_EXT" == "bz2" ]; then
-  tarflag="j"
-else
-  tarflag="z"
-fi
-
-SRC_DIR="$SRC_DIR/$PACKAGE"
-mkdir -p $SRC_DIR
-
 if [ "$RTOOL" == "wget" ] && [ ! -f "$SRC_DIR/$SRC" ]; then
-  wget "$URL" -O "$SRC_DIR/$SRC"
+  wget "$URL" -O "$SRC_DIR/$SRC" || exit $ERROR_WGET
 fi
 
 TMP="$TMP/$PACKAGE"
@@ -173,29 +155,28 @@ rm -rf $PKG/*
 # Explode the package framework:
 cd $PKG
 if [ -f $CWD/_$PRGNAM.tar.gz ]; then
-  explodepkg $CWD/_$PRGNAM.tar.gz
+  explodepkg $CWD/_$PRGNAM.tar.gz || exit $ERROR_TAR
 fi
 
 cd $TMP/tmp-$PRGNAM
 
 # Extract tar ball in TEMP dir
 echo Building $PRGNAM...
-tar xvf$tarflag $SRC_DIR/$PRGNAM-$VERSION.tar.gz
+tar xvf $SRC_DIR/$PRGNAM-$VERSION.tar.gz || exit $ERROR_TAR
 cd $PRGNAM-$VERSION
 ./configure --prefix=/usr --sysconfdir=/usr/share/icecast/etc \
-            --libdir=$LIBDIR --localstatedir=/var \
-            2>&1 | tee $TMP/configure-${PRGNAM}.log
+            --libdir=$LIBDIR --localstatedir=/var || exit $ERROR_CONF
 
-make 2>&1 | tee $TMP/make-${PRGNAM}.log
+make || exit $ERROR_MAKE
 
 # Install all the needed stuff to the package dir
 # Use installwatch if available:
-which installwatch > /dev/null 2>&1
-if [ $? == 0 ]; then
-  installwatch -o $TMP/install-${PRGNAM}.log make DESTDIR=$PKG install
-else
-  make DESTDIR=$PKG install 2>&1 |tee $TMP/install-${PRGNAM}.log
-fi
+# which installwatch > /dev/null 2>&1
+# if [ $? == 0 ]; then
+#   installwatch -o $TMP/install-${PRGNAM}.log make DESTDIR=$PKG install
+# else
+make DESTDIR=$PKG install || exit $ERROR_INSTALL
+# fi
 
 mkdir -p $PKG/var/log/icecast
 (cd $PKG/usr/share/icecast/etc && patch -p0 < $CWD/icecast_conf.patch)
@@ -289,7 +270,7 @@ find $PKG  -type f -name "*~" -exec rm -f {} \;
 
 # --- PACKAGE DESCRIPTION ---
 mkdir -p $PKG/install
-cat $CWD/icecast.slack-desc > $PKG/install/slack-desc
+cat $CWD/slack-desc > $PKG/install/slack-desc
 
 
 # --- BUILDING ---
@@ -302,7 +283,7 @@ find . | xargs file | grep "shared object" | grep ELF | cut -f 1 -d : | xargs st
 
 VERSION="`echo $VERSION | sed -e 's/-/_/g'`"
 
-makepkg --linkadd y --chown n $REPOS/$PRGNAM-$VERSION-$ARCH-$BUILD.tgz
+makepkg --linkadd y --chown n $REPOS/$PRGNAM-$VERSION-$ARCH-$BUILD.tgz || exit $ERROR_MKPKG
 
 #(cd $REPOS && md5sum $PRGNAM-$VERSION-$ARCH-$BUILD.tgz > $PRGNAM-$VERSION-$ARCH-$BUILD.tgz.md5)
 #cat $PKG/install/slack-desc | grep "^${PRGNAM}" > $REPOS/$PRGNAM-$VERSION-$ARCH-$BUILD.txt
