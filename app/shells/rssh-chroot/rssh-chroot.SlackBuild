@@ -3,15 +3,19 @@
 # slackbuild for rssh-chroot
 # 
 
+if [ -s "slack-required" ]; then
+  echo Recomended and required packages for building rssh-chroot are:
+  cat slack-required | sed -e 's/^/\t/'
+  if [ "$INTERACT" != "no" ]; then
+    echo If you dont have those installed, press Ctrl-C. Otherwise, hit ENTER.
+    read crap
+#  else
+#    echo Sleeping 3 seconds...
+#    sleep 3
+  fi
+fi
+
 CWD="`pwd`"
-
-cat << EOCAT
-Please consider to run this script with the following things installed:
-
-  rssh
-  libsafe
-
-EOCAT
 
 if [ "$INTERACT" != "no" ]; then
   echo "Hit ENTER do continue, Crtl-C to abort"
@@ -36,6 +40,12 @@ BUILD=${BUILD:=2rha}
 SRC_DIR=${SRC:=$CWD}
 TMP=${TMP:=/tmp}
 REPOS=${REPOS:=$TMP}
+
+# -------  error codes for createpkg  --------------
+ERROR_WGET=31;      ERROR_MAKE=32;      ERROR_INSTALL=33
+ERROR_MD5=34;       ERROR_CONF=35;      ERROR_HELP=36
+ERROR_TAR=37;       ERROR_MKPKG=38;     ERROR_GPG=39
+ERROR_PATCH=40
 
 if [ "$ARCH" == "x86_64" ]; then
   LIBDIR=/usr/lib64
@@ -119,7 +129,7 @@ EOF
 chmod 755 ./$CHROOT_BASE/{bin,etc,lib,lib/tls,usr/lib,usr/libexec,usr/bin,usr/doc,dev}
 chmod 111 ./$CHROOT_BASE/home
 
-makepkg -c n $REPOS/$PACKAGE-$VERSION-$ARCH-$BUILD.tgz
+makepkg -c n $REPOS/$PACKAGE-$VERSION-$ARCH-$BUILD.tgz || exit $ERROR_MKPKG
 
 if [ "$CLEANUP" == "yes" ]; then
   rm -rf $TMP
