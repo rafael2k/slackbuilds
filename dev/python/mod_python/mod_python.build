@@ -21,7 +21,7 @@ fi
 PACKAGE="mod_python"
 VERSION=${VERSION:=2.7.11}
 ARCH="${ARCH:=x86_64}"
-BUILD=${BUILD:=2rha}
+BUILD=${BUILD:=3rha}
 SRC_DIR=${SRC:=$CWD}
 TMP=${TMP:=/tmp}
 
@@ -50,12 +50,6 @@ if [ ! -d "$SRC_DIR" ]; then
   mkdir -p $SRC_DIR
 fi
 
-if [ "$PACKAGE_EXT" == "bz2" ]; then
-  tarflag="j"
-else
-  tarflag="z"
-fi
-
 if [ "$RTOOL" == "wget" ] && [ ! -f "$SRC_DIR/$SRC" ]; then
   wget "$URL" -O "$SRC_DIR/$SRC" || exit $ERROR_WGET
 fi
@@ -68,7 +62,7 @@ fi
 
 cd $TMP
 
-tar xvf$tarflag $SRC_DIR/$SRC
+tar xvf $SRC_DIR/$SRC || exit $ERROR_TAR
 cd $PACKAGE-$VERSION
 
 if [ -f "$CWD/$PACKAGE-$VERSION.diff" ]; then
@@ -79,7 +73,7 @@ if [ -f "$CWD/$PACKAGE-$VERSION-$ARCH.diff" ]; then
   patch -p1 < $CWD/$PACKAGE-$VERSION-$ARCH.diff || exit $ERROR_PATCH
 fi
 
-./configure
+./configure || exit $ERROR_CONF
 
 # coxa, favor corrigir!
 if [ "$ARCH" == "x86_64" ]; then
