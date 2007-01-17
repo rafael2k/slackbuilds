@@ -61,7 +61,7 @@ CWD="`pwd`"
 mkdir $TMP/package-$PACKAGE
 cd $TMP/package-$PACKAGE
 
-tar xvf $CWD/data.tar || exit $ERROR_TAR
+tar xvf $CWD/data.tar.gz || exit $ERROR_TAR
 cd $TMP/package-$PACKAGE
 
 mkdir install
