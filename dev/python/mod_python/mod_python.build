@@ -78,7 +78,8 @@ fi
 # coxa, favor corrigir!
 if [ "$ARCH" == "x86_64" ]; then
   sed -e 's/^OPT=$/OPT=-fPIC -DEAPI/' src/Makefile > src/Makefile.new
-  mv src/Makefile.new src/Makefile
+  sed -e 's/^PY_STD_LIB=\/usr\/lib/PY_STD_LIB=\/usr\/lib64/' src/Makefile.new > src/Makefile
+  # mv src/Makefile.new src/Makefile
 else
   sed -e 's/^OPT=$/OPT=-DEAPI/' src/Makefile > src/Makefile.new
   mv src/Makefile.new src/Makefile
