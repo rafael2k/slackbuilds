@@ -1,6 +1,66 @@
+diff -Naur backupninja-0.9.4.orig/handlers/mysql backupninja-0.9.4/handlers/mysql
+--- backupninja-0.9.4.orig/handlers/mysql	2006-10-07 01:45:20.000000000 -0300
++++ backupninja-0.9.4/handlers/mysql	2007-01-18 14:00:38.000000000 -0200
+@@ -90,8 +90,7 @@
+ then
+     if [ $usevserver = yes ]
+     then
+-    	vhome=`$VSERVER $vsname exec getent passwd "root" | awk -F: '{print $6}'`
+-	home="$vroot$vhome"
++    	home=`$VSERVER $vsname exec getent passwd "root" | awk -F: '{print $6}'`
+     else
+     	home=`getent passwd "root" | awk -F: '{print $6}'`
+     fi
+@@ -99,18 +98,25 @@
+     [ -d $home ] || fatal "Can't find root's home directory ($home)."
+     
+     mycnf="$home/.my.cnf"
+-    
+-    if [ -f $mycnf ]
++
++    if [ $usevserver = yes ]
++    then
++      workcnf="$vroot$mycnf"
++    else
++      workcnf="$mycnf"
++    fi
++
++    if [ -f $workcnf ]
+     then
+-	# rename temporarily
+-	tmpcnf="$home/my.cnf.disable"
+-	debug "mv $mycnf $tmpcnf"
+-	mv $mycnf $tmpcnf
++	    # rename temporarily
++	    tmpcnf="$workcnf.disable"
++      debug "mv $workcnf $tmpcnf"
++	    mv $workcnf $tmpcnf
+     fi
+     
+     oldmask=`umask`
+     umask 077
+-    cat > $mycnf <<EOF
++    cat > $workcnf <<EOF
+ # auto generated backupninja mysql conf
+ [mysql]
+ host=$dbhost
+@@ -128,12 +134,7 @@
+ password="$dbpassword"
+ EOF
+ 	umask $oldmask
+-	if [ $usevserver = yes ] 
+-	then
+-	    defaultsfile="--defaults-extra-file=$vhome/.my.cnf"
+-	else
+-	    defaultsfile="--defaults-extra-file=$mycnf"
+-	fi
++	defaultsfile="--defaults-extra-file=$mycnf"
+ fi
+ 
+ # if a user is not set, use $configfile, otherwise use $mycnf
 diff -Naur backupninja-0.9.4.orig/handlers/pgsql backupninja-0.9.4/handlers/pgsql
 --- backupninja-0.9.4.orig/handlers/pgsql	2006-10-07 01:45:20.000000000 -0300
-+++ backupninja-0.9.4/handlers/pgsql	2006-11-02 17:43:13.000000000 -0200
++++ backupninja-0.9.4/handlers/pgsql	2007-01-18 13:41:41.000000000 -0200
 @@ -64,10 +64,10 @@
  if [ $usevserver = yes ]; then
     pguid=`$VSERVER $vsname exec getent passwd $PGSQLUSER | awk -F: '{print $3}'`
@@ -56,7 +116,7 @@ diff -Naur backupninja-0.9.4.orig/handlers/pgsql backupninja-0.9.4/handlers/pgsq
  	debug "$execstr"
 diff -Naur backupninja-0.9.4.orig/src/backupninja.in backupninja-0.9.4/src/backupninja.in
 --- backupninja-0.9.4.orig/src/backupninja.in	2006-10-07 01:45:20.000000000 -0300
-+++ backupninja-0.9.4/src/backupninja.in	2006-11-02 17:45:38.000000000 -0200
++++ backupninja-0.9.4/src/backupninja.in	2007-01-18 13:41:41.000000000 -0200
 @@ -442,6 +442,7 @@
  getconf MYSQLDUMP /usr/bin/mysqldump
  getconf PGSQLDUMP /usr/bin/pg_dump
