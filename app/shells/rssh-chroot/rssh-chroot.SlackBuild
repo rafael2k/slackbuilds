@@ -36,7 +36,7 @@ PRGNAM="rssh-chroot"
 PACKAGE="$PRGNAM"
 ARCH=${ARCH:=i486}
 VERSION=${VERSION:=2.3.2}
-BUILD=${BUILD:=3rha}
+BUILD=${BUILD:=4rha}
 SRC_DIR=${SRC:=$CWD}
 TMP=${TMP:=/tmp}
 REPOS=${REPOS:=$TMP}
@@ -127,6 +127,9 @@ EOF
 
 chmod 755 ./$CHROOT_BASE/{bin,etc,lib,lib/tls,usr/lib,usr/libexec,usr/bin,usr/doc,dev}
 chmod 111 ./$CHROOT_BASE/home
+
+# install script
+echo '( echo please check if /var/users/dev/null was correctly created )' > install/doinst.sh
 
 makepkg -c n $REPOS/$PACKAGE-$VERSION-$ARCH-$BUILD.tgz || exit $ERROR_MKPKG
 
