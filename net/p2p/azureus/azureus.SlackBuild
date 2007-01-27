@@ -1,6 +1,7 @@
 #!/bin/bash
 #
 # slackbuild for azureus
+# by rhatto at riseup.net
 # 
 
 CWD="`pwd`"
@@ -16,7 +17,7 @@ PRGNAM="azureus"
 PACKAGE="$PRGNAM"
 VERSION=${VERSION:=2.5.0.4}
 ARCH=${ARCH:=i486}
-BUILD=${BUILD:=1rha}
+BUILD=${BUILD:=2rha}
 TMP=${TMP:=/tmp}
 SRC_DIR=${SRC:=$CWD}
 TMP=${TMP:=/tmp}
@@ -28,6 +29,12 @@ else
   LIBDIR=/usr/lib
 fi
 
+# -------  error codes for createpkg  --------------
+ERROR_WGET=31;      ERROR_MAKE=32;      ERROR_INSTALL=33
+ERROR_MD5=34;       ERROR_CONF=35;      ERROR_HELP=36
+ERROR_TAR=37;       ERROR_MKPKG=38;     ERROR_GPG=39
+ERROR_PATCH=40
+
 PACKAGE_EXT="bz2"
 SRC="Azureus_$VERSION"_"linux-$ARCH.tar.$PACKAGE_EXT"
 URL="http://easynews.dl.sourceforge.net/sourceforge/$PACKAGE/$SRC"
@@ -36,14 +43,8 @@ RTOOL="wget"
 SRC_DIR="$SRC_DIR/$PACKAGE"
 mkdir -p $SRC_DIR
 
-if [ "$PACKAGE_EXT" == "bz2" ]; then
-  tarflag="j"
-else
-  tarflag="z"
-fi
-
 if [ "$RTOOL" == "wget" ] && [ ! -f "$SRC_DIR/$SRC" ]; then
- wget "$URL" -O "$SRC_DIR/$SRC"
+ wget "$URL" -O "$SRC_DIR/$SRC" || exit $ERROR_WGET
 fi
 
 TMP="$TMP/$PACKAGE"
@@ -59,12 +60,15 @@ cd $TMP/package-$PACKAGE
 mkdir -p usr/local
 cd usr/local
 
-tar xvf$tarflag $SRC_DIR/$SRC
+tar xvf $SRC_DIR/$SRC || exit $ERORR_TAR
 cd $TMP/package-$PACKAGE
 
 if [ "$VERSION" == "2.4.0.2" ]; then
   rm usr/local/azureus/plugins/azplugins/*
   wget "http://azureus.sourceforge.net/plugins/azplugins_2.0.jar" -O "usr/local/azureus/plugins/azplugins/azplugins_2.0.jar"
+elif [ "$VERSION" == "2.5.0.4" ]; then
+  rm usr/local/azureus/plugins/azplugins/*
+  wget "http://azureus.sourceforge.net/plugins/azplugins_2.1.4.jar" -O "usr/local/azureus/plugins/azplugins/azplugins_2.1.4.jar"
 fi
 
 cat << EOF > install/slack-desc
@@ -89,7 +93,7 @@ azureus:
 azureus: 
 EOF
 
-makepkg -c y $REPOS/$PACKAGE-$VERSION-$ARCH-$BUILD.tgz
+makepkg -c y $REPOS/$PACKAGE-$VERSION-$ARCH-$BUILD.tgz || exit $ERROR_MKPKG
 
 if [ "$CLEANUP" == "yes" ]; then
   rm -rf $TMP
