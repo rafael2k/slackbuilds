@@ -116,7 +116,7 @@ CFLAGS="$SLKCFLAGS" \
   --prefix="$PREFIX" --libdir="$LIBDIR" || exit $ERROR_CONF
 make || exit $ERROR_MAKE
 make test
-make install DESTDIR=$PKG || exit $ERROR_INSTALL
+make install DESTDIR="$PKG" || exit $ERROR_INSTALL
 
 # Strip binaries
 ( cd "$PKG"

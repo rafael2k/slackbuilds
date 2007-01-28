@@ -77,7 +77,7 @@ CFLAGS="$SLKCFLAGS" \
   ./configure \
   --prefix="$PREFIX" --libdir="$LIBDIR" --enable-release || exit $ERROR_CONF
 make || exit $ERROR_MAKE
-make install prefix=$PKG/$PREFIX || exit $ERROR_INSTALL
+make install prefix="$PKG/$PREFIX" || exit $ERROR_INSTALL
 
 # Fix permissions
 find "$PKG" -type f -exec chmod a-x {} \;

@@ -100,7 +100,7 @@ CFLAGS="$SLKCFLAGS" \
   --infodir="$PREFIX/info" --mandir="$PREFIX/man" \
   --enable-m-guard --enable-noexecstack || exit $ERROR_CONF
 make || exit $ERROR_MAKE
-make install DESTDIR=$PKG || exit $ERROR_INSTALL
+make install DESTDIR="$PKG" || exit $ERROR_INSTALL
 
 # Strip binaries
 ( cd "$PKG"

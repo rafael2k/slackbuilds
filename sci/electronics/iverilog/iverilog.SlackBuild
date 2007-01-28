@@ -75,7 +75,7 @@ CFLAGS="$SLKCFLAGS" \
   ./configure \
   --prefix="$PREFIX" --libdir="$LIBDIR" || exit $ERROR_CONF
 make || exit $ERROR_MAKE
-make install prefix=$PKG/$PREFIX || exit $ERROR_INSTALL
+make install prefix="$PKG/$PREFIX" || exit $ERROR_INSTALL
 
 # Strip binaries
 ( cd "$PKG"
