@@ -26,10 +26,10 @@ TMP=${TMP:=/tmp}
 PKG=${PKG:=$TMP/package-$PKG_NAME}
 REPOS=${REPOS:=$TMP}
 PREFIX=${PREFIX:=/usr}
-PKG_SRC=$SRC_DIR/$SRC_NAME-$VERSION
+PKG_SRC="$SRC_DIR/$SRC_NAME-$VERSION"
 
 # Set system libraries' path and optmization flags based on $ARCH
-LIBDIR=$PREFIX/lib
+LIBDIR="$PREFIX/lib"
 
 if [ "$ARCH" = "i386" ]; then
   SLKCFLAGS="-O2 -march=i386 -mcpu=i686"
@@ -51,13 +51,13 @@ ERROR_TAR=37;       ERROR_MKPKG=38;     ERROR_GPG=39
 ERROR_PATCH=40;     ERROR_VCS=41;       ERROR_MKDIR=42
 
 # Clean up any leftovers of previous builds
-rm -rf $PKG_SRC 2> /dev/null
-rm -rf $PKG 2> /dev/null
+rm -rf "$PKG_SRC" 2> /dev/null
+rm -rf "$PKG" 2> /dev/null
 
 # Create directories, if necessary
-mkdir -p $SRC_DIR || exit $ERROR_MKDIR
-mkdir -p $PKG || exit $ERROR_MKDIR
-mkdir -p $REPOS || exit $ERROR_MKDIR
+mkdir -p "$SRC_DIR" || exit $ERROR_MKDIR
+mkdir -p "$PKG" || exit $ERROR_MKDIR
+mkdir -p "$REPOS" || exit $ERROR_MKDIR
 
 # Import (minimized) signing key from
 # http://www.gnupg.org/(en)/signature_key.html
@@ -77,7 +77,7 @@ z05PRKjChvxrWzhe/Yn6BAmPF+6YxQo2W98rzq0THS5wKJjXmHw=
 EOKEY
 
 # Dowload source and its signature, if necessary
-SRC="$PKG_SRC.tar.bz2"
+SRC="$SRC_NAME-$VERSION.tar.bz2"
 URL="ftp://ftp.gnupg.org/gcrypt/gnupg/$SRC"
 
 if [ ! -f "$SRC_DIR/$SRC" ]; then
@@ -88,24 +88,24 @@ if [ ! -f "$SRC_DIR/$SRC.sig" ]; then
 fi
 
 # Check source's signature
-gpg --verify $SRC_DIR/$SRC.sig $SRC_DIR/$SRC || exit $ERROR_GPG
+gpg --verify "$SRC_DIR/$SRC.sig" "$SRC_DIR/$SRC" || exit $ERROR_GPG
 
 # Untar, patch, configure, compile and install
-tar --no-same-owner --no-same-permissions -xvf $SRC_DIR/$SRC -C $SRC_DIR || exit $ERROR_TAR
-cd $SRC_DIR/$PKG_SRC/g10
-patch -Np0 < $CWD/filter-context-20-small.diff || exit $ERROR_PATCH
-cd ..
+tar --no-same-owner --no-same-permissions -xvf "$SRC_DIR/$SRC" -C "$SRC_DIR" || exit $ERROR_TAR
+cd "$PKG_SRC/g10"
+patch -Np0 < "$CWD/filter-context-20-small.diff" || exit $ERROR_PATCH
+cd "$PKG_SRC"
 CFLAGS="$SLKCFLAGS" \
   CXXFLAGS="$SLKCFLAGS" \
   ./configure \
-  --prefix=$PREFIX --libdir=$LIBDIR \
-  --infodir=$PREFIX/info --mandir=$PREFIX/man \
+  --prefix="$PREFIX" --libdir="$LIBDIR" \
+  --infodir="$PREFIX/info" --mandir="$PREFIX/man" \
   --enable-static-rnd=linux --enable-noexecstack || exit $ERROR_CONF
 make || exit $ERROR_MAKE
 make install DESTDIR=$PKG || exit $ERROR_INSTALL
 
 # Strip binaries
-( cd $PKG
+( cd "$PKG"
   find . | xargs file | grep "executable" | grep ELF | cut -f 1 -d : | \
     xargs strip --strip-unneeded 2> /dev/null
   find . | xargs file | grep "shared object" | grep ELF | cut -f 1 -d : | \
@@ -113,14 +113,14 @@ make install DESTDIR=$PKG || exit $ERROR_INSTALL
 )
 
 # Avoid overwriting share/gnupg/ files, from the original gnupg package
-mv -f $PKG/$PREFIX/share/gnupg $PKG/$PREFIX/share/gnupg2
+mv -f "$PKG/$PREFIX/share/gnupg" "$PKG/$PREFIX/share/gnupg2"
 
 # Install gpg2, gpgv2, gpg-agent, and gpgsm already suid root
-chmod 4755 $PKG/$PREFIX/bin/{gpg2,gpgv2,gpg-agent,gpgsm}
+chmod 4755 "$PKG/$PREFIX/bin/{gpg2,gpgv2,gpg-agent,gpgsm}"
 
-# Compress and link manpages, if any
-if [ -d $PKG/$PREFIX/man ]; then
-  ( cd $PKG/$PREFIX/man
+# Compress and link manpages
+if [ -d "$PKG/$PREFIX/man" ]; then
+  ( cd "$PKG/$PREFIX/man"
     for manpagedir in $(find . -type d -name "man*") ; do
       ( cd $manpagedir
         for eachpage in $( find . -type l -maxdepth 1) ; do
@@ -133,9 +133,9 @@ if [ -d $PKG/$PREFIX/man ]; then
   )
 fi
 
-# Compress info files, if any
-if [ -d $PKG/$PREFIX/info ]; then
-  ( cd $PKG/$PREFIX/info
+# Compress info files
+if [ -d "$PKG/$PREFIX/info" ]; then
+  ( cd "$PKG/$PREFIX/info"
     rm -f dir
     gzip -9 *
   )
@@ -145,16 +145,16 @@ fi
 DOCS="ABOUT-NLS AUTHORS COPYING ChangeLog INSTALL NEWS README* THANKS TODO \
      VERSION doc/DETAILS doc/HACKING doc/KEYSERVER doc/OpenPGP doc/TRANSLATE \
      doc/examples doc/*.png"
-mkdir -p $PKG/$PREFIX/doc/$PKG_NAME-$VERSION || exit $ERROR_MKDIR
-cp -a $DOCS $PKG/$PREFIX/doc/$PKG_NAME-$VERSION
-( cd $PKG/$PREFIX/doc/$PKG_NAME-$VERSION
-  ln -sf $PREFIX/share/$PKG_NAME/FAQ .
-  ln -sf $PREFIX/share/$PKG_NAME/faq.html .
+mkdir -p "$PKG/$PREFIX/doc/$PKG_NAME-$VERSION" || exit $ERROR_MKDIR
+cp -a $DOCS "$PKG/$PREFIX/doc/$PKG_NAME-$VERSION"
+( cd "$PKG/$PREFIX/doc/$PKG_NAME-$VERSION"
+  ln -sf "$PREFIX/share/$PKG_NAME/FAQ" .
+  ln -sf "$PREFIX/share/$PKG_NAME/faq.html" .
 )
 
 # Add package description (slack-desc)
-mkdir -p $PKG/install || exit $ERROR_MKDIR
-cat << EODESC > $PKG/install/slack-desc
+mkdir -p "$PKG/install" || exit $ERROR_MKDIR
+cat << EODESC > "$PKG/install/slack-desc"
 # HOW TO EDIT THIS FILE:
 # The "handy ruler" below makes it easier to edit a package description.  Line
 # up the first '|' above the ':' following the base package name, and the '|'
@@ -177,10 +177,10 @@ gnupg2:
 EODESC
 
 # Build the package
-cd $PKG
-makepkg -l y -c n $REPOS/$PKG_NAME-$VERSION-$ARCH-$BUILD.tgz || exit $ERROR_MKPKG
+cd "$PKG"
+makepkg -l y -c n "$REPOS/$PKG_NAME-$VERSION-$ARCH-$BUILD.tgz" || exit $ERROR_MKPKG
 
 # Delete source and build directories, if requested
 if [ "$CLEANUP" == "yes" ]; then
-  rm -rf $SRC_DIR/$PKG_SRC $PKG
+  rm -rf "$PKG_SRC" "$PKG"
 fi

@@ -19,17 +19,18 @@ fi
 SRC_NAME="ivi"
 PKG_NAME="ivi"
 ARCH=${ARCH:=i486}
-VERSION=${VERSION:=0.4_20031121}
+SRC_VERSION="0.4-pre-20031121"
+PKG_VERSION="0.4_20031121"
 BUILD=${BUILD:=1ls}
 SRC_DIR=${SRC_DIR:=$CWD}
 TMP=${TMP:=/tmp}
 PKG=${PKG:=$TMP/package-$PKG_NAME}
 REPOS=${REPOS:=$TMP}
 PREFIX=${PREFIX:=/usr}
-PKG_SRC=$SRC_NAME-0.4-pre-20031121
+PKG_SRC="$SRC_DIR/$SRC_NAME-$SRC_VERSION"
 
 # Set system libraries' path and optmization flags based on $ARCH
-LIBDIR=$PREFIX/lib
+LIBDIR="$PREFIX/lib"
 
 if [ "$ARCH" = "i386" ]; then
   SLKCFLAGS="-O2 -march=i386 -mcpu=i686"
@@ -51,16 +52,16 @@ ERROR_TAR=37;       ERROR_MKPKG=38;     ERROR_GPG=39
 ERROR_PATCH=40;     ERROR_VCS=41;       ERROR_MKDIR=42
 
 # Clean up any leftovers of previous builds
-rm -rf $PKG_SRC 2> /dev/null
-rm -rf $PKG 2> /dev/null
+rm -rf "$PKG_SRC" 2> /dev/null
+rm -rf "$PKG" 2> /dev/null
 
 # Create directories, if necessary
-mkdir -p $SRC_DIR || exit $ERROR_MKDIR
-mkdir -p $PKG || exit $ERROR_MKDIR
-mkdir -p $REPOS || exit $ERROR_MKDIR
+mkdir -p "$SRC_DIR" || exit $ERROR_MKDIR
+mkdir -p "$PKG" || exit $ERROR_MKDIR
+mkdir -p "$REPOS" || exit $ERROR_MKDIR
 
 # Dowload source, if necessary
-SRC="$PKG_SRC.tar.gz"
+SRC="$SRC_NAME-0.4-pre-20031121.tar.gz"
 URL="http://downloads.sourceforge.net/ivi/$SRC"
 
 if [ ! -f "$SRC_DIR/$SRC" ]; then
@@ -68,62 +69,39 @@ if [ ! -f "$SRC_DIR/$SRC" ]; then
 fi
 
 # Untar, patch, configure, compile and install
-tar --no-same-owner --no-same-permissions -xvf $SRC_DIR/$SRC -C $SRC_DIR || exit $ERROR_TAR
-cd $SRC_DIR/$PKG_SRC
-patch -Np1 < $CWD/ivi-0.4-pre-20031121-gcc3.4.patch || exit $ERROR_PATCH
+tar --no-same-owner --no-same-permissions -xvf "$SRC_DIR/$SRC" -C "$SRC_DIR" || exit $ERROR_TAR
+cd "$PKG_SRC"
+patch -Np1 < "$CWD/ivi-0.4-pre-20031121-gcc3.4.patch" || exit $ERROR_PATCH
 CFLAGS="$SLKCFLAGS" \
   CXXFLAGS="$SLKCFLAGS" \
   ./configure \
-  --prefix=$PREFIX --libdir=$LIBDIR --enable-release || exit $ERROR_CONF
+  --prefix="$PREFIX" --libdir="$LIBDIR" --enable-release || exit $ERROR_CONF
 make || exit $ERROR_MAKE
 make install prefix=$PKG/$PREFIX || exit $ERROR_INSTALL
 
 # Fix permissions
-find $PKG -type f -exec chmod a-x {} \;
-chmod a+x $PKG/$PREFIX/bin/ivi
-find $PKG/$PREFIX/modules -name "*.vpi" -exec chmod a+x {} \;
+find "$PKG" -type f -exec chmod a-x {} \;
+chmod a+x "$PKG/$PREFIX/bin/ivi"
+find "$PKG/$PREFIX/modules" -name "*.vpi" -exec chmod a+x {} \;
 
 # Strip binaries
-( cd $PKG
+( cd "$PKG"
   find . | xargs file | grep "executable" | grep ELF | cut -f 1 -d : | \
     xargs strip --strip-unneeded 2> /dev/null
   find . | xargs file | grep "shared object" | grep ELF | cut -f 1 -d : | \
     xargs strip --strip-unneeded 2> /dev/null
 )
 
-# Compress and link manpages, if any
-if [ -d $PKG/$PREFIX/man ]; then
-  ( cd $PKG/$PREFIX/man
-    for manpagedir in $(find . -type d -name "man*") ; do
-      ( cd $manpagedir
-        for eachpage in $( find . -type l -maxdepth 1) ; do
-          ln -s $( readlink $eachpage ).gz $eachpage.gz
-          rm $eachpage
-        done
-        gzip -9 *.?
-      )
-    done
-  )
-fi
-
-# Compress info files, if any
-if [ -d $PKG/$PREFIX/info ]; then
-  ( cd $PKG/$PREFIX/info
-    rm -f dir
-    gzip -9 *
-  )
-fi
-
 # Install documentation and examples
 DOCS="LIMITATIONS README *.txt"
-mkdir -p $PKG/$PREFIX/doc/$PKG_NAME-$VERSION || exit $ERROR_MKDIR
-cp -a $DOCS $PKG/$PREFIX/doc/$PKG_NAME-$VERSION
-mv $PKG/$PREFIX/{examples,doc/getting_started,doc/ivi_commands} \
-  $PKG/$PREFIX/doc/$PKG_NAME-$VERSION
+mkdir -p "$PKG/$PREFIX/doc/$PKG_NAME-$PKG_VERSION" || exit $ERROR_MKDIR
+cp -a $DOCS "$PKG/$PREFIX/doc/$PKG_NAME-$PKG_VERSION"
+mv "$PKG/$PREFIX/{examples,doc/getting_started,doc/ivi_commands}" \
+  "$PKG/$PREFIX/doc/$PKG_NAME-$PKG_VERSION"
 
 # Add package description (slack-desc)
-mkdir -p $PKG/install || exit $ERROR_MKDIR
-cat << EODESC > $PKG/install/slack-desc
+mkdir -p "$PKG/install" || exit $ERROR_MKDIR
+cat << EODESC > "$PKG/install/slack-desc"
 # HOW TO EDIT THIS FILE:
 # The "handy ruler" below makes it easier to edit a package description.  Line
 # up the first '|' above the ':' following the base package name, and the '|'
@@ -146,10 +124,10 @@ ivi:
 EODESC
 
 # Build the package
-cd $PKG
-makepkg -l y -c n $REPOS/$PKG_NAME-$VERSION-$ARCH-$BUILD.tgz || exit $ERROR_MKPKG
+cd "$PKG"
+makepkg -l y -c n "$REPOS/$PKG_NAME-$PKG_VERSION-$ARCH-$BUILD.tgz" || exit $ERROR_MKPKG
 
 # Delete source and build directories, if requested
 if [ "$CLEANUP" == "yes" ]; then
-  rm -rf $SRC_DIR/$PKG_SRC $PKG
+  rm -rf "$PKG_SRC" "$PKG"
 fi
