@@ -69,20 +69,34 @@ if [ ! -f "$SRC_DIR/$SRC" ]; then
 fi
 
 # Untar, patch, configure, compile and install
-tar --no-same-owner --no-same-permissions -xvf "$SRC_DIR/$SRC" -C "$SRC_DIR" || exit $ERROR_TAR
+cd "$SRC_DIR"
+tar --no-same-owner --no-same-permissions -xvf "$SRC_DIR/$SRC" || exit $ERROR_TAR
 cd "$PKG_SRC"
 patch -Np1 < "$CWD/ivi-0.4-pre-20031121-gcc3.4.patch" || exit $ERROR_PATCH
 CFLAGS="$SLKCFLAGS" \
   CXXFLAGS="$SLKCFLAGS" \
-  ./configure \
-  --prefix="$PREFIX" --libdir="$LIBDIR" --enable-release || exit $ERROR_CONF
+  ./configure --enable-release || exit $ERROR_CONF
 make || exit $ERROR_MAKE
-make install prefix="$PKG/$PREFIX" || exit $ERROR_INSTALL
+make install prefix="$PKG/$PREFIX/share/ivi" || exit $ERROR_INSTALL
+
+# Don't overwrite files under $PKG/$PREFIX/share/ivi/etc
+( cd "$PKG/$PREFIX/share/ivi/etc"
+  mv -f system.conf system.conf.new
+  mv -f site.conf site.conf.new
+  mv -f ivi.conf.rct ivi.conf.rct.new
+)
+
+# Install /usr/bin wrapper (taken from Debian's package)
+mkdir -p "$PKG/$PREFIX/bin" || exit $ERROR_MKDIR
+cat << EOSCRIPT > "$PKG/$PREFIX/bin/ivi"
+#!/bin/sh
+exec /usr/share/ivi/bin/ivi "\$@"
+EOSCRIPT
 
 # Fix permissions
-find "$PKG" -type f -exec chmod a-x {} \;
-chmod a+x "$PKG/$PREFIX/bin/ivi"
-find "$PKG/$PREFIX/modules" -name "*.vpi" -exec chmod a+x {} \;
+find "$PKG" -type f -exec chmod 644 {} \;
+chmod 755 "$PKG/$PREFIX/share/ivi/bin/ivi" "$PKG/$PREFIX/bin/ivi"
+find "$PKG/$PREFIX/share/ivi/modules" -name "*.vpi" -exec chmod 755 {} \;
 
 # Strip binaries
 ( cd "$PKG"
@@ -94,9 +108,10 @@ find "$PKG/$PREFIX/modules" -name "*.vpi" -exec chmod a+x {} \;
 
 # Install documentation and examples
 DOCS="LIMITATIONS README *.txt"
+mv -f "$PKG/$PREFIX/share/ivi/doc" "$PKG/$PREFIX/doc"
 mkdir -p "$PKG/$PREFIX/doc/$PKG_NAME-$PKG_VERSION" || exit $ERROR_MKDIR
 cp -a $DOCS "$PKG/$PREFIX/doc/$PKG_NAME-$PKG_VERSION"
-mv "$PKG/$PREFIX/{examples,doc/getting_started,doc/ivi_commands}" \
+mv "$PKG/$PREFIX/doc/"{getting_started,ivi_commands} \
   "$PKG/$PREFIX/doc/$PKG_NAME-$PKG_VERSION"
 
 # Add package description (slack-desc)
@@ -122,6 +137,26 @@ ivi:
 ivi:
 ivi:
 EODESC
+
+# Add a post-installation script (doinst.sh)
+cat << EOSCRIPT > "$PKG/install/doinst.sh"
+config() {
+  NEW="\$1"
+  OLD="\$(dirname \$NEW)/\$(basename \$NEW .new)"
+  # If there's no config file by that name, mv it over:
+  if [ ! -r \$OLD ]; then
+    mv \$NEW \$OLD
+  elif [ "\$(cat \$OLD | md5sum)" = "\$(cat \$NEW | md5sum)" ]; then
+    # toss the redundant copy
+    rm \$NEW
+  fi
+  # Otherwise, we leave the .new copy for the admin to consider...
+}
+
+config usr/share/ivi/etc/system.conf.new
+config usr/share/ivi/etc/site.conf.new
+config usr/share/ivi/etc/ivi.conf.rct.new
+EOSCRIPT
 
 # Build the package
 cd "$PKG"

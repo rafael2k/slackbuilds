@@ -91,13 +91,14 @@ fi
 gpg --verify "$SRC_DIR/$SRC.sig" "$SRC_DIR/$SRC" || exit $ERROR_GPG
 
 # Untar, configure, compile and install
-tar --no-same-owner --no-same-permissions -xvf "$SRC_DIR/$SRC" -C "$SRC_DIR" || exit $ERROR_TAR
+cd "$SRC_DIR"
+tar --no-same-owner --no-same-permissions -xvf "$SRC_DIR/$SRC" || exit $ERROR_TAR
 cd "$PKG_SRC"
 CFLAGS="$SLKCFLAGS" \
   CXXFLAGS="$SLKCFLAGS" \
   ./configure \
   --prefix="$PREFIX" --libdir="$LIBDIR" \
-  --infodir="$PREFIX/info" --mandir="$PREFIX/man" || exit $ERROR_CONF
+  --infodir="$PREFIX/info" || exit $ERROR_CONF
 make || exit $ERROR_MAKE
 make install DESTDIR="$PKG" || exit $ERROR_INSTALL
 

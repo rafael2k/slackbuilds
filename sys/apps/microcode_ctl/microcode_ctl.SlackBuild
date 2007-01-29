@@ -19,7 +19,7 @@ fi
 SRC_NAME="microcode_ctl"
 PKG_NAME="microcode_ctl"
 ARCH=${ARCH:=i486}
-VERSION=${VERSION:=1.14}
+VERSION=${VERSION:=1.16}
 BUILD=${BUILD:=1ls}
 SRC_DIR=${SRC_DIR:=$CWD}
 TMP=${TMP:=/tmp}
@@ -68,7 +68,8 @@ if [ ! -f "$SRC_DIR/$SRC" ]; then
 fi
 
 # Untar, compile and install
-tar --no-same-owner --no-same-permissions -xvf "$SRC_DIR/$SRC" -C "$SRC_DIR" || exit $ERROR_TAR
+cd "$SRC_DIR"
+tar --no-same-owner --no-same-permissions -xvf "$SRC_DIR/$SRC" || exit $ERROR_TAR
 cd "$PKG_SRC"
 make all || exit $ERROR_MAKE
 if [ ! -c /dev/cpu/microcode ]; then
