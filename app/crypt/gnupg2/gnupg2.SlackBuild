@@ -19,7 +19,7 @@ fi
 SRC_NAME="gnupg"
 PKG_NAME="gnupg2"
 ARCH=${ARCH:=i486}
-VERSION=${VERSION:=2.0.1}
+VERSION=${VERSION:=2.0.2}
 BUILD=${BUILD:=1ls}
 SRC_DIR=${SRC_DIR:=$CWD}
 TMP=${TMP:=/tmp}
@@ -93,8 +93,6 @@ gpg --verify "$SRC_DIR/$SRC.sig" "$SRC_DIR/$SRC" || exit $ERROR_GPG
 # Untar, patch, configure, compile and install
 cd "$SRC_DIR"
 tar --no-same-owner --no-same-permissions -xvf "$SRC_DIR/$SRC" || exit $ERROR_TAR
-cd "$PKG_SRC/g10"
-patch -Np0 < "$CWD/filter-context-20-small.diff" || exit $ERROR_PATCH
 cd "$PKG_SRC"
 CFLAGS="$SLKCFLAGS" \
   CXXFLAGS="$SLKCFLAGS" \

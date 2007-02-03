@@ -19,7 +19,7 @@ fi
 SRC_NAME="libgcrypt"
 PKG_NAME="libgcrypt"
 ARCH=${ARCH:=i486}
-VERSION=${VERSION:=1.2.3}
+VERSION=${VERSION:=1.2.4}
 BUILD=${BUILD:=1ls}
 SRC_DIR=${SRC_DIR:=$CWD}
 TMP=${TMP:=/tmp}
