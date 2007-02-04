@@ -1,7 +1,7 @@
 ###################################################
 ## Generic template for SlackBuilds
 ##
-## Version 0.3.2 - Luis ( luis at riseup d0t net)
+## Version 0.3.3 - Luis ( luis at riseup d0t net)
 ##
 ###################################################
 #!/bin/bash
@@ -9,7 +9,7 @@
 # SlackBuild for [[PROGRAM NAME]]
 # [[PROGRAM URL]]
 #
-# Author: [[AUTHOR]]
+# Author: [[SLACKBUILD AUTHOR]]
 #
 
 CWD=`pwd`
@@ -26,7 +26,7 @@ SRC_NAME="[[SOURCE NAME]]"
 PKG_NAME="[[PACKAGE NAME]]"
 ARCH=${ARCH:=i486}
 VERSION=${VERSION:=[[VERSION]]}
-BUILD=${BUILD:=1[[AUTHOR INITIALS]]}
+BUILD=${BUILD:=1[[SLACKBUILD AUTHOR INITIALS]]}
 SRC_DIR=${SRC_DIR:=$CWD}
 TMP=${TMP:=/tmp}
 PKG=${PKG:=$TMP/package-$PKG_NAME}
@@ -75,7 +75,7 @@ EOKEY
 SRC="$SRC_NAME-$VERSION.tar.[[SOURCE EXTENSION]]"
 URL="[[DOWNLOAD FOLDER URL]]/$SRC"
 
-if [ ! -f "$SRC_DIR/$SRC" ] || ! [[SOURCE DECOMPRESSOR]] -t "$SRC_DIR/$SRC" 2> /dev/null; then
+if [ ! -f "$SRC_DIR/$SRC" ] || ! [[DECOMPRESSOR]] [[DECOMPRESSOR TEST FLAG]] "$SRC_DIR/$SRC" 2> /dev/null; then
   wget "$URL" -O "$SRC_DIR/$SRC" || exit $ERROR_WGET
 fi
 if [ ! -f "$SRC_DIR/$SRC.sig" ]; then
@@ -143,6 +143,7 @@ cat << EODESC > "$PKG/install/slack-desc"
 # make exactly 11 lines for the formatting to be correct.  It's also
 # customary to leave one space after the ':'.
 
+        |-----handy-ruler------------------------------------------------------|
 [[SLACK-DESC]]
 EODESC
 
