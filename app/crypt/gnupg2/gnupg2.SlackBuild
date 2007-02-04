@@ -80,7 +80,7 @@ EOKEY
 SRC="$SRC_NAME-$VERSION.tar.bz2"
 URL="ftp://ftp.gnupg.org/gcrypt/gnupg/$SRC"
 
-if [ ! -f "$SRC_DIR/$SRC" ]; then
+if [ ! -f "$SRC_DIR/$SRC" ] || ! bzip2 -t "$SRC_DIR/$SRC" 2> /dev/null; then
   wget "$URL" -O "$SRC_DIR/$SRC" || exit $ERROR_WGET
 fi
 if [ ! -f "$SRC_DIR/$SRC.sig" ]; then

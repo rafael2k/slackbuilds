@@ -48,7 +48,7 @@ mkdir -p "$REPOS" || exit $ERROR_MKDIR
 SRC="$SRC_NAME-0.4-pre-20031121.tar.gz"
 URL="http://downloads.sourceforge.net/ivi/$SRC"
 
-if [ ! -f "$SRC_DIR/$SRC" ]; then
+if [ ! -f "$SRC_DIR/$SRC" ] || ! gzip -t "$SRC_DIR/$SRC" 2> /dev/null; then
   wget "$URL" -O "$SRC_DIR/$SRC" || exit $ERROR_WGET
 fi
 

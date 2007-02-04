@@ -47,7 +47,7 @@ mkdir -p "$REPOS" || exit $ERROR_MKDIR
 SRC="$SRC_NAME-$VERSION.tar.gz"
 URL="http://urbanmyth.org/microcode/$SRC"
 
-if [ ! -f "$SRC_DIR/$SRC" ]; then
+if [ ! -f "$SRC_DIR/$SRC" ] || ! gzip -t "$SRC_DIR/$SRC" 2> /dev/null; then
   wget "$URL" -O "$SRC_DIR/$SRC" || exit $ERROR_WGET
 fi
 
