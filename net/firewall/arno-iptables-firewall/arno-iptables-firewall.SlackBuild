@@ -56,12 +56,14 @@ cd "$SRC_DIR"
 tar --no-same-owner --no-same-permissions -xvf "$SRC_DIR/$SRC" || exit $ERROR_TAR
 cd "$PKG_SRC"
 mkdir -p "$PKG/etc/rc.d" || exit $ERROR_MKDIR
+mkdir -p "$PKG/etc/logrotate.d" || exit $ERROR_MKDIR
 mkdir -p "$PKG/$PREFIX/bin" || exit $ERROR_MKDIR
 mkdir -p "$PKG/$PREFIX/man/man1" || exit $ERROR_MKDIR
 mkdir -p "$PKG/$PREFIX/man/man8" || exit $ERROR_MKDIR
 cp -a arno-iptables-firewall "$PKG/etc/rc.d/rc.firewall.new"
 cp -a etc/arno-iptables-firewall "$PKG/etc"
 cp -a Slackware/syslog.conf "$PKG/etc/syslog.conf.new"
+cp -a "$CWD/syslog.new" "$PKG/etc/logrotate.d"
 cp -a arno-fwfilter "$PKG/$PREFIX/bin"
 cp -a man/arno-fwfilter.1 "$PKG/$PREFIX/man/man1"
 cp -a man/arno-iptables-firewall.8 "$PKG/$PREFIX/man/man8"
@@ -133,6 +135,7 @@ config etc/rc.d/rc.firewall.new
 config etc/arno-iptables-firewall/firewall.conf.new
 config etc/arno-iptables-firewall/plugins/ssh-brute-force-protection.conf.new
 config etc/syslog.conf.new
+config etc/logrotate.d/syslog.new
 
 echo
 echo " Remember to check the .new files (if any), specially:"
@@ -140,6 +143,7 @@ echo
 echo "   /etc/rc.d/rc.firewall.new"
 echo "   /etc/arno-iptables-firewall/firewall.conf.new"
 echo "   /etc/syslog.conf.new"
+echo "   /etc/logrotate.d/syslog.new"
 echo
 echo " Also, firewall.conf *has* to be properly configured for"
 echo " this firewall to work."
