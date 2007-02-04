@@ -18,7 +18,7 @@ fi
 # Set variables
 SRC_NAME="ivi"
 PKG_NAME="ivi"
-ARCH=${ARCH:=i486}
+ARCH="i486"
 SRC_VERSION="0.4-pre-20031121"
 PKG_VERSION="0.4_20031121"
 BUILD=${BUILD:=1ls}
@@ -28,22 +28,6 @@ PKG=${PKG:=$TMP/package-$PKG_NAME}
 REPOS=${REPOS:=$TMP}
 PREFIX=${PREFIX:=/usr}
 PKG_SRC="$SRC_DIR/$SRC_NAME-$SRC_VERSION"
-
-# Set system libraries' path and optmization flags based on $ARCH
-LIBDIR="$PREFIX/lib"
-
-if [ "$ARCH" = "i386" ]; then
-  SLKCFLAGS="-O2 -march=i386 -mcpu=i686"
-elif [ "$ARCH" = "i486" ]; then
-  SLKCFLAGS="-O2 -march=i486 -mcpu=i686"
-elif [ "$ARCH" = "i686" ]; then
-  SLKCFLAGS="-O2 -march=i686"
-elif [ "$ARCH" = "s390" ]; then
-  SLKCFLAGS="-O2"
-elif [ "$ARCH" = "x86_64" ]; then
-  SLKCFLAGS="-O2"
-  LIBDIR="$PREFIX/lib64"
-fi
 
 # Set error codes (used by createpkg)
 ERROR_WGET=31;      ERROR_MAKE=32;      ERROR_INSTALL=33
@@ -73,9 +57,7 @@ cd "$SRC_DIR"
 tar --no-same-owner --no-same-permissions -xvf "$SRC_DIR/$SRC" || exit $ERROR_TAR
 cd "$PKG_SRC"
 patch -Np1 < "$CWD/ivi-0.4-pre-20031121-gcc3.4.patch" || exit $ERROR_PATCH
-CFLAGS="$SLKCFLAGS" \
-  CXXFLAGS="$SLKCFLAGS" \
-  ./configure --enable-release || exit $ERROR_CONF
+./configure --enable-release || exit $ERROR_CONF
 make || exit $ERROR_MAKE
 make install prefix="$PKG/$PREFIX/share/ivi" || exit $ERROR_INSTALL
 
