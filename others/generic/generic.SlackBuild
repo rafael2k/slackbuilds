@@ -75,7 +75,7 @@ EOKEY
 SRC="$SRC_NAME-$VERSION.tar.[[SOURCE EXTENSION]]"
 URL="[[DOWNLOAD FOLDER URL]]/$SRC"
 
-if [ ! -f "$SRC_DIR/$SRC" ] || ! [[SOURCE DECOMPRESSOR]] -t "$SRC_DIR/$SRC"; then
+if [ ! -f "$SRC_DIR/$SRC" ] || ! [[SOURCE DECOMPRESSOR]] -t "$SRC_DIR/$SRC" 2> /dev/null; then
   wget "$URL" -O "$SRC_DIR/$SRC" || exit $ERROR_WGET
 fi
 if [ ! -f "$SRC_DIR/$SRC.sig" ]; then
