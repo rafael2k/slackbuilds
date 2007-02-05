@@ -1,7 +1,7 @@
 ###################################################
 ## Generic template for SlackBuilds
 ##
-## Version 0.3.3 - Luis ( luis at riseup d0t net)
+## Version 0.3.4 - Luis ( luis at riseup d0t net)
 ##
 ###################################################
 #!/bin/bash
@@ -75,10 +75,10 @@ EOKEY
 SRC="$SRC_NAME-$VERSION.tar.[[SOURCE EXTENSION]]"
 URL="[[DOWNLOAD FOLDER URL]]/$SRC"
 
-if [ ! -f "$SRC_DIR/$SRC" ] || ! [[DECOMPRESSOR]] [[DECOMPRESSOR TEST FLAG]] "$SRC_DIR/$SRC" 2> /dev/null; then
+if [ ! -s "$SRC_DIR/$SRC" ] || ! [[DECOMPRESSOR]] [[DECOMPRESSOR TEST FLAG]] "$SRC_DIR/$SRC" 2> /dev/null; then
   wget "$URL" -O "$SRC_DIR/$SRC" || exit $ERROR_WGET
 fi
-if [ ! -f "$SRC_DIR/$SRC.sig" ]; then
+if [ ! -s "$SRC_DIR/$SRC.sig" ]; then
   wget "$URL.sig" -O "$SRC_DIR/$SRC.sig" || exit $ERROR_WGET
 fi
 
