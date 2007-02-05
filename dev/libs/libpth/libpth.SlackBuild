@@ -97,10 +97,10 @@ EOKEY
 SRC="$SRC_NAME-$VERSION.tar.gz"
 URL="ftp://ftp.gnu.org/gnu/pth/$SRC"
 
-if [ ! -f "$SRC_DIR/$SRC" ] || ! gzip -t "$SRC_DIR/$SRC" 2> /dev/null; then
+if [ ! -s "$SRC_DIR/$SRC" ] || ! gzip -t "$SRC_DIR/$SRC" 2> /dev/null; then
   wget "$URL" -O "$SRC_DIR/$SRC" || exit $ERROR_WGET
 fi
-if [ ! -f "$SRC_DIR/$SRC.sig" ]; then
+if [ ! -s "$SRC_DIR/$SRC.sig" ]; then
   wget "$URL.sig" -O "$SRC_DIR/$SRC.sig" || exit $ERROR_WGET
 fi
 

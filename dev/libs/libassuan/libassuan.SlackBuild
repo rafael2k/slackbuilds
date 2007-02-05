@@ -80,10 +80,10 @@ EOKEY
 SRC="$SRC_NAME-$VERSION.tar.bz2"
 URL="ftp://ftp.gnupg.org/gcrypt/libassuan/$SRC"
 
-if [ ! -f "$SRC_DIR/$SRC" ] || ! bzip2 -t "$SRC_DIR/$SRC" 2> /dev/null; then
+if [ ! -s "$SRC_DIR/$SRC" ] || ! bzip2 -t "$SRC_DIR/$SRC" 2> /dev/null; then
   wget "$URL" -O "$SRC_DIR/$SRC" || exit $ERROR_WGET
 fi
-if [ ! -f "$SRC_DIR/$SRC.sig" ]; then
+if [ ! -s "$SRC_DIR/$SRC.sig" ]; then
   wget "$URL.sig" -O "$SRC_DIR/$SRC.sig" || exit $ERROR_WGET
 fi
 
