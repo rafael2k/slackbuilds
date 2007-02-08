@@ -1,3 +1,15 @@
+libmad
+esound
+glib
+libogg
+libvorbis
+libungif
+gtk
+arts
+audiofile
+sdl
+gdk-pixbuf
+cdparanoia
 libtheora
 speex
 jack
