@@ -1,7 +1,7 @@
 ###################################################
 ## Generic template for SlackBuilds
 ##
-## Version 0.3.4 - Luis ( luis at riseup d0t net)
+## Version 0.4 - Luis ( luis at riseup d0t net)
 ##
 ###################################################
 #!/bin/bash
@@ -25,14 +25,15 @@ fi
 SRC_NAME="[[SOURCE NAME]]"
 PKG_NAME="[[PACKAGE NAME]]"
 ARCH=${ARCH:=i486}
-VERSION=${VERSION:=[[VERSION]]}
+SRC_VERSION=${VERSION:=[[VERSION]]}
+PKG_VERSION="$(echo "$SRC_VERSION" | tr '[[:blank:]-]' '_')"
 BUILD=${BUILD:=1[[SLACKBUILD AUTHOR INITIALS]]}
 SRC_DIR=${SRC_DIR:=$CWD}
 TMP=${TMP:=/tmp}
 PKG=${PKG:=$TMP/package-$PKG_NAME}
 REPOS=${REPOS:=$TMP}
-PREFIX=${PREFIX:=/usr}
-PKG_SRC="$SRC_DIR/$SRC_NAME-$VERSION"
+PREFIX=${PREFIX:=[[PREFIX]]}
+PKG_SRC="$SRC_DIR/$SRC_NAME-$SRC_VERSION"
 
 # Set system libraries' path and optmization flags based on $ARCH
 LIBDIR="$PREFIX/lib"
@@ -72,7 +73,7 @@ gpg --import << EOKEY || exit $ERROR_GPG
 EOKEY
 
 # Dowload source and its signature, if necessary
-SRC="$SRC_NAME-$VERSION.tar.[[SOURCE EXTENSION]]"
+SRC="$SRC_NAME-$SRC_VERSION.tar.[[SOURCE EXTENSION]]"
 URL="[[DOWNLOAD FOLDER URL]]/$SRC"
 
 if [ ! -s "$SRC_DIR/$SRC" ] || ! [[DECOMPRESSOR]] [[DECOMPRESSOR TEST FLAG]] "$SRC_DIR/$SRC" 2> /dev/null; then
@@ -130,8 +131,8 @@ fi
 
 # Install documentation
 DOCS="[[DOCUMENTATION FILES]]"
-mkdir -p "$PKG/$PREFIX/doc/$PKG_NAME-$VERSION" || exit $ERROR_MKDIR
-cp -a $DOCS "$PKG/$PREFIX/doc/$PKG_NAME-$VERSION"
+mkdir -p "$PKG/$PREFIX/doc/$PKG_NAME-$PKG_VERSION" || exit $ERROR_MKDIR
+cp -a $DOCS "$PKG/$PREFIX/doc/$PKG_NAME-$PKG_VERSION"
 
 # Add package description (slack-desc)
 mkdir -p "$PKG/install" || exit $ERROR_MKDIR
@@ -168,7 +169,7 @@ EOSCRIPT
 
 # Build the package
 cd "$PKG"
-makepkg -l y -c n "$REPOS/$PKG_NAME-$VERSION-$ARCH-$BUILD.tgz" || exit $ERROR_MKPKG
+makepkg -l y -c n "$REPOS/$PKG_NAME-$PKG_VERSION-$ARCH-$BUILD.tgz" || exit $ERROR_MKPKG
 
 # Delete source and build directories, if requested
 if [ "$CLEANUP" == "yes" ]; then
