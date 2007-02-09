@@ -1,7 +1,7 @@
 ###################################################
 ## Generic template for SlackBuilds
 ##
-## Version 0.4 - Luis ( luis at riseup d0t net)
+## Version 0.5 - Luis ( luis at riseup d0t net)
 ##
 ###################################################
 #!/bin/bash
@@ -12,8 +12,6 @@
 # Author: [[SLACKBUILD AUTHOR]]
 #
 
-CWD=`pwd`
-
 # Look for slackbuildrc
 if [ -f ~/.slackbuildrc ]; then
   source ~/.slackbuildrc
@@ -22,9 +20,10 @@ elif [ -f /etc/slackbuildrc ]; then
 fi
 
 # Set variables
+CWD=$(pwd)
 SRC_NAME="[[SOURCE NAME]]"
 PKG_NAME="[[PACKAGE NAME]]"
-ARCH=${ARCH:=i486}
+ARCH=${ARCH:=[[ARCH]]}
 SRC_VERSION=${VERSION:=[[VERSION]]}
 PKG_VERSION="$(echo "$SRC_VERSION" | tr '[[:blank:]-]' '_')"
 BUILD=${BUILD:=1[[SLACKBUILD AUTHOR INITIALS]]}
