@@ -1,7 +1,7 @@
 ###################################################
 ## Generic template for SlackBuilds
 ##
-## Version 0.5 - Luis ( luis at riseup d0t net)
+## Version 0.6 - Luis ( luis at riseup d0t net)
 ##
 ###################################################
 #!/bin/bash
@@ -85,11 +85,23 @@ fi
 # Check source's signature
 gpg --verify "$SRC_DIR/$SRC.sig" "$SRC_DIR/$SRC" || exit $ERROR_GPG
 
-# Untar, patch, configure, compile and install
+# Untar
 cd "$SRC_DIR"
 tar --no-same-owner --no-same-permissions -xvf "$SRC_DIR/$SRC" || exit $ERROR_TAR
+
+# Patch source
 cd "$PKG_SRC"
-patch -Np[[NUMBER OF PREFIX SLASHES TO STRIP]] < "$CWD/[[PATCH FILE]]"
+patches="[[PATCH FILES]] $PACKAGE.diff $PACKAGE-$VERSION.diff
+         $PACKAGE-$VERSION-$ARCH.diff $PACKAGE-$ARCH.diff"
+for patch in $patches; do
+  if [ -f "$CWD/$patch" ]; then
+    patch -Np[[NUMBER OF PREFIX SLASHES TO STRIP]] < "$CWD/$patch" || exit $ERROR_PATCH
+  elif [ -f "$CWD/patches/$patch" ]; then
+    patch -Np[[NUMBER OF PREFIX SLASHES TO STRIP]] < "$CWD/patches/$patch" || exit $ERROR_PATCH
+  fi
+done
+
+# Configure, compile and install
 CFLAGS="$SLKCFLAGS" \
   CXXFLAGS="$SLKCFLAGS" \
   ./configure \
