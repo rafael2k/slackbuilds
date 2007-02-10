@@ -1,7 +1,7 @@
 ###################################################
 ## Generic template for SlackBuilds
 ##
-## Version 0.6 - Luis ( luis at riseup d0t net)
+## Version 0.7 - Luis ( luis at riseup d0t net)
 ##
 ###################################################
 #!/bin/bash
@@ -20,7 +20,7 @@ elif [ -f /etc/slackbuildrc ]; then
 fi
 
 # Set variables
-CWD=$(pwd)
+CWD="$(pwd)"
 SRC_NAME="[[SOURCE NAME]]"
 PKG_NAME="[[PACKAGE NAME]]"
 ARCH=${ARCH:=[[ARCH]]}
@@ -60,29 +60,30 @@ ERROR_PATCH=40;     ERROR_VCS=41;       ERROR_MKDIR=42
 rm -rf "$PKG_SRC" 2> /dev/null
 rm -rf "$PKG" 2> /dev/null
 
-# Create directories, if necessary
+# Create directories if necessary
 mkdir -p "$SRC_DIR" || exit $ERROR_MKDIR
 mkdir -p "$PKG" || exit $ERROR_MKDIR
 mkdir -p "$REPOS" || exit $ERROR_MKDIR
 
-# Import (minimized) signing key from
+# Import minimized signing key from
 # [[SIGNING KEY URL]]
 gpg --import << EOKEY || exit $ERROR_GPG
 [[SIGNING KEY]]
 EOKEY
 
-# Dowload source and its signature, if necessary
+# Dowload source if necessary
 SRC="$SRC_NAME-$SRC_VERSION.tar.[[SOURCE EXTENSION]]"
 URL="[[DOWNLOAD FOLDER URL]]/$SRC"
 
 if [ ! -s "$SRC_DIR/$SRC" ] || ! [[DECOMPRESSOR]] [[DECOMPRESSOR TEST FLAG]] "$SRC_DIR/$SRC" 2> /dev/null; then
   wget "$URL" -O "$SRC_DIR/$SRC" || exit $ERROR_WGET
 fi
+
+# Dowload source's signature if necessary and check it
 if [ ! -s "$SRC_DIR/$SRC.sig" ]; then
   wget "$URL.sig" -O "$SRC_DIR/$SRC.sig" || exit $ERROR_WGET
 fi
 
-# Check source's signature
 gpg --verify "$SRC_DIR/$SRC.sig" "$SRC_DIR/$SRC" || exit $ERROR_GPG
 
 # Untar
@@ -101,12 +102,16 @@ for patch in $patches; do
   fi
 done
 
-# Configure, compile and install
+# Configure
 CFLAGS="$SLKCFLAGS" \
   CXXFLAGS="$SLKCFLAGS" \
   ./configure \
   --prefix="$PREFIX" --libdir="$LIBDIR" [[OTHER CONFIGURE ARGS]] || exit $ERROR_CONF
+
+# Compile
 make || exit $ERROR_MAKE
+
+# Install
 make install DESTDIR="$PKG" || exit $ERROR_INSTALL
 
 # Strip binaries
@@ -182,7 +187,7 @@ EOSCRIPT
 cd "$PKG"
 makepkg -l y -c n "$REPOS/$PKG_NAME-$PKG_VERSION-$ARCH-$BUILD.tgz" || exit $ERROR_MKPKG
 
-# Delete source and build directories, if requested
+# Delete source and build directories if requested
 if [ "$CLEANUP" == "yes" ]; then
   rm -rf "$PKG_SRC" "$PKG"
 fi
