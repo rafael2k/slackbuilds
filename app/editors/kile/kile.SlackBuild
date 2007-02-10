@@ -2,7 +2,7 @@
 #
 # slackbuild for kile, by Rudson R. Alves
 # requires: none
-# tested: kile-1.9.2
+# tested: kile-1.9.3
 
 CWD=`pwd`
 
@@ -16,8 +16,8 @@ fi
 # --------  Variáveis de controle de versão  --------------
 # Nome da fonte para a qual o slackbuild foi construído e
 # o seu md5sum
-SRC_ORIG="kile-1.9.2.tar.bz2"
-MD5_ORIG="2f4fa752595c9011fd9292d7ff99d124"
+SRC_ORIG="kile-1.9.3.tar.bz2"
+MD5_ORIG="0404b4be7bced7123111c49918130a1f"
 PACKAGE_ORIG=`echo $SRC_ORIG | sed -r 's/(.*)-(.*)\.(.*\..*)$/\1/'`
 VERSION_ORIG=`echo $SRC_ORIG | sed -r 's/(.*)-(.*)\.(.*\..*)$/\2/'`
    EXTENSION=`echo $SRC_ORIG | sed -r 's/(.*)-(.*)\.(.*\..*)$/\3/'`

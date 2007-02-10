@@ -2,7 +2,7 @@
 #
 # slackbuild for kile, by Rudson R. Alves
 # requires: none
-# tested: broffice-2.0.4
+# tested: broffice-2.1.0
 
 CWD=`pwd`
 
@@ -16,8 +16,8 @@ fi
 # --------  Variáveis de controle de versão  --------------
 # Nome da fonte para a qual o slackbuild foi construído e
 # o seu md5sum
-SRC_ORIG="broffice.org.2.0.4.rpm.tar.bz2"
-MD5_ORIG="3b78ddd41c7f8da098ec36f78642613f"
+SRC_ORIG="broffice.org.2.1.0.rpm.tar.bz2"
+MD5_ORIG="32b8b50821d090392c1b28d8f4b4dba4"
 PACKAGE_ORIG=`echo $SRC_ORIG | sed -r 's/(.*)\.org\.(.*)\.rpm\.(.*)$/\1/'`
 VERSION_ORIG=`echo $SRC_ORIG | sed -r 's/(.*)\.org\.(.*)\.rpm\.(.*)$/\2/'`
    EXTENSION=`echo $SRC_ORIG | sed -r 's/(.*)\.org\.(.*)\.rpm\.(.*)$/\3/'`
@@ -30,7 +30,7 @@ ERROR_PATCH=40;     ERROR_VCS=41
 
 # ---------  Inicializa variáveis de entrada  -------------
 PACKAGE=$PACKAGE_ORIG
-ARCH="i686"
+ARCH="i586"
 SRC_DIR=${SRC:=$CWD}
 VERSION=${VERSION:=$VERSION_ORIG}
 SRC=$PACKAGE.org.$VERSION.rpm.$EXTENSION
@@ -90,11 +90,11 @@ mkdir -p $PKG
 # Instala arquivos em $PKG_VERSION
 tar xvf $( ls *.tgz ) -C $PKG || exit $ERROR_TAR
 cd ..
-j=1
+#j=1
 for i in *.tgz; do
     tar xvf $i -C $PKG || exit $ERROR_TAR
     rm $i
-    let j++
+#    let j++
 done
 
 # Altera diretório do kde
@@ -103,33 +103,33 @@ mv $PKG/opt/kde3 $PKG/opt/kde
 cd $PKG/usr/bin
 rm * 2>/dev/null
 
-# broffice.org-2.0
-cat << EOFBROFFICE > $PKG/usr/bin/broffice.org-2.0
+# broffice.org-2.1
+cat << EOFBROFFICE > $PKG/usr/bin/broffice.org-2.1
 #!/bin/sh
-exec /opt/broffice.org2.0/program/soffice "$@"
+exec /opt/broffice.org2.1/program/soffice \$@
 EOFBROFFICE
 
-# broffice.org-2.0-printeradmin
-cat << EOFBRADMIN > $PKG/usr/bin/broffice.org-2.0-printeradmin
+# broffice.org-2.1-printeradmin
+cat << EOFBRADMIN > $PKG/usr/bin/broffice.org-2.1-printeradmin
 #!/bin/sh
-exec /opt/broffice.org2.0/program/spadmin
+exec /opt/broffice.org2.1/program/spadmin
 EOFBRADMIN
 
 chmod +x *
 
-ln -s ../../opt/broffice.org2.0/program/soffice soffice
+ln -s ../../opt/broffice.org2.1/program/soffice soffice
 
 cd $PKG/usr/share/applications
 rm *
-for i in $( ls ../../../opt/broffice.org2.0/share/xdg/* ); do
+for i in $( ls ../../../opt/broffice.org2.1/share/xdg/* ); do
     NAME=$( echo $i | sed 's/.*xdg\/\(.*\.desktop\)$/\1/' )
     ln -s $i $NAME
 done
 
 # -----------------  Stripa código  -----------------------
 cd $PKG
-find . | xargs file | grep "executable" | grep ELF | cut -f 1 -d : | xargs strip --strip-unneeded 2> /dev/null
-find . | xargs file | grep "shared object" | grep ELF | cut -f 1 -d : | xargs strip --strip-unneeded 2> /dev/null
+#find . | xargs file | grep "executable" | grep ELF | cut -f 1 -d : | xargs strip --strip-unneeded 2> /dev/null
+#find . | xargs file | grep "shared object" | grep ELF | cut -f 1 -d : | xargs strip --strip-unneeded 2> /dev/null
 
 # ----------------  Cria slack-desc  ----------------------
 mkdir $PKG/install

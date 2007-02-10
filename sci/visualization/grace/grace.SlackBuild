@@ -2,7 +2,7 @@
 #
 # slackbuild for lame, by Rudson R. Alves
 # requires: none
-# tested: grace
+# tested: grace-5.1.20
 
 CWD=`pwd`
 

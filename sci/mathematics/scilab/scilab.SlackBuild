@@ -2,7 +2,7 @@
 #
 # slackbuild for lame, by Rudson R. Alves
 # requires: none
-# tested: scilab-4.0
+# tested: scilab-4.1
 
 CWD=`pwd`
 
@@ -15,8 +15,8 @@ fi
 # --------  Variáveis de controle de versão  --------------
 # Nome da fonte para a qual o slackbuild foi construído e
 # o seu md5sum
-SRC_ORIG="scilab-4.0-src.tar.gz"
-MD5_ORIG="26e1c1480453bb1021bcea3ac412ad19"
+SRC_ORIG="scilab-4.1-src.tar.gz"
+MD5_ORIG="3003fe63088558b931a11127fb8d8ccc"
 PACKAGE_ORIG=`echo $SRC_ORIG | sed -r 's/(.*)-(.*)-src\.(.*\..*)$/\1/'`
 VERSION_ORIG=`echo $SRC_ORIG | sed -r 's/(.*)-(.*)-src\.(.*\..*)$/\2/'`
    EXTENSION=`echo $SRC_ORIG | sed -r 's/(.*)-(.*)-src\.(.*\..*)$/\3/'`
@@ -39,7 +39,7 @@ REPOS=${REPOS:=$TMP}
 PREFIX=${PREFIX:=/usr}
 OPTCONF=${OPTCONF:=""}
 MD5=${MD5:=$MD5_ORIG}
-URL=${URL:="http://www.scilab.org/download/stable/$SRC"}
+URL=${URL:="http://www.scilab.org/download/4.1/$SRC"}
 
 # ----------------  Download fontes  ----------------------
 # Fonte a ser compilada, com o path
