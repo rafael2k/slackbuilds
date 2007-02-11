@@ -15,8 +15,8 @@ fi
 # --------  Variáveis de controle de versão  --------------
 # Nome da fonte para a qual o slackbuild foi construído e
 # o seu md5sum
-SRC_ORIG="lame-3.97b3_.tar.gz"
-MD5_ORIG="4fbdad5d4203e75125cf5b875b171ac0"
+SRC_ORIG="lame-3.97.tar.gz"
+#MD5_ORIG=""
 PACKAGE_ORIG=`echo $SRC_ORIG | sed -r 's/(.*)-(.*)\.(.*\..*)$/\1/'`
 VERSION_ORIG=`echo $SRC_ORIG | sed -r 's/(.*)-(.*)\.(.*\..*)$/\2/'`
    EXTENSION=`echo $SRC_ORIG | sed -r 's/(.*)-(.*)\.(.*\..*)$/\3/'`
@@ -47,7 +47,7 @@ REPOS=${REPOS:=$TMP}
 PREFIX=${PREFIX:=/usr}
 OPTCONF=${OPTCONF:=""}
 MD5=${MD5:=$MD5_ORIG}
-URL=${URL:="http://ufpr.dl.sourceforge.net/sourceforge/lame/$SRC"}
+URL=${URL:="http://superb-west.dl.sourceforge.net/sourceforge/lame/$SRC"}
 
 # ----------------  Download fontes  ----------------------
 # Fonte a ser compilada, com o path
@@ -58,10 +58,10 @@ if [ ! -e $SOURCE ]; then
 fi
 
 # ------------------  Checa md5sum  -----------------------
-if [ "$SRC_ORIG" = "$SRC" -o "$MD5" != "$MD5_ORIG" -a "$MD5" != "no" ]; then
-    SUM=`md5sum $SOURCE | awk '{print $1}'`
-    [ "$SUM" != "$MD5" ] && exit $ERROR_MD5
-fi
+#if [ "$SRC_ORIG" = "$SRC" -o "$MD5" != "$MD5_ORIG" -a "$MD5" != "no" ]; then
+#    SUM=`md5sum $SOURCE | awk '{print $1}'`
+#    [ "$SUM" != "$MD5" ] && exit $ERROR_MD5
+#fi
 
 # -----------------  ARCH e LIBDIR  -----------------------
 # Libdir, para arch x86_64

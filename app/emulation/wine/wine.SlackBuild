@@ -2,7 +2,7 @@
 #
 # slackbuild for wine, by Rudson R. Alves
 # requires: none
-# tested: wine-0.9.24
+# tested: wine-0.9.30
 
 CWD=`pwd`
 
@@ -16,8 +16,8 @@ fi
 # --------  Variáveis de controle de versão  --------------
 # Nome da fonte para a qual o slackbuild foi construído e
 # o seu md5sum
-SRC_ORIG="wine-0.9.26.tar.bz2"
-MD5_ORIG="4a3a41e0ac26417a7ad981b89b0c10ce"
+SRC_ORIG="wine-0.9.30.tar.bz2"
+#MD5_ORIG=""
 PACKAGE_ORIG=`echo $SRC_ORIG | sed 's/\(.*\)-\(.*\)\.\(.*\..*\)$/\1/'`
 VERSION_ORIG=`echo $SRC_ORIG | sed 's/\(.*\)-\(.*\)\.\(.*\..*\)$/\2/'`
 EXTENSION=`echo $SRC_ORIG | sed 's/\(.*\)-\(.*\)\.\(.*\..*\)$/\3/'`
@@ -51,10 +51,10 @@ if [ ! -e $SOURCE ]; then
 fi
 
 # ------------------  Checa md5sum  -----------------------
-if [ "$SRC_ORIG" = "$SRC" -o "$MD5" != "$MD5_ORIG" -a "$MD5" != "no" ]; then
-    SUM=`md5sum $SOURCE | awk '{print $1}'`
-    [ "$SUM" != "$MD5" ] && exit $ERROR_MD5
-fi
+#if [ "$SRC_ORIG" = "$SRC" -o "$MD5" != "$MD5_ORIG" -a "$MD5" != "no" ]; then
+#    SUM=`md5sum $SOURCE | awk '{print $1}'`
+#    [ "$SUM" != "$MD5" ] && exit $ERROR_MD5
+#fi
 
 # -----------------  ARCH e LIBDIR  -----------------------
 # Libdir, para arch x86_64

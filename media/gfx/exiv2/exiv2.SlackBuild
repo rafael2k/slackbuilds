@@ -2,7 +2,7 @@
 #
 # slackbuild for exiv2, by Rudson R. Alves
 # requires: none
-# tested: exiv2-0.11
+# tested: exiv2-0.12
 
 CWD=`pwd`
 
@@ -16,8 +16,8 @@ fi
 # --------  Variáveis de controle de versão  --------------
 # Nome da fonte para a qual o slackbuild foi construído e
 # o seu md5sum
-SRC_ORIG="exiv2-0.11.tar.gz"
-MD5_ORIG="269ce822946c56549d086f0c08dffc79"
+SRC_ORIG="exiv2-0.12.tar.gz"
+MD5_ORIG="a97a4e489df7ec99458e3e33b506c3e6"
 PACKAGE_ORIG=`echo $SRC_ORIG | sed -r 's/(.*)-(.*)\.(.*\..*)$/\1/'`
 VERSION_ORIG=`echo $SRC_ORIG | sed -r 's/(.*)-(.*)\.(.*\..*)$/\2/'`
    EXTENSION=`echo $SRC_ORIG | sed -r 's/(.*)-(.*)\.(.*\..*)$/\3/'`

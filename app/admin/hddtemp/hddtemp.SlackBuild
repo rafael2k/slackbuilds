@@ -104,6 +104,12 @@ mkdir -p $PKG
 # Instala programa em diretório temporário
 make install DESTDIR=$PKG || exit $ERROR_INSTALL
 
+# Get the last hddtemp.db file
+cd $PKG
+mkdir -p usr/share/misc
+cd usr/share/misc/
+wget http://www.guzu.net/linux/hddtemp.db
+
 # -----------------  Stripa código  -----------------------
 cd $PKG
 find . | xargs file | grep "executable" | grep ELF | cut -f 1 -d : | xargs strip --strip-unneeded 2> /dev/null

@@ -16,12 +16,11 @@ fi
 # --------  Variáveis de controle de versão  --------------
 # Nome da fonte para a qual o slackbuild foi construído e
 # o seu md5sum
-SRC_ORIG="digikam-0.9.0-beta3.tar.bz2"
-MD5_ORIG="4b6ecbe86ba258818b56257dbc851560"
-PACKAGE_ORIG=`echo $SRC_ORIG | sed -r 's/(.*)-(.*)-(.*)\.(.*\..*)$/\1/'`
-VERSION_ORIG=`echo $SRC_ORIG | sed -r 's/(.*)-(.*)-(.*)\.(.*\..*)$/\2/'`
-    REVISION=`echo $SRC_ORIG | sed -r 's/(.*)-(.*)-(.*)\.(.*\..*)$/\3/'`
-   EXTENSION=`echo $SRC_ORIG | sed -r 's/(.*)-(.*)-(.*)\.(.*\..*)$/\4/'`
+SRC_ORIG="digikam-0.9.0.tar.bz2"
+#MD5_ORIG=""
+PACKAGE_ORIG=`echo $SRC_ORIG | sed -r 's/(.*)-(.*)\.(.*\..*)$/\1/'`
+VERSION_ORIG=`echo $SRC_ORIG | sed -r 's/(.*)-(.*)\.(.*\..*)$/\2/'`
+   EXTENSION=`echo $SRC_ORIG | sed -r 's/(.*)-(.*)\.(.*\..*)$/\3/'`
 
 # -------  Códigos de erro para o createpkg  --------------
 ERROR_WGET=31;      ERROR_MAKE=32;      ERROR_INSTALL=33
@@ -39,14 +38,14 @@ if [ "$VERSION" != "" ]; then
 else
     VERSION=$VERSION_ORIG
 fi
-SRC=$PACKAGE-$VERSION-$REVISION.$EXTENSION
+SRC=$PACKAGE-$VERSION.$EXTENSION
 BUILD=${BUILD:=1rud}
 TMP=${TMP:=/tmp}
 REPOS=${REPOS:=$TMP}
 PREFIX=${PREFIX:=/opt/kde}
 OPTCONF=${OPTCONF:=""}
 MD5=${MD5:=$MD5_ORIG}
-URL=${URL:="http://ufpr.dl.sourceforge.net/sourceforge/digikam/$SRC"}
+URL=${URL:="http://superb-west.dl.sourceforge.net/sourceforge/digikam/$SRC"}
 
 # ----------------  Download fontes  ----------------------
 # Fonte a ser compilada, com o path
@@ -57,10 +56,10 @@ if [ ! -e $SOURCE ]; then
 fi
 
 # ------------------  Checa md5sum  -----------------------
-if [ "$SRC_ORIG" = "$SRC" -o "$MD5" != "$MD5_ORIG" -a "$MD5" != "no" ]; then
-    SUM=`md5sum $SOURCE | awk '{print $1}'`
-    [ "$SUM" != "$MD5" ] && exit $ERROR_MD5
-fi
+#if [ "$SRC_ORIG" = "$SRC" -o "$MD5" != "$MD5_ORIG" -a "$MD5" != "no" ]; then
+#    SUM=`md5sum $SOURCE | awk '{print $1}'`
+#    [ "$SUM" != "$MD5" ] && exit $ERROR_MD5
+#fi
 
 # -----------------  ARCH e LIBDIR  -----------------------
 # Libdir, para arch x86_64
