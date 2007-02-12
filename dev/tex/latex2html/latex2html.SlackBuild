@@ -2,7 +2,7 @@
 #
 # slackbuild for latex2html, by Rudson R. Alves
 # requires: tetex, perl >=5.1, espgs, netpbm
-# tested: latex2html-2002
+# tested: latex2html-2002-2-1
 
 CWD=`pwd`
 
@@ -16,11 +16,11 @@ fi
 # --------  Variáveis de controle de versão  --------------
 # Nome da fonte para a qual o slackbuild foi construído e
 # o seu md5sum
-SRC_ORIG="latex2html-2002.tar.gz"
-MD5_ORIG="72c2cb20526639cbf6ee2a66223c5cc2"
-PACKAGE_ORIG=`echo $SRC_ORIG | sed -r 's/(.*)-(.*)\.(.*\..*)$/\1/'`
-VERSION_ORIG=`echo $SRC_ORIG | sed -r 's/(.*)-(.*)\.(.*\..*)$/\2/'`
-   EXTENSION=`echo $SRC_ORIG | sed -r 's/(.*)-(.*)\.(.*\..*)$/\3/'`
+SRC_ORIG="latex2html-2002-2-1.tar.gz"
+#MD5_ORIG="72c2cb20526639cbf6ee2a66223c5cc2"
+PACKAGE_ORIG=`echo $SRC_ORIG | sed -r 's/(.*)-(.*\-.*\-.*)\.(.*\..*)$/\1/'`
+VERSION_ORIG=`echo $SRC_ORIG | sed -r 's/(.*)-(.*\-.*\-.*)\.(.*\..*)$/\2/' | tr - .`
+   EXTENSION=`echo $SRC_ORIG | sed -r 's/(.*)-(.*\-.*\-.*)\.(.*\..*)$/\3/'`
 
 # -------  Códigos de erro para o createpkg  --------------
 ERROR_WGET=31;      ERROR_MAKE=32;      ERROR_INSTALL=33
@@ -33,7 +33,7 @@ PACKAGE=$PACKAGE_ORIG
 ARCH=${ARCH:=i486}
 SRC_DIR=${SRC:=$CWD}
 VERSION=${VERSION:=$VERSION_ORIG}
-SRC=$PACKAGE-$VERSION.$EXTENSION
+SRC=$PACKAGE-$(echo $VERSION | tr . -).$EXTENSION
 BUILD=${BUILD:=1rud}
 TMP=${TMP:=/tmp}
 REPOS=${REPOS:=$TMP}
@@ -51,10 +51,10 @@ if [ ! -e $SOURCE ]; then
 fi
 
 # ------------------  Checa md5sum  -----------------------
-if [ "$SRC_ORIG" = "$SRC" -o "$MD5" != "$MD5_ORIG" -a "$MD5" != "no" ]; then
-    SUM=`md5sum $SOURCE | awk '{print $1}'`
-    [ "$SUM" != "$MD5" ] && exit $ERROR_MD5
-fi
+#if [ "$SRC_ORIG" = "$SRC" -o "$MD5" != "$MD5_ORIG" -a "$MD5" != "no" ]; then
+#    SUM=`md5sum $SOURCE | awk '{print $1}'`
+#    [ "$SUM" != "$MD5" ] && exit $ERROR_MD5
+#fi
 
 # -----------------  ARCH e LIBDIR  -----------------------
 # Libdir, para arch x86_64
@@ -91,7 +91,7 @@ cd $PKG_DIR
 CFLAGS="$SLKCFLAGS" ./configure --prefix=$PREFIX --libdir=$LIBDIR $OPTCONF || exit $ERROR_CONF
 
 # ----------------  Compila programa  ---------------------
-make -j3 || exit $ERROR_MAKE
+make || exit $ERROR_MAKE
 
 # -------------  Diretório Temporário  --------------------
 # Cria diretório temporário para construção do pacote
