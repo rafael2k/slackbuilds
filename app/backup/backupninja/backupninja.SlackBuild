@@ -16,7 +16,7 @@ fi
 PACKAGE="backupninja"
 ARCH="noarch"
 VERSION=${VERSION:=0.9.4}
-BUILD=${BUILD:=5rha}
+BUILD=${BUILD:=6rha}
 SRC_DIR=${SRC:=$CWD}
 TMP=${TMP:=/tmp}
 REPOS=${REPOS:=$TMP}
@@ -78,6 +78,8 @@ CWD="`pwd`"
 
 cd $TMP/package-$PACKAGE
 mkdir etc/backup.d
+chown -R root.root *
+chmod 600 etc/backup.d
 
 mv etc/backupninja.conf etc/backupninja.conf.new
 
@@ -114,7 +116,7 @@ done
 # install script
 echo '( if [ ! -f "etc/backupninja.conf" ]; then mv etc/backupninja.conf.new etc/backupninja.conf; fi )' > install/doinst.sh
 
-makepkg -c y -l y $REPOS/$PACKAGE-$VERSION-$ARCH-$BUILD.tgz || exit $ERROR_MKPKG
+makepkg -l y $REPOS/$PACKAGE-$VERSION-$ARCH-$BUILD.tgz || exit $ERROR_MKPKG
 
 if [ "$CLEANUP" == "yes" ]; then
   rm -rf $TMP
