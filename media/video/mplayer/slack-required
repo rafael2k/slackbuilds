@@ -4,7 +4,6 @@ glib
 libogg
 libvorbis
 libungif
-gtk
 arts
 audiofile
 sdl
