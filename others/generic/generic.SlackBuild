@@ -1,7 +1,7 @@
 ###################################################
 ## Generic template for SlackBuilds
 ##
-## Version 0.7.1 - Luis ( luis at riseup d0t net)
+## Version 0.7.2 - Luis ( luis at riseup d0t net)
 ##
 ###################################################
 #!/bin/bash
@@ -32,7 +32,7 @@ TMP=${TMP:=/tmp}
 PKG=${PKG:=$TMP/package-$PKG_NAME}
 REPOS=${REPOS:=$TMP}
 PREFIX=${PREFIX:=[[PREFIX]]}
-PKG_SRC="$SRC_DIR/$SRC_NAME-$SRC_VERSION"
+PKG_SRC="$TMP/$SRC_NAME-$SRC_VERSION"
 
 # Set system libraries' path and optmization flags based on $ARCH
 LIBDIR="$PREFIX/lib"
@@ -87,7 +87,7 @@ fi
 gpg --verify "$SRC_DIR/$SRC.sig" "$SRC_DIR/$SRC" || exit $ERROR_GPG
 
 # Untar
-cd "$SRC_DIR"
+cd "$TMP"
 tar --no-same-owner --no-same-permissions -xvf "$SRC_DIR/$SRC" || exit $ERROR_TAR
 cd "$PKG_SRC"
 
