@@ -1,7 +1,7 @@
 ###################################################
 ## Generic template for SlackBuilds
 ##
-## Version 0.7 - Luis ( luis at riseup d0t net)
+## Version 0.7.1 - Luis ( luis at riseup d0t net)
 ##
 ###################################################
 #!/bin/bash
@@ -89,9 +89,9 @@ gpg --verify "$SRC_DIR/$SRC.sig" "$SRC_DIR/$SRC" || exit $ERROR_GPG
 # Untar
 cd "$SRC_DIR"
 tar --no-same-owner --no-same-permissions -xvf "$SRC_DIR/$SRC" || exit $ERROR_TAR
+cd "$PKG_SRC"
 
 # Patch source
-cd "$PKG_SRC"
 patches="[[PATCH FILES]] $PACKAGE.diff $PACKAGE-$VERSION.diff
          $PACKAGE-$VERSION-$ARCH.diff $PACKAGE-$ARCH.diff"
 for patch in $patches; do
