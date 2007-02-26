@@ -75,7 +75,8 @@ if [ "$ARCH" == "i586" ] || [ "$ARCH" == "i686" ]; then
   EXTRA_ARGS="--enable-win32 --enable-qtx"
 fi 
 
-./configure --prefix=/usr --libdir=$LIBDIR --confdir=/etc --language=pt_BR --enable-largefiles --enable-gui --enable-real --enable-runtime-cpudetection $EXTRA_ARGS || exit $ERROR_CONF
+# add --enable-runtime-cpudetection for package creation!
+./configure --prefix=/usr --libdir=$LIBDIR --confdir=/etc --language=pt_BR --enable-largefiles --enable-gui --enable-real $EXTRA_ARGS || exit $ERROR_CONF
 make || exit $ERROR_MAKE
 echo "$TMP/package-$PACKAGE/$PACKAGE"
 make DESTDIR=$TMP/package-$PACKAGE/$PACKAGE install || exit $ERROR_INSTALL
