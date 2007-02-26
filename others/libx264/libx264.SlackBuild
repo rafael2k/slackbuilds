@@ -27,7 +27,7 @@ fi
 # default settings
 PACKAGE="libx264"
 ARCH=${ARCH:=i486}
-VERSION=${VERSION:=20061004}
+VERSION=${VERSION:=20070225}
 BUILD=${BUILD:=1rd}
 SRC_DIR=${SRC:=$CWD}
 TMP=${TMP:=/tmp}
@@ -72,7 +72,19 @@ if [ -f "$CWD/$PACKAGE-$VERSION.diff" ]; then
   patch -p1 < $CWD/$PACKAGE-$VERSION.diff
 fi
 
-./configure --prefix=/usr --enable-shared --enable-visualize --enable-pic --sysconfdir=/etc --libdir=$LIBDIR --with-docdir=/usr/doc/$PACKAGE-$VERSION
+
+# These hacks are needed because x264 do not correcly accepts CFLAGS not ac_options for optimized code.
+
+if [ "$ARCH" == "i486" ] || [ "$ARCH" == "i386" ]; then
+  patch -p0 < $CWD/$PACKAGE-nommxfix.patch
+fi
+
+if [ "$ARCH" == "powerpc" ] && [ "$HAVE_ALTIVEC" != "true" ]; then
+  patch -p0 < $CWD/$PACKAGE-noaltivecfix.patch
+fi
+
+
+./configure --prefix=/usr --enable-shared --enable-visualize --enable-pic --libdir=$LIBDIR 
 make || exit 32
 make DESTDIR=$TMP/package-$PACKAGE install
 

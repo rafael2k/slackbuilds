@@ -1,0 +1,11 @@
+--- configure.old	2007-02-25 18:53:19.000000000 +0000
++++ configure	2007-02-25 18:55:31.000000000 +0000
+@@ -138,7 +138,7 @@
+ case "${MACHINE%%-*}" in
+   i*86)
+     ARCH="X86"
+-    CFLAGS="$CFLAGS -DHAVE_MMXEXT -DHAVE_SSE2"
++    CFLAGS="$CFLAGS "
+     AS="nasm"
+     ASFLAGS="-O2"
+     if [ "$SYS" = MACOSX ]; then
