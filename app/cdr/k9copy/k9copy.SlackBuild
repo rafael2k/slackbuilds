@@ -16,11 +16,12 @@ fi
 # --------  Variáveis de controle de versão  --------------
 # Nome da fonte para a qual o slackbuild foi construído e
 # o seu md5sum
-SRC_ORIG="k9copy-1.1.0.tar.gz"
-MD5_ORIG="b500708518f3ae0c544b3c42dc650c58"
-PACKAGE_ORIG=`echo $SRC_ORIG | sed -r 's/(.*)-(.*)\.(.*\..*)$/\1/'`
-VERSION_ORIG=`echo $SRC_ORIG | sed -r 's/(.*)-(.*)\.(.*\..*)$/\2/'`
-   EXTENSION=`echo $SRC_ORIG | sed -r 's/(.*)-(.*)\.(.*\..*)$/\3/'`
+SRC_ORIG="k9copy-1.0.4-2.tar.gz"
+MD5_ORIG="5b53658a12192c7832059b56daf23385"
+PACKAGE_ORIG=`echo $SRC_ORIG | sed -r 's/(.*)-(.*)-(.*)\.(.*\..*)$/\1/'`
+VERSION_ORIG=`echo $SRC_ORIG | sed -r 's/(.*)-(.*)-(.*)\.(.*\..*)$/\2/'`
+    REVISION=`echo $SRC_ORIG | sed -r 's/(.*)-(.*)-(.*)\.(.*\..*)$/\3/'`
+   EXTENSION=`echo $SRC_ORIG | sed -r 's/(.*)-(.*)-(.*)\.(.*\..*)$/\4/'`
 
 # -------  Códigos de erro para o createpkg  --------------
 ERROR_WGET=31;      ERROR_MAKE=32;      ERROR_INSTALL=33
@@ -38,7 +39,7 @@ if [ "$VERSION" != "" ]; then
 else
     VERSION=$VERSION_ORIG
 fi
-SRC=$PACKAGE-$VERSION.$EXTENSION
+SRC=$PACKAGE-$VERSION-$REVISION.$EXTENSION
 BUILD=${BUILD:=1rud}
 TMP=${TMP:=/tmp}
 REPOS=${REPOS:=$TMP}
