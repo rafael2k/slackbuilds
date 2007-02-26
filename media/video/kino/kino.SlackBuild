@@ -69,7 +69,8 @@ if [ -f "$CWD/$PACKAGE-$VERSION.diff" ]; then
   patch -p1 < $CWD/$PACKAGE-$VERSION.diff
 fi
 
-./configure --prefix=/usr --sysconfdir=/etc --libdir=$LIBDIR --with-docdir=/usr/doc/$PACKAGE-$VERSION
+# option --with-libdv-only is used because of incompatibilities of kino 0.9.5 with latest ffmpeg....
+./configure --prefix=/usr --with-libdv-only --sysconfdir=/etc --libdir=$LIBDIR --with-docdir=/usr/doc/$PACKAGE-$VERSION
 make || exit 32
 make DESTDIR=$TMP/package-$PACKAGE install
 
