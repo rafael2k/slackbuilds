@@ -27,7 +27,7 @@ fi
 # default settings
 PACKAGE="vlc"
 ARCH=${ARCH:=i486}
-VERSION=${VERSION:=0.8.5}
+VERSION=${VERSION:=0.8.6}
 BUILD=${BUILD:=1rd}
 SRC_DIR=${SRC:=$CWD}
 TMP=${TMP:=/tmp}
@@ -71,7 +71,7 @@ if [ -f "$CWD/$PACKAGE-$VERSION.diff" ]; then
 fi
 
 # h264 free implementation is unstable and changing a lot...
-./configure --prefix=/usr --enable-theora --disable-x264 --libdir=$LIBDIR 
+./configure --prefix=/usr --enable-theora --libdir=$LIBDIR 
 make || exit 32
 make DESTDIR=$TMP/package-$PACKAGE install
 
