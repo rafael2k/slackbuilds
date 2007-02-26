@@ -27,7 +27,7 @@ fi
 # default settings
 PACKAGE="mjpegtools"
 ARCH=${ARCH:=i486}
-VERSION=${VERSION:=1.8.0}
+VERSION=${VERSION:=1.9.0rc1}
 BUILD=${BUILD:=1rd}
 SRC_DIR=${SRC:=$CWD}
 TMP=${TMP:=/tmp}
@@ -65,15 +65,21 @@ cd $TMP
 tar xvf$tarflag $SRC_DIR/$SRC
 cd $PACKAGE-$VERSION
 
-if [ "$ARCH" == "powerpc" ]; then
-  patch -p0 < $CWD/$PACKAGE-powerpc.diff
+if [ "$ARCH" == "powerpc" ] && [ "$HAVE_ALTIVEC" != "true" ] && [ "$VERSION" == "1.8.0" ] ; then
+  patch -p0 < $CWD/$PACKAGE-$VERSION-powerpc.diff
 fi
 
 if [ -f "$CWD/$PACKAGE-$VERSION.diff" ]; then
   patch -p0 < $CWD/$PACKAGE-$VERSION.diff
 fi
 
-./configure --prefix=/usr --sysconfdir=/etc --libdir=$LIBDIR --with-docdir=/usr/doc/$PACKAGE-$VERSION
+EXTRA_AC_OPTIONS=""
+
+if [ "$ARCH" == "i386" ] || [ "$ARCH" == "i486" ]; then
+  EXTRA_AC_OPTIONS=" --disable-simd-accel"
+fi
+
+./configure --prefix=/usr --sysconfdir=/etc --libdir=$LIBDIR --with-docdir=/usr/doc/$PACKAGE-$VERSION $EXTRA_AC_OPTIONS
 
 make || exit 32
 make DESTDIR=$TMP/package-$PACKAGE install
