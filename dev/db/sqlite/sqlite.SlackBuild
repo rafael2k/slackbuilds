@@ -27,7 +27,7 @@ fi
 # default settings
 PACKAGE="sqlite"
 ARCH=${ARCH:=i486}
-VERSION=${VERSION:=3.3.8}
+VERSION=${VERSION:=3.3.13}
 BUILD=${BUILD:=1rha}
 SRC_DIR=${SRC:=$CWD}
 TMP=${TMP:=/tmp}
