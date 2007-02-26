@@ -27,7 +27,7 @@ fi
 # default settings
 PACKAGE="dvgrab"
 ARCH=${ARCH:=i486}
-VERSION=${VERSION:=2.0}
+VERSION=${VERSION:=2.1}
 BUILD=${BUILD:=1rd}
 SRC_DIR=${SRC:=$CWD}
 TMP=${TMP:=/tmp}
