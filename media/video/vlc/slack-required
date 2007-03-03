@@ -4,6 +4,5 @@ libdc1394
 mpeg2dec
 liba52
 faac
-faad2
 lame
 wxWidgets
