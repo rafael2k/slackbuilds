@@ -30,7 +30,7 @@ fi
 
 PACKAGE="php"
 PACKAGE_NAME="php-pgsql" # this is beacuse we're build with pgsql support
-VERSION=${VERSION:=4.4.4}
+VERSION=${VERSION:=4.4.5}
 PINE=${PINE:=4.64}
 ARCH=${ARCH:=i486}
 BUILD=${BUILD:=2rha}

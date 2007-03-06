@@ -28,7 +28,7 @@ elif [ -f /etc/slackbuildrc ]; then
 fi
 
 PACKAGE="php"
-VERSION=${VERSION:=4.4.4}
+VERSION=${VERSION:=4.4.5}
 PINE=${PINE:=4.64}
 ARCH=${ARCH:=i486}
 BUILD=${BUILD:=2rha}
