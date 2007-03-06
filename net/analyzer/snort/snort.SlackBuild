@@ -131,7 +131,7 @@ mkdir -p etc/snort
 CFG="snort.conf reference.config threshold.conf classification.config gen-msg.map generators sid sid.new sid-msg.map unicode.map"
 
 for file in $CFG; do
-  cp $CWD/etc/$CFG > etc/snort/$CFG.new
+  cp $CWD/etc/$CFG etc/snort/$CFG.new
 done
 
 cat << EOF > install/slack-desc
