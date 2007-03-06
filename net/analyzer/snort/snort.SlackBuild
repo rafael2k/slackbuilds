@@ -123,6 +123,8 @@ cd $TMP/package-$PACKAGE
 find . | xargs file | grep "executable" | grep ELF | cut -f 1 -d : | xargs strip --strip-unneeded 2> /dev/null
 find . | xargs file | grep "shared object" | grep ELF | cut -f 1 -d : | xargs strip --strip-unneeded 2> /dev/null
 
+find usr/man -type f -exec gzip -9 {} \;
+
 mkdir -p etc/snort
 
 CFG="snort.conf reference.config threshold.conf classification.config gen-msg.map generators sid sid.new sid-msg.map unicode.map"
