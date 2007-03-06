@@ -107,7 +107,7 @@ fi
 
 ./configure --prefix=/usr --sysconfdir=/etc --libdir=$LIBDIR \
               --localstatedir=/var --enable-pthread \
-              --enable-linux-smp-stats --with-mysql \
+              --enable-linux-smp-stats --with-mysql=/usr \
               --disable-dynamicplugin || exit $ERROR_CONF
 
 make || exit $ERROR_MAKE
