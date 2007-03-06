@@ -33,7 +33,7 @@ PACKAGE_NAME="php-pgsql" # this is beacuse we're build with pgsql support
 VERSION=${VERSION:=4.4.5}
 PINE=${PINE:=4.64}
 ARCH=${ARCH:=i486}
-BUILD=${BUILD:=2rha}
+BUILD=${BUILD:=1rha}
 TMP=${TMP:=/tmp}
 SRC_DIR=${SRC:=$CWD}
 REPOS=${REPOS:=$TMP}
