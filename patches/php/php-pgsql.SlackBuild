@@ -251,7 +251,7 @@ find . -name "*.h" -exec chmod 644 {} \;
 find . -name "*.orig" -exec rm {} \;
 
 # Fix a UTF-8 parsing overflow:
-if [[ "`echo $VERSION | tr -dc '[[:digit:]]')`" -lt 445 ]]; then
+if [[ `echo $VERSION | tr -dc '[[:digit:]]')` -lt 445 ]]; then
   zcat $CWD/php4.utf8.diff.gz | patch -p1 --verbose --backup --suffix=.orig || exit $ERROR_PATCH
 fi
 
