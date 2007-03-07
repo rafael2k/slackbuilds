@@ -1,7 +1,7 @@
 ###################################################
 ## Generic template for SlackBuilds
 ##
-## Version 0.7.2 - Luis ( luis at riseup d0t net)
+## Version 0.7.3 - Luis ( luis at riseup d0t net)
 ##
 ###################################################
 #!/bin/bash
@@ -27,7 +27,7 @@ ARCH=${ARCH:=[[ARCH]]}
 SRC_VERSION=${VERSION:=[[VERSION]]}
 PKG_VERSION="$(echo "$SRC_VERSION" | tr '[[:blank:]-]' '_')"
 BUILD=${BUILD:=1[[SLACKBUILD AUTHOR INITIALS]]}
-SRC_DIR=${SRC_DIR:=$CWD}
+SRC_DIR=${SRC_DIR:=$CWD}/$PKG_NAME
 TMP=${TMP:=/tmp}
 PKG=${PKG:=$TMP/package-$PKG_NAME}
 REPOS=${REPOS:=$TMP}
@@ -65,12 +65,6 @@ mkdir -p "$SRC_DIR" || exit $ERROR_MKDIR
 mkdir -p "$PKG" || exit $ERROR_MKDIR
 mkdir -p "$REPOS" || exit $ERROR_MKDIR
 
-# Import minimized signing key from
-# [[SIGNING KEY URL]]
-gpg --import << EOKEY || exit $ERROR_GPG
-[[SIGNING KEY]]
-EOKEY
-
 # Dowload source if necessary
 SRC="$SRC_NAME-$SRC_VERSION.tar.[[SOURCE EXTENSION]]"
 URL="[[DOWNLOAD FOLDER URL]]/$SRC"
@@ -78,6 +72,12 @@ URL="[[DOWNLOAD FOLDER URL]]/$SRC"
 if [ ! -s "$SRC_DIR/$SRC" ] || ! [[DECOMPRESSOR]] [[DECOMPRESSOR TEST FLAG]] "$SRC_DIR/$SRC" 2> /dev/null; then
   wget "$URL" -O "$SRC_DIR/$SRC" || exit $ERROR_WGET
 fi
+
+# Import minimized signing key from
+# [[SIGNING KEY URL]]
+gpg --import << EOKEY || exit $ERROR_GPG
+[[SIGNING KEY]]
+EOKEY
 
 # Dowload source's signature if necessary and check it
 if [ ! -s "$SRC_DIR/$SRC.sig" ]; then
