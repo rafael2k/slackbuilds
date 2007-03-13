@@ -3,6 +3,9 @@
 # slackbuild script for MPlayer
 # by rhatto at riseup.net
 #
+# Modified: Alexandre aka xdoctor
+# Date: 11/03/2007
+# Acrescimo do download de Skin e instalação
 
 if [ -s "slack-required" ]; then
   echo Recomended and required packages for building MPlayer are:
@@ -24,7 +27,7 @@ elif [ -f /etc/slackbuildrc ]; then
   source /etc/slackbuildrc
 fi
 
-# default settings
+# default package settings
 PACKAGE="MPlayer"
 ARCH=${ARCH:=i486}
 VERSION=${VERSION:=1.0rc1}
@@ -32,6 +35,12 @@ BUILD=${BUILD:=1rha}
 SRC_DIR=${SRC:=$CWD}
 TMP=${TMP:=/tmp}
 REPOS=${REPOS:=$TMP}
+
+# default skin settings
+SKIN="Blue"
+VERSION_SKIN="1.7"
+SKIN_EXT="bz2"
+PACKAGE_SKIN=${PACKAGE_SKIN:=$SKIN-$VERSION_SKIN.tar.$SKIN_EXT}
 
 # -------  error codes for createpkg  --------------
 ERROR_WGET=31;      ERROR_MAKE=32;      ERROR_INSTALL=33
@@ -45,10 +54,14 @@ else
   LIBDIR=/usr/lib
 fi
 
+# URL do MPlayer
 RTOOL="wget"
 PACKAGE_EXT="bz2"
 SRC="$PACKAGE-$VERSION.tar.$PACKAGE_EXT"
 URL="http://www1.mplayerhq.hu/MPlayer/releases/$SRC"
+
+# URL do Skin do MPlayer
+URL_SKIN="http://www1.mplayerhq.hu/MPlayer/Skin/$SKIN-$VERSION_SKIN.tar.$SKIN_EXT"
 
 if [ "$PACKAGE_EXT" == "bz2" ]; then
   tarflag="j"
@@ -59,8 +72,14 @@ fi
 SRC_DIR="$SRC_DIR/$PACKAGE"
 mkdir -p $SRC_DIR
 
+# Download do MPlayer
 if [ "$RTOOL" == "wget" ] && [ ! -f "$SRC_DIR/$SRC" ]; then
   wget "$URL" -O "$SRC_DIR/$SRC" || exit $ERROR_WGET
+fi
+
+# Download do Skin
+if [ "$RTOOL" == "wget" ] && [ ! -f "$SRC_DIR/$PACKAGE_SKIN" ]; then
+  wget "$URL_SKIN" -O "$SRC_DIR/$PACKAGE_SKIN" || exit 
 fi
 
 TMP="$TMP/$PACKAGE"
@@ -118,6 +137,15 @@ mkdir -p usr/doc/$PACKAGE-$VERSION
 for file in AUTHORS ChangeLog Copyright DOCS LICENSE README TOOLS; do
   cp $CWD/$file* usr/doc/$PACKAGE-$VERSION/
 done
+
+# Extracao e criacao da pasta para Skin
+# criacao do diretorio
+SKIN_DIR=${SKIN_DIR:=$TMP/package-$PACKAGE/$PACKAGE/usr/share/mplayer/skins}
+mkdir -p usr/share/mplayer/skins
+cd $SKIN_DIR
+tar jxvf $SRC_DIR/$PACKAGE_SKIN
+mv $SKIN default
+cd $TMP/package-$PACKAGE/$PACKAGE
 
 makepkg -c y -l y $REPOS/$PACKAGE-$VERSION-$ARCH-$BUILD.tgz || exit $ERROR_MKPKG
 
