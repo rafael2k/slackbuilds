@@ -1,7 +1,7 @@
 ###################################################
 ## Generic template for SlackBuilds
 ##
-## Version 0.7.3 - Luis ( luis at riseup d0t net)
+## Version 0.7.4 - Luis ( luis at riseup d0t net)
 ##
 ###################################################
 #!/bin/bash
@@ -92,8 +92,8 @@ tar --no-same-owner --no-same-permissions -xvf "$SRC_DIR/$SRC" || exit $ERROR_TA
 cd "$PKG_SRC"
 
 # Patch source
-patches="[[PATCH FILES]] $PACKAGE.diff $PACKAGE-$VERSION.diff
-         $PACKAGE-$VERSION-$ARCH.diff $PACKAGE-$ARCH.diff"
+patches="[[PATCH FILES]] $PKG_NAME.diff $PKG_NAME-$PKG_VERSION.diff
+         $PKG_NAME-$PKG_VERSION-$ARCH.diff $PKG_NAME-$ARCH.diff"
 for patch in $patches; do
   if [ -f "$CWD/$patch" ]; then
     patch -Np[[NUMBER OF PREFIX SLASHES TO STRIP]] < "$CWD/$patch" || exit $ERROR_PATCH

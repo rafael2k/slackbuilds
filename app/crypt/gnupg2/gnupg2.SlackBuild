@@ -149,8 +149,8 @@ fi
 
 # Install documentation
 DOCS="ABOUT-NLS AUTHORS COPYING ChangeLog INSTALL NEWS README* THANKS TODO \
-     VERSION doc/DETAILS doc/HACKING doc/KEYSERVER doc/OpenPGP doc/TRANSLATE \
-     doc/examples doc/*.png"
+      VERSION doc/DETAILS doc/HACKING doc/KEYSERVER doc/OpenPGP doc/TRANSLATE \
+      doc/examples doc/*.png"
 mkdir -p "$PKG/$PREFIX/doc/$PKG_NAME-$PKG_VERSION" || exit $ERROR_MKDIR
 cp -a $DOCS "$PKG/$PREFIX/doc/$PKG_NAME-$PKG_VERSION"
 ( cd "$PKG/$PREFIX/doc/$PKG_NAME-$PKG_VERSION"
