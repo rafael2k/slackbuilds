@@ -92,8 +92,6 @@ cd $PACKAGE-$VERSION
 
 if [ "$ARCH" == "i586" ] || [ "$ARCH" == "i686" ]; then
   EXTRA_ARGS="--enable-win32 --enable-qtx"
-elif [ "$ARCH" == "x86_64" ]; then
-  EXTRA_ARGS="--disable-x264"
 fi
 
 # add --enable-runtime-cpudetection for package creation!
