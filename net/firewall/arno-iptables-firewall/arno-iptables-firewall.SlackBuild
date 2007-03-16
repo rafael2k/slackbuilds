@@ -6,8 +6,6 @@
 # Author: Luis ( luis at riseup d0t net )
 #
 
-CWD=`pwd`
-
 # Look for slackbuildrc
 if [ -f ~/.slackbuildrc ]; then
   source ~/.slackbuildrc
@@ -16,17 +14,19 @@ elif [ -f /etc/slackbuildrc ]; then
 fi
 
 # Set variables
+CWD="$(pwd)"
 SRC_NAME="arno-iptables-firewall"
 PKG_NAME="arno-iptables-firewall"
 ARCH="noarch"
-VERSION=${VERSION:=1.8.8g}
+SRC_VERSION=${VERSION:=1.8.8h}
+PKG_VERSION="$(echo "$SRC_VERSION" | tr '[[:blank:]-]' '_')"
 BUILD=${BUILD:=1ls}
-SRC_DIR=${SRC_DIR:=$CWD}
+SRC_DIR=${SRC_DIR:=$CWD}/$PKG_NAME
 TMP=${TMP:=/tmp}
 PKG=${PKG:=$TMP/package-$PKG_NAME}
 REPOS=${REPOS:=$TMP}
 PREFIX=${PREFIX:=/usr}
-PKG_SRC="$SRC_DIR/${SRC_NAME}_$VERSION"
+PKG_SRC="$TMP/${SRC_NAME}_$SRC_VERSION"
 
 # Set error codes (used by createpkg)
 ERROR_WGET=31;      ERROR_MAKE=32;      ERROR_INSTALL=33
@@ -38,23 +38,25 @@ ERROR_PATCH=40;     ERROR_VCS=41;       ERROR_MKDIR=42
 rm -rf "$PKG_SRC" 2> /dev/null
 rm -rf "$PKG" 2> /dev/null
 
-# Create directories, if necessary
+# Create directories if necessary
 mkdir -p "$SRC_DIR" || exit $ERROR_MKDIR
 mkdir -p "$PKG" || exit $ERROR_MKDIR
 mkdir -p "$REPOS" || exit $ERROR_MKDIR
 
-# Dowload source, if necessary
-SRC="${SRC_NAME}_$VERSION.tar.gz"
+# Dowload source if necessary
+SRC="${SRC_NAME}_$SRC_VERSION.tar.gz"
 URL="http://rocky.eld.leidenuniv.nl/iptables-firewall/$SRC"
 
 if [ ! -s "$SRC_DIR/$SRC" ] || ! gzip -t "$SRC_DIR/$SRC" 2> /dev/null; then
   wget "$URL" -O "$SRC_DIR/$SRC" || exit $ERROR_WGET
 fi
 
-# Untar and install
-cd "$SRC_DIR"
+# Untar
+cd "$TMP"
 tar --no-same-owner --no-same-permissions -xvf "$SRC_DIR/$SRC" || exit $ERROR_TAR
 cd "$PKG_SRC"
+
+# Install
 mkdir -p "$PKG/etc/rc.d" || exit $ERROR_MKDIR
 mkdir -p "$PKG/etc/logrotate.d" || exit $ERROR_MKDIR
 mkdir -p "$PKG/$PREFIX/bin" || exit $ERROR_MKDIR
@@ -89,8 +91,8 @@ fi
 
 # Install documentation
 DOCS="CHANGELOG README gpl_license.txt"
-mkdir -p "$PKG/$PREFIX/doc/$PKG_NAME-$VERSION" || exit $ERROR_MKDIR
-cp -a $DOCS "$PKG/$PREFIX/doc/$PKG_NAME-$VERSION"
+mkdir -p "$PKG/$PREFIX/doc/$PKG_NAME-$PKG_VERSION" || exit $ERROR_MKDIR
+cp -a $DOCS "$PKG/$PREFIX/doc/$PKG_NAME-$PKG_VERSION"
 
 # Add package description (slack-desc)
 mkdir -p "$PKG/install" || exit $ERROR_MKDIR
@@ -152,9 +154,9 @@ EOSCRIPT
 
 # Build the package
 cd "$PKG"
-makepkg -l y -c n "$REPOS/$PKG_NAME-$VERSION-$ARCH-$BUILD.tgz" || exit $ERROR_MKPKG
+makepkg -l y -c n "$REPOS/$PKG_NAME-$PKG_VERSION-$ARCH-$BUILD.tgz" || exit $ERROR_MKPKG
 
-# Delete source and build directories, if requested
+# Delete source and build directories if requested
 if [ "$CLEANUP" == "yes" ]; then
   rm -rf "$PKG_SRC" "$PKG"
 fi

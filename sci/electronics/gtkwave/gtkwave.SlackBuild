@@ -6,8 +6,6 @@
 # Author: Luis ( luis at riseup d0t net )
 #
 
-CWD=`pwd`
-
 # Look for slackbuildrc
 if [ -f ~/.slackbuildrc ]; then
   source ~/.slackbuildrc
@@ -16,6 +14,7 @@ elif [ -f /etc/slackbuildrc ]; then
 fi
 
 # Set variables
+CWD="$(pwd)"
 SRC_NAME="gtkwave"
 PKG_NAME="gtkwave"
 ARCH="i486"
@@ -23,11 +22,12 @@ VERSION=   # Only the -current version is available for download.
            #+The version being built can only be defined after
            #+decompressing the downloaded source.
 BUILD=${BUILD:=1ls}
-SRC_DIR=${SRC_DIR:=$CWD}
+SRC_DIR=${SRC_DIR:=$CWD}/$PKG_NAME
 TMP=${TMP:=/tmp}
 PKG=${PKG:=$TMP/package-$PKG_NAME}
 REPOS=${REPOS:=$TMP}
 PREFIX=${PREFIX:=/usr}
+PKG_SRC="$TMP/$SRC_NAME"-3.*
 
 # Set error codes (used by createpkg)
 ERROR_WGET=31;      ERROR_MAKE=32;      ERROR_INSTALL=33
@@ -36,15 +36,15 @@ ERROR_TAR=37;       ERROR_MKPKG=38;     ERROR_GPG=39
 ERROR_PATCH=40;     ERROR_VCS=41;       ERROR_MKDIR=42
 
 # Clean up any leftovers of previous builds
-rm -rf "$SRC_DIR/$SRC_NAME"-3.* 2> /dev/null
+rm -rf "$PKG_SRC" 2> /dev/null
 rm -rf "$PKG" 2> /dev/null
 
-# Create directories, if necessary
+# Create directories if necessary
 mkdir -p "$SRC_DIR" || exit $ERROR_MKDIR
 mkdir -p "$PKG" || exit $ERROR_MKDIR
 mkdir -p "$REPOS" || exit $ERROR_MKDIR
 
-# Dowload source, if necessary
+# Dowload source if necessary
 SRC="$SRC_NAME-current.tar.gz"
 URL="http://home.nc.rr.com/gtkwave/$SRC"
 
@@ -67,13 +67,22 @@ else
   fi
 fi
 
-# Untar, define $VERSION, configure, compile and install
-cd "$SRC_DIR"
+# Untar
+cd "$TMP"
 tar --no-same-owner --no-same-permissions -xvf "$SRC_DIR/$SRC" || exit $ERROR_TAR
-VERSION="$(ls -d "$SRC_DIR/$SRC_NAME"-3.* | cut -d "-" -f 2)"
-cd "$SRC_NAME-$VERSION"
+cd "$PKG_SRC"
+
+# Define $SRC_ and $PKG_VERSION
+SRC_VERSION="$(ls -d "$SRC_DIR/$SRC_NAME"-3.* | cut -d "-" -f 2)"
+PKG_VERSION="$(echo "$SRC_VERSION" | tr '[[:blank:]-]' '_')"
+
+# Configure
 echo $GTK_VERSION | ./configure || exit $ERROR_CONF
+
+# Compile
 make || exit $ERROR_MAKE
+
+# Install
 make install prefix="$PKG/$PREFIX" || exit $ERROR_INSTALL
 
 # Strip binaries
@@ -101,8 +110,8 @@ fi
 
 # Install documentation and examples
 DOCS="*.TXT doc/gtkwave.odt examples"
-mkdir -p "$PKG/$PREFIX/doc/$PKG_NAME-$VERSION" || exit $ERROR_MKDIR
-cp -a $DOCS "$PKG/$PREFIX/doc/$PKG_NAME-$VERSION"
+mkdir -p "$PKG/$PREFIX/doc/$PKG_NAME-$PKG_VERSION" || exit $ERROR_MKDIR
+cp -a $DOCS "$PKG/$PREFIX/doc/$PKG_NAME-$PKG_VERSION"
 
 # Add package description (slack-desc)
 mkdir -p "$PKG/install" || exit $ERROR_MKDIR
@@ -130,9 +139,9 @@ EODESC
 
 # Build the package
 cd "$PKG"
-makepkg -l y -c n "$REPOS/$PKG_NAME-$VERSION-$ARCH-$BUILD.tgz" || exit $ERROR_MKPKG
+makepkg -l y -c n "$REPOS/$PKG_NAME-$PKG_VERSION-$ARCH-$BUILD.tgz" || exit $ERROR_MKPKG
 
-# Delete source and build directories, if requested
+# Delete source and build directories if requested
 if [ "$CLEANUP" == "yes" ]; then
-  rm -rf "$SRC_DIR/$SRC_NAME-$VERSION" "$PKG"
+  rm -rf "$PKG_SRC" "$PKG"
 fi
