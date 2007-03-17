@@ -108,7 +108,7 @@ if [ -d "$PKG/$PREFIX/man" ]; then
   )
 fi
 
-# Install documentation and examples
+# Install documentation
 DOCS="*.TXT doc/gtkwave.odt examples"
 mkdir -p "$PKG/$PREFIX/doc/$PKG_NAME-$PKG_VERSION" || exit $ERROR_MKDIR
 cp -a $DOCS "$PKG/$PREFIX/doc/$PKG_NAME-$PKG_VERSION"

@@ -106,7 +106,7 @@ if [ -d "$PKG/$PREFIX/man" ]; then
   )
 fi
 
-# Install documentation and examples
+# Install documentation
 mkdir -p "$PKG/$PREFIX/doc/$PKG_NAME-$PKG_VERSION/vvp" || exit $ERROR_MKDIR
 cp -a COPYING INSTALL *.txt examples "$PKG/$PREFIX/doc/$PKG_NAME-$PKG_VERSION"
 cp -a vvp/*.txt vvp/examples "$PKG/$PREFIX/doc/$PKG_NAME-$PKG_VERSION/vvp"

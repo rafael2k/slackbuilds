@@ -118,7 +118,7 @@ make install DESTDIR="$PKG" || exit $ERROR_INSTALL
     xargs strip --strip-unneeded 2> /dev/null
 )
 
-# Avoid overwriting share/gnupg/ files, from the original gnupg package
+# Avoid overwriting share/gnupg/ files, from Slackware's gnupg package
 mv -f "$PKG/$PREFIX/share/gnupg" "$PKG/$PREFIX/share/gnupg2"
 
 # Install gpg2, gpgv2, gpg-agent, and gpgsm already suid root
