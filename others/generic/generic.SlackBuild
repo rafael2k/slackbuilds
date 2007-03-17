@@ -92,7 +92,8 @@ tar --no-same-owner --no-same-permissions -xvf "$SRC_DIR/$SRC" || exit $ERROR_TA
 cd "$PKG_SRC"
 
 # Patch source
-patches="[[PATCH FILES]] $PKG_NAME.diff $PKG_NAME-$PKG_VERSION.diff
+patches="[[PATCH FILES]]
+         $PKG_NAME.diff $PKG_NAME-$PKG_VERSION.diff
          $PKG_NAME-$PKG_VERSION-$ARCH.diff $PKG_NAME-$ARCH.diff"
 for patch in $patches; do
   if [ -f "$CWD/$patch" ]; then
