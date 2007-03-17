@@ -80,7 +80,7 @@ cp -r data $TMP/package-$PACKAGE/opt/0verkill
 cp -r grx $TMP/package-$PACKAGE/opt/0verkill
 
 chown -R root.root $TMP/package-$PACKAGE/opt/0verkill
-chmod 644 $TMP/package-$PACKAGE/opt/0verkill/{data,grx}
+chmod 644 $TMP/package-$PACKAGE/opt/0verkill/{data,grx}/*
 chmod 755 $TMP/package-$PACKAGE/opt/0verkill/{0verkill,server}
 
 echo '#!/bin/bash' > $TMP/package-$PACKAGE/usr/games/0verkill
