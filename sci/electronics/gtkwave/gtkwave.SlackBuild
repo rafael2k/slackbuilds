@@ -18,16 +18,15 @@ CWD="$(pwd)"
 SRC_NAME="gtkwave"
 PKG_NAME="gtkwave"
 ARCH="i486"
-VERSION=   # Only the -current version is available for download.
-           #+The version being built can only be defined after
-           #+decompressing the downloaded source.
+SRC_VERSION=${VERSION:=3.0.22}
+PKG_VERSION="$(echo "$SRC_VERSION" | tr '[[:blank:]-]' '_')"
 BUILD=${BUILD:=1ls}
 SRC_DIR=${SRC_DIR:=$CWD}/$PKG_NAME
 TMP=${TMP:=/tmp}
 PKG=${PKG:=$TMP/package-$PKG_NAME}
 REPOS=${REPOS:=$TMP}
 PREFIX=${PREFIX:=/usr}
-PKG_SRC="$TMP/$SRC_NAME"-3.*
+PKG_SRC="$TMP/$SRC_NAME-$SRC_VERSION"
 
 # Set error codes (used by createpkg)
 ERROR_WGET=31;      ERROR_MAKE=32;      ERROR_INSTALL=33
@@ -45,7 +44,7 @@ mkdir -p "$PKG" || exit $ERROR_MKDIR
 mkdir -p "$REPOS" || exit $ERROR_MKDIR
 
 # Dowload source if necessary
-SRC="$SRC_NAME-current.tar.gz"
+SRC="$SRC_NAME-$SRC_VERSION.tar.gz"
 URL="http://home.nc.rr.com/gtkwave/$SRC"
 
 if [ ! -s "$SRC_DIR/$SRC" ] || ! gzip -t "$SRC_DIR/$SRC" 2> /dev/null; then
@@ -71,10 +70,6 @@ fi
 cd "$TMP"
 tar --no-same-owner --no-same-permissions -xvf "$SRC_DIR/$SRC" || exit $ERROR_TAR
 cd "$PKG_SRC"
-
-# Define $SRC_ and $PKG_VERSION
-SRC_VERSION="$(ls -d "$SRC_DIR/$SRC_NAME"-3.* | cut -d "-" -f 2)"
-PKG_VERSION="$(echo "$SRC_VERSION" | tr '[[:blank:]-]' '_')"
 
 # Configure
 echo $GTK_VERSION | ./configure || exit $ERROR_CONF
