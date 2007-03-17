@@ -85,7 +85,7 @@ find . -perm 511 -exec chmod 755 {} \;
 find . -perm 711 -exec chmod 755 {} \;
 find . -perm 555 -exec chmod 755 {} \;
 
-./configure --prefix=/usr --sysconfdir=/etc --libdir=$LIBDIR || exit $ERROR_CONF
+./configure --prefix=/usr --libdir=$LIBDIR || exit $ERROR_CONF
 
 zcat $CWD/libpng.libs.diff.gz | patch -p1 --verbose || exit $ERROR_PATCH
 
