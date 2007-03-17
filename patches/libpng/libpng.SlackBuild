@@ -3,8 +3,9 @@
 # slackbuild script for libpng
 # by rhatto at riseup.net
 #
-# some code grabbed from slackware 11.0 script, at
-# ftp://ftp.slackware.com/pub/slackware/slackware-11.0/source/l/libpng/
+# some code grabbed from slackware 11.0 and slamd64-11.0 scripts, found at
+# ftp://ftp.slackware.com/pub/slackware/slackware-11.0/source/l/libpng/ and
+# http://slamd64.he.net/slamd64-11.0/source/l/libpng/libpng.SlackBuild
 #
 
 if [ -s "slack-required" ]; then
@@ -85,10 +86,20 @@ find . -perm 511 -exec chmod 755 {} \;
 find . -perm 711 -exec chmod 755 {} \;
 find . -perm 555 -exec chmod 755 {} \;
 
-zcat $CWD/libpng.libs.diff.gz | patch -p1 --verbose || exit $ERROR_PATCH
-ln -sf scripts/makefile.linux ./Makefile
+if [ "$ARCH" == "x86_64" ]; then
+  # Do *NOT* move this... put here in Slamd64 so that libdir
+  # can be overriden and so that we don't have inline assembly problems
+  # - if you change this, rebuilding libpng will break, and 
+  # you'll have to rebuild everything that links to it (e.g. KDE).
+  zcat $CWD/libpng.libs.diff.gz | patch -p1 --verbose || exit $ERROR_PATCH
+  ln -sf scripts/makefile.linux ./Makefile
+  ./configure --prefix=/usr --libdir=$LIBDIR || exit $ERROR_CONF
+else
+  ./configure --prefix=/usr --libdir=$LIBDIR || exit $ERROR_CONF
+  zcat $CWD/libpng.libs.diff.gz | patch -p1 --verbose || exit $ERROR_PATCH
+  ln -sf scripts/makefile.linux ./Makefile
+fi
 
-./configure --prefix=/usr --libdir=$LIBDIR || exit $ERROR_CONF
 make || exit $ERROR_MAKE
 make DESTDIR=$TMP/package-$PACKAGE install || exit $ERROR_INSTALL
 
