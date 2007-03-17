@@ -47,8 +47,7 @@ ERROR_TAR=37;       ERROR_MKPKG=38;     ERROR_GPG=39
 ERROR_PATCH=40
 
 RTOOL="wget"
-PACKAGE_EXT="gz"
-SRC="$PACKAGE-$VERSION.tar.$PACKAGE_EXT"
+SRC="$PACKAGE-$VERSION.tgz"
 URL="http://artax.karlin.mff.cuni.cz/~brain/0verkill/release/$SRC"
 
 SRC_DIR="$SRC_DIR/$PACKAGE"
