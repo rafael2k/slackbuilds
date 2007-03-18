@@ -2,7 +2,7 @@
 #
 # slackbuild for wine, by Rudson R. Alves
 # requires: none
-# tested: wine-0.9.31
+# tested: wine-0.9.33
 
 CWD=`pwd`
 
@@ -16,7 +16,7 @@ fi
 # --------  Variáveis de controle de versão  --------------
 # Nome da fonte para a qual o slackbuild foi construído e
 # o seu md5sum
-SRC_ORIG="wine-0.9.31.tar.bz2"
+SRC_ORIG="wine-0.9.33.tar.bz2"
 #MD5_ORIG=""
 PACKAGE_ORIG=`echo $SRC_ORIG | sed 's/\(.*\)-\(.*\)\.\(.*\..*\)$/\1/'`
 VERSION_ORIG=`echo $SRC_ORIG | sed 's/\(.*\)-\(.*\)\.\(.*\..*\)$/\2/'`
