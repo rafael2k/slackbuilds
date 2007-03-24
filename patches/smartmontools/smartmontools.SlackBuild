@@ -44,9 +44,9 @@ mkdir -p $TMP $SRC_DIR
 
 # TODO: signature checking
 if [ "$RTOOL" == "wget" ] && [ ! -f "$SRC_DIR/$SRC" ]; then
-  rm -f $SRC_DIR/$SRC.asc
   wget "$URL" -O "$SRC_DIR/$SRC"
-  wget "$URL.asc" -O "$SRC_DIR/$SRC.asc"
+  #rm -f $SRC_DIR/$SRC.asc
+  #wget "$URL.asc" -O "$SRC_DIR/$SRC.asc"
 fi
 
 if [ ! -d $TMP ]; then
