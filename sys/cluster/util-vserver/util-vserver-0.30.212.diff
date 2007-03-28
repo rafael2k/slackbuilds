@@ -1,0 +1,44 @@
+Index: /src/vlogin.c
+===================================================================
+--- /src/vlogin.c (revision 2325)
++++ /src/vlogin.c (revision 2514)
+@@ -125,5 +125,5 @@
+ 
+ /* copy terminal activities */
+-static void
++static ssize_t
+ terminal_copy(int src, int dst)
+ {
+@@ -142,4 +142,6 @@
+   /* write activity to user */
+   EwriteAll(dst, buf, len);
++
++  return len;
+ }
+ 
+@@ -277,9 +279,19 @@
+     }
+ 
+-    if (FD_ISSET(STDIN_FILENO, &rfds))
+-      terminal_copy(STDIN_FILENO, t.fd);
+-
+-    if (FD_ISSET(t.fd, &rfds))
+-      terminal_copy(t.fd, STDOUT_FILENO);
++    if (FD_ISSET(STDIN_FILENO, &rfds)) {
++      /* EOF */
++      if (terminal_copy(STDIN_FILENO, t.fd) == 0) {
++	terminal_kill(SIGHUP);
++	exit(0);
++      }
++    }
++
++    if (FD_ISSET(t.fd, &rfds)) {
++      /* EOF */
++      if (terminal_copy(t.fd, STDOUT_FILENO) == 0) {
++	terminal_kill(SIGHUP);
++	exit(0);
++      }
++    }
+   }
+ 
+

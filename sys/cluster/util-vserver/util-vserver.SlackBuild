@@ -27,7 +27,7 @@ fi
 PACKAGE="util-vserver"
 ARCH=${ARCH:=i486}
 VERSION=${VERSION:=0.30.212}
-BUILD=${BUILD:=1rha}
+BUILD=${BUILD:=2rha}
 SRC_DIR=${SRC:=$CWD}
 TMP=${TMP:=/tmp}
 REPOS=${REPOS:=$TMP}
@@ -50,18 +50,16 @@ SRC="$PACKAGE-$VERSION.tar.$PACKAGE_EXT"
 SRC="$PACKAGE-$VERSION.tar.$PACKAGE_EXT"
 URL="http://ftp.linux-vserver.org/pub/utils/util-vserver/$SRC"
 
-if [ "$PACKAGE_EXT" == "bz2" ]; then
-  tarflag="j"
-else
-  tarflag="z"
-fi
-
 SRC_DIR="$SRC_DIR/$PACKAGE"
 mkdir -p $SRC_DIR
 
-if [ "$RTOOL" == "wget" ] && [ ! -f "$SRC_DIR/$SRC" ]; then
-  wget "$URL" -O "$SRC_DIR/$SRC" || exit $ERROR_WGET
-  wget "$URL.asc" -O "$SRC_DIR/$SRC.asc" || exit $ERROR_WGET
+if [ "$RTOOL" == "wget" ]; then
+  if [ ! -f "$SRC_DIR/$SRC" ]; then
+    wget "$URL" -O "$SRC_DIR/$SRC" || exit $ERROR_WGET
+  fi
+  if [ ! -f "$SRC_DIR/$SRC.asc" ]; then
+    wget "$URL.asc" -O "$SRC_DIR/$SRC.asc" || exit $ERROR_WGET
+  fi
 fi
 
 # gpg --verify $SRC_DIR/$SRC.asc $SRC_DIR/$SRC || exit $ERROR_GPG
@@ -71,8 +69,13 @@ rm -rf $TMP
 mkdir -p $TMP/package-$PACKAGE
 cd $TMP
 
-tar xvf$tarflag $SRC_DIR/$SRC || exit $ERROR_TAR
+tar xvf $SRC_DIR/$SRC || exit $ERROR_TAR
 cd $PACKAGE-$VERSION
+
+if [ -f "$CWD/$PACKAGE-$VERSION.diff" ]; then
+  patch -p1 < $CWD/$PACKAGE-$VERSION.diff
+fi
+
 ./configure --prefix=/usr --sysconfdir=/etc --libdir=$LIBDIR --with-initrddir=/etc/rc.d --localstatedir=/var || exit $ERROR_CONF
 make || exit $ERROR_MAKE
 make DESTDIR=$TMP/package-$PACKAGE install || exit $ERROR_INSTALL
