@@ -2,7 +2,7 @@
 #
 # slackbuild for libkipi, by Rudson R. Alves
 # requires: none
-# tested: libkipi-0.1.4
+# tested: libkipi-0.1.5
 
 CWD=`pwd`
 
@@ -16,8 +16,8 @@ fi
 # --------  Variáveis de controle de versão  --------------
 # Nome da fonte para a qual o slackbuild foi construído e
 # o seu md5sum
-SRC_ORIG="libkipi-0.1.4.tar.bz2"
-MD5_ORIG="2d8b8da064b85b0e53a98b4a7510392e"
+SRC_ORIG="libkipi-0.1.5.tar.bz2"
+MD5_ORIG="aef790871583444cd81bd9dea9c3fd0b"
 PACKAGE_ORIG=`echo $SRC_ORIG | sed -r 's/(.*)-(.*)\.(.*\..*)$/\1/'`
 VERSION_ORIG=`echo $SRC_ORIG | sed -r 's/(.*)-(.*)\.(.*\..*)$/\2/'`
    EXTENSION=`echo $SRC_ORIG | sed -r 's/(.*)-(.*)\.(.*\..*)$/\3/'`
@@ -40,7 +40,7 @@ REPOS=${REPOS:=$TMP}
 PREFIX=${PREFIX:=/opt/kde}
 OPTCONF=${OPTCONF:=""}
 MD5=${MD5:=$MD5_ORIG}
-URL=${URL:="http://superb-west.dl.sourceforge.net/sourceforge/kipi/$SRC"}
+URL=${URL:="http://ufpr.dl.sourceforge.net/sourceforge/kipi/$SRC"}
 
 # ----------------  Download fontes  ----------------------
 # Fonte a ser compilada, com o path
