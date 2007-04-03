@@ -1,7 +1,7 @@
 ###################################################
 ## Generic template for SlackBuilds
 ##
-## Version 0.8 - Luis ( luis at riseup d0t net)
+## Version 0.8.1 - Luis ( luis at riseup d0t net)
 ##
 ###################################################
 #!/bin/bash
@@ -34,7 +34,6 @@ REPOS=${REPOS:=$TMP}
 PREFIX=${PREFIX:=[[PREFIX]]}
 PKG_SRC="$TMP/$SRC_NAME-$SRC_VERSION"
 CONF_OPTIONS=${CONF_OPTIONS:=[[OTHER CONFIGURE ARGS]]}
-MAKE_OPTIONS=${MAKE_OPTIONS:=[[MAKE OPTIONS]]}
 
 # Set system libraries' path and optmization flags based on $ARCH
 LIBDIR="$PREFIX/lib"
@@ -122,7 +121,7 @@ CFLAGS="$SLKCFLAGS" \
   --prefix="$PREFIX" --libdir="$LIBDIR" "$CONF_OPTIONS" || exit $ERROR_CONF
 
 # Compile
-make "$MAKE_OPTIONS" || exit $ERROR_MAKE
+make || exit $ERROR_MAKE
 
 # Install
 make install DESTDIR="$PKG" || exit $ERROR_INSTALL
