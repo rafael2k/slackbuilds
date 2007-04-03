@@ -1,7 +1,7 @@
 ###################################################
 ## Generic template for SlackBuilds
 ##
-## Version 0.7.4 - Luis ( luis at riseup d0t net)
+## Version 0.8 - Luis ( luis at riseup d0t net)
 ##
 ###################################################
 #!/bin/bash
@@ -33,6 +33,8 @@ PKG=${PKG:=$TMP/package-$PKG_NAME}
 REPOS=${REPOS:=$TMP}
 PREFIX=${PREFIX:=[[PREFIX]]}
 PKG_SRC="$TMP/$SRC_NAME-$SRC_VERSION"
+CONF_OPTIONS=${CONF_OPTIONS:=[[OTHER CONFIGURE ARGS]]}
+MAKE_OPTIONS=${MAKE_OPTIONS:=[[MAKE OPTIONS]]}
 
 # Set system libraries' path and optmization flags based on $ARCH
 LIBDIR="$PREFIX/lib"
@@ -73,6 +75,16 @@ if [ ! -s "$SRC_DIR/$SRC" ] || ! [[DECOMPRESSOR]] [[DECOMPRESSOR TEST FLAG]] "$S
   wget "$URL" -O "$SRC_DIR/$SRC" || exit $ERROR_WGET
 fi
 
+# Download source's MD5 checksum if necessary and check it
+if [ ! -s "$SRC_DIR/$SRC.[[MD5SUM EXTENSION]]" ]; then
+   wget "$URL.[[MD5SUM EXTENSION]]" -O "$SRC_DIR/$SRC.[[MD5SUM EXTENSION]]" || exit $ERROR_WGET
+fi
+
+MD5SUM_SRC="$(md5sum "$SRC_DIR/$SRC" | cut -d " " -f 1)"
+MD5SUM_URL="$(grep "$SRC[ \t]*$" "$SRC_DIR/$SRC.[[MD5SUM EXTENSION]]" | cut -d " " -f 1)"
+
+[ "$MD5SUM_SRC" == "$MD5SUM_URL" ] || exit $ERROR_MD5
+
 # Import minimized signing key from
 # [[SIGNING KEY URL]]
 gpg --import << EOKEY || exit $ERROR_GPG
@@ -107,10 +119,10 @@ done
 CFLAGS="$SLKCFLAGS" \
   CXXFLAGS="$SLKCFLAGS" \
   ./configure \
-  --prefix="$PREFIX" --libdir="$LIBDIR" [[OTHER CONFIGURE ARGS]] || exit $ERROR_CONF
+  --prefix="$PREFIX" --libdir="$LIBDIR" "$CONF_OPTIONS" || exit $ERROR_CONF
 
 # Compile
-make || exit $ERROR_MAKE
+make "$MAKE_OPTIONS" || exit $ERROR_MAKE
 
 # Install
 make install DESTDIR="$PKG" || exit $ERROR_INSTALL
