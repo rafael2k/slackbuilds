@@ -1,2 +1,6 @@
+# Dependency list to dvdauthor
+# 
+# dependency [condition] [version]]
 libpng
 fftw
+

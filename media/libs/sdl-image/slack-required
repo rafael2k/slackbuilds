@@ -1,0 +1,5 @@
+# Dependency list to sdl_image
+# 
+# dependency [condition] [version]]
+sdl
+
