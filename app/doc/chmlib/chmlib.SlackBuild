@@ -72,6 +72,7 @@ fi
 
 ./configure --prefix=/usr --sysconfdir=/etc --libdir=$LIBDIR || exit $ERROR_CONF
 make || exit $ERROR_MAKE
+make examples || exit $ERROR_MAKE
 make DESTDIR=$TMP/package-$PACKAGE install || exit $ERROR_INSTALL
 
 CWD="`pwd`"
