@@ -47,9 +47,9 @@ ERROR_TAR=37;       ERROR_MKPKG=38;     ERROR_GPG=39
 ERROR_PATCH=40
 
 RTOOL="wget"
-PACKAGE_EXT="bz2"
+PACKAGE_EXT="gz"
 SRC="$PACKAGE-$VERSION.tar.$PACKAGE_EXT"
-URL="http://ufpr.dl.sourceforge.net/sourceforge/$PACKAGE/$SRC"
+URL="http://downloads.sourceforge.net/xchm/$SRC"
 
 SRC_DIR="$SRC_DIR/$PACKAGE"
 mkdir -p $SRC_DIR
