@@ -16,7 +16,7 @@ fi
 # Set variables
 CWD="$(pwd)"
 SRC_NAME="SDL_mixer"
-PKG_NAME="sdl_mixer"
+PKG_NAME="sdl-mixer"
 ARCH=${ARCH:=i468}
 SRC_VERSION=${VERSION:=1.2.7}
 PKG_VERSION="$(echo "$SRC_VERSION" | tr '[[:blank:]-]' '_')"
@@ -111,15 +111,15 @@ cat << EODESC > "$PKG/install/slack-desc"
 
    _     |-----handy-ruler---------------------------------------------------|
 sdl_mixer: SDL_mixer 1.2 by Slack.Sarava
-sdl_mixer: 
+sdl_mixer:
 sdl_mixer: This is a simple multi-channel audio mixer. It supports 8 channels
 sdl_mixer: of 16 bit stereo audio, plus a single channel of music, mixed by
 sdl_mixer: the popular MikMod MOD, Timidity MIDI and SMPEG MP3 libraries.
-sdl_mixer: The mixer can currently load Microsoft WAVE files and Creative 
-sdl_mixer: Labs VOC files as audio samples, and can load MIDI files via 
-sdl_mixer: Timidity and the following music formats via MikMod:  .MOD .S3M 
-sdl_mixer: .IT .XM. It can load Ogg Vorbis streams as music if built with 
-sdl_mixer: the Ogg Vorbis libraries, and finally it can load MP3 music 
+sdl_mixer: The mixer can currently load Microsoft WAVE files and Creative
+sdl_mixer: Labs VOC files as audio samples, and can load MIDI files via
+sdl_mixer: Timidity and the following music formats via MikMod:  .MOD .S3M
+sdl_mixer: .IT .XM. It can load Ogg Vorbis streams as music if built with
+sdl_mixer: the Ogg Vorbis libraries, and finally it can load MP3 music
 sdl_mixer: using the SMPEG library.
 EODESC
 
