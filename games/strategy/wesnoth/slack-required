@@ -1,8 +1,8 @@
 # Dependency list to wesnoth
 # 
 # dependency [condition] [version]]
-libsdl          >=        1.2
-libsdl-image    >=        1.2
+sdl             >=        1.2
+sdl-image       >=        1.2
 vorbis-tools
-libsdl-mixer    >=        1.2
-libsdl-net
+sdl-mixer       >=        1.2
+sdl-net
