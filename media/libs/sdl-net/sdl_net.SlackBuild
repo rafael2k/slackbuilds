@@ -16,7 +16,7 @@ fi
 # Set variables
 CWD="$(pwd)"
 SRC_NAME="SDL_net"
-PKG_NAME="sdl_net"
+PKG_NAME="sdl-net"
 ARCH=${ARCH:=i468}
 SRC_VERSION=${VERSION:=1.2.6}
 PKG_VERSION="$(echo "$SRC_VERSION" | tr '[[:blank:]-]' '_')"
