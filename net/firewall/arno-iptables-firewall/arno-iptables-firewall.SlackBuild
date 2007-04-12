@@ -27,6 +27,8 @@ PKG=${PKG:=$TMP/package-$PKG_NAME}
 REPOS=${REPOS:=$TMP}
 PREFIX=${PREFIX:=/usr}
 PKG_SRC="$TMP/${SRC_NAME}_$SRC_VERSION"
+CONF_OPTIONS=${CONF_OPTIONS:=}
+NUMJOBS=${NUMJOBS:=-j4}
 
 # Set error codes (used by createpkg)
 ERROR_WGET=31;      ERROR_MAKE=32;      ERROR_INSTALL=33
@@ -91,8 +93,8 @@ fi
 
 # Install documentation
 DOCS="CHANGELOG README gpl_license.txt"
-mkdir -p "$PKG/$PREFIX/doc/$PKG_NAME-$PKG_VERSION" || exit $ERROR_MKDIR
-cp -a $DOCS "$PKG/$PREFIX/doc/$PKG_NAME-$PKG_VERSION"
+mkdir -p "$PKG/usr/doc/$PKG_NAME-$PKG_VERSION" || exit $ERROR_MKDIR
+cp -a $DOCS "$PKG/usr/doc/$PKG_NAME-$PKG_VERSION"
 
 # Add package description (slack-desc)
 mkdir -p "$PKG/install" || exit $ERROR_MKDIR

@@ -27,6 +27,8 @@ PKG=${PKG:=$TMP/package-$PKG_NAME}
 REPOS=${REPOS:=$TMP}
 PREFIX=${PREFIX:=/usr}
 PKG_SRC="$TMP/$SRC_NAME-$SRC_VERSION"
+CONF_OPTIONS=${CONF_OPTIONS:=--mandir=$PREFIX/man}
+NUMJOBS=${NUMJOBS:=-j4}
 
 # Set system libraries' path and optmization flags based on $ARCH
 LIBDIR="$PREFIX/lib"
@@ -117,11 +119,10 @@ cd "$PKG_SRC"
 CFLAGS="$SLKCFLAGS" \
   CXXFLAGS="$SLKCFLAGS" \
   ./configure \
-  --prefix="$PREFIX" --libdir="$LIBDIR" \
-  --mandir="$PREFIX/man" || exit $ERROR_CONF
+  --prefix="$PREFIX" --libdir="$LIBDIR" "$CONF_OPTIONS" || exit $ERROR_CONF
 
 # Compile
-make || exit $ERROR_MAKE
+make "$NUMJOBS" || exit $ERROR_MAKE
 make test
 
 # Install
@@ -153,8 +154,8 @@ fi
 # Install documentation
 DOCS="ANNOUNCE AUTHORS COPYING ChangeLog HACKING HISTORY INSTALL NEWS PORTING \
       README SUPPORT TESTS THANKS USERS"
-mkdir -p "$PKG/$PREFIX/doc/$PKG_NAME-$PKG_VERSION" || exit $ERROR_MKDIR
-cp -a $DOCS "$PKG/$PREFIX/doc/$PKG_NAME-$PKG_VERSION"
+mkdir -p "$PKG/usr/doc/$PKG_NAME-$PKG_VERSION" || exit $ERROR_MKDIR
+cp -a $DOCS "$PKG/usr/doc/$PKG_NAME-$PKG_VERSION"
 
 # Add package description (slack-desc)
 mkdir -p "$PKG/install" || exit $ERROR_MKDIR

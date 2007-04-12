@@ -27,6 +27,8 @@ PKG=${PKG:=$TMP/package-$PKG_NAME}
 REPOS=${REPOS:=$TMP}
 PREFIX=${PREFIX:=/usr}
 PKG_SRC="$TMP/$SRC_NAME-$SRC_VERSION"
+CONF_OPTIONS=${CONF_OPTIONS:=}
+NUMJOBS=${NUMJOBS:=-j4}
 
 # Set system optmization flags based on $ARCH
 if [ "$ARCH" = "i386" ]; then
@@ -70,10 +72,10 @@ tar --no-same-owner --no-same-permissions -xvf "$SRC_DIR/$SRC" || exit $ERROR_TA
 cd "$PKG_SRC"
 
 # Configure
-CFLAGS="$SLKCFLAGS" ./configure || exit $ERROR_CONF
+CFLAGS="$SLKCFLAGS" ./configure "$CONF_OPTIONS" || exit $ERROR_CONF
 
 # Compile
-make || exit $ERROR_MAKE
+make "$NUMJOBS" || exit $ERROR_MAKE
 
 # Install
 mkdir -p "$PKG/$PREFIX/bin" "$PKG/$PREFIX/man/man1" || exit $ERROR_MKDIR
@@ -104,8 +106,8 @@ fi
 
 # Install documentation
 DOCS="CHANGES COPYRIGHT README"
-mkdir -p "$PKG/$PREFIX/doc/$PKG_NAME-$PKG_VERSION" || exit $ERROR_MKDIR
-cp -a $DOCS "$PKG/$PREFIX/doc/$PKG_NAME-$PKG_VERSION"
+mkdir -p "$PKG/usr/doc/$PKG_NAME-$PKG_VERSION" || exit $ERROR_MKDIR
+cp -a $DOCS "$PKG/usr/doc/$PKG_NAME-$PKG_VERSION"
 
 # Add package description (slack-desc)
 mkdir -p "$PKG/install" || exit $ERROR_MKDIR
