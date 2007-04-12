@@ -1,7 +1,7 @@
 ###################################################
 ## Generic template for SlackBuilds
 ##
-## Version 0.8.1 - Luis ( luis at riseup d0t net)
+## Version 0.8.2 - Luis ( luis at riseup d0t net)
 ##
 ###################################################
 #!/bin/bash
@@ -34,6 +34,7 @@ REPOS=${REPOS:=$TMP}
 PREFIX=${PREFIX:=[[PREFIX]]}
 PKG_SRC="$TMP/$SRC_NAME-$SRC_VERSION"
 CONF_OPTIONS=${CONF_OPTIONS:=[[OTHER CONFIGURE ARGS]]}
+NUMJOBS=${NUMJOBS:=-j4}
 
 # Set system libraries' path and optmization flags based on $ARCH
 LIBDIR="$PREFIX/lib"
@@ -121,7 +122,7 @@ CFLAGS="$SLKCFLAGS" \
   --prefix="$PREFIX" --libdir="$LIBDIR" "$CONF_OPTIONS" || exit $ERROR_CONF
 
 # Compile
-make || exit $ERROR_MAKE
+make "$NUMJOBS" || exit $ERROR_MAKE
 
 # Install
 make install DESTDIR="$PKG" || exit $ERROR_INSTALL
@@ -159,8 +160,8 @@ fi
 
 # Install documentation
 DOCS="[[DOCUMENTATION FILES]]"
-mkdir -p "$PKG/$PREFIX/doc/$PKG_NAME-$PKG_VERSION" || exit $ERROR_MKDIR
-cp -a $DOCS "$PKG/$PREFIX/doc/$PKG_NAME-$PKG_VERSION"
+mkdir -p "$PKG/usr/doc/$PKG_NAME-$PKG_VERSION" || exit $ERROR_MKDIR
+cp -a $DOCS "$PKG/usr/doc/$PKG_NAME-$PKG_VERSION"
 
 # Add package description (slack-desc)
 mkdir -p "$PKG/install" || exit $ERROR_MKDIR
