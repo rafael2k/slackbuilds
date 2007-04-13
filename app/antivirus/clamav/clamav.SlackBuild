@@ -38,7 +38,7 @@ fi
 
 # default settings
 PACKAGE="clamav"
-VERSION=${VERSION:=0.90.1}
+VERSION=${VERSION:=0.90.2}
 ARCH=${ARCH:=i486}
 BUILD=${BUILD:=1rha}
 TMP=${TMP:=/tmp}
