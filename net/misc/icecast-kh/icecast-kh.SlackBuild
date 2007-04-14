@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# $Id: icecast.SlackBuild,v 1.4 2006/02/28 15:12:47 root Exp root $
+# $Id: icecast-kh.SlackBuild,v 1.4 2006/02/28 15:12:47 root Exp root $
 # Copyright (c) 2006 Eric Hameleers <alien@slackware.com>
 # Distributed under the terms of the GNU General Public License, Version 2
 # ---------------------------------------------------------------------------
@@ -34,12 +34,13 @@
 #            New release.
 # 2.3.1-1-r: 07/jun/2006 by rhatto at riseup.net
 #            Small changes to fit in slack.sarava.org standards
-#
+# 2.3.1.2.r: 14/apr/2007 by rhatto at riseup.net
+#            For building icecast-kh branch
 # ---------------------------------------------------------------------------
 #
 
 if [ -s "slack-required" ]; then
-  echo Recomended and required packages for building icecast are:
+  echo Recomended and required packages for building icecast-kh are:
   cat slack-required | sed -e 's/^/\t/'
   if [ "$INTERACT" != "no" ]; then
     echo If you dont have those installed, press Ctrl-C. Otherwise, hit ENTER.
@@ -59,10 +60,9 @@ elif [ -f /etc/slackbuildrc ]; then
   source /etc/slackbuildrc
 fi
 
-PRGNAM=icecast
+PRGNAM="icecast-kh"
 PACKAGE="$PRGNAM"
-VERSION=${VERSION:=2.3.1}
-#VERSION=${VERSION:=2.3-kh8a}
+VERSION=${VERSION:=2.3-kh8a}
 ARCH=${ARCH:=i486}
 BUILD=${BUILD:=1rha}
 TMP=${TMP:=/tmp}
@@ -86,13 +86,8 @@ mkdir -p $SRC_DIR
 
 RTOOL="wget"
 PACKAGE_EXT="gz"
-SRC="$PACKAGE-$VERSION.tar.$PACKAGE_EXT"
-
-if echo $VERSION | grep -q "kh"; then
-  URL="http://www.icecast.pwp.blueyonder.co.uk/$SRC"
-else
-  URL="http://downloads.xiph.org/releases/$PACKAGE/$SRC"
-fi
+SRC="icecast-$VERSION.tar.$PACKAGE_EXT"
+URL="http://www.icecast.pwp.blueyonder.co.uk/$SRC"
 
 if [ "$RTOOL" == "wget" ] && [ ! -f "$SRC_DIR/$SRC" ]; then
   wget "$URL" -O "$SRC_DIR/$SRC" || exit $ERROR_WGET
@@ -166,8 +161,8 @@ cd $TMP/tmp-$PRGNAM
 
 # Extract tar ball in TEMP dir
 echo Building $PRGNAM...
-tar xvf $SRC_DIR/$PRGNAM-$VERSION.tar.gz || exit $ERROR_TAR
-cd $PRGNAM-$VERSION
+tar xvf $SRC_DIR/icecast-$VERSION.tar.gz || exit $ERROR_TAR
+cd icecast-$VERSION
 ./configure --prefix=/usr --sysconfdir=/usr/share/icecast/etc \
             --libdir=$LIBDIR --localstatedir=/var || exit $ERROR_CONF
 
@@ -263,7 +258,7 @@ EOINS
 # Rename those files which must not overwrite existing ones when the package
 # is installed. Corresponding entries will be created at the end of
 # the 'doinst.sh' script.
-(cd $PKG ; preconfig usr/share/icecast/etc/$PRGNAM.xml)
+(cd $PKG ; preconfig usr/share/icecast/etc/icecast.xml)
 echo "" >> $PKG/install/doinst.sh
 
 
