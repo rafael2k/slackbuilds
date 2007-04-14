@@ -183,8 +183,11 @@ make DESTDIR=$PKG install || exit $ERROR_INSTALL
 # fi
 
 mkdir -p $PKG/var/log/icecast
-(cd $PKG/usr/share/icecast/etc && patch -p0 < $CWD/icecast_conf.patch)
 
+if [ -f "$CWD/icecast_conf.patch" ]; then
+  (cd $PKG/usr/share/icecast/etc && patch -p0 < $CWD/icecast_conf.patch)
+  true
+fi
 
 # --- DOCUMENTATION ---
 
