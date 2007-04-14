@@ -1,0 +1,305 @@
+#!/bin/bash
+#
+# $Id: icecast.SlackBuild,v 1.4 2006/02/28 15:12:47 root Exp root $
+# Copyright (c) 2006 Eric Hameleers <alien@slackware.com>
+# Distributed under the terms of the GNU General Public License, Version 2
+# ---------------------------------------------------------------------------
+# Slackware SlackBuild script
+# ===========================
+# By:        Eric Hameleers <alien@slackware.com>
+# For:       Icecast
+# URL:       http://www.icecast.org/
+# Summary:   Xiph Streaming media server that supports
+#            multiple audio formats (and theora video streams too).
+# Needs:     libvorbis, libogg, libxml2, curl and optionally libtheora
+# Changelog:
+# 2.0.0-1:   16/jan/2004 by Eric Hameleers
+# 2.0.0-2:   17/jan/2004 by Eric Hameleers
+#            Bug fix in the rc.icecast script
+# 2.0.0-3:   22/apr/2004 by Eric Hameleers
+#            Add "next" operatrion to rc.icecast
+# 2.0.2-1:   20/oct/2004 by Eric Hameleers
+#            Rebuilt new releease.
+# 2.2.0-1:   01/jan/2005 by Eric Hameleers
+#            Rebuilt new releease.
+# 2.2.0-2:   11/aug/2005 by Eric Hameleers
+#            Add "current" and "status" to rc.icecast parameters.
+#            Make sure that existing /etc/rc.d/rc.icecast isn't overwritten.
+# 2.2.0-3:   17/sep/2005 by Eric Hameleers
+#            Forgot to add "current" to rc.icecast 'help' output
+#            (i.e. run rc.icecast with no parameters).
+# 2.3.0-1:   04/oct/2005 by Eric Hameleers
+#            New release.
+# 2.3.1-1:   28/feb/2006 by Eric Hameleers <alien@sox.homeip.net>
+#            New release.
+# 2.3.1-1-r: 07/jun/2006 by rhatto at riseup.net
+#            Small changes to fit in slack.sarava.org standards
+#
+# ---------------------------------------------------------------------------
+#
+
+if [ -s "slack-required" ]; then
+  echo Recomended and required packages for building icecast are:
+  cat slack-required | sed -e 's/^/\t/'
+  if [ "$INTERACT" != "no" ]; then
+    echo If you dont have those installed, press Ctrl-C. Otherwise, hit ENTER.
+    read crap
+#  else
+#    echo Sleeping 3 seconds...
+#    sleep 3
+  fi
+fi
+
+# Set initial variables:
+CWD="`pwd`"
+
+if [ -f ~/.slackbuildrc ]; then
+  source ~/.slackbuildrc
+elif [ -f /etc/slackbuildrc ]; then
+  source /etc/slackbuildrc
+fi
+
+PRGNAM=icecast
+PACKAGE="$PRGNAM"
+VERSION=${VERSION:=2.3.1}
+#VERSION=${VERSION:=2.3-kh8a}
+ARCH=${ARCH:=i486}
+BUILD=${BUILD:=1rha}
+TMP=${TMP:=/tmp}
+SRC_DIR=${SRC:=$CWD}
+REPOS=${REPOS:=$TMP}
+
+# -------  error codes for createpkg  --------------
+ERROR_WGET=31;      ERROR_MAKE=32;      ERROR_INSTALL=33
+ERROR_MD5=34;       ERROR_CONF=35;      ERROR_HELP=36
+ERROR_TAR=37;       ERROR_MKPKG=38;     ERROR_GPG=39
+ERROR_PATCH=40
+
+if [ "$ARCH" == "x86_64" ]; then
+  LIBDIR=/usr/lib64
+else
+  LIBDIR=/usr/lib
+fi
+
+SRC_DIR="$SRC_DIR/$PACKAGE"
+mkdir -p $SRC_DIR
+
+RTOOL="wget"
+PACKAGE_EXT="gz"
+SRC="$PACKAGE-$VERSION.tar.$PACKAGE_EXT"
+
+if echo $VERSION | grep -q "kh"; then
+  URL="http://www.icecast.pwp.blueyonder.co.uk/$SRC"
+else
+  URL="http://downloads.xiph.org/releases/$PACKAGE/$SRC"
+fi
+
+if [ "$RTOOL" == "wget" ] && [ ! -f "$SRC_DIR/$SRC" ]; then
+  wget "$URL" -O "$SRC_DIR/$SRC" || exit $ERROR_WGET
+fi
+
+TMP="$TMP/$PACKAGE"
+rm -rf $TMP
+
+PKG=$TMP/package-$PRGNAM
+
+if [ ! -d $TMP/tmp-$PRGNAM ]; then
+  mkdir -p $TMP/tmp-$PRGNAM # location to build the source
+fi
+if [ ! -d $PKG ]; then
+  mkdir -p $PKG             # place for the package to be built
+fi
+
+
+# --- HELPER FUNCTIONS ---
+
+#
+# Function 'preconfig filename [remove]'
+#
+#   param1 (required) may be a wildcard;
+#          in that case surround it with double quotes!
+#   param2 (optional) has value 'remove'
+#
+# Description:
+# Prepare the incoming configuration files which are not allowed
+# to overwrite existing ones.
+# These files will get a '.new' extension.
+# An entry in the 'doinst.sh' script will be created for these files, copying
+# the *.new files back to their original names,
+# but only if the original names don't exist.
+# Use the second parameter 'remove', like in 'preconfig filename(s) remove'
+# to add a 'rm -f filename.new' in 'doinst.sh', so as not to clutter
+# the harddisk with useless example files.
+
+preconfig() {
+  mkdir -p $PKG/install 2>/dev/null
+  for infile in $1; do
+    mv ${infile} ${infile}.new
+  done
+  echo -n "config \"$1.new\"" >> $PKG/install/doinst.sh
+  # If there's a second parameter with value 'remove' add a 'rm filename.new'
+  if [ "$2" = "remove" ]; then
+    echo -n " ; rm -f $1.new" >> $PKG/install/doinst.sh
+  fi
+  echo ""  >> $PKG/install/doinst.sh
+}
+
+
+# --- PACKAGE BUILDING ---
+
+echo "+==============+"
+echo "| $PRGNAM-$VERSION |"
+echo "+==============+"
+
+iceuser=icecast
+icegroup=icecast
+
+rm -rf $PKG/*
+
+# Explode the package framework:
+cd $PKG
+if [ -f $CWD/_$PRGNAM.tar.gz ]; then
+  explodepkg $CWD/_$PRGNAM.tar.gz || exit $ERROR_TAR
+fi
+
+cd $TMP/tmp-$PRGNAM
+
+# Extract tar ball in TEMP dir
+echo Building $PRGNAM...
+tar xvf $SRC_DIR/$PRGNAM-$VERSION.tar.gz || exit $ERROR_TAR
+cd $PRGNAM-$VERSION
+./configure --prefix=/usr --sysconfdir=/usr/share/icecast/etc \
+            --libdir=$LIBDIR --localstatedir=/var || exit $ERROR_CONF
+
+make || exit $ERROR_MAKE
+
+# Install all the needed stuff to the package dir
+# Use installwatch if available:
+# which installwatch > /dev/null 2>&1
+# if [ $? == 0 ]; then
+#   installwatch -o $TMP/install-${PRGNAM}.log make DESTDIR=$PKG install
+# else
+make DESTDIR=$PKG install || exit $ERROR_INSTALL
+# fi
+
+mkdir -p $PKG/var/log/icecast
+(cd $PKG/usr/share/icecast/etc && patch -p0 < $CWD/icecast_conf.patch)
+
+
+# --- DOCUMENTATION ---
+
+# Compress the man page
+gzip -9 $PKG/usr/man/*/*
+
+# Copy the documentation
+mkdir -p $PKG/usr/doc/$PRGNAM-$VERSION
+mv $PKG/usr/share/doc/icecast/* $PKG/usr/doc/$PRGNAM-$VERSION/
+rm -r $PKG/usr/share/doc
+chmod -R -w $PKG/usr/doc/$PRGNAM-$VERSION
+
+
+# --- POST-INSTALL SCRIPT ---
+
+# --- Fabricate the 'doinst.sh' script: ------
+mkdir -p $PKG/install
+
+cat <<EOINS > $PKG/install/doinst.sh
+# Handle the incoming configuration files:
+config() {
+  for infile in \$1; do
+    NEW="\$infile"
+    OLD="\`dirname \$NEW\`/\`basename \$NEW .new\`"
+    # If there's no config file by that name, mv it over:
+    if [ ! -r \$OLD ]; then
+      mv \$NEW \$OLD
+    elif [ "\`cat \$OLD | md5sum\`" = "\`cat \$NEW | md5sum\`" ]; then
+      # toss the redundant copy
+      rm \$NEW
+    fi
+    # Otherwise, we leave the .new copy for the admin to consider...
+  done
+}
+
+chroot . /sbin/ldconfig
+
+# Take care of rc.icecast
+config etc/rc.d/rc.icecast.new
+
+#Add the '${icegroup}' group if it doesn't exist already
+chroot . /usr/sbin/groupadd ${icegroup} 2> /dev/null
+#Add the '${iceuser}' user if it doesn't exist already
+chroot . /usr/sbin/useradd -c "Icecast" -d /usr/share/icecast \\
+        -g ${icegroup} -s "/bin/false" ${iceuser} 2> /dev/null
+
+# Configure the home directory
+mkdir -p usr/share/icecast
+chroot . /usr/bin/chown -R ${iceuser}:${icegroup} usr/share/icecast
+chmod 750 usr/share/icecast
+
+# Configure the log directory
+mkdir -p var/log/icecast
+chroot . /usr/bin/chown -R ${iceuser} var/log/icecast
+chmod 750 var/log/icecast
+
+#
+# Update rc.local so that Icecast will be started on boot
+#
+if ! grep "rc.icecast" etc/rc.d/rc.local 1>/dev/null 2>&1 ; then
+  cat <<-_EOM_ >> etc/rc.d/rc.local
+	
+	if [ -x /etc/rc.d/rc.icecast ]; then
+	  # Start Icecast server
+	  echo "Starting icecast:    /etc/rc.d/rc.icecast start"
+	  /etc/rc.d/rc.icecast start
+	fi
+	_EOM_
+fi
+
+EOINS
+
+# --- End of 'doinst.sh' script -----------
+
+# Finally, take care of the configuration files:
+# Rename those files which must not overwrite existing ones when the package
+# is installed. Corresponding entries will be created at the end of
+# the 'doinst.sh' script.
+(cd $PKG ; preconfig usr/share/icecast/etc/$PRGNAM.xml)
+echo "" >> $PKG/install/doinst.sh
+
+
+# --- OWNERSHIP, RIGHTS ---
+chown -R root.root $PKG
+
+find $PKG  -type f -name "*~" -exec rm -f {} \;
+
+# --- PACKAGE DESCRIPTION ---
+mkdir -p $PKG/install
+cat $CWD/slack-desc > $PKG/install/slack-desc
+
+
+# --- BUILDING ---
+
+# Build the package and compute its md5 checksum:
+cd $PKG
+
+find . | xargs file | grep "executable" | grep ELF | cut -f 1 -d : | xargs strip --strip-unneeded 2> /dev/null
+find . | xargs file | grep "shared object" | grep ELF | cut -f 1 -d : | xargs strip --strip-unneeded 2> /dev/null
+
+VERSION="`echo $VERSION | sed -e 's/-/_/g'`"
+
+makepkg --linkadd y --chown n $REPOS/$PRGNAM-$VERSION-$ARCH-$BUILD.tgz || exit $ERROR_MKPKG
+
+#(cd $REPOS && md5sum $PRGNAM-$VERSION-$ARCH-$BUILD.tgz > $PRGNAM-$VERSION-$ARCH-$BUILD.tgz.md5)
+#cat $PKG/install/slack-desc | grep "^${PRGNAM}" > $REPOS/$PRGNAM-$VERSION-$ARCH-$BUILD.txt
+ 
+
+# --- CLEANUP ---
+
+# Clean up the extra stuff:
+if [ "$CLEANUP" == "yes" ]; then
+  rm -rf $TMP
+fi
+
+#
+# EOF
+#
