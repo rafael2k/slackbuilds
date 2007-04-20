@@ -39,7 +39,7 @@ fi
 # default settings
 PACKAGE="darkice"
 ARCH=${ARCH:=i486}
-VERSION=${VERSION:=0.17.1}
+VERSION=${VERSION:=0.18}
 BUILD=${BUILD:=1rha}
 SRC_DIR=${SRC:=$CWD}
 TMP=${TMP:=/tmp}
@@ -55,7 +55,7 @@ fi
 RTOOL="wget"
 PACKAGE_EXT="gz"
 SRC="$PACKAGE-$VERSION.tar.$PACKAGE_EXT"
-URL="http://easynews.dl.sourceforge.net/sourceforge/darkice/$SRC"
+URL="http://darkice.tyrell.hu/dist/$VERSION/darkice-$VERSION.tar.gz"
 
 SRC_DIR="$SRC_DIR/$PACKAGE"
 mkdir -p $SRC_DIR
