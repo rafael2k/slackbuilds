@@ -82,7 +82,7 @@ if [ -f "$CWD/$PACKAGE-$VERSION.diff" ]; then
 fi
 
 # options --with-libdv and --with-libdv-only is used because of incompatibilities of kino 0.9.5 with latest ffmpeg....
-./configure --prefix=/usr --with-libdv --with-libdv-only --sysconfdir=/etc --libdir=$LIBDIR --with-docdir=/usr/doc/$PACKAGE-$VERSION
+./configure --prefix=/usr --enable-quicktime --with-libdv --with-libdv-only --sysconfdir=/etc --libdir=$LIBDIR --with-docdir=/usr/doc/$PACKAGE-$VERSION
 make || exit 32
 make DESTDIR=$TMP/package-$PACKAGE install
 
