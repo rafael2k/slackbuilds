@@ -40,7 +40,7 @@ fi
 PACKAGE="courier-authlib"
 VERSION=${VERION:=0.59.3}
 ARCH=${ARCH:=i486}
-BUILD=${BUILD:=1rha}
+BUILD=${BUILD:=2rha}
 TMP=${TMP:=/tmp}
 REPOS=${REPOS:=$TMP}
 SRC_DIR=${SRC:=$CWD}
@@ -94,6 +94,8 @@ make install-configure DESTDIR=$TMP/package-$PACKAGE install || exit $ERROR_INST
 
 mkdir -p $TMP/package-$PACKAGE/etc/rc.d
 cp $CWD/rc.courier-authlib.new $TMP/package-$PACKAGE/etc/rc.d
+
+rm $TMP/package-$PACKAGE/etc/authlib/{authdaemonrc,authldaprc,authmysqlrc}
 
 CWD="`pwd`"
 
