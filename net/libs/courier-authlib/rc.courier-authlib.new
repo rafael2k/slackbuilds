@@ -1,0 +1,61 @@
+#! /bin/sh
+# 
+# description: Authlib - Courier authentication library.
+#
+# If you want the courier-authlib daemon run at startup make
+# the rc script executable, for example:
+# chmod +x /etc/rc.d/rc.courier-authlib
+# and add something like this to your /etc/rc.d/rc.local file
+#
+# # Start the courier-authlib daemon.
+# if [ -x /etc/rc.d/rc.courier-authlib ]; then
+#   . /etc/rc.d/rc.courier-authlib start
+# fi
+#
+# grabbed from http://www.tuxjm.net/downloads/source/testing/courier-authlib/courier-authlib-init
+#
+
+prefix="/usr"
+exec_prefix="/usr"
+sysconfdir="/etc/"
+sbindir="/usr/sbin"
+
+if test ! -f /etc/authlib/authdaemonrc
+then
+	echo "/etc/authlib/authdaemonrc does not exist, forgot make install-configure?"
+	exit 1
+fi
+
+case "$1" in
+start)
+        cd /
+        # Start daemons.
+        touch /var/lock/subsys/courier-authlib
+
+        echo -n "Starting Courier authentication services:"
+
+	$sbindir/authdaemond start
+
+	echo " authdaemond"
+        ;;
+stop)
+        echo -n "Stopping Courier authentication services:"
+
+	$sbindir/authdaemond stop
+
+	echo " authdaemond"
+        rm -f /var/lock/subsys/courier-authlib
+        ;;
+restart)
+	$0 stop
+	$0 start
+        ;;
+reload)
+        echo -n "Starting Courier authentication services:"
+
+	$sbindir/authdaemond restart
+
+	echo " authdaemond"
+        ;;
+esac
+exit 0

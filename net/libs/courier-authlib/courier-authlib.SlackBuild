@@ -38,7 +38,7 @@ fi
 
 # default settings
 PACKAGE="courier-authlib"
-VERSION=${VERION:=0.58}
+VERSION=${VERION:=0.59.3}
 ARCH=${ARCH:=i486}
 BUILD=${BUILD:=1rha}
 TMP=${TMP:=/tmp}
@@ -84,9 +84,16 @@ cd $TMP
 
 tar xvf $SRC_DIR/$SRC || exit $ERROR_TAR
 cd $PACKAGE-$VERSION
+
 ./configure --prefix=/usr --sysconfdir=/etc --libdir=$LIBDIR || exit $ERROR_CONF
+
 make || exit $ERROR_MAKE
 make DESTDIR=$TMP/package-$PACKAGE install || exit $ERROR_INSTALL
+make install-migrate DESTDIR=$TMP/package-$PACKAGE install || exit $ERROR_INSTALL
+make install-configure DESTDIR=$TMP/package-$PACKAGE install || exit $ERROR_INSTALL
+
+mkdir -p $TMP/package-$PACKAGE/etc/rc.d
+cp $CWD/rc.courier-authlib.new $TMP/package-$PACKAGE/etc/rc.d
 
 CWD="`pwd`"
 
@@ -125,7 +132,8 @@ for file in AUTHORS COPYING COPYING.GPL ChangeLog INSTALL INSTALL.html NEWS NEWS
   cp $CWD/$file* usr/doc/$PACKAGE-$VERSION/
 done
 
-echo 'chroot . /sbin/ldconfig' > install/doinst.sh
+echo '( chroot . /sbin/ldconfig )' > install/doinst.sh
+echo '( if [ ! -f "etc/rc.d/rc.courier-authlib" ]; then mv etc/rc.d/rc.courier-authlib.new etc/rc.d/rc.courier-authlib ; fi )' >> install/doinst.sh
 
 makepkg -c y -l y $REPOS/$PACKAGE-$VERSION-$ARCH-$BUILD.tgz || exit $ERROR_MKPKG
 
