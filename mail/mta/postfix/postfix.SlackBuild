@@ -62,7 +62,8 @@ SRC="$PACKAGE-$VERSION.tar.$PACKAGE_EXT"
 VDA="$PACKAGE-$VERSION-vda.patch.gz"
 VDA_URL="http://web.onda.com.br/nadal/postfix/VDA/$VDA"
 ANON="postfix-anon-$VERSION.diff"
-URL="ftp://ftp.pucpr.br/$PACKAGE/official/$SRC"
+#URL="ftp://ftp.pucpr.br/$PACKAGE/official/$SRC"
+URL="http://ftp.unicamp.br/pub/postfix/official/$SRC"
 
 SRC_DIR="$SRC_DIR/$PACKAGE"
 mkdir -p $SRC_DIR
