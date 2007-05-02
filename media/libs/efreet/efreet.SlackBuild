@@ -1,10 +1,10 @@
 #!/bin/bash
 #
-#  embryo.SlackBuild is free software; you can redistribute it and/or modify it under the
+#  efreet.SlackBuild is free software; you can redistribute it and/or modify it under the
 #  terms of the GNU General Public License as published by the Free Software
 #  Foundation; either version 2 of the License, or any later version.
 #
-#  embryo.SlackBuild is distributed in the hope that it will be useful, but WITHOUT ANY
+#  efreet.SlackBuild is distributed in the hope that it will be useful, but WITHOUT ANY
 #  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
 #  A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
 #
@@ -17,7 +17,7 @@
 #
 
 if [ -s "slack-required" ]; then
-  echo Recomended and required packages for building embryo are:
+  echo Recomended and required packages for building efreet are:
   cat slack-required | sed -e 's/^/\t/'
   if [ "$INTERACT" != "no" ]; then
     echo If you dont have those installed, press Ctrl-C. Otherwise, hit ENTER.
@@ -100,17 +100,17 @@ cat << EOF > install/slack-desc
 # customary to leave one space after the ':'.
 
       |-----handy-ruler-----------------------------------------------------|
-embryo: efreet
-embryo:
-embryo: Efreet is primarily a shared library that gives you an API to load and control
-embryo: interpreted programs compiled into an abstract machine bytecode that it
-embryo: understands.  This abstract (or virtual) machine is similar to a real machine
-embryo: with a CPU, but it is emulated in software.
-embryo:
-embryo:
-embryo:
-embryo:
-embryo:
+efreet: efreet
+efreet:
+efreet: library for handling of freedesktop.org specs.
+efreet: 
+efreet:
+efreet:
+efreet:
+efreet:
+efreet:
+efreet:
+efreet:
 EOF
 
 # docs
