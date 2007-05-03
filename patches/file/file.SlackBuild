@@ -59,13 +59,13 @@ if [ "$RTOOL" == "wget" ] && [ ! -f "$SRC_DIR/$SRC" ]; then
 fi
 
 TMP="$TMP/$PACKAGE"
-PKG=$TMP/package-file
+PKG=$TMP/package-$PACKAGE
 rm -rf $TMP
 mkdir -p $PKG
 cd $TMP
 
-tar xjvf $CWD/file-$VERSION.tar.bz2 || exit $ERROR_TAR
-cd file-$VERSION
+tar xjvf $CWD/$PACKAGE-$VERSION.tar.$PACKAGE_EXT || exit $ERROR_TAR
+cd $PACKAGE-$VERSION
 
 if [ "$VERSION" == "4.20" ]; then
   cd src
