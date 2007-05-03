@@ -60,7 +60,7 @@ ERROR_PATCH=40
 RTOOL="wget"
 PACKAGE_EXT="gz"
 SRC="$PACKAGE-$VERSION.tar.$PACKAGE_EXT"
-URL="http://easynews.sourceforge.net/libwpd/$SRC"
+URL="http://easynews.sourceforge.net/sourceforge/libwpd/$SRC"
 
 if [ "$RTOOL" == "wget" ] && [ ! -f "$SRC_DIR/$SRC" ]; then
   wget "$URL" -O "$SRC_DIR/$SRC" || exit $ERROR_WGET
