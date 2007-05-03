@@ -371,7 +371,8 @@ cd $PKG
 makepkg -l y -c n $REPOS/gnupg-$VERSION-$ARCH-$BUILD.tgz || exit $ERROR_MKPKG
 
 # Clean up the extra stuff:
-if [ "$1" = "--cleanup" ]; then
-  rm -rf $TMP/gnupg-$VERSION
-  rm -rf $PKG
+
+if [ "$CLEANUP" == "yes" ]; then
+  rm -rf $TMP
 fi
+
