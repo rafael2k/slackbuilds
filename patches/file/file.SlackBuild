@@ -64,7 +64,7 @@ rm -rf $TMP
 mkdir -p $PKG
 cd $TMP
 
-tar xjvf $CWD/$PACKAGE-$VERSION.tar.$PACKAGE_EXT || exit $ERROR_TAR
+tar xvf $SRC_DIR/$SRC || exit $ERROR_TAR
 cd $PACKAGE-$VERSION
 
 if [ "$VERSION" == "4.20" ]; then
