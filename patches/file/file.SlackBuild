@@ -1,7 +1,7 @@
 #!/bin/bash
 #
-# Got it from ftp://ftp.slackware.com/pub/slackware/slackware-11.0/patches/source/file/file.SlackBuild
-# Small changes by rhatto at riseup.net
+# got it from ftp://ftp.slackware.com/pub/slackware/slackware-11.0/patches/source/file/file.SlackBuild
+# small changes by rhatto at riseup.net
 #
 
 if [ -s "slack-required" ]; then

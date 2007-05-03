@@ -3,6 +3,18 @@
 # got it from ftp://ftp.slackware.com/pub/slackware/slackware-10.2/patches/source/gnupg/gnupg.SlackBuild
 # small changes by rhatto
 
+if [ -s "slack-required" ]; then
+  echo Recomended and required packages for building cairo are:
+  cat slack-required | sed -e 's/^/\t/'
+  if [ "$INTERACT" != "no" ]; then
+    echo If you dont have those installed, press Ctrl-C. Otherwise, hit ENTER.
+    read crap
+#  else
+#    echo Sleeping 3 seconds...
+#    sleep 3
+  fi
+fi
+
 # Set initial variables:
 CWD="`pwd`"
 
@@ -13,7 +25,7 @@ elif [ -f /etc/slackbuildrc ]; then
 fi
 
 PACKAGE="gnupg"
-VERSION=${VERSION:=1.4.5}
+VERSION=${VERSION:=1.4.7}
 ARCH=${ARCH:=i486}
 BUILD=${BUILD:=1rha}
 TMP=${TMP:=/tmp}
@@ -25,6 +37,12 @@ if [ "$ARCH" == "x86_64" ]; then
 else
   LIBDIR=/usr/lib
 fi
+
+# -------  error codes for createpkg  --------------
+ERROR_WGET=31;      ERROR_MAKE=32;      ERROR_INSTALL=33
+ERROR_MD5=34;       ERROR_CONF=35;      ERROR_HELP=36
+ERROR_TAR=37;       ERROR_MKPKG=38;     ERROR_GPG=39
+ERROR_PATCH=40
 
 # signing key from http://www.gnupg.org/(en)/signature_key.html
 gpg --import << EOGPG
@@ -284,23 +302,19 @@ PACKAGE_EXT="bz2"
 SRC="$PACKAGE-$VERSION.tar.$PACKAGE_EXT"
 URL="ftp://ftp.gnupg.org/gcrypt/gnupg/$SRC"
 
-if [ "$PACKAGE_EXT" == "bz2" ]; then
-  tarflag="j"
-else
-  tarflag="z"
-fi
-
 SRC_DIR="$SRC_DIR/$PACKAGE"
 mkdir -p $SRC_DIR
 
-if [ "$RTOOL" == "wget" ] && [ ! -f "$SRC_DIR/$SRC" ]; then
-  rm -f $SRC_DIR/$SRC.sig
-  wget "$URL" -O "$SRC_DIR/$SRC"
-  wget "$URL.sig" -O "$SRC_DIR/$SRC.sig"
+if [ "$RTOOL" == "wget" ]; then
+  if [ ! -f "$SRC_DIR/$SRC" ]; then
+    wget "$URL" -O "$SRC_DIR/$SRC" || exit $ERROR_WGET
+  fi
+  if [ ! -f "$SRC_DIR/$SRC.sig" ]; then
+    wget "$URL.sig" -O "$SRC_DIR/$SRC.sig" || exit $ERROR_WGET
+  fi
 fi
 
-gpg --verify $SRC_DIR/$SRC.sig || echo WARNING: error checking signature!
-sleep 2
+gpg --verify $SRC_DIR/$SRC.sig || exit $ERROR_GPG
 
 if [ "$ARCH" = "i386" ]; then
   SLKCFLAGS="-O2 -march=i386 -mcpu=i686"
@@ -319,7 +333,7 @@ mkdir -p $PKG
 
 cd $TMP
 rm -rf gnupg-$VERSION
-tar xvf$tarflag $SRC_DIR/$SRC
+tar xvf $SRC_DIR/$SRC || exit $ERROR_TAR
 cd gnupg-$VERSION
 chown -R root.root .
 find . -perm 664 -exec chmod 644 {} \;
@@ -333,9 +347,9 @@ find . -perm 511 -exec chmod 755 {} \;
 find . -perm 711 -exec chmod 755 {} \;
 find . -perm 555 -exec chmod 755 {} \;
 CFLAGS="$SLKCFLAGS" \
-./configure --prefix=/usr --libdir=$LIBDIR
-make -j3
-make install DESTDIR=$PKG
+./configure --prefix=/usr --libdir=$LIBDIR || exit $ERROR_CONF
+make -j3 || exit $ERROR_MAKE
+make install DESTDIR=$PKG || exit $ERROR_INSTALL
 strip --strip-unneeded $PKG/usr/bin/*
 chown -R root.bin $PKG/usr/bin
 rm -f $PKG/usr/info/dir
@@ -354,7 +368,7 @@ cat $CWD/slack-desc.gnupg > $PKG/install/slack-desc
 
 # Build the package:
 cd $PKG
-makepkg -l y -c n $REPOS/gnupg-$VERSION-$ARCH-$BUILD.tgz
+makepkg -l y -c n $REPOS/gnupg-$VERSION-$ARCH-$BUILD.tgz || exit $ERROR_MKPKG
 
 # Clean up the extra stuff:
 if [ "$1" = "--cleanup" ]; then
