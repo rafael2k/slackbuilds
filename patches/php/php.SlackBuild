@@ -170,7 +170,7 @@ CFLAGS="$SLKCFLAGS" \
   --with-jpeg-dir=/usr \
   --with-png \
   --with-ttf \
-  --with-freetype-dir=/usr \  
+  --with-freetype-dir=/usr \
   --with-gmp \
   --enable-mbstring \
   --with-curl=/usr \
