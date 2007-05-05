@@ -45,8 +45,8 @@ ERROR_PATCH=40
 RTOOL="wget"
 
 SRC="$PACKAGE-$VERSION.tar.bz2"
-URL="http://mirror.pacific.net.au/linux/slackware/slackware-10.2/patches/source/php/$SRC"
-#URL="http://br.php.net/get/$SRC/from/this/mirror"
+#URL="http://mirror.pacific.net.au/linux/slackware/slackware-10.2/patches/source/php/$SRC"
+URL="http://br.php.net/get/$SRC/from/this/mirror"
 
 # pear modules
 DB="DB-1.7.11.tgz"
