@@ -4,6 +4,18 @@
 # this is a small modified version of the script found at
 # http://www.slackware.com/~alien/slackbuilds/freetype2/build/freetype2.SlackBuild
 
+if [ -s "slack-required" ]; then
+  echo Recomended and required packages for building cairo are:
+  cat slack-required | sed -e 's/^/\t/'
+  if [ "$INTERACT" != "no" ]; then
+    echo If you dont have those installed, press Ctrl-C. Otherwise, hit ENTER.
+    read crap
+#  else
+#    echo Sleeping 3 seconds...
+#    sleep 3
+  fi
+fi
+
 CWD=`pwd`
 
 if [ -f ~/.slackbuildrc ]; then
@@ -25,6 +37,12 @@ if [ "$ARCH" == "x86_64" ]; then
 else
   LIBDIR=/usr/lib
 fi
+
+# -------  error codes for createpkg  --------------
+ERROR_WGET=31;      ERROR_MAKE=32;      ERROR_INSTALL=33
+ERROR_MD5=34;       ERROR_CONF=35;      ERROR_HELP=36
+ERROR_TAR=37;       ERROR_MKPKG=38;     ERROR_GPG=39
+ERROR_PATCH=40
 
 PACKAGE="$PRGNAM"
 PACKAGE_EXT="bz2"
@@ -62,7 +80,7 @@ SRC_DIR="$SRC_DIR/$PACKAGE"
 mkdir -p $SRC_DIR
 
 if [ "$RTOOL" == "wget" ] && [ ! -f "$SRC_DIR/$SRC" ]; then
- wget "$URL" -O "$SRC_DIR/$SRC"
+ wget "$URL" -O "$SRC_DIR/$SRC" || exit $ERROR_WGET
 fi
 
 if [ "$ARCH" = "i386" ]; then
@@ -83,33 +101,29 @@ fi
 rm -rf $PKG
 mkdir -p $PKG
 
-if [ "$PACKAGE_EXT" == "bz2" ]; then
-  tarflag="j"
-else
-  tarflag="z"
-fi
-
+TMP="$TMP/$PACKAGE"
+rm -rf $TMP
+mkdir -p $TMP
 cd $TMP
-rm -rf $PRGNAM-$VERSION
 
-tar xvf$tarflag $SRC_DIR/$PRGNAM-$VERSION.tar.$PACKAGE_EXT
+tar xvf $SRC_DIR/$PRGNAM-$VERSION.tar.$PACKAGE_EXT || exit $ERROR_TAR
 cd $PRGNAM-$VERSION
 
 if [ -f "$CWD/freetype.illadvisederror.diff.gz" ]; then
   # This breaks far too many things. Freetype2 developers will have to get their
   # punishment on someone else's distribution.
-  zcat $CWD/freetype.illadvisederror.diff.gz | patch -p1 -b -z .ill --verbose
+  zcat $CWD/freetype.illadvisederror.diff.gz | patch -p1 -b -z .ill --verbose || exit $ERROR_PATCH
 fi
 
 if [ -f "$CWD/freetype_enable_bytecode_interpreter.patch.gz" ]; then
   # Enable freetype's bytecode interpreter:
-  zcat $CWD/freetype_enable_bytecode_interpreter.patch.gz | patch -p1 -b -z .bc --verbose
+  zcat $CWD/freetype_enable_bytecode_interpreter.patch.gz | patch -p1 -b -z .bc --verbose || exit $ERROR_PATCH
 fi
 
 chown -R root.root .
-CFLAGS="$SLKCFLAGS" make setup CFG="--prefix=/usr --libdir=$LIBDIR $ARCH-slackware-linux"
-make || exit 32
-make install DESTDIR=$PKG
+CFLAGS="$SLKCFLAGS" make setup CFG="--prefix=/usr --libdir=$LIBDIR $ARCH-slackware-linux" || exit $ERROR_CONF
+make || exit $ERROR_MAKE
+make install DESTDIR=$PKG || exit $ERROR_INSTALL
 ldconfig
 
 mkdir -p $PKG/usr/include
@@ -133,12 +147,11 @@ cd $PKG
 find . | xargs file | grep "executable" | grep ELF | cut -f 1 -d : | xargs strip --strip-unneeded 2> /dev/null
 find . | xargs file | grep "shared object" | grep ELF | cut -f 1 -d : | xargs strip --strip-unneeded 2> /dev/null
 
-makepkg -l y -c n $REPOS/$PRGNAM-$VERSION-$ARCH-$BUILD.tgz
-slack_build | grep "^${PRGNAM}" > $REPOS/$PRGNAM-$VERSION-$ARCH-$BUILD.txt
-(cd $REPOS && md5sum $PRGNAM-$VERSION-$ARCH-$BUILD.tgz > $PRGNAM-$VERSION-$ARCH-$BUILD.tgz.md5)
+makepkg -l y -c n $REPOS/$PRGNAM-$VERSION-$ARCH-$BUILD.tgz || exit $ERROR_MKPKG
 
-if [ "$1" = "--cleanup" ]; then
-  rm -rf $TMP/$PRGNAM-$VERSION
-  rm -rf $PKG
+# slack_build | grep "^${PRGNAM}" > $REPOS/$PRGNAM-$VERSION-$ARCH-$BUILD.txt
+# (cd $REPOS && md5sum $PRGNAM-$VERSION-$ARCH-$BUILD.tgz > $PRGNAM-$VERSION-$ARCH-$BUILD.tgz.md5)
+
+if [ "$CLEANUP" == "yes" ]; then
+  rm -rf $TMP
 fi
-
