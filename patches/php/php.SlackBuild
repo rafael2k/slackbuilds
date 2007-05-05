@@ -51,7 +51,7 @@ URL="http://br.php.net/distributions/$SRC"
 # pear modules
 DB="DB-1.7.11.tgz"
 HTTP="HTTP-1.4.0.tgz"
-MAIL="Mail-1.1.1.4.tgz"
+MAIL="Mail-1.1.14.tgz"
 SMTP="Net_SMTP-1.2.10.tgz"
 SOCKET="Net_Socket-1.0.8.tgz"
 PARSER="XML_Parser-1.2.8.tgz"
