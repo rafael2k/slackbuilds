@@ -56,7 +56,7 @@ fi
 RTOOL="wget"
 PACKAGE_EXT="gz"
 SRC="$PACKAGE-$VERSION.tar.$PACKAGE_EXT"
-URL="http://ufpr.dl.sourceforge.net/sourceforge/libdv/$SRC"
+URL="http://superb-west.dl.sourceforge.net/sourceforge/libdv/$SRC"
 
 SRC_DIR="$SRC_DIR/$PACKAGE"
 mkdir -p $SRC_DIR
