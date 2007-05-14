@@ -39,7 +39,7 @@ TMP=${TMP:=/tmp}
 
 RTOOL="wget"
 PACKAGE_EXT="tgz"
-SRC="$PACKAGE-$VERSION.$PACKAGE_EXT"
+SRC="pecl_http-$VERSION.$PACKAGE_EXT"
 URL="http://pecl.php.net/get/$SRC"
 
 if [ "$ARCH" == "x86_64" ]; then
@@ -74,7 +74,7 @@ fi
 cd $TMP
 
 tar xvf $SRC_DIR/$SRC || exit $ERROR_TAR
-cd SQLite-$VERSION
+cd pecl_http-$VERSION
 
 phpize
 ./configure --prefix=/usr --sysconfdir=/etc --libdir=$LIBDIR || exit $ERROR_CONF
