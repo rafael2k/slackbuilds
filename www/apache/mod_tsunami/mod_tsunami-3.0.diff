@@ -1,0 +1,11 @@
+--- Makefile.orig	2007-05-16 19:26:02.000000000 -0300
++++ Makefile	2007-05-16 19:26:11.000000000 -0300
+@@ -4,7 +4,7 @@
+ APXS=apxs
+ 
+ all:
+-	${APXS} -i -a -c mod_tsunami.c
++	${APXS} -a -c mod_tsunami.c
+ 
+ clean:
+ 	rm -fr *~ docs/*~ *.o *.so
