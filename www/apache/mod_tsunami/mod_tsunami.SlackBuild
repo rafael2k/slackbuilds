@@ -84,7 +84,7 @@ fi
 
 make
 mkdir -p $TMP/package-$PACKAGE/usr/libexec/apache
-cp mod_tsunami.so usr/libexec/apache/mod_tsunami.so
+cp mod_tsunami.so $TMP/package-$PACKAGE/usr/libexec/apache/mod_tsunami.so
 
 CWD="`pwd`"
 
