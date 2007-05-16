@@ -1,5 +1,6 @@
---- Makefile.orig	2007-05-16 19:26:02.000000000 -0300
-+++ Makefile	2007-05-16 19:26:11.000000000 -0300
+diff -Naur mod_tsunami-3.0.orig/Makefile mod_tsunami-3.0/Makefile
+--- mod_tsunami-3.0.orig/Makefile	2004-10-03 17:36:39.000000000 -0300
++++ mod_tsunami-3.0/Makefile	2007-05-16 19:38:18.000000000 -0300
 @@ -4,7 +4,7 @@
  APXS=apxs
  
