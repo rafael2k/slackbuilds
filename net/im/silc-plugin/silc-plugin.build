@@ -1,0 +1,133 @@
+#!/bin/bash
+#
+#  silc-plugin.build is free software; you can redistribute it and/or modify it under the
+#  terms of the GNU General Public License as published by the Free Software
+#  Foundation; either version 2 of the License, or any later version.
+#
+#  silc-plugin.build is distributed in the hope that it will be useful, but WITHOUT ANY
+#  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
+#  A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
+#
+#  You should have received a copy of the GNU General Public License along with
+#  this program; if not, write to the Free Software Foundation, Inc., 59 Temple
+#  Place - Suite 330, Boston, MA 02111-1307, USA
+#
+# build script for silc-plugin
+# by rhatto at riseup.net
+# build it with slacktrack, example:
+#
+#   ARCH=x86_64 slacktrack -jefkzp "silc-plugin-1.0.3-x86_64-1rha.tgz" "./silc-plugin.build"
+# 
+
+if [ -s "slack-required" ]; then
+  echo Recomended and required packages for building silc-plugin are:
+  cat client.slack-required | sed -e 's/^/\t/'
+  if [ "$INTERACT" != "no" ]; then
+    echo If you dont have those installed, press Ctrl-C. Otherwise, hit ENTER.
+    read crap
+#  else
+#    echo Sleeping 3 seconds...
+#    sleep 3
+  fi
+fi
+
+CWD="`pwd`"
+
+if [ -f "/etc/slackbuildrc" ]; then
+  source /etc/slackbuildrc
+fi
+
+if [ -f "~/.slackbuildrc" ]; then
+  source ~/.slackbuildrc
+fi
+
+# default settings
+PACKAGE="silc-plugin"
+ARCH=${ARCH:=i486}
+VERSION=${VERSION:=1.1-beta5}
+BUILD=${BUILD:=1rha}
+SRC_DIR=${SRC:=$CWD}
+TMP=${TMP:=/tmp}
+REPOS=${REPOS:=$TMP}
+
+if [ "$ARCH" == "x86_64" ]; then
+  LIBDIR=/usr/lib64
+else
+  LIBDIR=/usr/lib
+fi
+
+RTOOL="wget"
+PACKAGE_EXT="bz2"
+SRC="silc-client-$VERSION.tar.$PACKAGE_EXT"
+URL="http://silcnet.org/download/client/sources/$SRC"
+
+SRC_DIR="$SRC_DIR/$PACKAGE"
+if [ ! -d "$SRC_DIR" ]; then
+  mkdir -p $SRC_DIR
+fi
+
+if [ "$RTOOL" == "wget" ] && [ ! -f "$SRC_DIR/$SRC" ]; then
+  wget "$URL" -O "$SRC_DIR/$SRC"
+fi
+
+TMP="$TMP/$PACKAGE"
+if [ ! -d "$TMP" ]; then
+  mkdir -p $TMP
+fi
+cd $TMP
+
+tar xvf $SRC_DIR/$SRC
+cd $silc-client-$VERSION
+
+if [ -f "$CWD/$PACKAGE-$VERSION.diff" ]; then
+  patch -p1 < $CWD/$PACKAGE-$VERSION.diff
+fi
+
+./configure --prefix=/usr --sysconfdir=/etc --libdir=$LIBDIR --with-docdir=/usr/doc/$PACKAGE-$VERSION \
+            --enable-silc-plugin --without-silc-includes
+make || exit 32
+make install
+
+CWD="`pwd`"
+
+#strip --strip-unneeded /usr/bin/silc
+
+mkdir /install
+cat << EOF > /install/slack-desc
+# HOW TO EDIT THIS FILE:
+# The "handy ruler" below makes it easier to edit a package description.  Line
+# up the first '|' above the ':' following the base package name, and the '|'
+# on the right side marks the last column you can put a character in.  You must
+# make exactly 11 lines for the formatting to be correct.  It's also
+# customary to leave one space after the ':'.
+
+           |-----handy-ruler-----------------------------------------------------|
+silc-plugin: silc-plugin
+silc-plugin:
+silc-plugin: SILC (Secure Internet Live Conferencing) plugin for Irssi.
+silc-plugin:
+silc-plugin:
+silc-plugin:
+silc-plugin:
+silc-plugin:
+silc-plugin:
+silc-plugin:
+silc-plugin: 
+EOF
+
+mkdir -p /usr/doc/$PACKAGE-$VERSION
+
+DOCS="CHANGES COPYING CREDITS README README.PLUGIN TODO"
+
+for file in $DOCS; do
+  cp $CWD/$file* /usr/doc/$PACKAGE-$VERSION/
+done
+
+# TODO: one should check in the source how to make that stop to being copied to the root folder
+rm /draft-riikonen*
+rm /COPYING /CHANGES /CREDITS /README /INSTALL /TODO
+
+if [ "$CLEANUP" == "yes" ]; then
+  rm -rf $TMP
+fi
+

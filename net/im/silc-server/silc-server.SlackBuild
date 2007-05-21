@@ -16,7 +16,7 @@
 # by rhatto at riseup.net
 #
 
-if [ -s "server.slack-required" ]; then
+if [ -s "slack-required" ]; then
   echo Recomended and required packages for building silc-server are:
   cat server.slack-required | sed -e 's/^/\t/'
   if [ "$INTERACT" != "no" ]; then
