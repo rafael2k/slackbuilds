@@ -21,7 +21,7 @@
 
 if [ -s "slack-required" ]; then
   echo Recomended and required packages for building silc-plugin are:
-  cat client.slack-required | sed -e 's/^/\t/'
+  cat slack-required | sed -e 's/^/\t/'
   if [ "$INTERACT" != "no" ]; then
     echo If you dont have those installed, press Ctrl-C. Otherwise, hit ENTER.
     read crap
