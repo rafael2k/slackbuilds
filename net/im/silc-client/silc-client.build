@@ -52,12 +52,14 @@ REPOS=${REPOS:=$TMP}
 
 if [ "$ARCH" == "x86_64" ]; then
   LIBDIR=/usr/lib64
+  CONF_OPTIONS="--with-pic"
 else
   LIBDIR=/usr/lib
 fi
 
 RTOOL="wget"
 PACKAGE_EXT="bz2"
+PKG_VERSION="`echo $VERSION | sed -e 's/-/_/g'`"
 SRC="$PACKAGE-$VERSION.tar.$PACKAGE_EXT"
 URL="http://silcnet.org/download/client/sources/$SRC"
 
@@ -89,7 +91,7 @@ if [ -f "$CWD/$PACKAGE-$VERSION.diff" ]; then
   patch -p1 < $CWD/$PACKAGE-$VERSION.diff
 fi
 
-./configure --prefix=/usr --sysconfdir=/etc --libdir=$LIBDIR --with-docdir=/usr/doc/$PACKAGE-$VERSION
+./configure --prefix=/usr --sysconfdir=/etc --libdir=$LIBDIR --with-docdir=/usr/doc/$PACKAGE-$PKG_VERSION $CONF_OPTIONS
 make || exit 32
 make install
 
@@ -120,10 +122,10 @@ silc-client: being developed in the IETF.
 silc-client: 
 EOF
 
-mkdir -p /usr/doc/$PACKAGE-$VERSION
+mkdir -p /usr/doc/$PACKAGE-$PKG_VERSION
 
 for file in BSD CHANGES COPYING CREDITS GPL INSTALL README README.CVS README.MACOSX README.WIN32 TODO; do
-  cp $CWD/$file* /usr/doc/$PACKAGE-$VERSION/
+  cp $CWD/$file* /usr/doc/$PACKAGE-$PKG_VERSION/
 done
 
 # TODO: one should check in the source how to make that stop to being copied to the root folder

@@ -44,10 +44,12 @@ SRC_DIR=${SRC:=$CWD}
 TMP=${TMP:=/tmp}
 REPOS=${REPOS:=$TMP}
 
+PKG_VERSION="`echo $VERSION | sed -e 's/-/_/g'`"
+
 rm -rf $TMP/$PACKAGE
 mkdir -p $SRC_DIR/$PACKAGE $TMP/$PACKAGE
 
-slacktrack -b $REPOS -x $TMP,$SRC_DIR,/dev -jefkzp "$PACKAGE-$VERSION-$ARCH-$BUILD.tgz" "./$PACKAGE.build"
+slacktrack -b $REPOS -x $TMP,$SRC_DIR,/dev -jefkzp "$PACKAGE-$PKG_VERSION-$ARCH-$BUILD.tgz" "./$PACKAGE.build"
 
 if [ "$CLEANUP" == "yes" ]; then
   rm -rf $TMP/$PACKAGE
