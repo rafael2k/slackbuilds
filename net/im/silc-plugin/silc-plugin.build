@@ -85,7 +85,7 @@ if [ -f "$CWD/$PACKAGE-$VERSION.diff" ]; then
 fi
 
 ./configure --prefix=/usr --sysconfdir=/etc --libdir=$LIBDIR --with-docdir=/usr/doc/$PACKAGE-$PKG_VERSION \
-            --enable-silc-plugin --without-silc-includes
+            --enable-silc-plugin --without-silc-includes --with-simdir=$LIBDIR/irssi
 make || exit 32
 make install
 
