@@ -37,7 +37,7 @@ fi
 
 # default settings
 PACKAGE="silc-client"
-VERSION=${VERSION:=1.0.4}
+VERSION=${VERSION:=1.1-beta5}
 ARCH="${ARCH:=i486}"
 BUILD=${BUILD:=1rha}
 SRC_DIR=${SRC:=$CWD}
