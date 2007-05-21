@@ -77,7 +77,7 @@ fi
 cd $TMP
 
 tar xvf $SRC_DIR/$SRC
-cd $silc-client-$VERSION
+cd silc-client-$VERSION
 
 if [ -f "$CWD/$PACKAGE-$VERSION.diff" ]; then
   patch -p1 < $CWD/$PACKAGE-$VERSION.diff
