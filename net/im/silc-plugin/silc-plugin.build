@@ -62,7 +62,7 @@ PKG_VERSION="`echo $VERSION | sed -e 's/-/_/g'`"
 SRC="silc-client-$VERSION.tar.$PACKAGE_EXT"
 URL="http://silcnet.org/download/client/sources/$SRC"
 
-SRC_DIR="$SRC_DIR/$PACKAGE"
+SRC_DIR="$SRC_DIR/silc-client"
 if [ ! -d "$SRC_DIR" ]; then
   mkdir -p $SRC_DIR
 fi
