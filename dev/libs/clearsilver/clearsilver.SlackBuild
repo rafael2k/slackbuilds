@@ -1,0 +1,42 @@
+#!/bin/bash
+#
+#  clearsilver.SlackBuild is free software; you can redistribute it and/or modify it under the
+#  terms of the GNU General Public License as published by the Free Software
+#  Foundation; either version 2 of the License, or any later version.
+#
+#  clearsilver.SlackBuild is distributed in the hope that it will be useful, but WITHOUT ANY
+#  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
+#  A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
+#
+#  You should have received a copy of the GNU General Public License along with
+#  this program; if not, write to the Free Software Foundation, Inc., 59 Temple
+#  Place - Suite 330, Boston, MA 02111-1307, USA
+#
+# SlackBuild script to call clearsilver.build with correct settings
+#
+
+CWD="`pwd`"
+
+if [ -f ~/.slackbuildrc ]; then
+  source ~/.slackbuildrc
+elif [ -f /etc/slackbuildrc ]; then
+  source /etc/slackbuildrc
+fi
+
+# default settings
+PACKAGE="clearsilver"
+VERSION=${VERSION:=0.10.4}
+ARCH=${ARCH:=i486}
+BUILD=${BUILD:=1rha}
+SRC_DIR=${SRC:=$CWD}
+TMP=${TMP:=/tmp}
+REPOS=${REPOS:=$TMP}
+
+rm -rf $TMP/$PACKAGE
+mkdir -p $SRC_DIR/$PACKAGE $TMP/$PACKAGE $REPOS
+
+slacktrack -b $REPOS -x $TMP,$SRC_DIR,/dev -jefkzp "$PACKAGE-$VERSION-$ARCH-$BUILD.tgz" "./$PACKAGE.build"
+
+if [ "$CLEANUP" == "yes" ]; then
+  rm -rf $TMP/$PACKAGE
+fi
