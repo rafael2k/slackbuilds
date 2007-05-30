@@ -37,7 +37,7 @@ fi
 
 # default settings
 PACKAGE="silc-plugin"
-VERSION=${VERSION:=1.1-beta5}
+VERSION=${VERSION:=1.1-beta6}
 ARCH="${ARCH:=i486}"
 BUILD=${BUILD:=1rha}
 SRC_DIR=${SRC:=$CWD}

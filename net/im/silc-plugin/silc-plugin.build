@@ -44,14 +44,19 @@ fi
 # default settings
 PACKAGE="silc-plugin"
 ARCH=${ARCH:=i486}
-VERSION=${VERSION:=1.1-beta5}
+VERSION=${VERSION:=1.1-beta6}
 BUILD=${BUILD:=1rha}
 SRC_DIR=${SRC:=$CWD}
 TMP=${TMP:=/tmp}
 REPOS=${REPOS:=$TMP}
 
 if [ "$ARCH" == "x86_64" ]; then
+  export CFLAGS=-fPIC
   LIBDIR=/usr/lib64
+  #CONF_OPTIONS="--disable-asm"
+  #CONF_OPTIONS="--with-pic --disable-asm --with-pthreads=no"
+  export LDFLAGS="-L/lib64 -L/usr/lib64"
+  CONF_OPTIONS="--with-pic --with-pthreads=no --with-iconv=no"
 else
   LIBDIR=/usr/lib
 fi
@@ -84,8 +89,9 @@ if [ -f "$CWD/$PACKAGE-$VERSION.diff" ]; then
   patch -p1 < $CWD/$PACKAGE-$VERSION.diff
 fi
 
-./configure --prefix=/usr --sysconfdir=/etc --libdir=$LIBDIR --with-docdir=/usr/doc/$PACKAGE-$PKG_VERSION \
-            --enable-silc-plugin --without-silc-includes --with-simdir=$LIBDIR/irssi
+./configure --prefix=/usr --sysconfdir=/etc --libdir=$LIBDIR $CONF_OPTIONS \
+            --with-docdir=/usr/doc/$PACKAGE-$PKG_VERSION \
+            --enable-silc-plugin --without-silc-includes --with-simdir=$LIBDIR/irssi/modules
 make || exit 32
 make install
 
