@@ -62,7 +62,7 @@ fi
 
 PRGNAM="icecast-kh"
 PACKAGE="$PRGNAM"
-VERSION=${VERSION:=2.3-kh8a}
+VERSION=${VERSION:=2.3-kh13}
 ARCH=${ARCH:=i486}
 BUILD=${BUILD:=1rha}
 TMP=${TMP:=/tmp}
