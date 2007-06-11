@@ -61,7 +61,7 @@ ERROR_PATCH=40
 RTOOL="wget"
 PACKAGE_EXT="gz"
 SRC="$PACKAGE-$VERSION.tar.$PACKAGE_EXT"
-URL="http://cairommgraphics.org/releases/$SRC"
+URL="http://cairographics.org/releases/$SRC"
 
 SRC_DIR="$SRC_DIR/$PACKAGE"
 mkdir -p $SRC_DIR
