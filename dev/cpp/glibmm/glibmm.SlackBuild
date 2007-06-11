@@ -30,7 +30,7 @@ CWD="$(pwd)"
 SRC_NAME="glibmm"
 PKG_NAME="glibmm"
 ARCH=${ARCH:=i486}
-SRC_VERSION=${VERSION:=2.12.6}
+SRC_VERSION=${VERSION:=2.12.10}
 PKG_VERSION="$(echo "$SRC_VERSION" | tr '[[:blank:]-]' '_')"
 BUILD=${BUILD:=1rra}
 SRC_DIR=${SRC_DIR:=$CWD}/$PKG_NAME
