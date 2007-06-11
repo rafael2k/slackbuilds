@@ -1,4 +1,4 @@
 libgc
-sigc++
+libsigc++
 glibmm
 gtkmm
