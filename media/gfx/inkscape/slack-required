@@ -1,5 +1,5 @@
 libgc
+sigc++
 gdkmm
 glibmm
 gtkmm
-sigc++
