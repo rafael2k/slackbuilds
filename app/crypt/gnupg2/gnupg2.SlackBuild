@@ -1,16 +1,19 @@
 #!/bin/bash
 #
-#  gnupg2.SlackBuild is free software; you can redistribute it and/or modify it under the
-#  terms of the GNU General Public License as published by the Free Software
-#  Foundation; either version 2 of the License, or any later version.
+#  gnupg2.SlackBuild is free software; you can redistribute
+#  it and/or #  modify it under the terms of the GNU General Public
+#  License as published by #  the Free Software Foundation; either
+#  version 2 of the License, or any later version.
 #
-#  gnupg2.SlackBuild is distributed in the hope that it will be useful, but WITHOUT ANY
-#  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
-#  A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
+#  gnupg2.SlackBuild is distributed in the hope that it
+#  will be useful, #  but WITHOUT ANY WARRANTY; without even the
+#  implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+#  PURPOSE.  See the GNU General Public License for more details.
 #
-#  You should have received a copy of the GNU General Public License along with
-#  this program; if not, write to the Free Software Foundation, Inc., 59 Temple
-#  Place - Suite 330, Boston, MA 02111-1307, USA
+#  You should have received a copy of the GNU General Public
+#  License along with this program; if not, write to the Free
+#  Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
+#  MA 02111-1307, USA
 #
 # SlackBuild for gnupg2 (GNU Privacy Guard v2)
 # http://www.gnupg.org/
@@ -30,7 +33,7 @@ CWD="$(pwd)"
 SRC_NAME="gnupg"
 PKG_NAME="gnupg2"
 ARCH=${ARCH:=i486}
-SRC_VERSION=${VERSION:=2.0.3}
+SRC_VERSION=${VERSION:=2.0.4}
 PKG_VERSION="$(echo "$SRC_VERSION" | tr '[[:blank:]-]' '_')"
 BUILD=${BUILD:=1ls}
 SRC_DIR=${SRC_DIR:=$CWD}/$PKG_NAME
@@ -114,7 +117,7 @@ cd "$PKG_SRC"
 CFLAGS="$SLKCFLAGS" \
   CXXFLAGS="$SLKCFLAGS" \
   ./configure \
-  --prefix="$PREFIX" --libdir="$LIBDIR" "$CONF_OPTIONS" || exit $ERROR_CONF
+  --prefix="$PREFIX" --libdir="$LIBDIR" $CONF_OPTIONS || exit $ERROR_CONF
 
 # Compile
 make "$NUMJOBS" || exit $ERROR_MAKE

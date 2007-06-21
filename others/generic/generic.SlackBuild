@@ -1,7 +1,7 @@
 ###################################################
 ## Generic template for SlackBuilds
 ##
-## Version 0.8.3 - Luis ( luis at riseup d0t net)
+## Version 0.8.4 - Luis ( luis at riseup d0t net)
 ##
 ###################################################
 #!/bin/bash
@@ -134,7 +134,7 @@ done
 CFLAGS="$SLKCFLAGS" \
   CXXFLAGS="$SLKCFLAGS" \
   ./configure \
-  --prefix="$PREFIX" --libdir="$LIBDIR" "$CONF_OPTIONS" || exit $ERROR_CONF
+  --prefix="$PREFIX" --libdir="$LIBDIR" $CONF_OPTIONS || exit $ERROR_CONF
 
 # Compile
 make "$NUMJOBS" || exit $ERROR_MAKE

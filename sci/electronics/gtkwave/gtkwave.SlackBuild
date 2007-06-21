@@ -1,16 +1,19 @@
 #!/bin/bash
 #
-#  gtkwave.SlackBuild is free software; you can redistribute it and/or modify it under the
-#  terms of the GNU General Public License as published by the Free Software
-#  Foundation; either version 2 of the License, or any later version.
+#  gtkwave.SlackBuild is free software; you can redistribute
+#  it and/or #  modify it under the terms of the GNU General Public
+#  License as published by #  the Free Software Foundation; either
+#  version 2 of the License, or any later version.
 #
-#  gtkwave.SlackBuild is distributed in the hope that it will be useful, but WITHOUT ANY
-#  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
-#  A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
+#  gtkwave.SlackBuild is distributed in the hope that it
+#  will be useful, #  but WITHOUT ANY WARRANTY; without even the
+#  implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+#  PURPOSE.  See the GNU General Public License for more details.
 #
-#  You should have received a copy of the GNU General Public License along with
-#  this program; if not, write to the Free Software Foundation, Inc., 59 Temple
-#  Place - Suite 330, Boston, MA 02111-1307, USA
+#  You should have received a copy of the GNU General Public
+#  License along with this program; if not, write to the Free
+#  Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
+#  MA 02111-1307, USA
 #
 # SlackBuild for GTKWave
 # http://home.nc.rr.com/gtkwave/
@@ -29,8 +32,8 @@ fi
 CWD="$(pwd)"
 SRC_NAME="gtkwave"
 PKG_NAME="gtkwave"
-ARCH="i486"
-SRC_VERSION=${VERSION:=3.0.22}
+ARCH=${ARCH:=i486}
+SRC_VERSION=${VERSION:=3.0.29}
 PKG_VERSION="$(echo "$SRC_VERSION" | tr '[[:blank:]-]' '_')"
 BUILD=${BUILD:=1ls}
 SRC_DIR=${SRC_DIR:=$CWD}/$PKG_NAME
@@ -41,6 +44,22 @@ PREFIX=${PREFIX:=/usr}
 PKG_SRC="$TMP/$SRC_NAME-$SRC_VERSION"
 CONF_OPTIONS=${CONF_OPTIONS:=}
 NUMJOBS=${NUMJOBS:=-j4}
+
+# Set system libraries' path and optmization flags based on $ARCH
+LIBDIR="$PREFIX/lib"
+
+if [ "$ARCH" = "i386" ]; then
+  SLKCFLAGS="-O2 -march=i386 -mcpu=i686"
+elif [ "$ARCH" = "i486" ]; then
+  SLKCFLAGS="-O2 -march=i486 -mcpu=i686"
+elif [ "$ARCH" = "i686" ]; then
+  SLKCFLAGS="-O2 -march=i686"
+elif [ "$ARCH" = "s390" ]; then
+  SLKCFLAGS="-O2"
+elif [ "$ARCH" = "x86_64" ]; then
+  SLKCFLAGS="-O2"
+  LIBDIR="$PREFIX/lib64"
+fi
 
 # Set error codes (used by createpkg)
 ERROR_WGET=31;      ERROR_MAKE=32;      ERROR_INSTALL=33
@@ -65,28 +84,16 @@ if [ ! -s "$SRC_DIR/$SRC" ] || ! gzip -t "$SRC_DIR/$SRC" 2> /dev/null; then
   wget "$URL" -O "$SRC_DIR/$SRC" || exit $ERROR_WGET
 fi
 
-# Check if GTKWave should be built for GTK+-2.x (default,
-#+if both are available) or 1.x
-pkg-config gtk+-2.0 --libs 1> /dev/null 2> /dev/null
-if [ $? == 0 ]; then
-  GTK_VERSION=2
-else
-  gtk-config --libs 1> /dev/null 2> /dev/null
-  if [ $? == 0 ]; then
-    GTK_VERSION=1
-  else
-    echo "ERROR: GTKWave requires either GTK+-1.x or 2.x"
-    exit $ERROR_CONF
-  fi
-fi
-
 # Untar
 cd "$TMP"
 tar --no-same-owner --no-same-permissions -xvf "$SRC_DIR/$SRC" || exit $ERROR_TAR
 cd "$PKG_SRC"
 
 # Configure
-echo $GTK_VERSION | ./configure "$CONF_OPTIONS" || exit $ERROR_CONF
+CFLAGS="$SLKCFLAGS" \
+  CXXFLAGS="$SLKCFLAGS" \
+  ./configure \
+  --prefix="$PREFIX" --libdir="$LIBDIR" $CONF_OPTIONS || exit $ERROR_CONF
 
 # Compile
 make "$NUMJOBS" || exit $ERROR_MAKE
@@ -118,7 +125,7 @@ if [ -d "$PKG/$PREFIX/man" ]; then
 fi
 
 # Install documentation
-DOCS="*.TXT doc/gtkwave.odt examples"
+DOCS="*.TXT"
 mkdir -p "$PKG/usr/doc/$PKG_NAME-$PKG_VERSION" || exit $ERROR_MKDIR
 cp -a $DOCS "$PKG/usr/doc/$PKG_NAME-$PKG_VERSION"
 
