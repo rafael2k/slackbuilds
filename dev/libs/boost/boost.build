@@ -29,7 +29,7 @@ fi
 # default settings
 PACKAGE="boost"
 ARCH=${ARCH:=i486}
-VERSION=${VERSION:=1.33.1}
+VERSION=${VERSION:=1.34.0}
 BUILD=${BUILD:=1rd}
 SRC_DIR=${SRC:=$CWD}
 TMP=${TMP:=/tmp}
@@ -42,7 +42,7 @@ ERROR_TAR=37;       ERROR_MKPKG=38;     ERROR_GPG=39
 ERROR_PATCH=40
 
 # Warning: hardcoded version!!
-VERSION2=1_33_1
+VERSION2=1_34_0
 
 if [ "$ARCH" == "x86_64" ]; then
   export LDFLAGS="-L/lib64 -L/usr/lib64"
