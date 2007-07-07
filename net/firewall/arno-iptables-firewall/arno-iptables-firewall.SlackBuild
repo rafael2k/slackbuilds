@@ -33,7 +33,7 @@ CWD="$(pwd)"
 SRC_NAME="arno-iptables-firewall"
 PKG_NAME="arno-iptables-firewall"
 ARCH="noarch"
-SRC_VERSION=${VERSION:=1.8.8h}
+SRC_VERSION=${VERSION:=1.8.8i}
 PKG_VERSION="$(echo "$SRC_VERSION" | tr '[[:blank:]-]' '_')"
 BUILD=${BUILD:=1ls}
 SRC_DIR=${SRC_DIR:=$CWD}/$PKG_NAME
@@ -88,16 +88,17 @@ cp -a man/arno-fwfilter.1 "$PKG/$PREFIX/man/man1"
 cp -a man/arno-iptables-firewall.8 "$PKG/$PREFIX/man/man8"
 mv -f "$PKG/etc/arno-iptables-firewall/firewall.conf" \
   "$PKG/etc/arno-iptables-firewall/firewall.conf.new"
-mv -f "$PKG/etc/arno-iptables-firewall/plugins/ssh-brute-force-protection.conf" \
-  "$PKG/etc/arno-iptables-firewall/plugins/ssh-brute-force-protection.conf.new"
+for file in $('ls' -1 "$PKG/etc/arno-iptables-firewall/plugins/"*.conf); do
+  mv -f "$file" "${file}.new"
+done
 
 # Compress and link manpages
 if [ -d "$PKG/$PREFIX/man" ]; then
   ( cd "$PKG/$PREFIX/man"
     for manpagedir in $(find . -type d -name "man*") ; do
       ( cd $manpagedir
-        for eachpage in $( find . -type l -maxdepth 1) ; do
-          ln -s $( readlink $eachpage ).gz $eachpage.gz
+        for eachpage in $(find . -type l -maxdepth 1) ; do
+          ln -s $(readlink $eachpage).gz $eachpage.gz
           rm $eachpage
         done
         gzip -9 *.?
@@ -152,12 +153,15 @@ config() {
 
 config etc/rc.d/rc.firewall.new
 config etc/arno-iptables-firewall/firewall.conf.new
-config etc/arno-iptables-firewall/plugins/ssh-brute-force-protection.conf.new
+$(for path in $('ls' -1 "$PKG/etc/arno-iptables-firewall/plugins/"*.conf.new); do
+  file="$(basename $path)"
+  echo "config etc/arno-iptables-firewall/plugins/$file"
+done)
 config etc/syslog.conf.new
 config etc/logrotate.d/syslog.new
 
 echo
-echo " Remember to check the .new files (if any), specially:"
+echo " Remember to check the new configuration files, specially:"
 echo
 echo "   /etc/rc.d/rc.firewall.new"
 echo "   /etc/arno-iptables-firewall/firewall.conf.new"
