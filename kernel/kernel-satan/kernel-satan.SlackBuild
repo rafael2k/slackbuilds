@@ -25,8 +25,8 @@ elif [ -f /etc/slackbuildrc ]; then
 fi
 
 PACKAGE="kernel-satan"
-KERNEL_VERSION="2.6.21.5"
-EXTRAVERSION="11"
+KERNEL_VERSION="2.6.21"
+EXTRAVERSION="5"
 ARCH="x86_64"
 BUILD="1rha"
 PATCHSET="vs2.2.0"
