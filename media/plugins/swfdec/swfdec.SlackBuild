@@ -86,7 +86,7 @@ fi
 sed -e 's/-std=c99/-std=gnu99/g' configure.ac > configure.ac.new
 sed -e 's/-std=c99/-std=gnu99/g' configure > configure.new
 mv configure.ac.new configure.ac
-mv configure.new configure
+mv configure.new configure && chmod +x configure
 
 ./configure --prefix=/usr --sysconfdir=/etc --libdir=$LIBDIR \
             --enable-gstreamer=no --enable-gnome-vfs=no || exit $ERROR_CONF
