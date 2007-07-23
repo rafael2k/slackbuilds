@@ -61,7 +61,7 @@ ERROR_PATCH=40
 RTOOL="wget"
 PACKAGE_EXT="gz"
 SRC="$PACKAGE-$VERSION.tar.$PACKAGE_EXT"
-URL="http://swfdec.freedesktop.org/download/swfdec-mozilla/0.4/$SRC"
+URL="http://swfdec.freedesktop.org/download/swfdec-mozilla/0.5/$SRC"
 
 SRC_DIR="$SRC_DIR/$PACKAGE"
 mkdir -p $SRC_DIR
