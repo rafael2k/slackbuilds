@@ -87,12 +87,13 @@ fi
 
 # dirty hack
 if [ "$ARCH" == "x86_64" ] && [ "$VERSION" == "0.5.0" ]; then
-  cd libswfdec
-  sed -e 's/\/usr\/lib64\/libpng12.la//g' libswfdec-0.5.la > libswfdec-0.5.la.new
-  mv libswfdec-0.5.la.new libswfdec-0.5.la
+  touch /usr/lib64/libpng12.la
+  make || exit $ERROR_MAKE
+  rm /usr/lib64/libpng12.la
+else
+  make || exit $ERROR_MAKE
 fi
 
-make || exit $ERROR_MAKE
 make DESTDIR=$TMP/package-$PACKAGE install || exit $ERROR_INSTALL
 
 CWD="`pwd`"
