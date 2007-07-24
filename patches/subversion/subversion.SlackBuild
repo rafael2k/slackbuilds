@@ -79,12 +79,12 @@ fi
 wget http://svnbook.red-bean.com/nightly/en/svn-book-html.tar.bz2 -O $SRC_DIR/svn-book-html.tar.bz2
 chmod 644 $SRC_DIR/svn-book-html.tar.bz2
 
-PKG=$TMP/$PACKAGE/package-subversion
-rm -rf $PKG
+TMP=$TMP/$PACKAGE
+PKG=$TMP/package-subversion
+rm -rf $TMP
 mkdir -p $PKG
 
 cd $TMP/$PACKAGE
-rm -rf subversion-$VERSION
 tar xvf $SRC_DIR/$SRC || exit $ERROR_TAR
 cd subversion-$VERSION
 
