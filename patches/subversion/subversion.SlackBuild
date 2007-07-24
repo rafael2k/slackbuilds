@@ -4,6 +4,18 @@
 # small changes by rhatto at riseup.net
 #
 
+# needs a function from simplepkg
+function default_version {
+
+  # get version from /etc/slackware-version
+  if [ -f "$1/etc/slackware-version" ]; then
+    cat $1/etc/slackware-version | awk '{ print $2 }' | sed -e 's/.0$//'
+  else
+    echo "none"
+  fi
+
+}
+
 if [ -s "slack-required" ]; then
   echo Recomended and required packages for building cairo are:
   cat slack-required | sed -e 's/^/\t/'
@@ -32,6 +44,7 @@ BUILD=${BUILD:=1rha}
 SRC_DIR=${SRC:=$CWD}
 TMP=${TMP:=/tmp}
 REPOS=${REPOS:=$TMP}
+DISTRO_VERSION="`default_version`"
 
 LIBDIR=/usr/lib
 if [ "$ARCH" = "i386" ]; then
@@ -70,7 +83,7 @@ PKG=$TMP/$PACKAGE/package-subversion
 rm -rf $PKG
 mkdir -p $PKG
 
-cd $TMP
+cd $TMP/$PACKAGE
 rm -rf subversion-$VERSION
 tar xvf $SRC_DIR/$SRC || exit $ERROR_TAR
 cd subversion-$VERSION
@@ -82,6 +95,10 @@ find . \
  \( -perm 666 -o -perm 664 -o -perm 600 -o -perm 444 -o -perm 440 -o -perm 400 \) \
  -exec chmod 644 {} \;
 
+if [ "$DISTRO_VERSION" == "12.0" ]; then
+  APXS="--with-apxs=/usr/sbin/apxs"
+fi
+
 CFLAGS="$SLKCFLAGS" \
 ./configure \
   --prefix=/usr \
@@ -90,12 +107,12 @@ CFLAGS="$SLKCFLAGS" \
   --disable-static \
   --with-apr=/usr \
   --with-apr-util=/usr \
-  --with-apxs=/usr/sbin/apxs \
   --with-neon=/usr \
   --with-pic \
   --with-ssl \
   --with-zlib \
-  --build=$ARCH-slackware-linux
+  --build=$ARCH-slackware-linux $APXS
+
 make -j4 || exit 1
 make install DESTDIR=$PKG
 make install-docs DESTDIR=$PKG
