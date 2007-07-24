@@ -76,7 +76,7 @@ if [ "$RTOOL" == "wget" ] && [ ! -f "$SRC_DIR/$SRC" ]; then
   wget "$URL" -O "$SRC_DIR/$SRC" || exit $ERROR_WGET
 fi
 
-wget http://svnbook.red-bean.com/nightly/en/svn-book-html.tar.bz2 -O $SRC_DIR/svn-book-html.tar.bz2
+wget http://svnbook.red-bean.com/nightly/en/svn-book-html.tar.bz2 -O $SRC_DIR/svn-book-html.tar.bz2 || exit $ERROR_WGET
 chmod 644 $SRC_DIR/svn-book-html.tar.bz2
 
 TMP=$TMP/$PACKAGE
@@ -111,11 +111,13 @@ CFLAGS="$SLKCFLAGS" \
   --with-pic \
   --with-ssl \
   --with-zlib \
-  --build=$ARCH-slackware-linux $APXS
+  --build=$ARCH-slackware-linux $APXS || exit $ERROR_CONF
 
-make -j4 || exit 1
-make install DESTDIR=$PKG
-make install-docs DESTDIR=$PKG
+make -j4 || exit $ERROR_MAKE
+make swig-py || exit $ERROR_MAKE
+make install DESTDIR=$PKG || exit $ERROR_INSTALL
+make install-docs DESTDIR=$PKG || exit $ERROR_INSTALL
+make install-swig-py DESTDIR=$PKG || exit $ERROR_INSTALL
 
 ( cd $PKG
   find . | xargs file | grep "executable" | grep ELF | cut -f 1 -d : | xargs strip --strip-unneeded 2> /dev/null
