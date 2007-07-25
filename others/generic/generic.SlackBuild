@@ -1,7 +1,7 @@
 ###################################################
 ## Generic template for SlackBuilds
 ##
-## Version 0.8.4 - Luis ( luis at riseup d0t net)
+## Version 0.8.5 - Luis ( luis at riseup d0t net)
 ##
 ###################################################
 #!/bin/bash
@@ -137,7 +137,7 @@ CFLAGS="$SLKCFLAGS" \
   --prefix="$PREFIX" --libdir="$LIBDIR" $CONF_OPTIONS || exit $ERROR_CONF
 
 # Compile
-make "$NUMJOBS" || exit $ERROR_MAKE
+make $NUMJOBS || exit $ERROR_MAKE
 
 # Install
 make install DESTDIR="$PKG" || exit $ERROR_INSTALL
