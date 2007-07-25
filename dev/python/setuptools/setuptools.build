@@ -39,8 +39,8 @@ TMP=${TMP:=/tmp}
 
 RTOOL="wget"
 PACKAGE_EXT="gz"
-SRC="$PACKAGE-$VERSION.tar.$PACKAGE_EXT"
-URL="http://peak.telecommunity.com/dist/ez_setup.py"
+SRC="ez_setup.py"
+URL="http://peak.telecommunity.com/dist/$SRC"
 
 if [ "$ARCH" == "x86_64" ]; then
   LIBDIR=/usr/lib64
@@ -72,8 +72,7 @@ fi
 
 cd $TMP
 
-cd $PACKAGE-$VERSION
-mv $SRC_DIR/ez_setup.py .
+mv $SRC_DIR/$SRC .
 python ez_setup.py install || exit $ERROR_INSTALL
 
 CWD="`pwd`"
