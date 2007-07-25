@@ -43,7 +43,7 @@ REPOS=${REPOS:=$TMP}
 PREFIX=${PREFIX:=/usr}
 PKG_SRC="$TMP/$SRC_NAME-$SRC_VERSION"
 CONF_OPTIONS=${CONF_OPTIONS:=--enable-release}
-NUMJOBS=${NUMJOBS:=-j4}
+NUMJOBS=${NUMJOBS:=-j6}
 
 # Set error codes (used by createpkg)
 ERROR_WGET=31;      ERROR_MAKE=32;      ERROR_INSTALL=33
@@ -89,7 +89,7 @@ done
 ./configure $CONF_OPTIONS || exit $ERROR_CONF
 
 # Compile
-make "$NUMJOBS" || exit $ERROR_MAKE
+make $NUMJOBS || exit $ERROR_MAKE
 
 # Install
 make install prefix="$PKG/$PREFIX/share/ivi" || exit $ERROR_INSTALL

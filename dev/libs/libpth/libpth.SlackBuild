@@ -42,8 +42,8 @@ PKG=${PKG:=$TMP/package-$PKG_NAME}
 REPOS=${REPOS:=$TMP}
 PREFIX=${PREFIX:=/usr}
 PKG_SRC="$TMP/$SRC_NAME-$SRC_VERSION"
-CONF_OPTIONS=${CONF_OPTIONS:=--mandir=$PREFIX/man}
-NUMJOBS=${NUMJOBS:=-j4}
+CONF_OPTIONS=${CONF_OPTIONS:=--sysconfdir=/etc --infodir=$PREFIX/info --mandir=$PREFIX/man --enable-shared=yes --enable-static=no --enable-pthread=no}
+NUMJOBS=${NUMJOBS:=}
 
 # Set system libraries' path and optmization flags based on $ARCH
 LIBDIR="$PREFIX/lib"
@@ -130,6 +130,20 @@ cd "$TMP"
 tar --no-same-owner --no-same-permissions -xvf "$SRC_DIR/$SRC" || exit $ERROR_TAR
 cd "$PKG_SRC"
 
+# Fix source files' ownership and permission
+chown -R root:root .
+find . -perm 666 -exec chmod 644 {} \;
+find . -perm 664 -exec chmod 644 {} \;
+find . -perm 600 -exec chmod 644 {} \;
+find . -perm 444 -exec chmod 644 {} \;
+find . -perm 400 -exec chmod 644 {} \;
+find . -perm 440 -exec chmod 644 {} \;
+find . -perm 777 -exec chmod 755 {} \;
+find . -perm 775 -exec chmod 755 {} \;
+find . -perm 511 -exec chmod 755 {} \;
+find . -perm 711 -exec chmod 755 {} \;
+find . -perm 555 -exec chmod 755 {} \;
+
 # Configure
 CFLAGS="$SLKCFLAGS" \
   CXXFLAGS="$SLKCFLAGS" \
@@ -137,7 +151,7 @@ CFLAGS="$SLKCFLAGS" \
   --prefix="$PREFIX" --libdir="$LIBDIR" $CONF_OPTIONS || exit $ERROR_CONF
 
 # Compile
-make "$NUMJOBS" || exit $ERROR_MAKE
+make $NUMJOBS || exit $ERROR_MAKE
 make test
 
 # Install
@@ -187,10 +201,10 @@ libpth: libpth (The GNU Portable Threads)
 libpth:
 libpth: Pth is a very portable POSIX/ANSI-C based library for Unix platforms
 libpth: which provides non-preemptive priority-based scheduling for multiple
-libpth: threads of execution ("multithreading") inside server applications.
-libpth: All threads run in the same address space of the server application,
-libpth: but each thread has its own individual program-counter, run-time
-libpth: stack, signal mask and errno variable.
+libpth: threads of execution (aka \`multithreading\') inside event-driven
+libpth: applications. All threads run in the same address space of the
+libpth: server application, but each thread has its own individual
+libpth: program-counter, run-time stack, signal mask and errno variable.
 libpth:
 libpth: For more information, http://www.gnu.org/software/pth/
 libpth:

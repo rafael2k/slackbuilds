@@ -33,7 +33,7 @@ CWD="$(pwd)"
 SRC_NAME="libksba"
 PKG_NAME="libksba"
 ARCH=${ARCH:=i486}
-SRC_VERSION=${VERSION:=1.0.1}
+SRC_VERSION=${VERSION:=1.0.2}
 PKG_VERSION="$(echo "$SRC_VERSION" | tr '[[:blank:]-]' '_')"
 BUILD=${BUILD:=1ls}
 SRC_DIR=${SRC_DIR:=$CWD}/$PKG_NAME
@@ -42,8 +42,8 @@ PKG=${PKG:=$TMP/package-$PKG_NAME}
 REPOS=${REPOS:=$TMP}
 PREFIX=${PREFIX:=/usr}
 PKG_SRC="$TMP/$SRC_NAME-$SRC_VERSION"
-CONF_OPTIONS=${CONF_OPTIONS:=--infodir=$PREFIX/info}
-NUMJOBS=${NUMJOBS:=-j4}
+CONF_OPTIONS=${CONF_OPTIONS:=--sysconfdir=/etc --localstatedir=/var --infodir=$PREFIX/info --enable-shared=yes --enable-static=no}
+NUMJOBS=${NUMJOBS:=-j6}
 
 # Set system libraries' path and optmization flags based on $ARCH
 LIBDIR="$PREFIX/lib"
@@ -113,6 +113,20 @@ cd "$TMP"
 tar --no-same-owner --no-same-permissions -xvf "$SRC_DIR/$SRC" || exit $ERROR_TAR
 cd "$PKG_SRC"
 
+# Fix source files' ownership and permission
+chown -R root:root .
+find . -perm 666 -exec chmod 644 {} \;
+find . -perm 664 -exec chmod 644 {} \;
+find . -perm 600 -exec chmod 644 {} \;
+find . -perm 444 -exec chmod 644 {} \;
+find . -perm 400 -exec chmod 644 {} \;
+find . -perm 440 -exec chmod 644 {} \;
+find . -perm 777 -exec chmod 755 {} \;
+find . -perm 775 -exec chmod 755 {} \;
+find . -perm 511 -exec chmod 755 {} \;
+find . -perm 711 -exec chmod 755 {} \;
+find . -perm 555 -exec chmod 755 {} \;
+
 # Configure
 CFLAGS="$SLKCFLAGS" \
   CXXFLAGS="$SLKCFLAGS" \
@@ -120,7 +134,7 @@ CFLAGS="$SLKCFLAGS" \
   --prefix="$PREFIX" --libdir="$LIBDIR" $CONF_OPTIONS || exit $ERROR_CONF
 
 # Compile
-make "$NUMJOBS" || exit $ERROR_MAKE
+make $NUMJOBS || exit $ERROR_MAKE
 
 # Install
 make install DESTDIR="$PKG" || exit $ERROR_INSTALL
@@ -157,10 +171,10 @@ cat << EODESC > "$PKG/install/slack-desc"
 # customary to leave one space after the ':'.
 
        |-----handy-ruler-------------------------------------------------------|
-libksba: libksba
+libksba: libksba (X.509 & CMS library for S/MIME and TLS)
 libksba:
-libksba: Libksba is a library to make the tasks of working with X.509
-libksba: certificates, CMS data and related objects more easy. It provides a
+libksba: KSBA (pronounced Kasbah) is a library to make X.509 certificates as
+libksba: well as the CMS easily accessible by other applications. It provides a
 libksba: highlevel interface to the implemented protocols and presents the data
 libksba: in a consistent way.
 libksba:

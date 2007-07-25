@@ -43,7 +43,7 @@ REPOS=${REPOS:=$TMP}
 PREFIX=${PREFIX:=/usr}
 PKG_SRC="$TMP/$SRC_NAME-$SRC_VERSION"
 CONF_OPTIONS=${CONF_OPTIONS:=}
-NUMJOBS=${NUMJOBS:=-j4}
+NUMJOBS=${NUMJOBS:=-j6}
 
 # Set error codes (used by createpkg)
 ERROR_WGET=31;      ERROR_MAKE=32;      ERROR_INSTALL=33
@@ -74,7 +74,7 @@ tar --no-same-owner --no-same-permissions -xvf "$SRC_DIR/$SRC" || exit $ERROR_TA
 cd "$PKG_SRC"
 
 # Compile
-make "$NUMJOBS" all || exit $ERROR_MAKE
+make $NUMJOBS all || exit $ERROR_MAKE
 if [ ! -c /dev/cpu/microcode ]; then
   make device || exit $ERROR_MAKE
 fi

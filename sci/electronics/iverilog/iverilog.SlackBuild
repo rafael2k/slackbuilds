@@ -33,7 +33,7 @@ CWD="$(pwd)"
 SRC_NAME="verilog"
 PKG_NAME="iverilog"
 ARCH=${ARCH:=i486}
-SRC_VERSION=${VERSION:=0.8.4}
+SRC_VERSION=${VERSION:=0.8.5}
 PKG_VERSION="$(echo "$SRC_VERSION" | tr '[[:blank:]-]' '_')"
 BUILD=${BUILD:=1ls}
 SRC_DIR=${SRC_DIR:=$CWD}/$PKG_NAME
@@ -43,7 +43,7 @@ REPOS=${REPOS:=$TMP}
 PREFIX=${PREFIX:=/usr}
 PKG_SRC="$TMP/$SRC_NAME-$SRC_VERSION"
 CONF_OPTIONS=${CONF_OPTIONS:=}
-NUMJOBS=${NUMJOBS:=-j4}
+NUMJOBS=${NUMJOBS:=-j6}
 
 # Set system libraries' path and optmization flags based on $ARCH
 LIBDIR="$PREFIX/lib"
@@ -96,7 +96,7 @@ CFLAGS="$SLKCFLAGS" \
   --prefix="$PREFIX" --libdir="$LIBDIR" $CONF_OPTIONS || exit $ERROR_CONF
 
 # Compile
-make "$NUMJOBS" || exit $ERROR_MAKE
+make $NUMJOBS || exit $ERROR_MAKE
 
 # Install
 make install \
