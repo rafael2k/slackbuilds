@@ -39,7 +39,7 @@ fi
 
 # default settings
 NAME="Image::Magick"
-PACKAGE="PerlMagick"
+PACKAGE="perl-image-magick"
 TMP=${TMP:=/tmp}
 VERSION=${VERSION:=6.32}
 ARCH=${ARCH:=i386}
@@ -61,7 +61,7 @@ fi
 
 RTOOL="wget"
 PACKAGE_EXT="gz"
-SRC="$PACKAGE-$VERSION.tar.$PACKAGE_EXT"
+SRC="PerlMagick-$VERSION.tar.$PACKAGE_EXT"
 FILE_NAME="`echo $NAME | sed -e 's/::/-/g'`"
 URL="http://search.cpan.org/CPAN/authors/id/J/JC/JCRISTY/$SRC"
 
@@ -82,7 +82,7 @@ if [ ! -d "$TMP" ]; then
 fi
 
 tar xvf $SRC_DIR/$SRC || exit $ERROR_TAR
-cd $PACKAGE-$VERSION
+cd PerlMagick-$VERSION
 
 # config and install!
 mkdir -p /install
