@@ -43,7 +43,7 @@ fi
 PACKAGE="MPlayer"
 ARCH=${ARCH:=i486}
 VERSION=${VERSION:=1.0rc1}
-BUILD=${BUILD:=1rha}
+BUILD=${BUILD:=2rha}
 SRC_DIR=${SRC:=$CWD}
 TMP=${TMP:=/tmp}
 REPOS=${REPOS:=$TMP}
@@ -57,7 +57,7 @@ PACKAGE_SKIN=${PACKAGE_SKIN:=$SKIN-$VERSION_SKIN.tar.$SKIN_EXT}
 # -------  error codes for createpkg  --------------
 ERROR_WGET=31;      ERROR_MAKE=32;      ERROR_INSTALL=33
 ERROR_MD5=34;       ERROR_CONF=35;      ERROR_HELP=36
-ERROR_TAR=37;       ERROR_MKPKG=38;      ERROR_GPG=39
+ERROR_TAR=37;       ERROR_MKPKG=38;     ERROR_GPG=39
 ERROR_PATCH=40
 
 if [ "$ARCH" == "x86_64" ]; then
@@ -75,18 +75,14 @@ URL="http://www1.mplayerhq.hu/MPlayer/releases/$SRC"
 # URL do Skin do MPlayer
 URL_SKIN="http://www1.mplayerhq.hu/MPlayer/Skin/$SKIN-$VERSION_SKIN.tar.$SKIN_EXT"
 
-if [ "$PACKAGE_EXT" == "bz2" ]; then
-  tarflag="j"
-else
-  tarflag="z"
-fi
-
 SRC_DIR="$SRC_DIR/$PACKAGE"
 mkdir -p $SRC_DIR
 
 # Download do MPlayer
-if [ "$RTOOL" == "wget" ] && [ ! -f "$SRC_DIR/$SRC" ]; then
-  wget "$URL" -O "$SRC_DIR/$SRC" || exit $ERROR_WGET
+if [ "$RTOOL" == "wget" ]; then
+ if [ ! -f "$SRC_DIR/$SRC" ]; then
+   wget "$URL" -O "$SRC_DIR/$SRC" || exit $ERROR_WGET
+ fi
 fi
 
 # Download do Skin
@@ -99,8 +95,12 @@ rm -rf $TMP
 mkdir -p $TMP
 cd $TMP
 
-tar xvf$tarflag $SRC_DIR/$SRC
+tar xvf $SRC_DIR/$SRC || exit $ERROR_TAR
 cd $PACKAGE-$VERSION
+
+if [ -f "$CWD/$PACKAGE-$VERSION.diff" ]; then
+  patch -p1 < $CWD/$PACKAGE-$VERSION.diff || exit $ERROR_PATCH
+fi
 
 if [ "$ARCH" == "i586" ] || [ "$ARCH" == "i686" ]; then
   EXTRA_ARGS="--enable-win32 --enable-qtx"
