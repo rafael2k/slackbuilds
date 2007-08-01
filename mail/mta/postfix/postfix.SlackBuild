@@ -27,7 +27,7 @@ fi
 # default settings
 PACKAGE=postfix
 ARCH=${ARCH:=i486}
-VERSION=${VERSION:=2.4.2}
+VERSION=${VERSION:=2.4.5}
 BUILD=${BUILD:=1rha}
 SRC_DIR=${SRC:=$CWD}
 TMP=${TMP:=/tmp}
