@@ -74,7 +74,7 @@ mkdir -p "$PKG" || exit $ERROR_MKDIR
 mkdir -p "$REPOS" || exit $ERROR_MKDIR
 
 # Dowload source if necessary
-SRC="$SRC_NAME-$SRC_VERSION-2.tar.gz"
+SRC="$SRC_NAME-$SRC_VERSION.tar.gz"
 URL="http://downloads.sourceforge.net/k9copy/$SRC"
 
 if [ ! -s "$SRC_DIR/$SRC" ] || ! gunzip -t "$SRC_DIR/$SRC" 2> /dev/null; then
