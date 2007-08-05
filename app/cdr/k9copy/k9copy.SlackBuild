@@ -30,7 +30,7 @@ CWD="$(pwd)"
 SRC_NAME="k9copy"
 PKG_NAME="k9copy"
 ARCH=${ARCH:=i468}
-SRC_VERSION=${VERSION:=1.0.4}
+SRC_VERSION=${VERSION:=1.1.2}
 PKG_VERSION="$(echo "$SRC_VERSION" | tr '[[:blank:]-]' '_')"
 BUILD=${BUILD:=1rra}
 SRC_DIR=${SRC_DIR:=$CWD}/$PKG_NAME
