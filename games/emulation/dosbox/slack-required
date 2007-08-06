@@ -1,0 +1,8 @@
+# Dependency list to dosbox
+#
+# dependency [condition] [version]]
+sdl				
+ncurses				
+libpng				
+sdl-net				
+sdl-sound				

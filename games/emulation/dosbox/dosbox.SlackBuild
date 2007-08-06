@@ -15,8 +15,8 @@
 #  Place - Suite 330, Boston, MA 02111-1307, USA
 #
 # slackbuild for dosbox, by Rudson R. Alves
-# requires: [[REQUIRES]]
-# tested: dosbox-0.70
+# requires: sdl ncurses libpng sdl-net sdl-sound
+# tested: dosbox-0.71
 #
 
 # Look for slackbuildrc
@@ -30,8 +30,8 @@ fi
 CWD="$(pwd)"
 SRC_NAME="dosbox"
 PKG_NAME="dosbox"
-ARCH=${ARCH:=i468}
-SRC_VERSION=${VERSION:=0.70}
+ARCH=${ARCH:=i486}
+SRC_VERSION=${VERSION:=0.71}
 PKG_VERSION="$(echo "$SRC_VERSION" | tr '[[:blank:]-]' '_')"
 BUILD=${BUILD:=1rra}
 SRC_DIR=${SRC_DIR:=$CWD}/$PKG_NAME
@@ -41,7 +41,7 @@ REPOS=${REPOS:=$TMP}
 PREFIX=${PREFIX:=/usr}
 PKG_SRC="$TMP/$SRC_NAME-$SRC_VERSION"
 CONF_OPTIONS=${CONF_OPTIONS:=""}
-NUMJOBS=${NUMJOBS:="-j4"}
+NUMJOBS=${NUMJOBS:="-j7"}
 
 # Set system libraries' path and optmization flags based on $ARCH
 LIBDIR="$PREFIX/lib"
@@ -75,12 +75,13 @@ mkdir -p "$PKG" || exit $ERROR_MKDIR
 mkdir -p "$REPOS" || exit $ERROR_MKDIR
 
 # Dowload source if necessary
-SRC="$SRC_NAME-$SRC_VERSION.tar.gz"
+SRC="$SRC_NAME-$VERSION.tar.gz"
 URL="http://downloads.sourceforge.net/dosbox/$SRC"
 
 if [ ! -s "$SRC_DIR/$SRC" ] || ! gunzip -t "$SRC_DIR/$SRC" 2> /dev/null; then
   wget "$URL" -O "$SRC_DIR/$SRC" || exit $ERROR_WGET
 fi
+
 
 # Untar
 cd "$TMP"
@@ -91,15 +92,7 @@ cd "$PKG_SRC"
 CFLAGS="$SLKCFLAGS" \
   CXXFLAGS="$SLKCFLAGS" \
   ./configure \
-    --prefix="$PREFIX" \
-    --localstatedir=/var \
-    --sysconfdir=/etc \
-    --datarootdir=/usr \
-    --datadir=/usr/share \
-    --program-prefix="" \
-    --program-suffix="" \
-    --libdir="$LIBDIR" "$CONF_OPTIONS" \
-    --build=$ARCH-slackware-linux || exit $ERROR_CONF
+  --prefix="$PREFIX" --libdir="$LIBDIR" $CONF_OPTIONS || exit $ERROR_CONF
 
 # Compile
 make $NUMJOBS || exit $ERROR_MAKE
@@ -130,14 +123,14 @@ cat << EODESC > "$PKG/install/slack-desc"
 # make exactly 11 lines for the formatting to be correct.  It's also
 # customary to leave one space after the ':'.
 
-      |-----handy-ruler------------------------------------------------------|
+      |-----handy-ruler-------------------------------------------------------|
 dosbox: DOSBox.slackBuild by Slack.Sarava
-dosbox: 
+dosbox:
 dosbox: DOSBox is a DOS-emulator that uses the SDL-library which makes DOSBox
 dosbox: very easy to port to different platforms. DOSBox has already been 
 dosbox: ported to many different platforms, such as Windows, BeOS, Linux, 
 dosbox: MacOS X...
-dosbox: 
+dosbox:
 dosbox: DOSBox also emulates CPU:286/386 realmode/protected mode, Directory 
 dosbox: FileSystem/XMS/EMS, Tandy/Hercules/CGA/EGA/VGA/VESA graphics, a 
 dosbox: SoundBlaster/Gravis Ultra Sound card for excellent sound 
@@ -152,4 +145,3 @@ makepkg -l y -c n "$REPOS/$PKG_NAME-$PKG_VERSION-$ARCH-$BUILD.tgz" || exit $ERRO
 if [ "$CLEANUP" == "yes" ]; then
   rm -rf "$PKG_SRC" "$PKG"
 fi
-

@@ -1,0 +1,4 @@
+# Dependency list to SDL_sound
+#
+# dependency [condition] [version]]
+sdl				
