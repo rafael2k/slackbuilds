@@ -1,0 +1,16 @@
+Index: cinelerra/mwindow.C
+===================================================================
+--- cinelerra/mwindow.C	(revision 1017)
++++ cinelerra/mwindow.C	(working copy)
+@@ -1348,9 +1348,9 @@
+ 	if(preferences->use_tipwindow)
+ 		init_tipwindow();
+ 		
+-SET_TRACE
++//SET_TRACE
+ 
+-	hide_splash();
++//	hide_splash();
+ SET_TRACE
+ 	init_shm();
+ }
