@@ -39,7 +39,7 @@ fi
 # default settings
 PACKAGE="faac"
 ARCH=${ARCH:=i486}
-VERSION=${VERSION:=1.24}
+VERSION=${VERSION:=1.25}
 BUILD=${BUILD:=1rd}
 SRC_DIR=${SRC:=$CWD}
 TMP=${TMP:=/tmp}
