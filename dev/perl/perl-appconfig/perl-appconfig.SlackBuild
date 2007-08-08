@@ -41,7 +41,7 @@ fi
 NAME="AppConfig"
 PACKAGE="perl-`echo $NAME | sed -e 's/::/-/g' | tr '[:upper:]' '[:lower:]'`"
 TMP=${TMP:=/tmp}
-VERSION=${VERSION:=1.63}
+VERSION=${VERSION:=1.66}
 ARCH=${ARCH:=i386}
 BUILD=${BUILD:=1rha}
 SRC_DIR=${SRC:=$CWD}
