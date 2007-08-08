@@ -41,7 +41,7 @@ fi
 NAME="Test::Simple"
 PACKAGE="perl-`echo $NAME | sed -e 's/::/-/g' | tr '[:upper:]' '[:lower:]'`"
 TMP=${TMP:=/tmp}
-VERSION=${VERSION:=0.66}
+VERSION=${VERSION:=0.70}
 ARCH=${ARCH:=i386}
 BUILD=${BUILD:=1rha}
 SRC_DIR=${SRC:=$CWD}
