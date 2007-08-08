@@ -86,14 +86,14 @@ fi
 
 
 # These hacks are needed because x264 do not correcly accepts CFLAGS not ac_options for optimized code.
+# REMOVED!!! - rafael2k
+# if [ "$ARCH" == "i486" ] || [ "$ARCH" == "i386" ]; then
+#   patch -p0 < $CWD/$PACKAGE-nommxfix.patch
+# fi
 
-if [ "$ARCH" == "i486" ] || [ "$ARCH" == "i386" ]; then
-  patch -p0 < $CWD/$PACKAGE-nommxfix.patch
-fi
-
-if [ "$ARCH" == "powerpc" ] && [ "$HAVE_ALTIVEC" != "true" ]; then
-  patch -p0 < $CWD/$PACKAGE-noaltivecfix.patch
-fi
+# if [ "$ARCH" == "powerpc" ] && [ "$HAVE_ALTIVEC" != "true" ]; then
+#   patch -p0 < $CWD/$PACKAGE-noaltivecfix.patch
+# fi
 
 
 ./configure --prefix=/usr --enable-shared --enable-visualize --enable-pic --libdir=$LIBDIR 
