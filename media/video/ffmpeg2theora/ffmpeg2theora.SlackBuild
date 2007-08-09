@@ -39,7 +39,7 @@ fi
 # default settings
 PACKAGE="ffmpeg2theora"
 ARCH=${ARCH:=i486}
-VERSION=${VERSION:=0.17}
+VERSION=${VERSION:=0.19}
 BUILD=${BUILD:=1rha}
 SRC_DIR=${SRC:=$CWD}
 TMP=${TMP:=/tmp}
