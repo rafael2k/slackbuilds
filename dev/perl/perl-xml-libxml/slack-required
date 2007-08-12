@@ -1,1 +1,3 @@
 perl-xml-libxml-common
+perl-xml-sax
+perl-xml-namespacesupport
