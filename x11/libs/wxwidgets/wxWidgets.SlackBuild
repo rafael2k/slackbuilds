@@ -39,7 +39,7 @@ fi
 # default settings
 PACKAGE="wxWidgets"
 ARCH=${ARCH:=i486}
-VERSION=${VERSION:=2.6.3}
+VERSION=${VERSION:=2.8.4}
 BUILD=${BUILD:=1rd}
 SRC_DIR=${SRC:=$CWD}
 TMP=${TMP:=/tmp}
