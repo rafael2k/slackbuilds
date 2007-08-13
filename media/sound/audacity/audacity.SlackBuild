@@ -76,7 +76,7 @@ cd $TMP
 
 tar xvf$tarflag $SRC_DIR/$SRC
 
-if [ "$VERSION" == "1.3.2" ]; then
+if [ "$VERSION" == "1.3.3" ]; then
   cd $PACKAGE-src-$VERSION-beta
 else
   cd $PACKAGE-src-$VERSION
