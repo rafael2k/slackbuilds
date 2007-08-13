@@ -3,6 +3,7 @@ evas
 ecore
 embryo
 edje
+exml
 imlib2
 engrave
 enlightenment
