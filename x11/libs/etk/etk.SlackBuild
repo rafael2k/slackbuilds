@@ -61,14 +61,14 @@ ERROR_PATCH=40;     ERROR_VCS=41
 SRC_DIR="$SRC_DIR/e17"
 mkdir -p $SRC_DIR
 
-if [ -d "$SRC_DIR/e17/proto/etk" ]; then
-  cd $SRC_DIR/e17/proto/etk
+if [ -d "$SRC_DIR/e17/libs/etk" ]; then
+  cd $SRC_DIR/e17/libs/etk
   cvs update || exit $ERROR_VCS
 else
   cd $SRC_DIR
   # echo "Please hit ENTER on passwd prompt..."
   # cvs -d:pserver:anonymous@anoncvs.enlightenment.org:/var/cvs/e login || exit $ERROR_VCS
-  cvs -z3 -d:pserver:anonymous@anoncvs.enlightenment.org:/var/cvs/e co e17/proto/etk || exit $ERROR_VCS
+  cvs -z3 -d:pserver:anonymous@anoncvs.enlightenment.org:/var/cvs/e co e17/libs/etk || exit $ERROR_VCS
 fi
 
 TMP="$TMP/$PACKAGE"
@@ -76,7 +76,7 @@ rm -rf $TMP
 mkdir -p $TMP
 cd $TMP
 
-cd $SRC_DIR/e17/proto/etk
+cd $SRC_DIR/e17/libs/etk
 
 make clean &> /dev/null
 ./autogen.sh --prefix=/usr --sysconfdir=/etc --libdir=$LIBDIR || exit $ERROR_CONF
