@@ -107,7 +107,7 @@ cat << EOF > install/slack-desc
 # customary to leave one space after the ':'.
 
         |-----handy-ruler-----------------------------------------------------|
-audacity: audacity (Audacity is a library to write portable GUI code)
+audacity: Audacity (Audacity is a software for sound recording and editing)
 audacity:
 audacity: Audacity is free, open source software for recording and editing 
 audacity: sounds. It is available for Mac OS X, Microsoft Windows, GNU/Linux, 
