@@ -12,7 +12,7 @@
 #  this program; if not, write to the Free Software Foundation, Inc., 59 Temple
 #  Place - Suite 330, Boston, MA 02111-1307, USA
 #
-# SlackBuild for broffice
+# SlackBuild for broffice originally for version 2.1.0, updated by rafael2k.
 # http://ftp.unicamp.br/pub/broffice/stable/2.1.0/
 #
 # Author: Rudson R Alves
@@ -30,14 +30,14 @@ CWD="$(pwd)"
 SRC_NAME="broffice"
 PKG_NAME="broffice"
 ARCH=i586
-SRC_VERSION=${VERSION:=2.1.0}
+SRC_VERSION=${VERSION:=2.2.1}
 PKG_VERSION="$(echo "$SRC_VERSION" | tr '[[:blank:]-]' '_')"
 BUILD=${BUILD:=1rra}
 SRC_DIR=${SRC_DIR:=$CWD}/$PKG_NAME
 TMP=${TMP:=/tmp}
 PKG=${PKG:=$TMP/package-$PKG_NAME}
 REPOS=${REPOS:=$TMP}
-PREFIX=${PREFIX:=/opt}
+PREFIX=${PREFIX:=/usr}
 PKG_SRC="$TMP/$SRC_NAME-$SRC_VERSION"
 #CONF_OPTIONS=${CONF_OPTIONS:=}
 
@@ -76,12 +76,12 @@ mkdir -p "$REPOS" || exit $ERROR_MKDIR
 mkdir -p "$PKG_SRC" || exit $ERROR_MKDIR
 
 # Dowload source if necessary
-SRC="${SRC_NAME}.org.${SRC_VERSION}.rpm.tar.bz2"
-URL="http://ftp.unicamp.br/pub/broffice/stable/2.1.0/$SRC"
+SRC="BrOo_${SRC_VERSION}_20070529_LinuxIntel_install_RPMS_pt-BR.tar.gz"
+URL="http://ftp.unicamp.br/pub/broffice/stable/2.2.1/$SRC"
 
-if [ ! -s "$SRC_DIR/$SRC" ] || ! bunzip2 -t "$SRC_DIR/$SRC" 2> /dev/null; then
-  wget "$URL" -O "$SRC_DIR/$SRC" || exit $ERROR_WGET
-fi
+# if [ ! -s "$SRC_DIR/$SRC" ] || ! bunzip2 -t "$SRC_DIR/$SRC" 2> /dev/null; then
+#  wget "$URL" -O "$SRC_DIR/$SRC" || exit $ERROR_WGET
+# fi
 
 # Download source's MD5 checksum if necessary and check it
 if [ ! -s "$SRC_DIR/md5sum.txt" ]; then
@@ -107,9 +107,9 @@ for i in *.rpm; do
 done
 rm *.rpm 2>/dev/null
 
-# Converte links to KDE
+# Converte links to KDE - retirado p/ ooffice 2.2.1, jah exite um pacote para slackware
 cd desktop-integration
-rpm2tgz broffice.org-suse-menus*.rpm
+# rpm2tgz broffice.org-suse-menus*.rpm
 rm *.rpm *.deb 2>/dev/null
 
 
@@ -121,46 +121,52 @@ for i in *.tgz; do
   tar xvf $i -C $PKG || exit $ERROR_TAR
 done
 
-# Change KDE directory
-mv $PKG/opt/kde3 $PKG/opt/kde
+# fix opt layout
+mkdir $PKG/usr
+mv $PKG/opt/* $PKG/usr
+
+#  Change KDE directory
+mv $PKG/usr/kde/share/* $PKG/usr/share/	
 
 cd $PKG/usr/bin
 rm * 2>/dev/null
 
-# broffice.org-2.1
-cat << EOFBROFFICE > $PKG/usr/bin/broffice.org-2.1
+# broffice.org-2.2.1
+cat << EOFBROFFICE > $PKG/usr/bin/broffice.org-2.2.1
 #!/bin/sh
-exec /opt/broffice.org2.1/program/soffice \$@
+exec /usr/broffice.org2.2/program/soffice \$@
 EOFBROFFICE
 
-# broffice.org-2.1-printeradmin
-cat << EOFBRADMIN > $PKG/usr/bin/broffice.org-2.1-printeradmin
+# broffice.org-2.2.1-printeradmin
+cat << EOFBRADMIN > $PKG/usr/bin/broffice.org-2.2.1-printeradmin
 #!/bin/sh
-exec /opt/broffice.org2.1/program/spadmin
+exec /usr/broffice.org2.2/program/spadmin
 EOFBRADMIN
 
 chmod +x *
 
-ln -s ../../opt/broffice.org2.1/program/soffice soffice
+ln -s ../../usr/broffice.org2.2/program/soffice soffice
 
-cd $PKG/usr/share/applications
-rm *
-for i in $( ls ../../../opt/broffice.org2.1/share/xdg/* ); do
-  NAME=$( echo $i | sed 's/.*xdg\/\(.*\.desktop\)$/\1/' )
-  ln -s $i $NAME
-done
+### do we really need that?
+# cd $PKG/usr/share/applications
+# rm *
+# for i in $( ls ../../../usr/broffice.org2.2/share/xdg/* ); do
+#   NAME=$( echo $i | sed 's/.*xdg\/\(.*\.desktop\)$/\1/' )
+#   ln -s $i $NAME
+# done
 
-if [ ! -z $SLACK_NEW ]; then
-  cp -a $PKG/opt/kde/* $PKG/usr/
-  cp -a $PKG/opt/gnome/* $PKG/usr/
-  rm -rf $PKG/opt/kde
-  rm -rf $PKG/opt/gnome
-fi
+### do we really need that?
+# if [ ! -z $SLACK_NEW ]; then
+#  cp -a $PKG/opt/kde/* $PKG/usr/
+#  cp -a $PKG/opt/gnome/* $PKG/usr/
+#  rm -rf $PKG/opt/kde
+#  rm -rf $PKG/opt/gnome
+# fi
 
 # Install documentation
 mkdir -p "$PKG/usr/doc/$PKG_NAME-$PKG_VERSION" || exit $ERROR_MKDIR
-cp -a $PKG_SRC/licenses/* $PKG/usr/doc/$PKG_NAME-$PKG_VERSION/
-cp -a $PKG_SRC/readmes/* $PKG/usr/doc/$PKG_NAME-$PKG_VERSION/
+mv $PKG/usr/broffice.org2.2/licenses/* $PKG/usr/doc/$PKG_NAME-$PKG_VERSION/
+mv $PKG/usr/broffice.org2.2/readmes/* $PKG/usr/doc/$PKG_NAME-$PKG_VERSION/
 
 # Add package description (slack-desc)
 mkdir -p "$PKG/install" || exit $ERROR_MKDIR
@@ -178,11 +184,12 @@ broffice:
 broffice: Pacote do BrOffice construído a partir do pacote rpm pelo
 broffice: broffice.Slackbuild.
 broffice:
-broffice: O BrOffice.org/OpenOffice.org é a mais aberta e democrática suíte de
-broffice: escritório disponível, composto por:  Writer - editor; Calc - plani-
-broffice: lha; Impress - apresentações; Draw - desenhos vetoriais; Math -
-broffice: Editor de equações; Base - Banco de dados
-broffice: URL: http://www.openoffice.org.br
+broffice: O BrOffice.org/OpenOffice.org	é uma suíte de escritório feito 
+broffice: inicialmente pela Star Division, e atualmente pela Sun (com alguma
+broffice: participação da 'comunidade'), e é composto por:  Writer - editor; 
+broffice: Calc - planilha; Impress - apresentações; Draw - desenhos vetoriais; 
+broffice: Math - Editor de equações; Base - Banco de dados.
+broffice: http://www.openoffice.org.br
 EODESC
 
 # Build the package
