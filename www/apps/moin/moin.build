@@ -16,7 +16,7 @@
 # by rhatto at riseup.net
 # build it with slacktrack, example:
 #
-#   slacktrack -jefkzp "moin-1.5.6-noarch-1rha.tgz" "./moin.build"
+#   slacktrack -jefkzp "moin-1.5.8-x86_64-1rha.tgz" "./moin.build"
 # 
 
 CWD="`pwd`"
@@ -31,7 +31,7 @@ fi
 
 # default settings
 PACKAGE="moin"
-VERSION=${VERSION:=1.5.7}
+VERSION=${VERSION:=1.5.8}
 ARCH=${ARCH:=i486}
 BUILD=${BUILD:=1rha}
 SRC_DIR=${SRC:=$CWD}
