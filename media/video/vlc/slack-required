@@ -1,4 +1,5 @@
 jack
+libavc1394
 libraw1394
 libdc1394
 mpeg2dec
