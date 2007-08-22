@@ -131,7 +131,7 @@ EOF
 # docs
 mkdir -p usr/doc/$PACKAGE-$VERSION
 DOCS="Changes README SIGNATURE"
-cp -a $CWD/$DOCS  usr/doc/$PACKAGE-$VERSION/
+cp -a $CWD/$DOCS usr/doc/$PACKAGE-$VERSION/
 
 makepkg -c y -l y $REPOS/$PACKAGE-$VERSION-$ARCH-$BUILD.tgz || exit $ERROR_MKPKG
 
