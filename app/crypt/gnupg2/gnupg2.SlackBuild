@@ -33,7 +33,7 @@ CWD="$(pwd)"
 SRC_NAME="gnupg"
 PKG_NAME="gnupg2"
 ARCH=${ARCH:=i486}
-SRC_VERSION=${VERSION:=2.0.5}
+SRC_VERSION=${VERSION:=2.0.6}
 PKG_VERSION="$(echo "$SRC_VERSION" | tr '[[:blank:]-]' '_')"
 BUILD=${BUILD:=1ls}
 SRC_DIR=${SRC_DIR:=$CWD}/$PKG_NAME
