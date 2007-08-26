@@ -39,7 +39,7 @@ fi
 # default settings
 PACKAGE="swfdec"
 ARCH=${ARCH:=i486}
-VERSION=${VERSION:=0.5.1}
+VERSION=${VERSION:=0.5.2}
 BUILD=${BUILD:=2rha}
 SRC_DIR=${SRC:=$CWD}
 TMP=${TMP:=/tmp}
