@@ -40,7 +40,7 @@ fi
 PACKAGE="swfdec-mozilla"
 ARCH=${ARCH:=i486}
 VERSION=${VERSION:=0.5.2}
-BUILD=${BUILD:=2rha}
+BUILD=${BUILD:=1rha}
 SRC_DIR=${SRC:=$CWD}
 TMP=${TMP:=/tmp}
 REPOS=${REPOS:=$TMP}
