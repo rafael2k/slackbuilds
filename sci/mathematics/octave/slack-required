@@ -1,0 +1,7 @@
+# Dependency list to octave
+#
+# dependency [condition] [version]]
+gcc		>=		3.2
+flex		>=		2.5.4
+bison		>=		1.31
+gperf		>=		3.0.1
