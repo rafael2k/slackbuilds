@@ -26,11 +26,11 @@ fi
 
 PACKAGE="kernel-satan"
 KERNEL_VERSION="2.6.22"
-EXTRAVERSION="2"
+EXTRAVERSION="6"
 ARCH="x86_64"
 BUILD="1rha"
 PATCHSET="vs2.2.0.3"
-PATCH_VERSION="2.6.22.2-$PATCHSET"
+PATCH_VERSION="2.6.22.6-$PATCHSET"
 TMP=${TMP:=/tmp}
 SRC_DIR=${SRC:=$CWD}
 REPOS=${REPOS:=$TMP}
@@ -67,17 +67,17 @@ mkdir -p $TMP
 cd $TMP
 
 rm -rf linux-$KERNEL_VERSION*
-tar jxvf $SRC_DIR/$KERNEL
+tar jxvf $SRC_DIR/$KERNEL || exit 1
 
 if [ ! -z "$PATCHSET" ]; then
   mv linux-$KERNEL_VERSION linux-$KERNEL_VERSION-$PATCHSET
   KERNEL_VERSION="$KERNEL_VERSION-$PATCHSET"
 fi
 
-cp $CWD/config-$KERNEL_VERSION linux-$KERNEL_VERSION/.config
+cp $CWD/config-$KERNEL_VERSION linux-$KERNEL_VERSION/.config || exit 1
 cd linux-$KERNEL_VERSION
 
-patch -p1 < $SRC_DIR/$PATCH
+patch -p1 < $SRC_DIR/$PATCH || exit 1
 
 if [ ! -z "$EXTRAVERSION" ] && [ ! -z "$PATCHSET" ]; then
   sed -e "s/^EXTRAVERSION =*$/EXTRAVERSION = \.$EXTRAVERSION-$PATCHSET/" Makefile > Makefile.tmp
