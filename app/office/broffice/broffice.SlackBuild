@@ -118,7 +118,7 @@ cd ..
 # fix opt layout
 mkdir $PKG/usr
 mv $PKG/opt/* $PKG/usr/
-#mv $PKG/usr/kde/share/* $PKG/usr/share/
+
 mv $PKG/usr/kde3/share/* $PKG/usr/share/
 rm -rf $PKG/opt
 rm -rf $PKG/usr/kde3
@@ -140,6 +140,19 @@ EOFBRADMIN
 
 chmod +x *
 ln -s ../../usr/broffice.org2.2/program/soffice soffice
+
+mkdir -p $PKG/usr/share/applications
+cd $PKG/usr/share/applications
+rm broffice.org2.2-*.desktop 2>/dev/null
+ln -s ../../broffice.org2.2/share/xdg/base.desktop broffice.org2.2-base.desktop
+ln -s ../../broffice.org2.2/share/xdg/calc.desktop broffice.org2.2-calc.desktop
+ln -s ../../broffice.org2.2/share/xdg/draw.desktop broffice.org2.2-draw.desktop
+ln -s ../../broffice.org2.2/share/xdg/extension.desktop broffice.org2.2-extension.desktop
+ln -s ../../broffice.org2.2/share/xdg/impress.desktop broffice.org2.2-impress.desktop
+ln -s ../../broffice.org2.2/share/xdg/math.desktop broffice.org2.2-math.desktop
+ln -s ../../broffice.org2.2/share/xdg/printeradmin.desktop broffice.org2.2-printeradmin.desktop
+ln -s ../../broffice.org2.2/share/xdg/qstart.desktop broffice.org2.2-qstart.desktop
+ln -s ../../broffice.org2.2/share/xdg/writer.desktop broffice.org2.2-writer.desktop
 
 # Install documentation
 mkdir -p "$PKG/usr/doc/$PKG_NAME-$PKG_VERSION" || exit $ERROR_MKDIR
