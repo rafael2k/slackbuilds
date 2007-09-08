@@ -121,7 +121,7 @@ mv $PKG/opt/* $PKG/usr/
 #mv $PKG/usr/kde/share/* $PKG/usr/share/
 mv $PKG/usr/kde3/share/* $PKG/usr/share/
 rm -rf $PKG/opt
-
+rm -rf $PKG/usr/kde3
 
 cd $PKG/usr/bin
 rm * 2>/dev/null
