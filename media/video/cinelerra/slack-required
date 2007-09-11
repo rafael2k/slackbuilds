@@ -1,3 +1,8 @@
+libasound
+libogg
+libvorbis
+libtheora
+libtiff
 openexr
 libdv
 libx264

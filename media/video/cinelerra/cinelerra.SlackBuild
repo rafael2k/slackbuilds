@@ -77,9 +77,9 @@ cd $SRC_DIR/cinelerra
 VERSION=r"`svnversion cinelerra`"
 
 # glibc 2.5 work-around!!!
-if [ -f "$CWD/$PACKAGE-$VERSION.diff" ]; then
-  patch -p0 < $CWD/$PACKAGE.diff || exit $ERROR_PATCH
-fi
+# if [ -f "$CWD/$PACKAGE.diff" ]; then
+#   patch -p0 < $CWD/$PACKAGE.diff || exit $ERROR_PATCH
+# fi
 
 if [ "$ARCH" == "i586" ] || [ "$ARCH" == "i686" ]; then
   EXTRA_ACFLAGS=" --enable-mmx"
