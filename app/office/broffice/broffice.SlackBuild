@@ -153,6 +153,9 @@ ln -s ../../broffice.org2.2/share/xdg/math.desktop broffice.org2.2-math.desktop
 ln -s ../../broffice.org2.2/share/xdg/printeradmin.desktop broffice.org2.2-printeradmin.desktop
 ln -s ../../broffice.org2.2/share/xdg/qstart.desktop broffice.org2.2-qstart.desktop
 ln -s ../../broffice.org2.2/share/xdg/writer.desktop broffice.org2.2-writer.desktop
+cd $PKG/usr/bin
+mkdir -p "$PKG/usr/bin" || exit $ERROR_MKDIR
+ln -s broffice.org-2.2.1 broffice.org2.2
 
 # Install documentation
 mkdir -p "$PKG/usr/doc/$PKG_NAME-$PKG_VERSION" || exit $ERROR_MKDIR
