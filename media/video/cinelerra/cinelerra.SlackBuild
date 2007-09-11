@@ -77,9 +77,9 @@ cd $SRC_DIR/cinelerra
 VERSION=r"`svnversion cinelerra`"
 
 # glibc 2.5 work-around!!!
-# if [ -f "$CWD/$PACKAGE.diff" ]; then
-#   patch -p0 < $CWD/$PACKAGE.diff || exit $ERROR_PATCH
-# fi
+if [ -f "$CWD/$PACKAGE.diff" ]; then
+  patch -p0 < $CWD/$PACKAGE.diff || exit $ERROR_PATCH
+fi
 
 if [ "$ARCH" == "i586" ] || [ "$ARCH" == "i686" ]; then
   EXTRA_ACFLAGS=" --enable-mmx"
@@ -121,9 +121,9 @@ cinelerra: for Linux. Cinelerra takes what normally is a boring server - studied
 cinelerra: in computer science classrooms, hidden in back offices - and turns it
 cinelerra: into a 50,000 watt flamethrower of multimedia editing.
 cinelerra: 
-cinelerra: This version is the cvs.cinelerra.org branch (in fact, a fork).
+cinelerra: This version is the cv.cinelerra.org branch (in fact, a fork).
 cinelerra: 
-cinelerra: http://cvs.cinelerra.org/
+cinelerra: http://cv.cinelerra.org/
 cinelerra: 
 EOF
 
