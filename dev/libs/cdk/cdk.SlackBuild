@@ -86,7 +86,7 @@ fi
 # Untar
 cd "$TMP"
 tar --no-same-owner --no-same-permissions -xvf "$SRC_DIR/$SRC" || exit $ERROR_TAR
-cd "$PKG_SRC"
+cd "$TMP/$SRC_NAME-$SRC_VERSION.orig"
 
 # Patch source
 patches="[[PATCH FILES]]
@@ -94,9 +94,9 @@ patches="[[PATCH FILES]]
          $PKG_NAME-$PKG_VERSION-$ARCH.diff $PKG_NAME-$ARCH.diff"
 for patch in $patches; do
   if [ -f "$CWD/$patch" ]; then
-    patch -Np[[NUMBER OF PREFIX SLASHES TO STRIP]] < "$CWD/$patch" || exit $ERROR_PATCH
+    patch -Np1 < "$CWD/$patch" || exit $ERROR_PATCH
   elif [ -f "$CWD/patches/$patch" ]; then
-    patch -Np[[NUMBER OF PREFIX SLASHES TO STRIP]] < "$CWD/patches/$patch" || exit $ERROR_PATCH
+    patch -Np1 < "$CWD/patches/$patch" || exit $ERROR_PATCH
   fi
 done
 
