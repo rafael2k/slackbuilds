@@ -1,0 +1,597 @@
+diff -Naur libcdk5-5.0.20050424.orig.orig/Makefile.in libcdk5-5.0.20050424.orig/Makefile.in
+--- libcdk5-5.0.20050424.orig.orig/Makefile.in	2005-07-28 10:44:02.000000000 -0300
++++ libcdk5-5.0.20050424.orig/Makefile.in	2007-09-13 13:33:01.000000000 -0300
+@@ -61,7 +61,7 @@
+ libdir		= $(DESTDIR)@libdir@
+ mandir		= $(DESTDIR)@mandir@
+ 
+-DOCUMENT_DIR	= @prefix@/doc/cdk
++DOCUMENT_DIR	= $(prefix)/doc/cdk
+ INCLUDE_DIR	= $(includedir)/cdk
+ LIB_DIR		= $(libdir)
+ MAN_DIR		= $(mandir)/man3
+@@ -304,9 +304,10 @@
+ install \
+ installCDKReadme :: $(DOCUMENT_DIR)
+ 	@echo "Installing CDK Readme files in $(DOCUMENT_DIR)..."
++	@mkdir -p ${DESTDIR}/${DOCUMENT_DIR}
+ 	@for i in $(CDKREADME); do \
+ 	   echo "	... $$i"; \
+-	   $(INSTALL_DATA) $(srcdir)/$$i $(DOCUMENT_DIR)/$$i; \
++	   $(INSTALL_DATA) $(srcdir)/$$i ${DESTDIR}/$(DOCUMENT_DIR)/$$i; \
+ 	done
+ 
+ uninstall \
+@@ -322,13 +323,14 @@
+ install \
+ installCDKManPages :: headers.sed $(AUTO_MAN) $(MAN_DIR)
+ 	@echo "Installing the CDK man pages in $(MAN_DIR) ..."
++	@mkdir -p ${DESTDIR}/${MAN_DIR}
+ 	@for i in $(AUTO_MAN); do \
+-	   $(SHELL) $(srcdir)/headers.sh -x "$(INSTALL_DATA)" -d $(MAN_DIR) -s . $$i; \
+-	   $(SHELL) $(srcdir)/manlinks.sh installing $(srcdir) $(MAN_DIR) $$i;  \
++	   $(SHELL) $(srcdir)/headers.sh -x "$(INSTALL_DATA)" -d ${DESTDIR}/$(MAN_DIR) -s . $$i; \
++	   $(SHELL) $(srcdir)/manlinks.sh installing $(srcdir) ${DESTDIR}/$(MAN_DIR) $$i;  \
+ 	done
+ 	@for i in $(CDKMAN); do \
+-	   $(SHELL) $(srcdir)/headers.sh -x "$(INSTALL_DATA)" -d $(MAN_DIR) -s . $(srcdir)/man/$$i; \
+-	   $(SHELL) $(srcdir)/manlinks.sh installing $(srcdir) $(MAN_DIR) $(srcdir)/man/$$i;  \
++	   $(SHELL) $(srcdir)/headers.sh -x "$(INSTALL_DATA)" -d ${DESTDIR}/$(MAN_DIR) -s . $(srcdir)/man/$$i; \
++	   $(SHELL) $(srcdir)/manlinks.sh installing $(srcdir) ${DESTDIR}/$(MAN_DIR) $(srcdir)/man/$$i;  \
+ 	done
+ 
+ uninstall \
+@@ -336,7 +338,7 @@
+ 	@echo "Uninstalling the CDK man pages from $(MAN_DIR) ..."
+ 	@- for i in $(AUTO_MAN); do \
+ 	   $(RM) $(MAN_DIR)/`basename $$i`; \
+-	   $(SHELL) $(srcdir)/manlinks.sh removing $(srcdir) $(MAN_DIR) $(srcdir)/$$i; \
++	   $(SHELL) $(srcdir)/manlinks.sh removing $(srcdir) ${MAN_DIR) $(srcdir)/$$i; \
+ 	done
+ 	@- for i in $(CDKMAN); do \
+ 	   $(RM) $(MAN_DIR)/$$i; \
+@@ -349,9 +351,10 @@
+ install \
+ installCDKHeaderFiles :: headers.sed $(MY_HDR) $(INCLUDE_DIR)
+ 	@echo "Installing CDK header files in $(INCLUDE_DIR)..."
+-	$(SHELL) $(srcdir)/headers.sh -x "$(INSTALL_DATA)" -d $(INCLUDE_DIR) -s $(srcdir) $(MY_HDR)
++	@mkdir -p ${DESTDIR}/${INCLUDE_DIR}
++	$(SHELL) $(srcdir)/headers.sh -x "$(INSTALL_DATA)" -d ${DESTDIR}/$(INCLUDE_DIR) -s $(srcdir) $(MY_HDR)
+ 	@for i in $(CDKHDR); do \
+-	   $(SHELL) $(srcdir)/headers.sh -x "$(INSTALL_DATA)" -d $(INCLUDE_DIR) -s $(srcdir) include/$$i; \
++	   $(SHELL) $(srcdir)/headers.sh -x "$(INSTALL_DATA)" -d ${DESTDIR}/$(INCLUDE_DIR) -s $(srcdir) include/$$i; \
+ 	done
+ 
+ uninstall \
+@@ -370,7 +373,8 @@
+ install \
+ installCDKLibrary :: $(LIB_DIR) $(CDKLIB)
+ 	@echo "Installing CDK library"
+-	@$(INSTALL_LIB) $(CDKLIB) $(LIB_DIR)/$(CDKLIB)
++	@mkdir -p ${DESTDIR}/${LIB_DIR}
++	@$(INSTALL_LIB) $(CDKLIB) ${DESTDIR}/$(LIB_DIR)/$(CDKLIB)
+ 
+ uninstall \
+ uninstallCDKLibrary ::
+@@ -383,8 +387,9 @@
+ #
+ installCDKSHLibrary :: $(LIB_DIR) $(CDKSHLIB)
+ 	@echo "Installing CDK library"
++	@mkdir -p ${DESTDIR}/${LIB_DIR}
+ 	@echo "	$(INSTALL_DATA) $(CDKSHLIB) $(LIB_DIR)"
+-	@$(INSTALL_DATA) $(CDKSHLIB) $(LIB_DIR)
++	@$(INSTALL_DATA) $(CDKSHLIB) ${DESTDIR}/$(LIB_DIR)
+ 	@echo " ln -sf $(CDKSHLIB) $(LIB_DIR)/@LIB_PREFIX@@LIB_ROOTNAME@.so"
+ 	@ln -sf $(CDKSHLIB) $(LIB_DIR)/@LIB_PREFIX@@LIB_ROOTNAME@.so
+ 
+@@ -456,7 +461,7 @@
+ $(DOCUMENT_DIR) \
+ $(INCLUDE_DIR) \
+ $(LIB_DIR) \
+-$(MAN_DIR) : ; $(srcdir)/mkdirs.sh $@
++$(MAN_DIR) : ; #$(srcdir)/mkdirs.sh $@
+ 
+ #
+ # Files generated from templates:
+diff -Naur libcdk5-5.0.20050424.orig.orig/config.guess libcdk5-5.0.20050424.orig/config.guess
+--- libcdk5-5.0.20050424.orig.orig/config.guess	2005-07-28 10:44:01.000000000 -0300
++++ libcdk5-5.0.20050424.orig/config.guess	2007-09-13 13:32:55.000000000 -0300
+@@ -1,9 +1,9 @@
+ #! /bin/sh
+ # Attempt to guess a canonical system name.
+ #   Copyright (C) 1992, 1993, 1994, 1995, 1996, 1997, 1998, 1999,
+-#   2000, 2001, 2002, 2003, 2004 Free Software Foundation, Inc.
++#   2000, 2001, 2002, 2003, 2004, 2005 Free Software Foundation, Inc.
+ 
+-timestamp='2004-11-12'
++timestamp='2005-04-22'
+ 
+ # This file is free software; you can redistribute it and/or modify it
+ # under the terms of the GNU General Public License as published by
+@@ -53,7 +53,7 @@
+ GNU config.guess ($timestamp)
+ 
+ Originally written by Per Bothner.
+-Copyright (C) 1992, 1993, 1994, 1995, 1996, 1997, 1998, 1999, 2000, 2001, 2002, 2003, 2004
++Copyright (C) 1992, 1993, 1994, 1995, 1996, 1997, 1998, 1999, 2000, 2001, 2002, 2003, 2004, 2005
+ Free Software Foundation, Inc.
+ 
+ This is free software; see the source for copying conditions.  There is NO
+@@ -804,6 +804,9 @@
+     i*:UWIN*:*)
+ 	echo ${UNAME_MACHINE}-pc-uwin
+ 	exit 0 ;;
++    amd64:CYGWIN*:*:*)
++	echo x86_64-unknown-cygwin
++	exit 0 ;;
+     p*:CYGWIN*:*)
+ 	echo powerpcle-unknown-cygwin
+ 	exit 0 ;;
+@@ -1137,6 +1140,10 @@
+ 	# From seanf@swdc.stratus.com.
+ 	echo i860-stratus-sysv4
+ 	exit 0 ;;
++    i*86:VOS:*:*)
++	# From Paul.Green@stratus.com.
++	echo ${UNAME_MACHINE}-stratus-vos
++	exit 0 ;;
+     *:VOS:*:*)
+ 	# From Paul.Green@stratus.com.
+ 	echo hppa1.1-stratus-vos
+@@ -1197,6 +1204,9 @@
+     *:QNX:*:4*)
+ 	echo i386-pc-qnx
+ 	exit 0 ;;
++    NSE-?:NONSTOP_KERNEL:*:*)
++	echo nse-tandem-nsk${UNAME_RELEASE}
++	exit 0 ;;
+     NSR-?:NONSTOP_KERNEL:*:*)
+ 	echo nsr-tandem-nsk${UNAME_RELEASE}
+ 	exit 0 ;;
+@@ -1413,7 +1423,9 @@
+ the operating system you are using. It is advised that you
+ download the most up to date version of the config scripts from
+ 
+-    ftp://ftp.gnu.org/pub/gnu/config/
++  http://savannah.gnu.org/cgi-bin/viewcvs/*checkout*/config/config/config.guess
++and
++  http://savannah.gnu.org/cgi-bin/viewcvs/*checkout*/config/config/config.sub
+ 
+ If the version you run ($0) is already up to date, please
+ send the following data and any information you think might be
+diff -Naur libcdk5-5.0.20050424.orig.orig/config.sub libcdk5-5.0.20050424.orig/config.sub
+--- libcdk5-5.0.20050424.orig.orig/config.sub	2005-07-28 10:44:01.000000000 -0300
++++ libcdk5-5.0.20050424.orig/config.sub	2007-09-13 13:32:55.000000000 -0300
+@@ -1,9 +1,9 @@
+ #! /bin/sh
+ # Configuration validation subroutine script.
+ #   Copyright (C) 1992, 1993, 1994, 1995, 1996, 1997, 1998, 1999,
+-#   2000, 2001, 2002, 2003, 2004 Free Software Foundation, Inc.
++#   2000, 2001, 2002, 2003, 2004, 2005 Free Software Foundation, Inc.
+ 
+-timestamp='2004-11-30'
++timestamp='2005-04-22'
+ 
+ # This file is (in principle) common to ALL GNU software.
+ # The presence of a machine in this file suggests that SOME GNU software
+@@ -70,7 +70,7 @@
+ version="\
+ GNU config.sub ($timestamp)
+ 
+-Copyright (C) 1992, 1993, 1994, 1995, 1996, 1997, 1998, 1999, 2000, 2001, 2002, 2003, 2004
++Copyright (C) 1992, 1993, 1994, 1995, 1996, 1997, 1998, 1999, 2000, 2001, 2002, 2003, 2004, 2005
+ Free Software Foundation, Inc.
+ 
+ This is free software; see the source for copying conditions.  There is NO
+@@ -231,13 +231,14 @@
+ 	| alpha64 | alpha64ev[4-8] | alpha64ev56 | alpha64ev6[78] | alpha64pca5[67] \
+ 	| am33_2.0 \
+ 	| arc | arm | arm[bl]e | arme[lb] | armv[2345] | armv[345][lb] | avr \
++	| bfin \
+ 	| c4x | clipper \
+ 	| d10v | d30v | dlx | dsp16xx \
+ 	| fr30 | frv \
+ 	| h8300 | h8500 | hppa | hppa1.[01] | hppa2.0 | hppa2.0[nw] | hppa64 \
+ 	| i370 | i860 | i960 | ia64 \
+ 	| ip2k | iq2000 \
+-	| m32r | m32rle | m68000 | m68k | m88k | mcore \
++	| m32r | m32rle | m68000 | m68k | m88k | maxq | mcore \
+ 	| mips | mipsbe | mipseb | mipsel | mipsle \
+ 	| mips16 \
+ 	| mips64 | mips64el \
+@@ -262,7 +263,8 @@
+ 	| pyramid \
+ 	| sh | sh[1234] | sh[23]e | sh[34]eb | shbe | shle | sh[1234]le | sh3ele \
+ 	| sh64 | sh64le \
+-	| sparc | sparc64 | sparc86x | sparclet | sparclite | sparcv8 | sparcv9 | sparcv9b \
++	| sparc | sparc64 | sparc64b | sparc86x | sparclet | sparclite \
++	| sparcv8 | sparcv9 | sparcv9b \
+ 	| strongarm \
+ 	| tahoe | thumb | tic4x | tic80 | tron \
+ 	| v850 | v850e \
+@@ -298,7 +300,7 @@
+ 	| alphapca5[67]-* | alpha64pca5[67]-* | arc-* \
+ 	| arm-*  | armbe-* | armle-* | armeb-* | armv*-* \
+ 	| avr-* \
+-	| bs2000-* \
++	| bfin-* | bs2000-* \
+ 	| c[123]* | c30-* | [cjt]90-* | c4x-* | c54x-* | c55x-* | c6x-* \
+ 	| clipper-* | craynv-* | cydra-* \
+ 	| d10v-* | d30v-* | dlx-* \
+@@ -310,7 +312,7 @@
+ 	| ip2k-* | iq2000-* \
+ 	| m32r-* | m32rle-* \
+ 	| m68000-* | m680[012346]0-* | m68360-* | m683?2-* | m68k-* \
+-	| m88110-* | m88k-* | mcore-* \
++	| m88110-* | m88k-* | maxq-* | mcore-* \
+ 	| mips-* | mipsbe-* | mipseb-* | mipsel-* | mipsle-* \
+ 	| mips16-* \
+ 	| mips64-* | mips64el-* \
+@@ -336,7 +338,8 @@
+ 	| romp-* | rs6000-* \
+ 	| sh-* | sh[1234]-* | sh[23]e-* | sh[34]eb-* | shbe-* \
+ 	| shle-* | sh[1234]le-* | sh3ele-* | sh64-* | sh64le-* \
+-	| sparc-* | sparc64-* | sparc86x-* | sparclet-* | sparclite-* \
++	| sparc-* | sparc64-* | sparc64b-* | sparc86x-* | sparclet-* \
++	| sparclite-* \
+ 	| sparcv8-* | sparcv9-* | sparcv9b-* | strongarm-* | sv1-* | sx?-* \
+ 	| tahoe-* | thumb-* \
+ 	| tic30-* | tic4x-* | tic54x-* | tic55x-* | tic6x-* | tic80-* \
+diff -Naur libcdk5-5.0.20050424.orig.orig/debian/changelog libcdk5-5.0.20050424.orig/debian/changelog
+--- libcdk5-5.0.20050424.orig.orig/debian/changelog	1969-12-31 21:00:00.000000000 -0300
++++ libcdk5-5.0.20050424.orig/debian/changelog	2007-09-13 13:32:55.000000000 -0300
+@@ -0,0 +1,90 @@
++libcdk5 (5.0.20050424-2) unstable; urgency=low
++
++  * Call ./configure properly even if not executable.  Closes: #322977.
++
++ -- John Goerzen <jgoerzen@complete.org>  Sat, 13 Aug 2005 18:01:16 -0500
++
++libcdk5 (5.0.20050424-1) unstable; urgency=low
++
++  * Packaged CDK 5 from invisible-island.net.  Closes: #319891, #211728.
++  * New source, library, dev package names; this is from a different
++    branch and is not API-compatible with libcdk version 4.
++
++ -- John Goerzen <jgoerzen@complete.org>  Mon, 25 Jul 2005 06:55:38 -0500
++
++libcdk (4.9.9-4) unstable; urgency=low
++
++  * New maintainer (closes: #279779)
++  * Previous two NMUs acknowledged (closes: #236485, #259606)
++  * Respect DEB_BUILD_OPTIONS
++  * Revised description (from upstream web site)
++  * Updated standards version
++  * Changed section of libcdk-devel to match overrides
++  * Updated debian/rules to debhelper 4 conventions
++  * Use dpatch
++  * Change all man page sections 3X to 3 to match file names
++  * Corrected debian/copyright
++
++ -- Peter Eisentraut <peter_e@gmx.net>  Wed,  9 Feb 2005 23:22:05 +0100
++
++libcdk (4.9.9-3.2) unstable; urgency=low
++
++  * Non-maintainer upload during BSP
++  * Update libtool stuff to let the package compile on ARM
++    (Closes: #259606)
++
++ -- Frank Lichtenheld <djpig@debian.org>  Sat, 17 Jul 2004 21:46:01 +0200
++
++libcdk (4.9.9-3.1) unstable; urgency=low
++
++  * Non-maintainer upload during BSP
++  * Don't overwrite COPYING with GPL text. It is not!
++  * Don't overwrite INSTALL with generic autotools text.
++  * Fix debian/copyright to include the actual license and a
++    correct copyright statement (Closes: #236485, #238957)
++  
++ -- Frank Lichtenheld <djpig@debian.org>  Sun, 11 Jul 2004 20:23:30 +0200
++
++libcdk (4.9.9-3) unstable; urgency=high
++
++  * New maintainer,
++  Closes: #123485
++  * NMU changes merged in CVS repository,
++  Closes: #74237, #94813
++  * Fix Y2K-ism in examples/bind_ex.c,
++  Closes: #97189
++  * Package now Build-Depends & Depends on libncurses5-dev,
++  Closes: #100800, #104310
++  * Include links for functions listed in manpages per policy,
++  Closes: #103917
++  * Correctly include latest config.sub & config.guess at build time,
++  Closes: #104437
++
++ -- Stephen Zander <gibreel@debian.org>  Sat, 29 Dec 2001 22:27:06 -0800
++
++libcdk (4.9.9-2.2) unstable; urgency=low
++
++  * NMU
++  * libcdk-dev should Depend: libncurses5-dev.  Closes: #104886
++  * Should suggest libcdk-examples.  Closes: #74237
++
++ -- LaMont Jones <lamont@debian.org>  Mon, 22 Oct 2001 22:56:45 -0600
++
++libcdk (4.9.9-2.1) unstable; urgency=low
++
++  * Run libtoolize to get support for new architectures.  Closes: #94813
++
++ -- LaMont Jones <lamont@debian.org>  Mon,  9 Jul 2001 21:39:34 -0600
++
++libcdk (4.9.9-2) unstable; urgency=low
++
++  * Missing manual pages added. (closes: #60903)
++
++ -- Raphael Bossek <bossekr@debian.org>  Wed, 22 Mar 2000 19:55:16 +0100
++
++libcdk (4.9.9-1) unstable; urgency=low
++
++  * New upstream version.
++
++ -- Raphael Bossek <bossekr@debian.org>  Fri, 14 Jan 2000 00:41:09 +0100
++
+diff -Naur libcdk5-5.0.20050424.orig.orig/debian/compat libcdk5-5.0.20050424.orig/debian/compat
+--- libcdk5-5.0.20050424.orig.orig/debian/compat	1969-12-31 21:00:00.000000000 -0300
++++ libcdk5-5.0.20050424.orig/debian/compat	2007-09-13 13:32:55.000000000 -0300
+@@ -0,0 +1 @@
++4
+diff -Naur libcdk5-5.0.20050424.orig.orig/debian/control libcdk5-5.0.20050424.orig/debian/control
+--- libcdk5-5.0.20050424.orig.orig/debian/control	1969-12-31 21:00:00.000000000 -0300
++++ libcdk5-5.0.20050424.orig/debian/control	2007-09-13 13:32:55.000000000 -0300
+@@ -0,0 +1,36 @@
++Source: libcdk5
++Section: libs
++Priority: optional
++Maintainer: John Goerzen <jgoerzen@complete.org>
++Standards-Version: 3.6.2
++Build-Depends: debhelper (>= 4), libncurses5-dev, autotools-dev
++
++Package: libcdk5
++Architecture: any
++Depends: ${shlibs:Depends}
++Description: C-based curses widget library
++ CDK stands for "Curses Development Kit".  CDK sits on top of the curses
++ library and provides 21 ready to use widgets for rapid application
++ development of text-based interfaces.  CDK delivers many of the common
++ widget types required for a robust interface.  Widgets can be combined
++ to create complex widgets if needed.
++ .
++ Home page: http://invisible-island.net/cdk/
++
++Package: libcdk5-dev
++Architecture: any
++Section: libdevel
++Depends: libcdk5 (= ${Source-Version}), libncurses5-dev
++Replaces: libcdk-examples, libcdk-dev
++Conflicts: libcdk-examples, libcdk-dev
++Description: C-based curses widget library (development files)
++ CDK stands for "Curses Development Kit".  CDK sits on top of the curses
++ library and provides 21 ready to use widgets for rapid application
++ development of text-based interfaces.  CDK delivers many of the common
++ widget types required for a robust interface.  Widgets can be combined
++ to create complex widgets if needed.
++ .
++ This package contains the header files and development libraries for
++ the CDK library.
++ .
++ Home page: http://invisible-island.net/cdk/
+diff -Naur libcdk5-5.0.20050424.orig.orig/debian/copyright libcdk5-5.0.20050424.orig/debian/copyright
+--- libcdk5-5.0.20050424.orig.orig/debian/copyright	1969-12-31 21:00:00.000000000 -0300
++++ libcdk5-5.0.20050424.orig/debian/copyright	2007-09-13 13:32:55.000000000 -0300
+@@ -0,0 +1,50 @@
++This Debian package of libcdk was initially put together by Raphael
++Bossek <bossekr@debian.org>; later maintainers are listed in the
++changelog file.
++
++The sources were downloaded from http://invisible-island.net/cdk/
++
++Modifications copyright Thomas Dickey 1999, 2000, 2001, 2002, 2003, 2004, 2005
++
++The software and documentation are still under the same licensing are the
++original Cdk, but noting that substantial work and enhancements have been made,
++I've added my name as needed -TD
++
++The original COPYING file follows (with corrections as noted in CHANGES).
++-------------------------------------------------------------------------------
++Cdk Copying Guide
++Copyright Mike Glover, 1995, 1996, 1997, 1998, 1999
++-------------------------------------------------------------------------------
++
++/*
++ * Copyright (c) 1999, Mike Glover
++ * All rights reserved.
++ *
++ * Redistribution and use in source and binary forms, with or without
++ * modification, are permitted provided that the following conditions
++ * are met:
++ * 1. Redistributions of source code must retain the above copyright
++ *    notice, this list of conditions and the following disclaimer.
++ * 2. Redistributions in binary form must reproduce the above copyright
++ *    notice, this list of conditions and the following disclaimer in the
++ *    documentation and/or other materials provided with the distribution.
++ * 3. All advertising materials mentioning features or use of this software
++ *    must display the following acknowledgment:
++ * 	This product includes software developed by Mike Glover
++ * 	and contributors.
++ * 4. Neither the name of Mike Glover, nor the names of contributors
++ *    may be used to endorse or promote products derived from this software
++ *    without specific prior written permission.
++ *
++ * THIS SOFTWARE IS PROVIDED BY MIKE GLOVER AND CONTRIBUTORS ``AS IS'' AND
++ * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
++ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
++ * ARE DISCLAIMED.  IN NO EVENT SHALL MIKE GLOVER OR CONTRIBUTORS BE LIABLE
++ * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
++ * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
++ * OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
++ * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
++ * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
++ * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
++ * SUCH DAMAGE.
++ */
+diff -Naur libcdk5-5.0.20050424.orig.orig/debian/libcdk5-dev.dirs libcdk5-5.0.20050424.orig/debian/libcdk5-dev.dirs
+--- libcdk5-5.0.20050424.orig.orig/debian/libcdk5-dev.dirs	1969-12-31 21:00:00.000000000 -0300
++++ libcdk5-5.0.20050424.orig/debian/libcdk5-dev.dirs	2007-09-13 13:32:55.000000000 -0300
+@@ -0,0 +1,2 @@
++usr/lib
++usr/include
+diff -Naur libcdk5-5.0.20050424.orig.orig/debian/libcdk5-dev.examples libcdk5-5.0.20050424.orig/debian/libcdk5-dev.examples
+--- libcdk5-5.0.20050424.orig.orig/debian/libcdk5-dev.examples	1969-12-31 21:00:00.000000000 -0300
++++ libcdk5-5.0.20050424.orig/debian/libcdk5-dev.examples	2007-09-13 13:32:55.000000000 -0300
+@@ -0,0 +1,2 @@
++examples/.
++demos
+diff -Naur libcdk5-5.0.20050424.orig.orig/debian/libcdk5-dev.install libcdk5-5.0.20050424.orig/debian/libcdk5-dev.install
+--- libcdk5-5.0.20050424.orig.orig/debian/libcdk5-dev.install	1969-12-31 21:00:00.000000000 -0300
++++ libcdk5-5.0.20050424.orig/debian/libcdk5-dev.install	2007-09-13 13:32:55.000000000 -0300
+@@ -0,0 +1,8 @@
++usr/include/*
++usr/lib/lib*.a
++usr/lib/lib*.so
++usr/lib/pkgconfig/*
++usr/lib/*.la
++usr/share/pkgconfig/*
++usr/share/man/*
++usr/share/doc/*
+diff -Naur libcdk5-5.0.20050424.orig.orig/debian/libcdk5-dev.manpages libcdk5-5.0.20050424.orig/debian/libcdk5-dev.manpages
+--- libcdk5-5.0.20050424.orig.orig/debian/libcdk5-dev.manpages	1969-12-31 21:00:00.000000000 -0300
++++ libcdk5-5.0.20050424.orig/debian/libcdk5-dev.manpages	2007-09-13 13:32:55.000000000 -0300
+@@ -0,0 +1,2 @@
++man/*.3
++debian/man/*.3
+diff -Naur libcdk5-5.0.20050424.orig.orig/debian/libcdk5.dirs libcdk5-5.0.20050424.orig/debian/libcdk5.dirs
+--- libcdk5-5.0.20050424.orig.orig/debian/libcdk5.dirs	1969-12-31 21:00:00.000000000 -0300
++++ libcdk5-5.0.20050424.orig/debian/libcdk5.dirs	2007-09-13 13:32:55.000000000 -0300
+@@ -0,0 +1 @@
++usr/lib
+diff -Naur libcdk5-5.0.20050424.orig.orig/debian/libcdk5.install libcdk5-5.0.20050424.orig/debian/libcdk5.install
+--- libcdk5-5.0.20050424.orig.orig/debian/libcdk5.install	1969-12-31 21:00:00.000000000 -0300
++++ libcdk5-5.0.20050424.orig/debian/libcdk5.install	2007-09-13 13:32:55.000000000 -0300
+@@ -0,0 +1 @@
++usr/lib/lib*.so.*
+diff -Naur libcdk5-5.0.20050424.orig.orig/debian/rules libcdk5-5.0.20050424.orig/debian/rules
+--- libcdk5-5.0.20050424.orig.orig/debian/rules	1969-12-31 21:00:00.000000000 -0300
++++ libcdk5-5.0.20050424.orig/debian/rules	2007-09-13 13:32:55.000000000 -0300
+@@ -0,0 +1,121 @@
++#!/usr/bin/make -f
++# -*- makefile -*-
++# Sample debian/rules that uses debhelper.
++# This file was originally written by Joey Hess and Craig Small.
++# As a special exception, when this file is copied by dh-make into a
++# dh-make output file, you may use that output file without restriction.
++# This special exception was added by Craig Small in version 0.37 of dh-make.
++
++# Uncomment this to turn on verbose mode.
++#export DH_VERBOSE=1
++
++
++# These are used for cross-compiling and for saving the configure script
++# from having to guess our platform (since we know it already)
++DEB_HOST_GNU_TYPE   ?= $(shell dpkg-architecture -qDEB_HOST_GNU_TYPE)
++DEB_BUILD_GNU_TYPE  ?= $(shell dpkg-architecture -qDEB_BUILD_GNU_TYPE)
++SHELL=/bin/bash
++
++CFLAGS = -Wall -g
++
++ifneq (,$(findstring noopt,$(DEB_BUILD_OPTIONS)))
++	CFLAGS += -O0
++else
++	CFLAGS += -O2
++endif
++
++# shared library versions, option 1
++version=2.0.5
++major=2
++# option 2, assuming the library is created as src/.libs/libfoo.so.2.0.5 or so
++#version=`ls src/.libs/lib*.so.* | \
++# awk '{if (match($$0,/[0-9]+\.[0-9]+\.[0-9]+$$/)) print substr($$0,RSTART)}'`
++#major=`ls src/.libs/lib*.so.* | \
++# awk '{if (match($$0,/\.so\.[0-9]+$$/)) print substr($$0,RSTART+4)}'`
++
++config.status: configure
++	dh_testdir
++	# Add here commands to configure the package.
++	CFLAGS="$(CFLAGS)" $(SHELL) ./configure --host=$(DEB_HOST_GNU_TYPE) --build=$(DEB_BUILD_GNU_TYPE) --prefix=/usr --mandir=\$${prefix}/share/man --infodir=\$${prefix}/share/info
++
++
++build: build-stamp
++build-stamp:  config.status
++	dh_testdir
++
++	# Add here commands to compile the package.
++	$(MAKE)
++	$(MAKE) cdkshlib
++
++	touch build-stamp
++
++clean:
++	dh_testdir
++	dh_testroot
++	rm -f build-stamp 
++	rm -rf debian/tmp
++
++	# Add here commands to clean up after the build process.
++	-$(MAKE) distclean
++ifneq "$(wildcard /usr/share/misc/config.sub)" ""
++	cp -f /usr/share/misc/config.sub config.sub
++endif
++ifneq "$(wildcard /usr/share/misc/config.guess)" ""
++	cp -f /usr/share/misc/config.guess config.guess
++endif
++
++
++	dh_clean 
++
++install: build
++	dh_testdir
++	dh_testroot
++	dh_clean -k 
++	-mkdir -p debian/tmp/usr{/doc/cdk,/share/man/man3,/include/cdk,/share/doc,/lib}
++	dh_installdirs
++
++	# Add here commands to install the package into debian/tmp
++	$(MAKE) install prefix=$(CURDIR)/debian/tmp/usr
++	$(MAKE) installCDKSHLibrary prefix=$(CURDIR)/debian/tmp/usr
++	mv debian/tmp/usr/doc/cdk debian/tmp/usr/share/doc/libcdk5-dev
++	ln -s libcdk.so.5.0 debian/tmp/usr/lib/libcdk.so.5
++	rm debian/tmp/usr/share/doc/libcdk5-dev/{COPYING,INSTALL}
++
++
++# Build architecture-independent files here.
++binary-indep: build install
++# We have nothing to do by default.
++
++# Build architecture-dependent files here.
++binary-arch: build install
++	dh_testdir
++	dh_testroot
++	dh_installchangelogs CHANGES
++	dh_installdocs
++	dh_installexamples
++	dh_install --sourcedir=debian/tmp
++#	dh_installmenu
++#	dh_installdebconf	
++#	dh_installlogrotate
++#	dh_installemacsen
++#	dh_installpam
++#	dh_installmime
++#	dh_installinit
++#	dh_installcron
++#	dh_installinfo
++	dh_installman
++	dh_link
++	dh_strip
++	dh_compress
++	dh_fixperms
++#	dh_perl
++#	dh_python
++	dh_makeshlibs
++	dh_installdeb
++	dh_shlibdeps
++	dh_gencontrol
++	dh_md5sums
++	dh_builddeb
++
++binary: binary-indep binary-arch
++.PHONY: build clean binary-indep binary-arch binary install 
