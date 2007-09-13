@@ -48,7 +48,13 @@ ERROR_TAR=37;       ERROR_MKPKG=38;     ERROR_GPG=39
 ERROR_PATCH=40
 
 PACKAGE_EXT="bz2"
-SRC="Azureus_$VERSION"_"linux-$ARCH.tar.$PACKAGE_EXT"
+
+if [ "$ARCH" == "i486" ] || [ "$ARCH" == "i386" ]; then
+  SRC="Azureus_$VERSION"_"linux.tar.$PACKAGE_EXT"
+else
+  SRC="Azureus_$VERSION"_"linux-$ARCH.tar.$PACKAGE_EXT"
+fi
+
 URL="http://easynews.dl.sourceforge.net/sourceforge/$PACKAGE/$SRC"
 RTOOL="wget"
 
