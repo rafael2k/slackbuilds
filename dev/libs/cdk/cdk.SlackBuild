@@ -87,6 +87,7 @@ fi
 cd "$TMP"
 tar --no-same-owner --no-same-permissions -xvf "$SRC_DIR/$SRC" || exit $ERROR_TAR
 cd "$TMP/$SRC_NAME-$SRC_VERSION.orig"
+chmod +x configure
 
 # Patch source
 patches="[[PATCH FILES]]
