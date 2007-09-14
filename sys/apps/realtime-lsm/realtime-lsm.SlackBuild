@@ -65,7 +65,12 @@ cd $TMP
 tar xvf$tarflag $SRC_DIR/$SRC
 cd $PACKAGE-$VERSION
 
+ARCH2=$ARCH
+unset ARCH
+
 make || exit 32
+
+ARCH=$ARCH2
 
 CWD="`pwd`"
 
