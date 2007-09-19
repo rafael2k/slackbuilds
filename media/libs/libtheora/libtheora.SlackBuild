@@ -89,16 +89,12 @@ fi
 find . -perm 777 -exec chmod 755 {} \;
 
 CFLAGS="$SLKCFLAGS" CXXFLAGS="$SLKCFLAGS" \
-./configure --prefix=/usr --disable-static --libdir=$LIBDIR --program-prefix="" --program-suffix="" $TARGET-slackware-linux || exit $ERROR_CONF
+./configure --prefix=/usr --libdir=$LIBDIR --program-prefix="" --program-suffix="" $TARGET-slackware-linux || exit $ERROR_CONF
 
 make || exit $ERROR_MAKE
 make install DESTDIR=$PKG || exit $ERROR_INSTALL
 
-mkdir -p $PKG/usr/doc/$NAME-$VERSION
-mv $PKG/usr/share/doc/$NAME-$VERSION/* $PKG/usr/doc/$NAME-$VERSION
-cp -a COPYING README $PKG/usr/doc/$NAME-$VERSION
-rm -rf $PKG/usr/share
-ln -sf /usr/lib/libtheora.so.0.2.0 $PKG/usr/lib/libtheora.so
+cp -a COPYING README $PKG/usr/share/doc/$NAME-$VERSION
 
 ( cd $PKG
   find . | xargs file | grep "executable" | grep ELF | cut -f 1 -d : | xargs strip --strip-unneeded 2> /dev/null
