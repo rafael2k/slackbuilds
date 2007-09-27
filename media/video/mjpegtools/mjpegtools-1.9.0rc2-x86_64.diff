@@ -1,0 +1,31 @@
+--- configure.ac.old	2007-09-27 05:53:17.000000000 +0000
++++ configure.ac	2007-09-27 05:56:20.000000000 +0000
+@@ -431,25 +431,9 @@
+ dnl file).
+ 
+ if test x$have_x86cpu = xtrue -o x$have_ppccpu = xtrue; then
+-  if test x$host_alias != x; then
+-    dnl This is to allow cross compiling
+-    AC_MSG_CHECKING(sub-architecture settings)
+-    if test x$have_x86cpu = xtrue; then
+-       host_mod_cpu=`echo $host_cpu | tr _ -`
+-       ARCHFLAGS="-march=$host_mod_cpu -mcpu=$host_mod_cpu"
+-    fi
+-  else
+-    if test ! -r $srcdir/cpuinfo.sh; then
+-       AC_MSG_ERROR([cpuinfo.sh script not found - do a cvs update])
+-    fi
+-    AC_MSG_CHECKING(sub-architecture settings)
+-    chmod +x $srcdir/cpuinfo.sh
+-    if test x$have_x86cpu = xtrue; then
+-       ARCHFLAGS=`$srcdir/cpuinfo.sh x86`
+-    elif test x$have_ppccpu = xtrue; then
+-       ARCHFLAGS=`$srcdir/cpuinfo.sh ppc`
+-    fi
+-  fi
++  AC_MSG_CHECKING(sub-architecture settings)
++  host_mod_cpu=`echo $host_cpu | tr _ -`
++  ARCHFLAGS="-march=$host_mod_cpu -mcpu=$host_mod_cpu"
+   AC_MSG_RESULT($ARCHFLAGS)
+ fi
+ 
