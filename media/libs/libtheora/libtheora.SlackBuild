@@ -18,7 +18,7 @@ elif [ -f /etc/slackbuildrc ]; then
 fi
 
 PACKAGE="libtheora"
-VERSION=${VERSION:=1.0alpha8}
+VERSION=${VERSION:=1.0beta1}
 ARCH=${ARCH:-i486}
 TARGET=${TARGET:=$ARCH}
 BUILD=${BUILD:=1rha}
