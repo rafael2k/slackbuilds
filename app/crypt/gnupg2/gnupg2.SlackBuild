@@ -33,7 +33,7 @@ CWD="$(pwd)"
 SRC_NAME="gnupg"
 PKG_NAME="gnupg2"
 ARCH=${ARCH:=i486}
-SRC_VERSION=${VERSION:=2.0.6}
+SRC_VERSION=${VERSION:=2.0.7}
 PKG_VERSION="$(echo "$SRC_VERSION" | tr '[[:blank:]-]' '_')"
 BUILD=${BUILD:=1ls}
 SRC_DIR=${SRC_DIR:=$CWD}/$PKG_NAME
@@ -43,7 +43,7 @@ REPOS=${REPOS:=$TMP}
 PREFIX=${PREFIX:=/usr}
 PKG_SRC="$TMP/$SRC_NAME-$SRC_VERSION"
 CONF_OPTIONS=${CONF_OPTIONS:=--infodir=$PREFIX/info --mandir=$PREFIX/man --program-prefix="" --program-suffix="" --enable-static-rnd=linux --enable-noexecstack}
-NUMJOBS=${NUMJOBS:=}
+NUMJOBS=${NUMJOBS:=-j3}
 
 # Set system libraries' path and optmization flags based on $ARCH
 LIBDIR="$PREFIX/lib"

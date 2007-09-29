@@ -43,7 +43,7 @@ REPOS=${REPOS:=$TMP}
 PREFIX=${PREFIX:=/usr}
 PKG_SRC="$TMP/$SRC_NAME-$SRC_VERSION"
 CONF_OPTIONS=${CONF_OPTIONS:=--infodir=$PREFIX/info}
-NUMJOBS=${NUMJOBS:=-j6}
+NUMJOBS=${NUMJOBS:=-j3}
 
 # Set system libraries' path and optmization flags based on $ARCH
 LIBDIR="$PREFIX/lib"
