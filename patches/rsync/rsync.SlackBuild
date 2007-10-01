@@ -1,0 +1,121 @@
+#!/bin/bash
+#
+# got it from ftp://ftp.slackware.com/pub/slackware/slackware-12.0/source/n/rsync/rsync.SlackBuild
+# changes by rhatto at riseup.net
+#
+# patch for 2.6.9 thanks to debian :)
+#
+
+if [ -s "slack-required" ]; then
+  echo Recomended and required packages for building cairo are:
+  cat slack-required | sed -e 's/^/\t/'
+  if [ "$INTERACT" != "no" ]; then
+    echo If you dont have those installed, press Ctrl-C. Otherwise, hit ENTER.
+    read crap
+#  else
+#    echo Sleeping 3 seconds...
+#    sleep 3
+  fi
+fi
+
+CWD="`pwd`"
+
+if [ -f ~/.slackbuildrc ]; then
+  source ~/.slackbuildrc
+elif [ -f /etc/slackbuildrc ]; then
+  source /etc/slackbuildrc
+fi
+
+# default settings
+PACKAGE="rsync"
+ARCH=${ARCH:=i486}
+VERSION=${VERSION:=2.6.9}
+BUILD=${BUILD:=1rha}
+SRC_DIR=${SRC:=$CWD}
+TMP=${TMP:=/tmp}
+REPOS=${REPOS:=$TMP}
+
+if [ "$ARCH" = "i386" ]; then
+  SLKCFLAGS="-O2 -march=i386 -mcpu=i686"
+elif [ "$ARCH" = "i486" ]; then
+  SLKCFLAGS="-O2 -march=i486 -mtune=i686"
+elif [ "$ARCH" = "s390" ]; then
+  SLKCFLAGS="-O2"
+elif [ "$ARCH" = "x86_64" ]; then
+  SLKCFLAGS="-O2"
+fi
+
+# -------  error codes for createpkg  --------------
+ERROR_WGET=31;      ERROR_MAKE=32;      ERROR_INSTALL=33
+ERROR_MD5=34;       ERROR_CONF=35;      ERROR_HELP=36
+ERROR_TAR=37;       ERROR_MKPKG=38;     ERROR_GPG=39
+ERROR_PATCH=40
+
+RTOOL="wget"
+PACKAGE_EXT="gz"
+SRC="$PACKAGE-$VERSION.tar.$PACKAGE_EXT"
+URL="http://rsync.samba.org/ftp/rsync/$SRC"
+
+SRC_DIR="$SRC_DIR/$PACKAGE"
+mkdir -p $SRC_DIR
+
+if [ "$RTOOL" == "wget" ] && [ ! -f "$SRC_DIR/$SRC" ]; then
+  wget "$URL" -O "$SRC_DIR/$SRC" || exit $ERROR_WGET
+fi
+
+TMP="$TMP/$PACKAGE"
+PKG=$TMP/pagage-$PACKAGE
+rm -rf $TMP
+mkdir -p $PKG
+
+# Explode the package framework:
+#cd $PKG
+#explodepkg $CWD/_rsync.tar.gz
+
+cd $TMP
+tar xzvf $SRC_DIR/rsync-$VERSION.tar.gz || exit $ERROR_TAR
+cd rsync-$VERSION
+
+if [ -f "$CWD/$PACKAGE-$VERSION.diff" ]; then
+  patch -p1 < $CWD/$PACKAGE-$VERSION.diff || exit $ERROR_PATCH
+fi
+
+chown -R root:root .
+find . -perm 666 -exec chmod 644 {} \;
+find . -perm 664 -exec chmod 644 {} \;
+find . -perm 600 -exec chmod 644 {} \;
+find . -perm 444 -exec chmod 644 {} \;
+find . -perm 400 -exec chmod 644 {} \;
+find . -perm 440 -exec chmod 644 {} \;
+find . -perm 777 -exec chmod 755 {} \;
+find . -perm 775 -exec chmod 755 {} \;
+find . -perm 511 -exec chmod 755 {} \;
+find . -perm 711 -exec chmod 755 {} \;
+find . -perm 555 -exec chmod 755 {} \;
+
+CFLAGS="$SLKCFLAGS" \
+./configure \
+  --prefix=/usr || exit $ERROR_CONF
+make -j4 || exit $ERROR_MAKE
+mkdir -p $PKG/usr/bin
+cat rsync > $PKG/usr/bin/rsync
+chmod 755 $PKG/usr/bin/rsync
+mkdir -p $PKG/usr/man/man1
+cat rsync.1 | gzip -9c > $PKG/usr/man/man1/rsync.1.gz
+mkdir -p $PKG/usr/man/man5
+cat rsyncd.conf.5 | gzip -9c > $PKG/usr/man/man5/rsyncd.conf.5.gz
+mkdir -p $PKG/usr/doc/rsync-$VERSION
+cp -a README NEWS COPYING tech_report.tex $PKG/usr/doc/rsync-$VERSION
+( cd $PKG
+  find . | xargs file | grep "executable" | grep ELF | cut -f 1 -d : | xargs strip --strip-unneeded 2> /dev/null
+  find . | xargs file | grep "shared object" | grep ELF | cut -f 1 -d : | xargs strip --strip-unneeded 2> /dev/null
+)
+mkdir -p $PKG/install
+cat $CWD/slack-desc > $PKG/install/slack-desc
+
+makepkg -c y -l y $REPOS/$PACKAGE-$VERSION-$ARCH-$BUILD.tgz || exit $ERROR_MKPKG
+
+if [ "$CLEANUP" == "yes" ]; then
+  rm -rf $TMP
+fi
+
