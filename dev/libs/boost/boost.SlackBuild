@@ -50,7 +50,13 @@ REPOS=${REPOS:=$TMP}
 rm -rf $TMP/$PACKAGE
 mkdir -p $SRC_DIR/$PACKAGE $TMP/$PACKAGE
 
-slacktrack -b $REPOS -x $TMP,$SRC_DIR,/dev -jefkzp "$PACKAGE-$VERSION-$ARCH-$BUILD.tgz" "./$PACKAGE.build"
+export PACKAGE VERSION ARCH BUILD SRC_DIR TMP REPOS
+
+if which simpletrack &> /dev/null; then
+  simpletrack $PACKAGE.build
+else
+  slacktrack -b $REPOS -x $TMP,$SRC_DIR,/dev -jefkzp "$PACKAGE-$VERSION-$ARCH-$BUILD.tgz" "./$PACKAGE.build"
+fi
 
 # doinst fix
 rm -rf $TMP/package-$PACKAGE

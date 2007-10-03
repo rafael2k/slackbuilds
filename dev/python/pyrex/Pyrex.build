@@ -29,7 +29,7 @@ fi
 # default settings
 PACKAGE="Pyrex"
 ARCH=${ARCH:=i486}
-VERSION=${VERSION:=0.9.4.1}
+VERSION=${VERSION:=0.9.5.1a}
 BUILD=${BUILD:=1rha}
 SRC_DIR=${SRC:=$CWD}
 TMP=${TMP:=/tmp}

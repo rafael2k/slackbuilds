@@ -37,7 +37,7 @@ fi
 
 # default settings
 PACKAGE="Pyrex"
-VERSION=${VERSION:=0.9.4.1}
+VERSION=${VERSION:=0.9.5.1a}
 ARCH="${ARCH:=i486}"
 BUILD=${BUILD:=1rha}
 SRC_DIR=${SRC:=$CWD}
@@ -47,7 +47,13 @@ REPOS=${REPOS:=$TMP}
 rm -rf $TMP/$PACKAGE
 mkdir -p $SRC_DIR/$PACKAGE $TMP/$PACKAGE
 
-slacktrack -b $REPOS -x $TMP,$SRC_DIR,/dev -jefkzp "$PACKAGE-$VERSION-$ARCH-$BUILD.tgz" "./$PACKAGE.build"
+export PACKAGE VERSION ARCH BUILD SRC_DIR TMP REPOS
+
+if which simpletrack &> /dev/null; then
+  simpletrack $PACKAGE.build
+else
+  slacktrack -b $REPOS -x $TMP,$SRC_DIR,/dev -jefkzp "$PACKAGE-$VERSION-$ARCH-$BUILD.tgz" "./$PACKAGE.build"
+fi
 
 if [ "$CLEANUP" == "yes" ]; then
   rm -rf $TMP/$PACKAGE
