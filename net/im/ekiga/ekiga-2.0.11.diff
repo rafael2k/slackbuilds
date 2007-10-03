@@ -1,0 +1,12 @@
+--- lib/gmconf/gmconf-glib.c-old	2007-10-03 00:23:37.000000000 -0300
++++ lib/gmconf/gmconf-glib.c	2007-10-03 00:23:45.000000000 -0300
+@@ -1472,8 +1472,7 @@
+   database_remove_namespace (db, namespac);
+ }
+ 
+-gboolean 
+-gm_conf_is_key_writable (gchar *key)
++gboolean gm_conf_is_key_writable (const gchar *key)
+ {
+   g_return_val_if_fail (key != NULL, FALSE);
+ 
