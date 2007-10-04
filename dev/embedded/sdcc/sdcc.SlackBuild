@@ -86,7 +86,7 @@ fi
 # Untar
 cd "$TMP"
 tar --no-same-owner --no-same-permissions -xvf "$SRC_DIR/$SRC" || exit $ERROR_TAR
-cd "$PKG_SRC"
+cd "$TMP/$PKG_NAME-$SRC_VERSION" # Check if that can be changed to 'cd "$PKG_SRC"'
 
 # Configure
 CFLAGS="$SLKCFLAGS" \
