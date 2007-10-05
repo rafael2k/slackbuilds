@@ -84,6 +84,8 @@ fi
 make || exit 32
 make install
 
+cd /usr/include && ln -s /usr/include/boost-$VERSION_UNDERLINE/ /usr/include/boost
+
 CWD="`pwd`"
 
 # docs
