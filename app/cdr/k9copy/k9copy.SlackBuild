@@ -1,21 +1,22 @@
 #!/bin/bash
 #
-#  k9copy.SlackBuild is free software; you can redistribute it and/or modify it under the
-#  terms of the GNU General Public License as published by the Free Software
-#  Foundation; either version 2 of the License, or any later version.
+#  k9copy.SlackBuild is free software; you can redistribute
+#  it and/or modify it under the terms of the GNU General Public License as
+#  published by the Free Software Foundation; either version 2 of the License,
+#  or any later version.
 #
-#  k9copy.SlackBuild is distributed in the hope that it will be useful, but WITHOUT ANY
-#  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
-#  A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
+#  k9copy.SlackBuild is distributed in the hope that it will
+#  be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General
+#  Public License for more details.
 #
 #  You should have received a copy of the GNU General Public License along with
 #  this program; if not, write to the Free Software Foundation, Inc., 59 Temple
 #  Place - Suite 330, Boston, MA 02111-1307, USA
 #
-# SlackBuild for k9copy
-# http://downloads.sourceforge.net/k9copy/
-#
-# Author: Rudson R. Alves
+# slackbuild for k9copy, by Rudson R. Alves
+# requires: vamps qt kdelibs libdvdread libdvdcss
+# tested: k9copy-1.1.3
 #
 
 # Look for slackbuildrc
@@ -29,8 +30,8 @@ fi
 CWD="$(pwd)"
 SRC_NAME="k9copy"
 PKG_NAME="k9copy"
-ARCH=${ARCH:=i468}
-SRC_VERSION=${VERSION:=1.1.2}
+ARCH=${ARCH:=i486}
+SRC_VERSION=${VERSION:=1.1.3}
 PKG_VERSION="$(echo "$SRC_VERSION" | tr '[[:blank:]-]' '_')"
 BUILD=${BUILD:=1rra}
 SRC_DIR=${SRC_DIR:=$CWD}/$PKG_NAME
@@ -40,7 +41,7 @@ REPOS=${REPOS:=$TMP}
 PREFIX=${PREFIX:=/usr}
 PKG_SRC="$TMP/$SRC_NAME-$SRC_VERSION"
 CONF_OPTIONS=${CONF_OPTIONS:=""}
-NUMJOBS=${NUMJOBS:="-j4"}
+NUMJOBS=${NUMJOBS:="-j7"}
 
 # Set system libraries' path and optmization flags based on $ARCH
 LIBDIR="$PREFIX/lib"
@@ -74,12 +75,13 @@ mkdir -p "$PKG" || exit $ERROR_MKDIR
 mkdir -p "$REPOS" || exit $ERROR_MKDIR
 
 # Dowload source if necessary
-SRC="$SRC_NAME-$SRC_VERSION.tar.gz"
+SRC="$SRC_NAME-$VERSION.tar.gz"
 URL="http://downloads.sourceforge.net/k9copy/$SRC"
 
 if [ ! -s "$SRC_DIR/$SRC" ] || ! gunzip -t "$SRC_DIR/$SRC" 2> /dev/null; then
   wget "$URL" -O "$SRC_DIR/$SRC" || exit $ERROR_WGET
 fi
+
 
 # Untar
 cd "$TMP"
@@ -90,7 +92,7 @@ cd "$PKG_SRC"
 CFLAGS="$SLKCFLAGS" \
   CXXFLAGS="$SLKCFLAGS" \
   ./configure \
-  --prefix="$PREFIX" --libdir="$LIBDIR" "$CONF_OPTIONS" || exit $ERROR_CONF
+  --prefix="$PREFIX" --libdir="$LIBDIR" $CONF_OPTIONS || exit $ERROR_CONF
 
 # Compile
 make $NUMJOBS || exit $ERROR_MAKE
@@ -121,7 +123,7 @@ cat << EODESC > "$PKG/install/slack-desc"
 # make exactly 11 lines for the formatting to be correct.  It's also
 # customary to leave one space after the ':'.
 
-      |-----handy-ruler------------------------------------------------------|
+      |-----handy-ruler-------------------------------------------------------|
 k9copy: k9copy.Slackbuild by Slack.Sarava
 k9copy:
 k9copy: K9Copy is a program from Jean-Michel PETIT <jmp@localhost>.
@@ -143,4 +145,3 @@ makepkg -l y -c n "$REPOS/$PKG_NAME-$PKG_VERSION-$ARCH-$BUILD.tgz" || exit $ERRO
 if [ "$CLEANUP" == "yes" ]; then
   rm -rf "$PKG_SRC" "$PKG"
 fi
-

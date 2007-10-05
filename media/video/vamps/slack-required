@@ -1,2 +1,5 @@
-dvdauthor
-libdvdread
+# Dependency list to vamps
+#
+# dependency [condition] [version]]
+dvdauthor				
+libdvdread				

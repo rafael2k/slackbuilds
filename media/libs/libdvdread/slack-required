@@ -1,4 +1,4 @@
 # Dependency list to libdvdread
-# 
+#
 # dependency [condition] [version]]
-libdvdcss
+libdvdcss				

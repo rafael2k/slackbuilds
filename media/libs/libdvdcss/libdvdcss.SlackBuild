@@ -83,11 +83,16 @@ if [ ! -s "$SRC_DIR/$SRC" ] || ! bunzip2 -t "$SRC_DIR/$SRC" 2> /dev/null; then
 fi
 
 
+# Untar
 cd "$TMP"
-tar --no-same-owner --no-same-permissions -xvf "$SRC_DIR/$SRC" || exit $ERROR_TAR
+tar --no-same-owner --no-same-permissions -xvf "$SRC_DIR/$SRC" || exit $ERROR_TA
 cd "$PKG_SRC"
 
-for i in `grep -r 'é' * | cut -f1 -d:`; do sed 's/é/e/g' $i > $i.out; mv $i.out $i; done
+# Slackware 12.0 TeX set
+for i in `grep -lr 'é' *`; do 
+    sed 's/é/e/g' $i > $i.new
+    mv $i.new $i
+done
 
 # Configure
 CFLAGS="$SLKCFLAGS" \

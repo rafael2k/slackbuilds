@@ -1,8 +1,8 @@
 # Dependency list to k9copy
-# 
+#
 # dependency [condition] [version]]
-vamps
-qt
-kdelibs
-libdvdread
-libdvdcss
+vamps				
+qt				
+kdelibs				
+libdvdread				
+libdvdcss				
