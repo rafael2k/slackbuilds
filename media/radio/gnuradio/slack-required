@@ -1,7 +1,11 @@
-boost
-swig
-fftw
-sdc
-cppunit
-jack
-wxWidgets
+# Dependency list to gnuradio
+#
+# dependency [condition] [version]]
+boost				
+swig				
+fftw				
+sdc				
+cppunit				
+xmlto				
+jack				
+wxWidgets				
