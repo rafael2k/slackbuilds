@@ -56,7 +56,10 @@ SRC="${PACKAGE}_${VERSION_UNDERLINE}.tar.$PACKAGE_EXT"
 URL="http://ufpr.dl.sourceforge.net/sourceforge/boost/$SRC"
 
 SRC_DIR="$SRC_DIR/$PACKAGE"
-mkdir -p $SRC_DIR
+
+if [ ! -d "$SRC_DIR" ]; then
+  mkdir -p $SRC_DIR
+fi
 
 if [ "$PACKAGE_EXT" == "bz2" ]; then
   tarflag="j"
@@ -69,8 +72,11 @@ if [ "$RTOOL" == "wget" ] && [ ! -f "$SRC_DIR/$SRC" ]; then
 fi
 
 TMP="$TMP/$PACKAGE"
-rm -rf $TMP
-mkdir -p $TMP
+
+if [ ! -d "$TMP" ]; then
+  mkdir -p $TMP
+fi
+
 cd $TMP
 
 tar xvf$tarflag $SRC_DIR/$SRC
