@@ -15,7 +15,7 @@
 #  Place - Suite 330, Boston, MA 02111-1307, USA
 #
 # slackbuild for gnuradio, by Silvio Rhatto - rhatto at riseup.net
-# requires: boost swig fftw sdc cppunit xmlto jack wxWidgets
+# requires: boost swig fftw sdcc cppunit jack wxWidgets
 # tested: gnuradio-3.0.4
 #
 
@@ -102,7 +102,8 @@ boost_version="`echo $boost | sed -e "s/^$pack-//" | cut -d "-" -f 1 | sed -e 's
 CFLAGS="$SLKCFLAGS" \
   CXXFLAGS="$SLKCFLAGS" \
   ./configure \
-  --prefix="$PREFIX" --libdir="$LIBDIR" $CONF_OPTIONS --with-boost-include-dir=/usr/include/boost-$boost_version || exit $ERROR_CONF
+  --prefix="$PREFIX" --libdir="$LIBDIR" --sysconfdir=/etc \
+  --with-boost-include-dir=/usr/include/boost-$boost_version $CONF_OPTIONS || exit $ERROR_CONF
 
 # Compile
 make $NUMJOBS || exit $ERROR_MAKE
@@ -147,8 +148,16 @@ gnuradio:
 gnuradio:
 EODESC
 
-# Build the package
 cd "$PKG"
+
+# config files
+echo '( chroot . /sbin/ldconfig )' > install/doinst.sh
+for conf in gnuradio-core gr-audio-alsa gr-audio-jack gr-audio-oss; do
+  mv etc/gnuradio/conf.d/$conf.conf etc/gnuradio/conf.d/$conf.conf.new
+  echo "( if [ ! -f "etc/gnuradio/conf.d/$conf.conf" ]; then mv etc/gnuradio/conf.d/$conf.conf.new etc/gnuradio/conf.d/$conf.conf ; fi )" >> install/doinst.sh
+done
+
+# Build the package
 makepkg -l y -c n "$REPOS/$PKG_NAME-$PKG_VERSION-$ARCH-$BUILD.tgz" || exit $ERROR_MKPKG
 
 # Delete source and build directories if requested

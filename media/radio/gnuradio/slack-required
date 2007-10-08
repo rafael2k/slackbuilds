@@ -1,10 +1,10 @@
 # Dependency list to gnuradio
 #
 # dependency [condition] [version]]
-boost
-swig
-fftw
-sdcc
-cppunit
-jack
-wxWidgets
+boost				
+swig				
+fftw				
+sdcc				
+cppunit				
+jack				
+wxWidgets				
