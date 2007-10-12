@@ -89,10 +89,11 @@ tar --no-same-owner --no-same-permissions -xvf "$SRC_DIR/$SRC" || exit $ERROR_TA
 cd "$PKG_SRC"
 
 # Compile
-make $NUMJOBS || exit $ERROR_MAKE
+PREFIX=$PREFIX make $NUMJOBS || exit $ERROR_MAKE
 
 # Install
-make install DESTDIR="$PKG" || exit $ERROR_INSTALL
+cp 
+PREFIX=$PKG/$PREFIX make install || exit $ERROR_INSTALL
 
 # Strip binaries
 ( cd "$PKG"
