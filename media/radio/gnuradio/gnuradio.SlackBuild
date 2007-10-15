@@ -16,7 +16,7 @@
 #
 # slackbuild for gnuradio, by Silvio Rhatto - rhatto at riseup.net
 # requires: boost swig fftw sdcc cppunit jack wxWidgets
-# tested: gnuradio-3.0.4
+# tested: gnuradio-3.1.0rc0
 #
 
 # Look for slackbuildrc
@@ -31,7 +31,7 @@ CWD="$(pwd)"
 SRC_NAME="gnuradio"
 PKG_NAME="gnuradio"
 ARCH=${ARCH:=i486}
-SRC_VERSION=${VERSION:=3.0.4}
+SRC_VERSION=${VERSION:=3.1.0rc0}
 PKG_VERSION="$(echo "$SRC_VERSION" | tr '[[:blank:]-]' '_')"
 BUILD=${BUILD:=1rha}
 SRC_DIR=${SRC_DIR:=$CWD}/$PKG_NAME
@@ -76,7 +76,7 @@ mkdir -p "$REPOS" || exit $ERROR_MKDIR
 
 # Dowload source if necessary
 SRC="$SRC_NAME-$VERSION.tar.gz"
-URL="ftp://ftp.gnu.org/gnu/gnuradio/$SRC"
+URL="http://gnuradio.org/releases/gnuradio/$SRC"
 
 if [ ! -s "$SRC_DIR/$SRC" ] || ! gunzip -t "$SRC_DIR/$SRC" 2> /dev/null; then
   wget "$URL" -O "$SRC_DIR/$SRC" || exit $ERROR_WGET
