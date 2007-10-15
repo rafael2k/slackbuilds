@@ -31,7 +31,7 @@ fi
 
 # default settings
 PACKAGE="denyhosts"
-VERSION=${VERSION:=2.5}
+VERSION=${VERSION:=2.6}
 ARCH=${ARCH:=i486}
 BUILD=${BUILD:=1rha}
 SRC_DIR=${SRC:=$CWD}
