@@ -39,7 +39,7 @@ fi
 # default settings
 PACKAGE="swfdec-mozilla"
 ARCH=${ARCH:=i486}
-VERSION=${VERSION:=0.5.2}
+VERSION=${VERSION:=0.5.3}
 BUILD=${BUILD:=1rha}
 SRC_DIR=${SRC:=$CWD}
 TMP=${TMP:=/tmp}
