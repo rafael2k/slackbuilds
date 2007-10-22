@@ -82,6 +82,10 @@ if [ ! -s "$SRC_DIR/$SRC" ] || ! gunzip -t "$SRC_DIR/$SRC" 2> /dev/null; then
   wget "$URL" -O "$SRC_DIR/$SRC" || exit $ERROR_WGET
 fi
 
+MD5SUM_SRC="$(md5sum "$SRC_DIR/$SRC" | cut -d " " -f 1)"
+MD5SUM_URL="bb18d19e1d6fb255dadda456cadec00e"
+
+[ "$MD5SUM_SRC" == "$MD5SUM_URL" ] || exit $ERROR_MD5
 
 # Untar
 cd "$TMP"

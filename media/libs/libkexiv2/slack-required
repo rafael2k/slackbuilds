@@ -1,0 +1,4 @@
+# Dependency list to libkexiv2
+#
+# dependency [condition] [version]]
+exiv2				

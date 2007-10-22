@@ -1,0 +1,14 @@
+# Dependency list to kipi-plugins
+#
+# dependency [condition] [version]]
+libkipi		>=		0.1.5
+libkexiv2		>=		0.1.5
+libkdcraw		>=		0.1.2
+gphoto2				
+libtiff		>=		3.6.x
+kdepim		>=		3.4
+libxslt		>=		1.1
+libgpod		>=		0.4.2
+mjpegtools				
+k3b				
+imagemagick				

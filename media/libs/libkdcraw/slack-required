@@ -1,0 +1,4 @@
+# Dependency list to libkdcraw
+#
+# dependency [condition] [version]]
+lcms				

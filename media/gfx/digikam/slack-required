@@ -1,8 +1,16 @@
-sqlite
-exiv2
-libpng
-lcms
-libtiff
-mjpegtools
-libgphoto2
-libkipi
+# Dependency list to digikam
+#
+# dependency [condition] [version]]
+qt				
+kdebase				
+sqlite				
+gphoto2				
+libkipi				
+libkexiv2				
+libkdcraw				
+lcms				
+libtiff				
+libpng				
+jasper				
+kipi-plugins				
+mjpegtools				
