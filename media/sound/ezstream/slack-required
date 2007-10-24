@@ -1,0 +1,4 @@
+# Dependency list to ezstream
+#
+# dependency [condition] [version]]
+libshout				
