@@ -16,7 +16,7 @@
 #
 # slackbuild for gnuradio, by Silvio Rhatto - rhatto at riseup.net
 # requires: boost swig fftw sdcc cppunit jack wxWidgets
-# tested: gnuradio-3.1.0rc0
+# tested: gnuradio-3.1.1
 #
 
 # Look for slackbuildrc
@@ -31,7 +31,7 @@ CWD="$(pwd)"
 SRC_NAME="gnuradio"
 PKG_NAME="gnuradio"
 ARCH=${ARCH:=i486}
-SRC_VERSION=${VERSION:=3.1.0rc0}
+SRC_VERSION=${VERSION:=3.1.1}
 PKG_VERSION="$(echo "$SRC_VERSION" | tr '[[:blank:]-]' '_')"
 BUILD=${BUILD:=1rha}
 SRC_DIR=${SRC_DIR:=$CWD}/$PKG_NAME
@@ -85,7 +85,7 @@ fi
 
 # Untar
 cd "$TMP"
-tar --no-same-owner --no-same-permissions -xvf "$SRC_DIR/$SRC" || exit $ERROR_TAR
+[[UNPACKER]] [[UNPACKER FLAGS]] "$SRC_DIR/$SRC" || exit $ERROR_TAR
 cd "$PKG_SRC"
 
 # get boost version
