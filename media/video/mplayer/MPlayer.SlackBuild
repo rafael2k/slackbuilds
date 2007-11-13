@@ -43,7 +43,7 @@ fi
 PACKAGE="MPlayer"
 ARCH=${ARCH:=i486}
 VERSION=${VERSION:=1.0rc2}
-BUILD=${BUILD:=1rha}
+BUILD=${BUILD:=2rha}
 SRC_DIR=${SRC:=$CWD}
 TMP=${TMP:=/tmp}
 REPOS=${REPOS:=$TMP}
@@ -73,7 +73,7 @@ SRC="$PACKAGE-$VERSION.tar.$PACKAGE_EXT"
 URL="http://www1.mplayerhq.hu/MPlayer/releases/$SRC"
 
 # URL do Skin do MPlayer
-URL_SKIN="http://www1.mplayerhq.hu/MPlayer/Skin/$SKIN-$VERSION_SKIN.tar.$SKIN_EXT"
+URL_SKIN="http://www.mplayerhq.hu/MPlayer/skins/$SKIN-$VERSION_SKIN.tar.$SKIN_EXT"
 
 SRC_DIR="$SRC_DIR/$PACKAGE"
 mkdir -p $SRC_DIR
