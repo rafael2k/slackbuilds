@@ -85,7 +85,7 @@ fi
 
 # Untar
 cd "$TMP"
-[[UNPACKER]] [[UNPACKER FLAGS]] "$SRC_DIR/$SRC" || exit $ERROR_TAR
+tar --no-same-owner --no-same-permissions -xvf "$SRC_DIR/$SRC" || exit $ERROR_TAR
 cd "$PKG_SRC"
 
 # get boost version
