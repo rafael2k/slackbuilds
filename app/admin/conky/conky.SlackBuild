@@ -39,7 +39,7 @@ fi
 # default settings
 PACKAGE="conky"
 ARCH=${ARCH:=i486}
-VERSION=${VERSION:=1.4.2}
+VERSION=${VERSION:=1.4.8}
 BUILD=${BUILD:=1rha}
 SRC_DIR=${SRC:=$CWD}
 TMP=${TMP:=/tmp}
