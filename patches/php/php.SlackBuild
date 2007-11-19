@@ -1,11 +1,41 @@
 #!/bin/bash
-#
 # Build and package mod_php on Slackware.
 # by:  David Cantrell <david@slackware.com>
-# Modified for PHP 4+ by volkerdi@slackware.com
+# Modified for PHP 4-5 by volkerdi@slackware.com
+# Copyright 2007 Patrick Volkerding, Sebeka, MN, USA
+# All rights reserved.
 #
-# Small changes by rhatto
+# Redistribution and use of this script, with or without modification, is
+# permitted provided that the following conditions are met:
 #
+# 1. Redistributions of this script must retain the above copyright
+#    notice, this list of conditions and the following disclaimer.
+#
+#  THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR IMPLIED
+#  WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+#  MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.  IN NO
+#  EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+#  SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+#  PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
+#  OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+#  WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
+#  OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+#  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+#
+# Small changes by rhatto at riseup.net
+#
+
+# needs a function from simplepkg, but slightly changed
+function default_version {
+
+  # get version from /etc/slackware-version
+  if [ -f "$1/etc/slackware-version" ]; then
+    cat $1/etc/slackware-version | awk '{ print $2 }' | sed -e 's/.0$//' | tr -d .
+  else
+    echo "none"
+  fi
+
+}
 
 if [ -s "slack-required" ]; then
   echo Recomended and required packages for building php are:
@@ -28,7 +58,8 @@ elif [ -f /etc/slackbuildrc ]; then
 fi
 
 PACKAGE="php"
-VERSION=${VERSION:=4.4.7}
+PHP_SERIES=${PHP_SERIES:=5}
+VERSION=${VERSION:=5.2.5}
 PINE=${PINE:=4.64}
 ARCH=${ARCH:=i486}
 BUILD=${BUILD:=1rha}
@@ -74,7 +105,9 @@ if [ "$RTOOL" == "wget" ]; then
   # rm -rf $SRC_DIR/pear*
   mkdir -p $SRC_DIR/pear
 
-  if [ $VERSION = 4.4.2 ]; then
+  if [ "$PHP_SERIES" == "5"]; then
+    pearlist="$PARSER"
+  elif [ "$VERSION" == "4.4.2" ]; then
     pearlist="$DB $HTTP $MAIL $SMTP $SOCKET $PARSER $RPC"
     mkdir -p $SRC_DIR/pear-4.4.2-bad-md5sums
     for pear in $TAR $GETOPT $TEMPLATE; do
@@ -138,82 +171,23 @@ rm -rf $TMP
 mkdir -p $TMP
 cd $TMP
 
-php_configure() {
-EXTENSION_DIR=/usr/$LIB/php/extensions \
-CFLAGS="$SLKCFLAGS" \
-./configure --prefix=/usr \
-  $* \
-  --with-_lib=$LIB \
-  --libdir=$LIBDIR \
-  --sysconfdir=/etc \
-  --with-config-file-path=/etc/apache \
-  --enable-safe-mode \
-  --with-openssl \
-  --with-mhash \
-  --enable-bcmath \
-  --with-bz2 \
-  --with-pic \
-  --enable-calendar \
-  --enable-ctype \
-  --with-gdbm \
-  --with-db4 \
-  --with-imap-ssl=$IMAPLIBDIR \
-  --with-imap=$IMAPLIBDIR \
-  --enable-dbase \
-  --enable-ftp \
-  --with-iconv \
-  --with-dom \
-  --with-exif \
-  --enable-exif \
-  --with-gd \
-  --enable-gd-native-ttf \
-  --with-jpeg-dir=/usr \
-  --with-png \
-  --with-ttf \
-  --with-freetype-dir=/usr \
-  --with-gmp \
-  --enable-mbstring \
-  --with-curl=/usr \
-  --with-pcre-regex=/usr \
-  --with-mysql=shared,/usr \
-  --with-gettext=shared,/usr \
-  --with-expat-dir=/usr \
-  --with-xml \
-  --enable-wddx \
-  --with-mm=/usr \
-  --enable-trans-sid \
-  --enable-shmop \
-  --enable-sockets \
-  --with-regex=php \
-  --enable-sysvsem \
-  --enable-sysvshm \
-  --enable-yp \
-  --enable-memory-limit \
-  --with-tsrm-pthreads \
-  --enable-shared \
-  --disable-debug \
-  --with-zlib=/usr $ADD_FLAGS || exit $ERROR_CONF
-  # --with-mod_charset    # only for Russian patched Apache
-  # --with-readline=/usr  # this is only for the CGI version
-  # --with-ttf            # this links with the shlib, need X for that
-  # --with-java           # no thanks
-
-  # TODO: check if it still happens
-  # strange bug, http://bugs.php.net/bug.php?id=31193
-  sed -e 's/^EXTRA_LIBS\(.*\)/EXTRA_LIBS\1 -liconv/' Makefile > Makefile.new
-  mv Makefile.new Makefile
-
-}
-
-# compile php
-rm -rf $PKG
-mkdir -p $PKG/etc/apache
-# A trick from DaMouse to enable building php into $PKG.
-# We'll remove this later on.
-cat /etc/apache/httpd.conf.default > $PKG/etc/apache/httpd.conf
-cd $TMP
-rm -rf php-$VERSION
-tar xvf $SRC_DIR/$SRC || exit $ERROR_TAR
+# changed since slackware 12.0
+if (( `default_version` >= 120 )); then
+  mkdir -p $PKG/etc/httpd
+  mkdir -p $PKG/etc/php
+  # A trick from DaMouse to enable building php into $PKG.
+  # We'll remove this later on.
+  cat /etc/httpd/original/httpd.conf > $PKG/etc/httpd/httpd.conf
+  if [ ! -e /etc/httpd/original/httpd.conf ]; then
+    echo "FATAL:  no /etc/httpd/original/httpd.conf found."
+    exit 1
+  fi
+  else
+    mkdir -p $PKG/etc/apache
+    # A trick from DaMouse to enable building php into $PKG.
+    # We'll remove this later on.
+    cat /etc/apache/httpd.conf.default > $PKG/etc/apache/httpd.conf
+fi
 
 # Add missing(?) PEAR modules back:
 ( cd php-$VERSION/pear/packages
@@ -221,6 +195,16 @@ tar xvf $SRC_DIR/$SRC || exit $ERROR_TAR
   bzip2 -d *.bz2 &> /dev/null
   gunzip -d -f *.tgz &> /dev/null
 )
+
+if [ "$ARCH" = "s390" ]; then
+  if [ -f "$CWD/php.configure.s390.diff.gz" ]; then
+    zcat $CWD/php.configure.s390.diff.gz | patch -p1 || exit
+  fi
+fi
+
+cd $TMP
+rm -rf php-$VERSION
+tar xvf $SRC_DIR/$SRC || exit $ERROR_TAR
 
 # Replace PEAR packages for which the 4.4.2 release contained incorrect md5sums:
 if [ $VERSION = 4.4.2 ]; then
@@ -242,52 +226,275 @@ if [ "$ARCH" == "x86_64" ]; then
 fi
 
 # Fixup perms/owners:
-chown -R root.root .
-find . -perm 777 -exec chmod 755 {} \;
-find . -perm 775 -exec chmod 755 {} \;
+chown -R root:root .
 find . -perm 666 -exec chmod 644 {} \;
 find . -perm 664 -exec chmod 644 {} \;
+find . -perm 600 -exec chmod 644 {} \;
+find . -perm 444 -exec chmod 644 {} \;
+find . -perm 400 -exec chmod 644 {} \;
+find . -perm 440 -exec chmod 644 {} \;
+find . -perm 777 -exec chmod 755 {} \;
+find . -perm 775 -exec chmod 755 {} \;
+find . -perm 511 -exec chmod 755 {} \;
+find . -perm 711 -exec chmod 755 {} \;
+find . -perm 555 -exec chmod 755 {} \;
+
 find . -name "*.h" -exec chmod 644 {} \;
+
 # Sometimes they ship a few of these:
 find . -name "*.orig" -exec rm {} \;
 
 # Fix a UTF-8 parsing overflow:
-if [[ `echo $VERSION | tr -dc '[[:digit:]]'` -lt 445 ]]; then
+FULL_VERSION="`echo $VERSION | tr -dc '[[:digit:]]'`"
+if [[ $FULL_VERSION -lt 445 ]]; then
   zcat $CWD/php4.utf8.diff.gz | patch -p1 --verbose --backup --suffix=.orig || exit $ERROR_PATCH
+elif [ "$FULL_VERSION"  == "441" ]; then
+  # Fix an issue introduced in PHP 4.4.1 that breaks SquirrelMail and
+  # probably some other PHP applications:
+  zcat $CWD/php.squirrel.diff.gz | patch -p1 --verbose || exit
 fi
 
 # Patch ini files:
 
 if [ "$ARCH" == "x86_64" ]; then
   zcat $CWD/php.ini-x86_64.diff.gz | patch -p1 --verbose --backup --suffix=.orig || exit $ERROR_PATCH
-  # Fix an issue introduced in PHP 4.4.1 that breaks SquirrelMail and
-  # probably some other PHP applications:
-  #zcat $CWD/php.squirrel.diff.gz | patch -p1 --verbose || exit
+  zcat $CWD/php.recommended-x86_64.ini.diff.gz | patch -p1 --verbose --backup --suffix=.orig || exit $ERROR_PATCH 
 else
   zcat $CWD/php.ini.diff.gz | patch -p1 --verbose --backup --suffix=.orig || exit $ERROR_PATCH
+  zcat $CWD/php.recommended.ini.diff.gz | patch -p1 --verbose --backup --suffix=.orig || exit $ERROR_PATCH 
 fi
+
+if [ "$PHP_SERIES" == "5" ]; then
+
+  if (( `default_version` >= 120 )); then
+    $CONFIG_FILES="--with-config-file-scan-dir=/etc/php --with-config-file-path=/etc/httpd"
+  else
+    $CONFIG_FILES="--with-config-file-path=/etc/apache"
+  fi
+
+  # Generic "kitchen sink" configure function, with as many things as possible (and
+  # maybe then some ;-) compiled as shared extensions:
+  php_configure() {
+  EXTENSION_DIR=/usr/lib/php/extensions \
+  CFLAGS="$SLKCFLAGS" \
+  ./configure --prefix=/usr \
+    $* \
+   	--with-libdir=$LIB \
+	-libdir=$LIBDIR \
+    --prefix=/usr \
+    --sysconfdir=/etc \
+    --disable-safe-mode \
+    --enable-apc \
+    --enable-apc-mmap \
+    --enable-memory-limit \
+    --enable-suhosin \
+    --disable-magic-quotes \
+    --enable-zend-multibyte \
+    --enable-mbregex \
+    --enable-tokenizer=shared \
+    $CONFIG_FILES \
+    --with-mod_charset \
+    --with-layout=PHP \
+    --enable-sigchild \
+    --enable-xml \
+    --with-libxml-dir=/usr \
+    --enable-simplexml \
+    --enable-spl \
+    --enable-filter \
+    --disable-debug \
+    --with-openssl=shared \
+    --with-pcre-regex=/usr \
+    --with-zlib=shared,/usr \
+    --enable-bcmath=shared \
+    --with-bz2=shared,/usr \
+    --enable-calendar=shared \
+    --enable-ctype=shared \
+    --with-curl=shared \
+    --with-curlwrappers \
+    --enable-dba=shared \
+    --with-gdbm=/usr \
+    --with-db4=/usr \
+    --enable-dbase=shared \
+    --enable-exif=shared \
+    --enable-ftp=shared \
+    --with-gd=shared \
+    --with-jpeg-dir=/usr \
+    --with-png-dir=/usr \
+    --with-zlib-dir=/usr \
+    --with-xpm-dir=/usr \
+    --with-freetype-dir=/usr \
+    --with-t1lib=/usr \
+    --enable-gd-native-ttf \
+    --enable-gd-jis-conv \
+    --with-gettext=shared,/usr \
+    --with-gmp=shared,/usr \
+    --with-iconv=shared \
+    --with-imap-ssl=/usr \
+    --with-imap=$IMAPLIBDIR \
+    --with-ldap=shared \
+    --enable-mbstring=shared \
+    --with-hash \
+    --with-mhash=shared,/usr \
+    --with-mysql=shared,/usr \
+    --with-mysqli=shared,/usr/bin/mysql_config \
+    --enable-pdo=shared \
+    --with-pdo-mysql=shared,/usr \
+    --with-pdo-sqlite=shared \
+    --with-pspell=shared,/usr \
+    --with-mm=/usr \
+    --enable-shmop=shared \
+    --with-snmp=shared,/usr \
+    --enable-soap=shared \
+    --enable-sockets \
+    --with-sqlite=shared \
+    --enable-sqlite-utf8 \
+    --with-regex=php \
+    --enable-sysvmsg \
+    --enable-sysvsem \
+    --enable-sysvshm \
+    --enable-wddx=shared \
+    --with-xsl=shared,/usr \
+    --enable-zip=shared \
+    --with-tsrm-pthreads \
+    --enable-shared=yes \
+    --enable-static=no \
+    --with-gnu-ld \
+    --with-pic \
+    --build=$ARCH-slackware-linux
+  }
+
+else
+
+  php_configure() {
+  EXTENSION_DIR=/usr/$LIB/php/extensions \
+  CFLAGS="$SLKCFLAGS" \
+  ./configure --prefix=/usr \
+    $* \
+    --with-_lib=$LIB \
+    --libdir=$LIBDIR \
+    --sysconfdir=/etc \
+    --with-config-file-path=/etc/apache \
+    --enable-safe-mode \
+    --with-openssl \
+    --with-mhash \
+    --enable-bcmath \
+    --with-bz2 \
+    --with-pic \
+    --enable-calendar \
+    --enable-ctype \
+    --with-gdbm \
+    --with-db4 \
+    --with-imap-ssl=$IMAPLIBDIR \
+    --with-imap=$IMAPLIBDIR \
+    --enable-dbase \
+    --enable-ftp \
+    --with-iconv \
+    --with-dom \
+    --with-exif \
+    --enable-exif \
+    --with-gd \
+    --enable-gd-native-ttf \
+    --with-jpeg-dir=/usr \
+    --with-png \
+    --with-ttf \
+    --with-freetype-dir=/usr \
+    --with-gmp \
+    --enable-mbstring \
+    --with-curl=/usr \
+    --with-pcre-regex=/usr \
+    --with-mysql=shared,/usr \
+    --with-gettext=shared,/usr \
+    --with-expat-dir=/usr \
+    --with-xml \
+    --enable-wddx \
+    --with-mm=/usr \
+    --enable-trans-sid \
+    --enable-shmop \
+    --enable-sockets \
+    --with-regex=php \
+    --enable-sysvsem \
+    --enable-sysvshm \
+    --enable-yp \
+    --enable-memory-limit \
+    --with-tsrm-pthreads \
+    --enable-shared \
+    --disable-debug \
+    --with-zlib=/usr $ADD_FLAGS || exit $ERROR_CONF
+    # --with-mod_charset    # only for Russian patched Apache
+    # --with-readline=/usr  # this is only for the CGI version
+    # --with-ttf            # this links with the shlib, need X for that
+    # --with-java           # no thanks
+  
+    # TODO: check if it still happens
+    # strange bug, http://bugs.php.net/bug.php?id=31193
+    sed -e 's/^EXTRA_LIBS\(.*\)/EXTRA_LIBS\1 -liconv/' Makefile > Makefile.new
+    mv Makefile.new Makefile
+  
+  }
+  
+fi
+
+# I am told this option is worse than nothing.  :-)
+#  --enable-safe-mode
+#
+# I would recommend *against* and will take no responbility for turning on "safe" mode.
 
 # Make the Apache module version of PHP:
 echo "***START APACHE MODULE***"
-php_configure --disable-static --with-apxs=/usr/sbin/apxs --enable-discard-path || exit $ERROR_CONF
+
+if (( `default_version` >= 120 )); then
+  php_configure --with-apxs2=/usr/sbin/apxs || exit $ERROR_CONF
+else
+  php_configure --disable-static --with-apxs=/usr/sbin/apxs --enable-discard-path || exit $ERROR_CONF
+fi
+
 make -j3 || exit $ERROR_MAKE
 make install INSTALL_ROOT=$PKG || exit $ERROR_INSTALL
 make distclean
 echo "***END APACHE MODULE***"
 
+if [ "$PHP_SERIES" == "5" ]; then
+  # Make the CLI version of PHP:
+  php_configure \
+    --enable-force-cgi-redirect \
+    --enable-fastcgi \
+    --enable-pcntl \
+    --enable-readline \
+    --enable-sigchild
+  make -j3 || exit $ERROR_MAKE
+  mkdir -p $PKG/usr/bin
+  cat ./sapi/cli/php > $PKG/usr/bin/php
+  chmod 755 $PKG/usr/bin/php
+else
+  # Make the standalone interpreter:
+  php_configure --enable-force-cgi-redirect --enable-fastcgi --enable-pcntl --enable-sigchild || exit $ERROR_CONF
+  make -j3 || exit $ERROR_MAKE
+  make install-cli INSTALL_ROOT=$PKG || exit $ERROR_INSTALL
+  chmod 755 $PKG/usr/bin/php
+  chown root.bin $PKG/usr/bin/php
+fi
+
+if [ "$PHP_SERIES" == "5" ]; then
+  # Make the FastCGI interpreter:
+  make distclean
+  php_configure \
+    --enable-force-cgi-redirect \
+    --enable-fastcgi \
+    --enable-pcntl \
+    --enable-readline \
+    --enable-sigchild
+  make -j3 || exit 1
+  mkdir -p $PKG/usr/bin
+  cat sapi/cgi/php-cgi > $PKG/usr/bin/php-cgi
+  chmod 755 $PKG/usr/bin/php-cgi
+else
+  # Install the CGI/FastCGI interpreter:
+  cat sapi/cgi/php > $PKG/usr/bin/php-cgi
+  chmod 755 $PKG/usr/bin/php-cgi
+fi
+
 # PHP likes to install Pear with some strange permissions.
 chmod 755 $PKG/usr/bin/pear
-
-# Make the standalone interpreter:
-php_configure --enable-force-cgi-redirect --enable-fastcgi --enable-pcntl --enable-sigchild || exit $ERROR_CONF
-make -j3 || exit $ERROR_MAKE
-make install-cli INSTALL_ROOT=$PKG || exit $ERROR_INSTALL
-chmod 755 $PKG/usr/bin/php
-chown root.bin $PKG/usr/bin/php
-
-# Install the CGI/FastCGI interpreter:
-cat sapi/cgi/php > $PKG/usr/bin/php-cgi
-chmod 755 $PKG/usr/bin/php-cgi
 
 # PHP 4.4.2 seems to be throwing some junk in the root directory:
 ( cd $PKG
@@ -339,10 +546,17 @@ cp -a $CWD/mod_php.conf.example $PKG/etc/apache
 chmod 644 $PKG/etc/apache/*
 chown root:root $PKG/etc/apache/*
 
+# This can go now.
 rm -f $PKG/etc/apache/httpd*
 
-chown -R root:bin $PKG/usr/bin
+if (( `default_version` >= 120 )); then
+  # Session directory for PHP:
+  mkdir -p $PKG/var/lib/php
+  chmod 770 $PKG/var/lib/php
+  chown root:apache $PKG/var/lib/php
+fi
 
+# Strip ELF objects.
 ( cd $PKG
   find . | xargs file | grep "executable" | grep ELF | cut -f 1 -d : | xargs strip --strip-unneeded 2> /dev/null
   find . | xargs file | grep "shared object" | grep ELF | cut -f 1 -d : | xargs strip --strip-unneeded 2> /dev/null
