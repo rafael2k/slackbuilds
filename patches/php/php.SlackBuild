@@ -22,7 +22,7 @@
 #  OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 #  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #
-# Small changes by rhatto at riseup.net
+# Changed by rhatto at riseup.net to fit slack.sarava.org needs
 #
 
 # needs a function from simplepkg, but slightly changed
@@ -105,7 +105,7 @@ if [ "$RTOOL" == "wget" ]; then
   # rm -rf $SRC_DIR/pear*
   mkdir -p $SRC_DIR/pear
 
-  if [ "$PHP_SERIES" == "5"]; then
+  if [ "$PHP_SERIES" == "5" ]; then
     pearlist="$PARSER"
   elif [ "$VERSION" == "4.4.2" ]; then
     pearlist="$DB $HTTP $MAIL $SMTP $SOCKET $PARSER $RPC"
