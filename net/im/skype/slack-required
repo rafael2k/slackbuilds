@@ -1,0 +1,6 @@
+# Dependency list to skype_static
+#
+# dependency [condition] [version]]
+dbus		>=		1.0
+alsa-lib		>=		2.0
+libsigc++		>=		2.0
