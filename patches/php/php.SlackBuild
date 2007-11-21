@@ -268,6 +268,7 @@ if [ "$PHP_SERIES" == "5" ]; then
 
   if (( `default_version` >= 120 )); then
     $CONFIG_FILES="--with-config-file-scan-dir=/etc/php --with-config-file-path=/etc/httpd"
+    $SNMP="--with-snmp=shared,/usr"
   else
     $CONFIG_FILES="--with-config-file-path=/etc/apache"
   fi
@@ -343,7 +344,7 @@ if [ "$PHP_SERIES" == "5" ]; then
     --with-pspell=shared,/usr \
     --with-mm=/usr \
     --enable-shmop=shared \
-    --with-snmp=shared,/usr \
+    $SNMP \
     --enable-soap=shared \
     --enable-sockets \
     --with-sqlite=shared \
