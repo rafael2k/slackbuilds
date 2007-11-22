@@ -1,4 +1,5 @@
 #!/bin/bash
+#
 # Build and package mod_php on Slackware.
 # by:  David Cantrell <david@slackware.com>
 # Modified for PHP 4-5 by volkerdi@slackware.com
@@ -201,8 +202,8 @@ fi
 )
 
 if [ "$ARCH" = "s390" ]; then
-  if [ -f "$CWD/php.configure.s390.diff.gz" ]; then
-    zcat $CWD/php.configure.s390.diff.gz | patch -p1 || exit
+  if [ -f "$CWD/patches/php.configure.s390.diff.gz" ]; then
+    zcat $CWD/patches/php.configure.s390.diff.gz | patch -p1 || exit
   fi
 fi
 
@@ -225,8 +226,8 @@ cd php-$VERSION
 if [ "$ARCH" == "x86_64" ]; then
   if [ "$PHP_SERIES" == "4" ]; then
     # Fix lib64 - thanks SuSE
-    echo patching with $CWD/php-with-_lib-$VERSION.diff.gz...
-    zcat $CWD/php-with-_lib-$VERSION.diff.gz | patch -p1 --verbose || exit $ERROR_PATCH
+    echo patching with $CWD/patches/php-with-_lib-$VERSION.diff.gz...
+    zcat $CWD/patches/php-with-_lib-$VERSION.diff.gz | patch -p1 --verbose || exit $ERROR_PATCH
     autoconf
   fi
 fi
@@ -253,21 +254,21 @@ find . -name "*.orig" -exec rm {} \;
 # Fix a UTF-8 parsing overflow:
 FULL_VERSION="`echo $VERSION | tr -dc '[[:digit:]]'`"
 if [[ $FULL_VERSION -lt 445 ]]; then
-  zcat $CWD/php4.utf8.diff.gz | patch -p1 --verbose --backup --suffix=.orig || exit $ERROR_PATCH
+  zcat $CWD/patches/php4.utf8.diff.gz | patch -p1 --verbose --backup --suffix=.orig || exit $ERROR_PATCH
 elif [ "$FULL_VERSION"  == "441" ]; then
   # Fix an issue introduced in PHP 4.4.1 that breaks SquirrelMail and
   # probably some other PHP applications:
-  zcat $CWD/php.squirrel.diff.gz | patch -p1 --verbose || exit
+  zcat $CWD/patches/php.squirrel.diff.gz | patch -p1 --verbose || exit
 fi
 
 # Patch ini files:
 
 if [ "$ARCH" == "x86_64" ]; then
-  zcat $CWD/php.ini-x86_64.diff.gz | patch -p1 --verbose --backup --suffix=.orig || exit $ERROR_PATCH
-  zcat $CWD/php.recommended-x86_64.ini.diff.gz | patch -p1 --verbose --backup --suffix=.orig || exit $ERROR_PATCH 
+  zcat $CWD/patches/php.ini-x86_64.diff.gz | patch -p1 --verbose --backup --suffix=.orig || exit $ERROR_PATCH
+  zcat $CWD/patches/php.recommended-x86_64.ini.diff.gz | patch -p1 --verbose --backup --suffix=.orig || exit $ERROR_PATCH 
 else
-  zcat $CWD/php.ini.diff.gz | patch -p1 --verbose --backup --suffix=.orig || exit $ERROR_PATCH
-  zcat $CWD/php.recommended.ini.diff.gz | patch -p1 --verbose --backup --suffix=.orig || exit $ERROR_PATCH 
+  zcat $CWD/patches/php.ini.diff.gz | patch -p1 --verbose --backup --suffix=.orig || exit $ERROR_PATCH
+  zcat $CWD/patches/php.recommended.ini.diff.gz | patch -p1 --verbose --backup --suffix=.orig || exit $ERROR_PATCH 
 fi
 
 # Generic "kitchen sink" configure function, with as many things as possible (and
@@ -528,9 +529,13 @@ cp -a \
   $PKG/usr/doc/php-$VERSION
 chown -R root:root $PKG/usr/doc/php-$VERSION
 
+if [ -f "$PKG/etc/pear.conf" ]; then
+  mv $PKG/etc/pear.conf $PKG/etc/pear.conf.example
+fi
+
 mkdir -p $PKG/etc/apache
 cp -a php.ini-dist php.ini-recommended $PKG/etc/apache
-cp -a $CWD/mod_php.conf.example $PKG/etc/apache
+cp -a $CWD/mod_php$PHP_SERIES.conf.example $PKG/etc/apache/mod_php.conf.example
 chmod 644 $PKG/etc/apache/*
 chown root:root $PKG/etc/apache/*
 

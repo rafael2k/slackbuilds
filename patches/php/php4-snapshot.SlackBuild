@@ -230,8 +230,8 @@ cd php4-STABLE-$SNAP_VERSION
 
 if [ "$ARCH" == "x86_64" ]; then
   # Fix lib64 - thanks SuSE
-  echo patchin with $CWD/php-with-_lib-$VERSION.diff.gz...
-  zcat $CWD/php-with-_lib-$VERSION.diff.gz | patch -p1 --verbose || exit $ERROR_PATCH
+  echo patching with $CWD/patches/php-with-_lib-$VERSION.diff.gz...
+  zcat $CWD/patches/php-with-_lib-$VERSION.diff.gz | patch -p1 --verbose || exit $ERROR_PATCH
   autoconf
 fi
 
@@ -246,17 +246,17 @@ find . -name "*.h" -exec chmod 644 {} \;
 find . -name "*.orig" -exec rm {} \;
 
 # Fix a UTF-8 parsing overflow:
-zcat $CWD/php4.utf8.diff.gz | patch -p1 --verbose --backup --suffix=.orig || exit $ERROR_PATCH
+zcat $CWD/patches/php4.utf8.diff.gz | patch -p1 --verbose --backup --suffix=.orig || exit $ERROR_PATCH
 
 # Patch ini files:
 
 if [ "$ARCH" == "x86_64" ]; then
-  zcat $CWD/php.ini-x86_64.diff.gz | patch -p1 --verbose --backup --suffix=.orig || exit $ERROR_PATCH
+  zcat $CWD/patches/php.ini-x86_64.diff.gz | patch -p1 --verbose --backup --suffix=.orig || exit $ERROR_PATCH
   # Fix an issue introduced in PHP 4.4.1 that breaks SquirrelMail and
   # probably some other PHP applications:
-  #zcat $CWD/php.squirrel.diff.gz | patch -p1 --verbose || exit
+  #zcat $CWD/patches/php.squirrel.diff.gz | patch -p1 --verbose || exit
 else
-  zcat $CWD/php.ini.diff.gz | patch -p1 --verbose --backup --suffix=.orig || exit $ERROR_PATCH
+  zcat $CWD/patches/php.ini.diff.gz | patch -p1 --verbose --backup --suffix=.orig || exit $ERROR_PATCH
 fi
 
 # Make the Apache module version of PHP:
@@ -303,7 +303,7 @@ chown -R root.root $PKG/usr/doc/php-$SNAP_VERSION
 
 mkdir -p $PKG/etc/apache
 cp -a php.ini-dist php.ini-recommended $PKG/etc/apache
-cp -a $CWD/mod_php.conf.example $PKG/etc/apache
+cp -a $CWD/mod_php4.conf.example $PKG/etc/apache/mod_php.conf.example
 chmod 644 $PKG/etc/apache/*
 chown root.root $PKG/etc/apache/*
 
