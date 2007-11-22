@@ -223,10 +223,12 @@ fi
 cd php-$VERSION
 
 if [ "$ARCH" == "x86_64" ]; then
-  # Fix lib64 - thanks SuSE
-  echo patching with $CWD/php-with-_lib-$VERSION.diff.gz...
-  zcat $CWD/php-with-_lib-$VERSION.diff.gz | patch -p1 --verbose || exit $ERROR_PATCH
-  autoconf
+  if [ "$PHP_SERIES" == "4" ]; then
+    # Fix lib64 - thanks SuSE
+    echo patching with $CWD/php-with-_lib-$VERSION.diff.gz...
+    zcat $CWD/php-with-_lib-$VERSION.diff.gz | patch -p1 --verbose || exit $ERROR_PATCH
+    autoconf
+  fi
 fi
 
 # Fixup perms/owners:
