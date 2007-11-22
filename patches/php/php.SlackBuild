@@ -155,7 +155,11 @@ if [ -r $IMAPLIBDIR/$LIB/c-client.a ]; then
   ls -l $IMAPLIBDIR/$LIB/c-client.a
   sleep 5
 else
-  ( cd $CWD/../pine ; CLEANUP=no SRC=$SRC_DIR/../ ./pine.SlackBuild )
+  if which createpkg &> /dev/null; then
+    ( CLEANUP=no createpkg pine )
+  else
+    ( cd $CWD/../pine ; CLEANUP=no SRC=$SRC_DIR/../ ./pine.SlackBuild )
+  fi
   ( cd $TMP/pine/pine${PINE}/imap/c-client
     strip -g c-client.a
     mkdir -p $IMAPLIBDIR/$LIB
@@ -264,176 +268,174 @@ else
   zcat $CWD/php.recommended.ini.diff.gz | patch -p1 --verbose --backup --suffix=.orig || exit $ERROR_PATCH 
 fi
 
-if [ "$PHP_SERIES" == "5" ]; then
+# Generic "kitchen sink" configure function, with as many things as possible (and
+# maybe then some ;-) compiled as shared extensions:
+php_configure() {
 
-  if (( `default_version` >= 120 )); then
-    $CONFIG_FILES="--with-config-file-scan-dir=/etc/php --with-config-file-path=/etc/httpd"
-    $SNMP="--with-snmp=shared,/usr"
-  else
-    $CONFIG_FILES="--with-config-file-path=/etc/apache"
-  fi
+	if [ "$PHP_SERIES" == "5" ]; then
 
-  # Generic "kitchen sink" configure function, with as many things as possible (and
-  # maybe then some ;-) compiled as shared extensions:
-  php_configure() {
-  EXTENSION_DIR=/usr/lib/php/extensions \
-  CFLAGS="$SLKCFLAGS" \
-  ./configure --prefix=/usr \
-    $* \
-   	--with-libdir=$LIB \
-	-libdir=$LIBDIR \
-    --prefix=/usr \
-    --sysconfdir=/etc \
-    --disable-safe-mode \
-    --enable-apc \
-    --enable-apc-mmap \
-    --enable-memory-limit \
-    --enable-suhosin \
-    --disable-magic-quotes \
-    --enable-zend-multibyte \
-    --enable-mbregex \
-    --enable-tokenizer=shared \
-    $CONFIG_FILES \
-    --with-mod_charset \
-    --with-layout=PHP \
-    --enable-sigchild \
-    --enable-xml \
-    --with-libxml-dir=/usr \
-    --enable-simplexml \
-    --enable-spl \
-    --enable-filter \
-    --disable-debug \
-    --with-openssl=shared \
-    --with-pcre-regex=/usr \
-    --with-zlib=shared,/usr \
-    --enable-bcmath=shared \
-    --with-bz2=shared,/usr \
-    --enable-calendar=shared \
-    --enable-ctype=shared \
-    --with-curl=shared \
-    --with-curlwrappers \
-    --enable-dba=shared \
-    --with-gdbm=/usr \
-    --with-db4=/usr \
-    --enable-dbase=shared \
-    --enable-exif=shared \
-    --enable-ftp=shared \
-    --with-gd=shared \
-    --with-jpeg-dir=/usr \
-    --with-png-dir=/usr \
-    --with-zlib-dir=/usr \
-    --with-xpm-dir=/usr \
-    --with-freetype-dir=/usr \
-    --with-t1lib=/usr \
-    --enable-gd-native-ttf \
-    --enable-gd-jis-conv \
-    --with-gettext=shared,/usr \
-    --with-gmp=shared,/usr \
-    --with-iconv=shared \
-    --with-imap-ssl=/usr \
-    --with-imap=$IMAPLIBDIR \
-    --with-ldap=shared \
-    --enable-mbstring=shared \
-    --with-hash \
-    --with-mhash=shared,/usr \
-    --with-mysql=shared,/usr \
-    --with-mysqli=shared,/usr/bin/mysql_config \
-    --enable-pdo=shared \
-    --with-pdo-mysql=shared,/usr \
-    --with-pdo-sqlite=shared \
-    --with-pspell=shared,/usr \
-    --with-mm=/usr \
-    --enable-shmop=shared \
-    $SNMP \
-    --enable-soap=shared \
-    --enable-sockets \
-    --with-sqlite=shared \
-    --enable-sqlite-utf8 \
-    --with-regex=php \
-    --enable-sysvmsg \
-    --enable-sysvsem \
-    --enable-sysvshm \
-    --enable-wddx=shared \
-    --with-xsl=shared,/usr \
-    --enable-zip=shared \
-    --with-tsrm-pthreads \
-    --enable-shared=yes \
-    --enable-static=no \
-    --with-gnu-ld \
-    --with-pic \
-    --build=$ARCH-slackware-linux
-  }
+		if (( `default_version` >= 120 )); then
+			$CONFIG_FILES="--with-config-file-scan-dir=/etc/php --with-config-file-path=/etc/httpd"
+			$SNMP="--with-snmp=shared,/usr"
+		else
+			$CONFIG_FILES="--with-config-file-path=/etc/apache"
+		fi
 
-else
+		EXTENSION_DIR=/usr/lib/php/extensions \
+		CFLAGS="$SLKCFLAGS" \
+		./configure --prefix=/usr \
+		$* \
+		--with-libdir=$LIB \
+		-libdir=$LIBDIR \
+		--prefix=/usr \
+		--sysconfdir=/etc \
+		--disable-safe-mode \
+		--enable-apc \
+		--enable-apc-mmap \
+		--enable-memory-limit \
+		--enable-suhosin \
+		--disable-magic-quotes \
+		--enable-zend-multibyte \
+		--enable-mbregex \
+		--enable-tokenizer=shared \
+		$CONFIG_FILES \
+		--with-mod_charset \
+		--with-layout=PHP \
+		--enable-sigchild \
+		--enable-xml \
+		--with-libxml-dir=/usr \
+		--enable-simplexml \
+		--enable-spl \
+		--enable-filter \
+		--disable-debug \
+		--with-openssl=shared \
+		--with-pcre-regex=/usr \
+		--with-zlib=shared,/usr \
+		--enable-bcmath=shared \
+		--with-bz2=shared,/usr \
+		--enable-calendar=shared \
+		--enable-ctype=shared \
+		--with-curl=shared \
+		--with-curlwrappers \
+		--enable-dba=shared \
+		--with-gdbm=/usr \
+		--with-db4=/usr \
+		--enable-dbase=shared \
+		--enable-exif=shared \
+		--enable-ftp=shared \
+		--with-gd=shared \
+		--with-jpeg-dir=/usr \
+		--with-png-dir=/usr \
+		--with-zlib-dir=/usr \
+		--with-xpm-dir=/usr \
+		--with-freetype-dir=/usr \
+		--with-t1lib=/usr \
+		--enable-gd-native-ttf \
+		--enable-gd-jis-conv \
+		--with-gettext=shared,/usr \
+		--with-gmp=shared,/usr \
+		--with-iconv=shared \
+		--with-imap-ssl=/usr \
+		--with-imap=$IMAPLIBDIR \
+		--with-ldap=shared \
+		--enable-mbstring=shared \
+		--with-hash \
+		--with-mhash=shared,/usr \
+		--with-mysql=shared,/usr \
+		--with-mysqli=shared,/usr/bin/mysql_config \
+		--enable-pdo=shared \
+		--with-pdo-mysql=shared,/usr \
+		--with-pdo-sqlite=shared \
+		--with-pspell=shared,/usr \
+		--with-mm=/usr \
+		--enable-shmop=shared \
+		$SNMP \
+		--enable-soap=shared \
+		--enable-sockets \
+		--with-sqlite=shared \
+		--enable-sqlite-utf8 \
+		--with-regex=php \
+		--enable-sysvmsg \
+		--enable-sysvsem \
+		--enable-sysvshm \
+		--enable-wddx=shared \
+		--with-xsl=shared,/usr \
+		--enable-zip=shared \
+		--with-tsrm-pthreads \
+		--enable-shared=yes \
+		--enable-static=no \
+		--with-gnu-ld \
+		--with-pic \
+		--build=$ARCH-slackware-linux
+	else
 
-  php_configure() {
-  EXTENSION_DIR=/usr/$LIB/php/extensions \
-  CFLAGS="$SLKCFLAGS" \
-  ./configure --prefix=/usr \
-    $* \
-    --with-_lib=$LIB \
-    --libdir=$LIBDIR \
-    --sysconfdir=/etc \
-    --with-config-file-path=/etc/apache \
-    --enable-safe-mode \
-    --with-openssl \
-    --with-mhash \
-    --enable-bcmath \
-    --with-bz2 \
-    --with-pic \
-    --enable-calendar \
-    --enable-ctype \
-    --with-gdbm \
-    --with-db4 \
-    --with-imap-ssl=$IMAPLIBDIR \
-    --with-imap=$IMAPLIBDIR \
-    --enable-dbase \
-    --enable-ftp \
-    --with-iconv \
-    --with-dom \
-    --with-exif \
-    --enable-exif \
-    --with-gd \
-    --enable-gd-native-ttf \
-    --with-jpeg-dir=/usr \
-    --with-png \
-    --with-ttf \
-    --with-freetype-dir=/usr \
-    --with-gmp \
-    --enable-mbstring \
-    --with-curl=/usr \
-    --with-pcre-regex=/usr \
-    --with-mysql=shared,/usr \
-    --with-gettext=shared,/usr \
-    --with-expat-dir=/usr \
-    --with-xml \
-    --enable-wddx \
-    --with-mm=/usr \
-    --enable-trans-sid \
-    --enable-shmop \
-    --enable-sockets \
-    --with-regex=php \
-    --enable-sysvsem \
-    --enable-sysvshm \
-    --enable-yp \
-    --enable-memory-limit \
-    --with-tsrm-pthreads \
-    --enable-shared \
-    --disable-debug \
-    --with-zlib=/usr $ADD_FLAGS || exit $ERROR_CONF
-    # --with-mod_charset    # only for Russian patched Apache
-    # --with-readline=/usr  # this is only for the CGI version
-    # --with-ttf            # this links with the shlib, need X for that
-    # --with-java           # no thanks
-  
-    # TODO: check if it still happens
-    # strange bug, http://bugs.php.net/bug.php?id=31193
-    sed -e 's/^EXTRA_LIBS\(.*\)/EXTRA_LIBS\1 -liconv/' Makefile > Makefile.new
-    mv Makefile.new Makefile
-  
-  }
-  
-fi
+		EXTENSION_DIR=/usr/$LIB/php/extensions \
+		CFLAGS="$SLKCFLAGS" \
+		./configure --prefix=/usr \
+		$* \
+		--with-_lib=$LIB \
+		--libdir=$LIBDIR \
+		--sysconfdir=/etc \
+		--with-config-file-path=/etc/apache \
+		--enable-safe-mode \
+		--with-openssl \
+		--with-mhash \
+		--enable-bcmath \
+		--with-bz2 \
+		--with-pic \
+		--enable-calendar \
+		--enable-ctype \
+		--with-gdbm \
+		--with-db4 \
+		--with-imap-ssl=$IMAPLIBDIR \
+		--with-imap=$IMAPLIBDIR \
+		--enable-dbase \
+		--enable-ftp \
+		--with-iconv \
+		--with-dom \
+		--with-exif \
+		--enable-exif \
+		--with-gd \
+		--enable-gd-native-ttf \
+		--with-jpeg-dir=/usr \
+		--with-png \
+		--with-ttf \
+		--with-freetype-dir=/usr \
+		--with-gmp \
+		--enable-mbstring \
+		--with-curl=/usr \
+		--with-pcre-regex=/usr \
+		--with-mysql=shared,/usr \
+		--with-gettext=shared,/usr \
+		--with-expat-dir=/usr \
+		--with-xml \
+		--enable-wddx \
+		--with-mm=/usr \
+		--enable-trans-sid \
+		--enable-shmop \
+		--enable-sockets \
+		--with-regex=php \
+		--enable-sysvsem \
+		--enable-sysvshm \
+		--enable-yp \
+		--enable-memory-limit \
+		--with-tsrm-pthreads \
+		--enable-shared \
+		--disable-debug \
+		--with-zlib=/usr $ADD_FLAGS || exit $ERROR_CONF
+		# --with-mod_charset    # only for Russian patched Apache
+		# --with-readline=/usr  # this is only for the CGI version
+		# --with-ttf            # this links with the shlib, need X for that
+		# --with-java           # no thanks
+
+		# TODO: check if it still happens
+		# strange bug, http://bugs.php.net/bug.php?id=31193
+		sed -e 's/^EXTRA_LIBS\(.*\)/EXTRA_LIBS\1 -liconv/' Makefile > Makefile.new
+		mv Makefile.new Makefile
+
+	fi
+
+}
 
 # I am told this option is worse than nothing.  :-)
 #  --enable-safe-mode
@@ -502,37 +504,20 @@ chmod 755 $PKG/usr/bin/pear
   rm -rf .channels .depdb .depdblock .filemap .lock .registry
 )
 
-if [ "$ARCH" == "x86_64" ]; then
-  # Fix $PKG/usr/lib64/php perms:
-  ( cd $PKG/usr/lib64/php
-    find . -perm 666 -exec chmod 644 {} \;
-    find . -perm 664 -exec chmod 644 {} \;
-    find . -perm 600 -exec chmod 644 {} \;
-    find . -perm 444 -exec chmod 644 {} \;
-    find . -perm 400 -exec chmod 644 {} \;
-    find . -perm 440 -exec chmod 644 {} \;
-    find . -perm 777 -exec chmod 755 {} \;
-    find . -perm 775 -exec chmod 755 {} \;
-    find . -perm 511 -exec chmod 755 {} \;
-    find . -perm 711 -exec chmod 755 {} \;
-    find . -perm 555 -exec chmod 755 {} \;
-   )
-else
-  # Fix $PKG/usr/lib/php perms:
-  ( cd $PKG/usr/lib/php
-    find . -perm 666 -exec chmod 644 {} \;
-    find . -perm 664 -exec chmod 644 {} \;
-    find . -perm 600 -exec chmod 644 {} \;
-    find . -perm 444 -exec chmod 644 {} \;
-    find . -perm 400 -exec chmod 644 {} \;
-    find . -perm 440 -exec chmod 644 {} \;
-    find . -perm 777 -exec chmod 755 {} \;
-    find . -perm 775 -exec chmod 755 {} \;
-    find . -perm 511 -exec chmod 755 {} \;
-    find . -perm 711 -exec chmod 755 {} \;
-    find . -perm 555 -exec chmod 755 {} \;
-  )
-fi
+# Fix $PKG/$LIBDIR/php perms:
+( cd $PKG/$LIBDIR/php
+  find . -perm 666 -exec chmod 644 {} \;
+  find . -perm 664 -exec chmod 644 {} \;
+  find . -perm 600 -exec chmod 644 {} \;
+  find . -perm 444 -exec chmod 644 {} \;
+  find . -perm 400 -exec chmod 644 {} \;
+  find . -perm 440 -exec chmod 644 {} \;
+  find . -perm 777 -exec chmod 755 {} \;
+  find . -perm 775 -exec chmod 755 {} \;
+  find . -perm 511 -exec chmod 755 {} \;
+  find . -perm 711 -exec chmod 755 {} \;
+  find . -perm 555 -exec chmod 755 {} \;
+)
 
 mkdir -p $PKG/usr/doc/php-$VERSION
 cp -a \
