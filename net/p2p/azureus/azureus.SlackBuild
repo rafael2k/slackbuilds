@@ -89,7 +89,7 @@ elif [ "$VERSION" == "2.5.0.4" ]; then
   wget "http://azureus.sourceforge.net/plugins/azplugins_2.1.4.jar" -O "usr/local/azureus/plugins/azplugins/azplugins_2.1.4.jar"
 elif [ "$VERSION" == "3.0.3.4" ]; then
   rm usr/local/azureus/plugins/azupnpav/*
-  wget "http://azureus.sourceforge.net/plugins/azupnpav_0.1.7.jar" -O "usr/local/azureus/plugins/azupnav/azupnpav_0.1.7.jar"
+  wget "http://azureus.sourceforge.net/plugins/azupnpav_0.1.7.jar" -O "usr/local/azureus/plugins/azupnpav/azupnpav_0.1.7.jar"
 fi
 
 cat << EOF > install/slack-desc
