@@ -29,7 +29,7 @@ PRGNAM="azureus"
 PACKAGE="$PRGNAM"
 VERSION=${VERSION:=3.0.3.4}
 ARCH=${ARCH:=i486}
-BUILD=${BUILD:=5rha}
+BUILD=${BUILD:=6rha}
 TMP=${TMP:=/tmp}
 SRC_DIR=${SRC:=$CWD}
 TMP=${TMP:=/tmp}
@@ -90,7 +90,10 @@ elif [ "$VERSION" == "2.5.0.4" ]; then
   wget "http://azureus.sourceforge.net/plugins/azplugins_2.1.4.jar" -O "$INSTALL_FOLDER/azureus/plugins/azplugins/azplugins_2.1.4.jar"
 elif [ "$VERSION" == "3.0.3.4" ]; then
   rm $INSTALL_FOLDER/azureus/plugins/azupnpav/*
-  wget "http://azureus.sourceforge.net/plugins/azupnpav_0.1.7.jar" -O "$INSTALL_FOLDER/azureus/plugins/azupnpav/azupnpav_0.1.7.jar"
+  wget "http://azureus.sourceforge.net/plugins/azupnpav_0.1.7.zip" -O "$INSTALL_FOLDER/azureus/plugins/azupnpav/azupnpav_0.1.7.zip"
+  cd $INSTALL_FOLDER/azureus/plugins/azupnpav/
+  unzip azupnpav_0.1.7.zip && rm azupnpav_0.1.7.zip
+  cd -
 fi
 
 cat << EOF > install/slack-desc
