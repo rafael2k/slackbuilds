@@ -29,11 +29,12 @@ PRGNAM="azureus"
 PACKAGE="$PRGNAM"
 VERSION=${VERSION:=3.0.3.4}
 ARCH=${ARCH:=i486}
-BUILD=${BUILD:=4rha}
+BUILD=${BUILD:=5rha}
 TMP=${TMP:=/tmp}
 SRC_DIR=${SRC:=$CWD}
 TMP=${TMP:=/tmp}
 REPOS=${REPOS:=$TMP}
+INSTALL_FOLDER="opt" # change to usr/local if you want
 
 if [ "$ARCH" == "x86_64" ]; then
   LIBDIR=/usr/lib64
@@ -75,21 +76,21 @@ rm -rf $TMP/package-$PACKAGE
 mkdir -p $TMP/package-$PACKAGE/install
 cd $TMP/package-$PACKAGE
 
-mkdir -p usr/local
-cd usr/local
+mkdir -p $INSTALL_FOLDER
+cd $INSTALL_FOLDER
 
 tar xvf $SRC_DIR/$SRC || exit $ERORR_TAR
 cd $TMP/package-$PACKAGE
 
 if [ "$VERSION" == "2.4.0.2" ]; then
-  rm usr/local/azureus/plugins/azplugins/*
-  wget "http://azureus.sourceforge.net/plugins/azplugins_2.0.jar" -O "usr/local/azureus/plugins/azplugins/azplugins_2.0.jar"
+  rm $INSTALL_FOLDER/azureus/plugins/azplugins/*
+  wget "http://azureus.sourceforge.net/plugins/azplugins_2.0.jar" -O "$INSTALL_FOLDER/azureus/plugins/azplugins/azplugins_2.0.jar"
 elif [ "$VERSION" == "2.5.0.4" ]; then
-  rm usr/local/azureus/plugins/azplugins/*
-  wget "http://azureus.sourceforge.net/plugins/azplugins_2.1.4.jar" -O "usr/local/azureus/plugins/azplugins/azplugins_2.1.4.jar"
+  rm $INSTALL_FOLDER/azureus/plugins/azplugins/*
+  wget "http://azureus.sourceforge.net/plugins/azplugins_2.1.4.jar" -O "$INSTALL_FOLDER/azureus/plugins/azplugins/azplugins_2.1.4.jar"
 elif [ "$VERSION" == "3.0.3.4" ]; then
-  rm usr/local/azureus/plugins/azupnpav/*
-  wget "http://azureus.sourceforge.net/plugins/azupnpav_0.1.7.jar" -O "usr/local/azureus/plugins/azupnpav/azupnpav_0.1.7.jar"
+  rm $INSTALL_FOLDER/azureus/plugins/azupnpav/*
+  wget "http://azureus.sourceforge.net/plugins/azupnpav_0.1.7.jar" -O "$INSTALL_FOLDER/azureus/plugins/azupnpav/azupnpav_0.1.7.jar"
 fi
 
 cat << EOF > install/slack-desc
