@@ -538,7 +538,17 @@ fi
 
 mkdir -p $PKG/etc/apache
 cp -a php.ini-dist php.ini-recommended $PKG/etc/apache
-cp -a $CWD/mod_php$PHP_SERIES.conf.example $PKG/etc/apache/mod_php.conf.example
+
+if [ "$PHP_SERIES" == "5" ]; then
+  if (( `default_version` >= 120 )); then
+    cp -a $CWD/mod_php$PHP_SERIES-apache2.conf.example $PKG/etc/apache/mod_php.conf.example
+  else
+    cp -a $CWD/mod_php$PHP_SERIES-apache1.3.conf.example $PKG/etc/apache/mod_php.conf.example
+  fi
+else
+  cp -a $CWD/mod_php$PHP_SERIES-apache1.3.conf.example $PKG/etc/apache/mod_php.conf.example
+fi
+
 chmod 644 $PKG/etc/apache/*
 chown root:root $PKG/etc/apache/*
 
