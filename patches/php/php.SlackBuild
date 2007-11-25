@@ -284,7 +284,7 @@ php_configure() {
 			$CONFIG_FILES="--with-config-file-path=/etc/apache"
 		fi
 
-		EXTENSION_DIR=/usr/lib/php/extensions \
+		EXTENSION_DIR=/usr/$LIB/php/extensions \
 		CFLAGS="$SLKCFLAGS" \
 		./configure --prefix=/usr \
 		$* \
