@@ -30,7 +30,7 @@
 function default_version {
 
   # get version from /etc/slackware-version
-  if [ -f "$1/etc/slackware-version" ]; then
+  if [ -f "$1/etc/slackware-version" ]; then # TODO: this changes :/
     cat $1/etc/slackware-version | awk '{ print $2 }' | sed -e 's/.0$//' | tr -d .
   else
     echo "none"
@@ -280,16 +280,19 @@ php_configure() {
 		if (( `default_version` >= 120 )); then
 			$CONFIG_FILES="--with-config-file-scan-dir=/etc/php --with-config-file-path=/etc/httpd"
 			$SNMP="--with-snmp=shared,/usr"
+			$MBSTRING="--enable-mbstring=shared"
 		else
 			$CONFIG_FILES="--with-config-file-path=/etc/apache"
+			$MBSTRING="--enable-mbstring"
 		fi
 
 		EXTENSION_DIR=/usr/$LIB/php/extensions \
 		CFLAGS="$SLKCFLAGS" \
-		./configure --prefix=/usr \
+		./configure \
 		$* \
-		--with-libdir=$LIB \
+	       	--prefix=/usr \
 		-libdir=$LIBDIR \
+		--with-libdir=$LIB \
 		--prefix=/usr \
 		--sysconfdir=/etc \
 		--disable-safe-mode \
@@ -341,7 +344,7 @@ php_configure() {
 		--with-imap-ssl=/usr \
 		--with-imap=$IMAPLIBDIR \
 		--with-ldap=shared \
-		--enable-mbstring=shared \
+		$MBSTRING \
 		--with-hash \
 		--with-mhash=shared,/usr \
 		--with-mysql=shared,/usr \
@@ -369,7 +372,7 @@ php_configure() {
 		--enable-static=no \
 		--with-gnu-ld \
 		--with-pic \
-		--build=$ARCH-slackware-linux
+		--build=$ARCH-slackware-linux # TODO
 	else
 
 		EXTENSION_DIR=/usr/$LIB/php/extensions \
