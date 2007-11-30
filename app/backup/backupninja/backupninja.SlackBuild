@@ -82,8 +82,10 @@ make DESTDIR=$TMP/package-$PACKAGE install || exit $ERROR_INSTALL
 
 if [ "$VERSION" == "0.9.4" ]; then
   cp $CWD/rsync $TMP/package-$PACKAGE/usr/share/$PACKAGE/
-  cp $CWD/wget $TMP/package-$PACKAGE/usr/share/$PACKAGE/
 fi
+
+# TODO: remove this line if the handler was added to backupninja tree
+cp $CWD/wget $TMP/package-$PACKAGE/usr/share/$PACKAGE/
 
 rm -rf $TMP/package-$PACKAGE/etc/cron.d
 mkdir $TMP/package-$PACKAGE/etc/cron.hourly
