@@ -3,7 +3,6 @@
 # wget and hardlinks, based on rsync handler
 #
 # feedback: rhatto at riseup.net | gpl
-# lot of enhancements grabbed from "rsnap" handler by paulv at bikkel.org
 #
 # Config file options
 # -------------------
