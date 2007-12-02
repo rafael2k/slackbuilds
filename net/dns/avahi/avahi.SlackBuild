@@ -15,7 +15,7 @@
 #  Place - Suite 330, Boston, MA 02111-1307, USA
 #
 # slackbuild for avahi, by Rudson R. Alves
-# requires: sbus pygtk mono monodoc xmltoman
+# requires: glib2 expat libdaemon mono monodoc xmltoman
 # tested: avahi-0.6.21
 #
 
@@ -40,7 +40,7 @@ PKG=${PKG:=$TMP/package-$PKG_NAME}
 REPOS=${REPOS:=$TMP}
 PREFIX=${PREFIX:=/usr}
 PKG_WORK="$TMP/$SRC_NAME"
-CONF_OPTIONS=${CONF_OPTIONS:="--disable-qt4 --with-avahi-priv-access-group=root --disable-static"}
+CONF_OPTIONS=${CONF_OPTIONS:="--sysconfdir=/etc --localstatedir=/var --program-prefix= --program-suffix= --disable-qt4 --with-avahi-priv-access-group=root --disable-static"}
 NUMJOBS=${NUMJOBS:="-j7"}
 
 # Set system libraries' path and optmization flags based on $ARCH

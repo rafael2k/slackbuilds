@@ -1,2 +1,5 @@
-libsndfile
-libfreebob
+# Dependency list to jack-audio-connection-kit
+#
+# dependency [condition] [version]]
+libsndfile				
+libfreebob				
