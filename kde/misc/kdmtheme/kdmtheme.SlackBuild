@@ -15,7 +15,7 @@
 #  Place - Suite 330, Boston, MA 02111-1307, USA
 #
 # slackbuild for kdmtheme, by Rudson R. Alves
-# requires: Null
+# requires: 
 # tested: kdmtheme-1.2
 #
 
@@ -39,7 +39,7 @@ TMP=${TMP:=/tmp}
 PKG=${PKG:=$TMP/package-$PKG_NAME}
 REPOS=${REPOS:=$TMP}
 PREFIX=${PREFIX:=/usr}
-PKG_SRC="$TMP/$SRC_NAME-$SRC_VERSION"
+PKG_WORK="$TMP/$SRC_NAME"
 CONF_OPTIONS=${CONF_OPTIONS:=""}
 NUMJOBS=${NUMJOBS:="-j7"}
 
@@ -73,6 +73,7 @@ rm -rf "$PKG" 2> /dev/null
 mkdir -p "$SRC_DIR" || exit $ERROR_MKDIR
 mkdir -p "$PKG" || exit $ERROR_MKDIR
 mkdir -p "$REPOS" || exit $ERROR_MKDIR
+mkdir -p "$PKG_WORK" || exit $ERROR_MKDIR
 
 # Dowload source if necessary
 SRC="$SRC_NAME-$VERSION.tar.bz2"
@@ -84,8 +85,9 @@ fi
 
 
 # Untar
-cd "$TMP"
+cd "$PKG_WORK"
 tar --no-same-owner --no-same-permissions -xvf "$SRC_DIR/$SRC" || exit $ERROR_TAR
+PKG_SRC=`ls -l | awk '/^d/ { print $8 }'`
 cd "$PKG_SRC"
 
 # Configure
