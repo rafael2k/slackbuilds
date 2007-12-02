@@ -87,7 +87,7 @@ fi
 # Untar
 cd "$PKG_WORK"
 tar --no-same-owner --no-same-permissions -xvf "$SRC_DIR/$SRC" || exit $ERROR_TAR
-PKG_SRC=`ls -l | awk '/^d/ { print $8 }'`
+PKG_SRC=$SRC_NAME-$SRC_VERSION
 cd "$PKG_SRC"
 
 # Configure
