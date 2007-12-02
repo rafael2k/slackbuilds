@@ -16,7 +16,7 @@
 #  MA 02111-1307, USA
 #
 # SlackBuild for pgpdump
-# http://pgp.iijlab.net/pgpdump.html
+# http://www.mew.org/~kazu/proj/pgpdump/
 #
 # Author: Luis ( luis at riseup d0t net )
 #
@@ -33,7 +33,7 @@ CWD="$(pwd)"
 SRC_NAME="pgpdump"
 PKG_NAME="pgpdump"
 ARCH=${ARCH:=i486}
-SRC_VERSION=${VERSION:=0.25}
+SRC_VERSION=${VERSION:=0.26}
 PKG_VERSION="$(echo "$SRC_VERSION" | tr '[[:blank:]-]' '_')"
 BUILD=${BUILD:=1ls}
 SRC_DIR=${SRC_DIR:=$CWD}/$PKG_NAME
@@ -41,7 +41,7 @@ TMP=${TMP:=/tmp}
 PKG=${PKG:=$TMP/package-$PKG_NAME}
 REPOS=${REPOS:=$TMP}
 PREFIX=${PREFIX:=/usr}
-PKG_SRC="$TMP/$SRC_NAME-$SRC_VERSION"
+PKG_WORK="$TMP/$SRC_NAME"
 CONF_OPTIONS=${CONF_OPTIONS:=}
 NUMJOBS=${NUMJOBS:=-j3}
 
@@ -65,25 +65,27 @@ ERROR_TAR=37;       ERROR_MKPKG=38;     ERROR_GPG=39
 ERROR_PATCH=40;     ERROR_VCS=41;       ERROR_MKDIR=42
 
 # Clean up any leftovers of previous builds
-rm -rf "$PKG_SRC" 2> /dev/null
+rm -rf "$PKG_WORK" 2> /dev/null
 rm -rf "$PKG" 2> /dev/null
 
 # Create directories if necessary
 mkdir -p "$SRC_DIR" || exit $ERROR_MKDIR
 mkdir -p "$PKG" || exit $ERROR_MKDIR
 mkdir -p "$REPOS" || exit $ERROR_MKDIR
+mkdir -p "$PKG_WORK" || exit $ERROR_MKDIR
 
 # Dowload source if necessary
 SRC="$SRC_NAME-$SRC_VERSION.tar.gz"
-URL="http://pgp.iijlab.net/pgpdump/$SRC"
+URL="http://www.mew.org/~kazu/proj/pgpdump/$SRC"
 
 if [ ! -s "$SRC_DIR/$SRC" ] || ! gzip -t "$SRC_DIR/$SRC" 2> /dev/null; then
   wget "$URL" -O "$SRC_DIR/$SRC" || exit $ERROR_WGET
 fi
 
 # Untar
-cd "$TMP"
+cd "$PKG_WORK"
 tar --no-same-owner --no-same-permissions -xvf "$SRC_DIR/$SRC" || exit $ERROR_TAR
+PKG_SRC=`ls -l | awk '/^d/ { print $8 }'`
 cd "$PKG_SRC"
 
 # Configure
@@ -140,7 +142,7 @@ pgpdump:
 pgpdump: pgpdump is a PGP packet visualizer which displays the packet format
 pgpdump: of OpenPGP (RFC 2440 + bis) and PGP version 2 (RFC 1991).
 pgpdump:
-pgpdump: For more information, http://pgp.iijlab.net/pgpdump/
+pgpdump: For more information, http://www.mew.org/~kazu/proj/pgpdump/
 pgpdump:
 pgpdump:
 pgpdump:
