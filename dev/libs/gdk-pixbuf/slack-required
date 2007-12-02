@@ -1,0 +1,11 @@
+# Dependency list to gdk-pixbuf
+#
+# dependency [condition] [version]]
+glib				
+glibc-solibs				
+gtk+				
+libX11				
+libXau				
+libXdmcp				
+libXext				
+libxcb				

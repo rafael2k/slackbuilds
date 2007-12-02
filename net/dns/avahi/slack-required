@@ -1,0 +1,8 @@
+# Dependency list to avahi
+#
+# dependency [condition] [version]]
+sbus		>=		1.1.1
+pygtk				
+mono				
+monodoc				
+xmltoman				

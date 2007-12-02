@@ -1,11 +1,11 @@
 #!/bin/bash
 #
-#  pygtk.SlackBuild is free software; you can redistribute
+#  jackd.SlackBuild is free software; you can redistribute
 #  it and/or modify it under the terms of the GNU General Public License as
 #  published by the Free Software Foundation; either version 2 of the License,
 #  or any later version.
 #
-#  pygtk.SlackBuild is distributed in the hope that it will
+#  jackd.SlackBuild is distributed in the hope that it will
 #  be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
 #  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General
 #  Public License for more details.
@@ -14,9 +14,9 @@
 #  this program; if not, write to the Free Software Foundation, Inc., 59 Temple
 #  Place - Suite 330, Boston, MA 02111-1307, USA
 #
-# slackbuild for pygtk, by Rudson R. Alves
+# slackbuild for jackd, by Rudson R. Alves
 # requires: 
-# tested: pygtk-2.12.0
+# tested: jackd-0.103.0
 #
 
 # Look for slackbuildrc
@@ -28,10 +28,10 @@ fi
 
 # Set variables
 CWD="$(pwd)"
-SRC_NAME="pygtk"
-PKG_NAME="pygtk"
+SRC_NAME="jack-audio-connection-kit"
+PKG_NAME="jackd"
 ARCH=${ARCH:=i486}
-SRC_VERSION=${VERSION:=2.12.0}
+SRC_VERSION=${VERSION:=0.103.0}
 PKG_VERSION="$(echo "$SRC_VERSION" | tr '[[:blank:]-]' '_')"
 BUILD=${BUILD:=1rra}
 SRC_DIR=${SRC_DIR:=$CWD}/$PKG_NAME
@@ -39,8 +39,8 @@ TMP=${TMP:=/tmp}
 PKG=${PKG:=$TMP/package-$PKG_NAME}
 REPOS=${REPOS:=$TMP}
 PREFIX=${PREFIX:=/usr}
-PKG_SRC="$TMP/$SRC_NAME-$SRC_VERSION"
-CONF_OPTIONS=${CONF_OPTIONS:="--sysconfdir=/etc"}
+PKG_WORK="$TMP/$SRC_NAME"
+CONF_OPTIONS=${CONF_OPTIONS:="--program-prefix= --program-suffix= --sysconfdir=/etc --localstatedir=/var --enable-freebob"}
 NUMJOBS=${NUMJOBS:="-j7"}
 
 # Set system libraries' path and optmization flags based on $ARCH
@@ -73,19 +73,21 @@ rm -rf "$PKG" 2> /dev/null
 mkdir -p "$SRC_DIR" || exit $ERROR_MKDIR
 mkdir -p "$PKG" || exit $ERROR_MKDIR
 mkdir -p "$REPOS" || exit $ERROR_MKDIR
+mkdir -p "$PKG_WORK" || exit $ERROR_MKDIR
 
 # Dowload source if necessary
-SRC="$SRC_NAME-$VERSION.tar.bz2"
-URL="ftp://ftp.gnome.org/pub/gnome/sources/pygtk/2.12/$SRC"
+SRC="$SRC_NAME-$VERSION.tar.gz"
+URL="http://downloads.sourceforge.net/jack-audio-connection-kit/$SRC"
 
-if [ ! -s "$SRC_DIR/$SRC" ] || ! bunzip2 -t "$SRC_DIR/$SRC" 2> /dev/null; then
+if [ ! -s "$SRC_DIR/$SRC" ] || ! gunzip -t "$SRC_DIR/$SRC" 2> /dev/null; then
   wget "$URL" -O "$SRC_DIR/$SRC" || exit $ERROR_WGET
 fi
 
 
 # Untar
-cd "$TMP"
+cd "$PKG_WORK"
 tar --no-same-owner --no-same-permissions -xvf "$SRC_DIR/$SRC" || exit $ERROR_TAR
+PKG_SRC=`ls -l | awk '/^d/ { print $8 }'`
 cd "$PKG_SRC"
 
 # Configure
@@ -109,7 +111,7 @@ make install DESTDIR="$PKG" || exit $ERROR_INSTALL
 )
 
 # Install documentation
-DOCS="AUTHORS COPYING ChangeLog ChangeLog.pre-2-0 ChangeLog.pre-2-6 INSTALL MAPPING NEWS PKG-INFO README THREADS TODO"
+DOCS="AUTHORS COPYING COPYING.GPL COPYING.LGPL README TODO"
 mkdir -p "$PKG/usr/doc/$PKG_NAME-$PKG_VERSION" || exit $ERROR_MKDIR
 cp -a $DOCS "$PKG/usr/doc/$PKG_NAME-$PKG_VERSION"
 
@@ -124,17 +126,17 @@ cat << EODESC > "$PKG/install/slack-desc"
 # customary to leave one space after the ':'.
 
      |-----handy-ruler--------------------------------------------------------|
-pygtk: pygtk (A set of Python bindings for the GTK widget set)
-pygtk:
-pygtk: PyGTK provides a convenient wrapper for the GTK library for use in
-pygtk: Python programs, and takes care of many of the boring details such
-pygtk: as managing memory and type casting. When combined with PyORBit and
-pygtk: gnome-python, it can be used to write full featured Gnome
-pygtk: applications.
-pygtk:
-pygtk:
-pygtk:
-pygtk:
+jack-audio-connection-kit: jack-audio-connection-kit by Slack.Sarava
+jack-audio-connection-kit:
+jack-audio-connection-kit: JACK is a low-latency audio server, written for
+jack-audio-connection-kit: POSIX conformant operating systems such as GNU/Linux
+jack-audio-connection-kit: and Apple's OS X. It can connect a number of
+jack-audio-connection-kit: different applications to an audio device, as well
+jack-audio-connection-kit: as allowing them to share audio between themselves.
+jack-audio-connection-kit: Its clients can run in their own processes (ie. as
+jack-audio-connection-kit: normal applications), or can they can run within the
+jack-audio-connection-kit: JACK server (ie. as a "plugin").
+jack-audio-connection-kit:
 EODESC
 
 # Build the package

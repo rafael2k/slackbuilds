@@ -1,11 +1,11 @@
 #!/bin/bash
 #
-#  pygtk.SlackBuild is free software; you can redistribute
+#  gconf.SlackBuild is free software; you can redistribute
 #  it and/or modify it under the terms of the GNU General Public License as
 #  published by the Free Software Foundation; either version 2 of the License,
 #  or any later version.
 #
-#  pygtk.SlackBuild is distributed in the hope that it will
+#  gconf.SlackBuild is distributed in the hope that it will
 #  be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
 #  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General
 #  Public License for more details.
@@ -14,9 +14,9 @@
 #  this program; if not, write to the Free Software Foundation, Inc., 59 Temple
 #  Place - Suite 330, Boston, MA 02111-1307, USA
 #
-# slackbuild for pygtk, by Rudson R. Alves
-# requires: 
-# tested: pygtk-2.12.0
+# slackbuild for gconf, by Rudson R. Alves
+# requires: glib orbit2
+# tested: gconf-2.20.1
 #
 
 # Look for slackbuildrc
@@ -28,10 +28,10 @@ fi
 
 # Set variables
 CWD="$(pwd)"
-SRC_NAME="pygtk"
-PKG_NAME="pygtk"
+SRC_NAME="GConf"
+PKG_NAME="gconf"
 ARCH=${ARCH:=i486}
-SRC_VERSION=${VERSION:=2.12.0}
+SRC_VERSION=${VERSION:=2.20.1}
 PKG_VERSION="$(echo "$SRC_VERSION" | tr '[[:blank:]-]' '_')"
 BUILD=${BUILD:=1rra}
 SRC_DIR=${SRC_DIR:=$CWD}/$PKG_NAME
@@ -39,8 +39,8 @@ TMP=${TMP:=/tmp}
 PKG=${PKG:=$TMP/package-$PKG_NAME}
 REPOS=${REPOS:=$TMP}
 PREFIX=${PREFIX:=/usr}
-PKG_SRC="$TMP/$SRC_NAME-$SRC_VERSION"
-CONF_OPTIONS=${CONF_OPTIONS:="--sysconfdir=/etc"}
+PKG_WORK="$TMP/$SRC_NAME"
+CONF_OPTIONS=${CONF_OPTIONS:=""}
 NUMJOBS=${NUMJOBS:="-j7"}
 
 # Set system libraries' path and optmization flags based on $ARCH
@@ -73,10 +73,11 @@ rm -rf "$PKG" 2> /dev/null
 mkdir -p "$SRC_DIR" || exit $ERROR_MKDIR
 mkdir -p "$PKG" || exit $ERROR_MKDIR
 mkdir -p "$REPOS" || exit $ERROR_MKDIR
+mkdir -p "$PKG_WORK" || exit $ERROR_MKDIR
 
 # Dowload source if necessary
 SRC="$SRC_NAME-$VERSION.tar.bz2"
-URL="ftp://ftp.gnome.org/pub/gnome/sources/pygtk/2.12/$SRC"
+URL="http://ftp.acc.umu.se/pub/gnome/sources/GConf/2.20/$SRC"
 
 if [ ! -s "$SRC_DIR/$SRC" ] || ! bunzip2 -t "$SRC_DIR/$SRC" 2> /dev/null; then
   wget "$URL" -O "$SRC_DIR/$SRC" || exit $ERROR_WGET
@@ -84,8 +85,9 @@ fi
 
 
 # Untar
-cd "$TMP"
+cd "$PKG_WORK"
 tar --no-same-owner --no-same-permissions -xvf "$SRC_DIR/$SRC" || exit $ERROR_TAR
+PKG_SRC=`ls -l | awk '/^d/ { print $8 }'`
 cd "$PKG_SRC"
 
 # Configure
@@ -109,7 +111,7 @@ make install DESTDIR="$PKG" || exit $ERROR_INSTALL
 )
 
 # Install documentation
-DOCS="AUTHORS COPYING ChangeLog ChangeLog.pre-2-0 ChangeLog.pre-2-6 INSTALL MAPPING NEWS PKG-INFO README THREADS TODO"
+DOCS="ABOUT-NLS AUTHORS COPYING ChangeLog INSTALL NEWS README TODO"
 mkdir -p "$PKG/usr/doc/$PKG_NAME-$PKG_VERSION" || exit $ERROR_MKDIR
 cp -a $DOCS "$PKG/usr/doc/$PKG_NAME-$PKG_VERSION"
 
@@ -124,17 +126,17 @@ cat << EODESC > "$PKG/install/slack-desc"
 # customary to leave one space after the ':'.
 
      |-----handy-ruler--------------------------------------------------------|
-pygtk: pygtk (A set of Python bindings for the GTK widget set)
-pygtk:
-pygtk: PyGTK provides a convenient wrapper for the GTK library for use in
-pygtk: Python programs, and takes care of many of the boring details such
-pygtk: as managing memory and type casting. When combined with PyORBit and
-pygtk: gnome-python, it can be used to write full featured Gnome
-pygtk: applications.
-pygtk:
-pygtk:
-pygtk:
-pygtk:
+gconf: gconf by Slack.Sarava
+gconf:
+gconf: GConf is a configuration database system, functionally similar to the
+gconf: Windows registry but lots better. :-) It's being written for the GNOME
+gconf: desktop but does not require GNOME; configure should notice if GNOME
+gconf: is not installed and compile the basic GConf library anyway.
+gconf:
+gconf:
+gconf:
+gconf:
+gconf:
 EODESC
 
 # Build the package

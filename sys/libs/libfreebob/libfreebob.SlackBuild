@@ -14,8 +14,9 @@
 #  this program; if not, write to the Free Software Foundation, Inc., 59 Temple
 #  Place - Suite 330, Boston, MA 02111-1307, USA
 #
-# slackbuild for libfreebob, by Rafael Diniz
-# tested: libfreebob-1.0.3
+# slackbuild for libfreebob, by Rudson R. Alves
+# requires: cxxlibs gcc glibc-solibs alsa-lib libavc1394 libiec61883 libraw1394 libxml2
+# tested: libfreebob-1.0.7
 #
 
 # Look for slackbuildrc
@@ -30,17 +31,17 @@ CWD="$(pwd)"
 SRC_NAME="libfreebob"
 PKG_NAME="libfreebob"
 ARCH=${ARCH:=i486}
-SRC_VERSION=${VERSION:=1.0.3}
+SRC_VERSION=${VERSION:=1.0.7}
 PKG_VERSION="$(echo "$SRC_VERSION" | tr '[[:blank:]-]' '_')"
-BUILD=${BUILD:=1rd}
+BUILD=${BUILD:=1rra}
 SRC_DIR=${SRC_DIR:=$CWD}/$PKG_NAME
 TMP=${TMP:=/tmp}
 PKG=${PKG:=$TMP/package-$PKG_NAME}
 REPOS=${REPOS:=$TMP}
 PREFIX=${PREFIX:=/usr}
-PKG_SRC="$TMP/$SRC_NAME-$SRC_VERSION"
-CONF_OPTIONS=${CONF_OPTIONS:=""}
-NUMJOBS=${NUMJOBS:="-j3"}
+PKG_WORK="$TMP/$SRC_NAME"
+CONF_OPTIONS=${CONF_OPTIONS:="--disable-static --program-prefix= --program-suffix= --build=$ARCH-slackware-linux"}
+NUMJOBS=${NUMJOBS:="-j7"}
 
 # Set system libraries' path and optmization flags based on $ARCH
 LIBDIR="$PREFIX/lib"
@@ -72,19 +73,21 @@ rm -rf "$PKG" 2> /dev/null
 mkdir -p "$SRC_DIR" || exit $ERROR_MKDIR
 mkdir -p "$PKG" || exit $ERROR_MKDIR
 mkdir -p "$REPOS" || exit $ERROR_MKDIR
+mkdir -p "$PKG_WORK" || exit $ERROR_MKDIR
 
 # Dowload source if necessary
-SRC="$SRC_NAME-$VERSION.tar.gz"
-URL="http://ufpr.dl.sourceforge.net/sourceforge/freebob//$SRC"
+SRC="$SRC_NAME-$VERSION.tar.bz2"
+URL="http://downloads.sourceforge.net/libfreebob/$SRC"
 
-if [ ! -s "$SRC_DIR/$SRC" ] || ! gunzip -t "$SRC_DIR/$SRC" 2> /dev/null; then
+if [ ! -s "$SRC_DIR/$SRC" ] || ! bunzip2 -t "$SRC_DIR/$SRC" 2> /dev/null; then
   wget "$URL" -O "$SRC_DIR/$SRC" || exit $ERROR_WGET
 fi
 
 
 # Untar
-cd "$TMP"
+cd "$PKG_WORK"
 tar --no-same-owner --no-same-permissions -xvf "$SRC_DIR/$SRC" || exit $ERROR_TAR
+PKG_SRC=`ls -l | awk '/^d/ { print $8 }'`
 cd "$PKG_SRC"
 
 # Configure
@@ -108,7 +111,7 @@ make install DESTDIR="$PKG" || exit $ERROR_INSTALL
 )
 
 # Install documentation
-DOCS="NEWS TODO README AUTHORS INSTALL ChangeLog COPYING"
+DOCS="AUTHORS COPYING ChangeLog INSTALL NEWS README TODO"
 mkdir -p "$PKG/usr/doc/$PKG_NAME-$PKG_VERSION" || exit $ERROR_MKDIR
 cp -a $DOCS "$PKG/usr/doc/$PKG_NAME-$PKG_VERSION"
 
@@ -123,17 +126,17 @@ cat << EODESC > "$PKG/install/slack-desc"
 # customary to leave one space after the ':'.
 
           |-----handy-ruler---------------------------------------------------|
-libfreebob: libfreebob (driver for firewire audio devices) 
+libfreebob: libfreebob by Slack.Sarava
 libfreebob:
-libfreebob: All eventually supported devices have a software running on in it 
-libfreebob: called BeBoB. We are trying to free it from the propritary world 
-libfreebob: of operating systems.
-libfreebob:
-libfreebob:
-libfreebob:
-libfreebob:
-libfreebob: http://freebob.sourceforge.net/
-libfreebob:
+libfreebob: What's FreeBoB project?
+libfreebob: * 'BeBoB' means the BridgeCo (http://www.bridgeco.net/) enhanced
+libfreebob:    breakout box firmware.
+libfreebob: * BeBoB devices are audio breakout boxes running this firmware.
+libfreebob: * BeBoB devices are attached with IEEE1394, a.k.a FireWire(tm) or
+libfreebob:   i.Link(tm), a high performance serial bus.
+libfreebob: * FreeBoB is a a generic Linux driver for BeBoB devices and will
+libfreebob:   support JACK and ALSA API's.
+libfreebob: * FreeBoB project aims to provide this generic Linux driver.
 EODESC
 
 # Build the package

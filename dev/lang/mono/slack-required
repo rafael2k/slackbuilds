@@ -1,0 +1,6 @@
+# Dependency list to mono
+#
+# dependency [condition] [version]]
+glib2		>=		2.12.12
+glibc-solibs		>=		2.5
+zlib		>=		1.2.3

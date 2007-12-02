@@ -1,0 +1,4 @@
+# Dependency list to libdaemon
+#
+# dependency [condition] [version]]
+glibc-solibs				

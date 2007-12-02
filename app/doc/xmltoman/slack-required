@@ -1,0 +1,4 @@
+# Dependency list to xmltoman
+#
+# dependency [condition] [version]]
+perl				
