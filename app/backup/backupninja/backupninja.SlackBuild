@@ -90,6 +90,18 @@ tar --no-same-owner --no-same-permissions -xvf "$SRC_DIR/$SRC" || exit $ERROR_TA
 PKG_SRC=`ls -l | awk '/^d/ { print $8 }'`
 cd "$PKG_SRC"
 
+# Patch source
+patches="[[PATCH FILES]]
+         $PKG_NAME.diff $PKG_NAME-$PKG_VERSION.diff
+         $PKG_NAME-$PKG_VERSION-$ARCH.diff $PKG_NAME-$ARCH.diff"
+for patch in $patches; do
+  if [ -f "$CWD/$patch" ]; then
+    patch -Np[[NUMBER OF PREFIX SLASHES TO STRIP]] < "$CWD/$patch" || exit $ERROR_PATCH
+  elif [ -f "$CWD/patches/$patch" ]; then
+    patch -Np[[NUMBER OF PREFIX SLASHES TO STRIP]] < "$CWD/patches/$patch" || exit $ERROR_PATCH
+  fi
+done
+
 # Configure
 ./autogen.sh || exit $ERROR_CONF
 CFLAGS="$SLKCFLAGS" \
