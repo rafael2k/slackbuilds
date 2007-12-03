@@ -91,6 +91,7 @@ PKG_SRC=`ls -l | awk '/^d/ { print $8 }'`
 cd "$PKG_SRC"
 
 # Configure
+./autogen.sh || exit $ERROR_CONF
 CFLAGS="$SLKCFLAGS" \
   CXXFLAGS="$SLKCFLAGS" \
   ./configure \
@@ -160,44 +161,3 @@ makepkg -l y -c n "$REPOS/$PKG_NAME-$PKG_VERSION-$ARCH-$BUILD.tgz" || exit $ERRO
 if [ "$CLEANUP" == "yes" ]; then
   rm -rf "$PKG_SRC" "$PKG"
 fi
-# Configure
-./autogen.sh || exit $ERROR_CONF
-CFLAGS="$SLKCFLAGS" \
-  CXXFLAGS="$SLKCFLAGS" \
-  ./configure \
-  --prefix="$PREFIX" --libdir="$LIBDIR" $CONF_OPTIONS || exit $ERROR_CONF
-
-# Install
-make install DESTDIR="$PKG" || exit $ERROR_INSTALL
-
-# TODO: remove this line as long as the handler is added to the source tree
-cp $CWD/wget $PKG/usr/share/$PKG_NAME/
-
-# Cron tasks
-rm -rf $PKG/etc/cron.d
-mkdir $PKG/etc/cron.hourly
-cp $CWD/backupninja.cron $PKG/etc/cron.hourly/backupninja
-chmod +x $PKG/etc/cron.hourly/backupninja
-
-# Permissions
-mkdir $PKG/etc/backup.d
-chown -R root.root $PKG/*
-chmod 600 $PKG/etc/backup.d
-
-# Fix config files
-sed -e 's/\/usr\/var\/log/\/var\/log\/backup/g' $PKG/etc/backupninja.conf > $PKG/etc/backupninja.conf.new
-rm $PKG/etc/backupninja.conf 
-sed -e 's/\/usr\/var\/log/\/var\/log\/backup/g' $PKG/etc/logrotate.d/backupninja > $PKG/etc/logrotate.d/backupninja.new
-mv $PKG/etc/logrotate.d/backupninja.new $PKG/etc/logrotate.d/backupninja
-
-backupninja: backupninja (a silent flower blossom death strike to lost data)
-backupninja:
-backupninja: Backupninja allows you to coordinate system backup by dropping a few
-backupninja: simple configuration files into /etc/backup.d/. Most programs you
-backupninja: might use for making backups don't have their own configuration file
-backupninja: format. Backupninja provides a centralized way to configure and
-backupninja: schedule many different backup utilities.
-backupninja:
-backupninja:
-backupninja:
-backupninja:
