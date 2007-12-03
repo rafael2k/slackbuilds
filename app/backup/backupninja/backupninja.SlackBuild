@@ -96,9 +96,9 @@ patches="[[PATCH FILES]]
          $PKG_NAME-$PKG_VERSION-$ARCH.diff $PKG_NAME-$ARCH.diff"
 for patch in $patches; do
   if [ -f "$CWD/$patch" ]; then
-    patch -Np[[NUMBER OF PREFIX SLASHES TO STRIP]] < "$CWD/$patch" || exit $ERROR_PATCH
+    patch -Np1 < "$CWD/$patch" || exit $ERROR_PATCH
   elif [ -f "$CWD/patches/$patch" ]; then
-    patch -Np[[NUMBER OF PREFIX SLASHES TO STRIP]] < "$CWD/patches/$patch" || exit $ERROR_PATCH
+    patch -Np1 < "$CWD/patches/$patch" || exit $ERROR_PATCH
   fi
 done
 
