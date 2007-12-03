@@ -86,6 +86,7 @@ tar xvf $SRC_DIR/$SRC || exit $ERROR_TAR
 cd $FILE_NAME-$VERSION
 
 # config and install!
+# TODO!!!
 mkdir -p /install
 
 perl Makefile.PL || exit $ERROR_CONF
