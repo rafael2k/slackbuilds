@@ -27,7 +27,7 @@ if [ -f ~/.slackbuildrc ]; then
 elif [ -f /etc/slackbuildrc ]; then
   source /etc/slackbuildrc
 fi
-PREFIX=
+
 # Set variables
 CWD="$(pwd)"
 SRC_NAME="rkhunter"
