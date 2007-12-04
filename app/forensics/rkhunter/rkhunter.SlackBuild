@@ -1,0 +1,168 @@
+#!/bin/bash
+#
+#  rkhunter.SlackBuild is free software; you can redistribute
+#  it and/or modify it under the terms of the GNU General Public
+#  License as published by the Free Software Foundation; either
+#  version 2 of the License, or any later version.
+#
+#  rkhunter.SlackBuild is distributed in the hope that it
+#  will be useful, but WITHOUT ANY WARRANTY; without even the
+#  implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+#  PURPOSE.  See the GNU General Public License for more details.
+#
+#  You should have received a copy of the GNU General Public
+#  License along with this program; if not, write to the Free
+#  Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
+#  MA 02111-1307, USA
+#
+# SlackBuild for Rootkit Hunter
+# http://rkhunter.sourceforge.net/
+#
+# Author: Luis ( luis at riseup d0t net )
+#
+
+# Look for slackbuildrc
+if [ -f ~/.slackbuildrc ]; then
+  source ~/.slackbuildrc
+elif [ -f /etc/slackbuildrc ]; then
+  source /etc/slackbuildrc
+fi
+PREFIX=
+# Set variables
+CWD="$(pwd)"
+SRC_NAME="rkhunter"
+PKG_NAME="rkhunter"
+ARCH=${ARCH:=i486}
+SRC_VERSION=${VERSION:=1.3.0}
+PKG_VERSION="$(echo "$SRC_VERSION" | tr '[[:blank:]-]' '_')"
+BUILD=${BUILD:=1ls}
+SRC_DIR=${SRC_DIR:=$CWD}/$PKG_NAME
+TMP=${TMP:=/tmp}
+PKG=${PKG:=$TMP/package-$PKG_NAME}
+REPOS=${REPOS:=$TMP}
+PREFIX=${PREFIX:=}
+PKG_WORK="$TMP/$SRC_NAME"
+CONF_OPTIONS=${CONF_OPTIONS:=}
+NUMJOBS=${NUMJOBS:=}
+
+# Set system libraries' path based on $ARCH
+if [ "$ARCH" = "x86_64" ]; then
+  LIBDIR="$PREFIX/lib64"
+else
+  LIBDIR="$PREFIX/lib"
+fi
+
+# Set error codes (used by createpkg)
+ERROR_WGET=31;      ERROR_MAKE=32;      ERROR_INSTALL=33
+ERROR_MD5=34;       ERROR_CONF=35;      ERROR_HELP=36
+ERROR_TAR=37;       ERROR_MKPKG=38;     ERROR_GPG=39
+ERROR_PATCH=40;     ERROR_VCS=41;       ERROR_MKDIR=42
+
+# Clean up any leftovers of previous builds
+rm -rf "$PKG_WORK" 2> /dev/null
+rm -rf "$PKG" 2> /dev/null
+
+# Create directories if necessary
+mkdir -p "$SRC_DIR" || exit $ERROR_MKDIR
+mkdir -p "$PKG" || exit $ERROR_MKDIR
+mkdir -p "$REPOS" || exit $ERROR_MKDIR
+mkdir -p "$PKG_WORK" || exit $ERROR_MKDIR
+
+# Dowload source if necessary
+SRC="$SRC_NAME-$SRC_VERSION.tar.gz"
+URL="http://downloads.sourceforge.net/rkhunter/$SRC"
+
+if [ ! -s "$SRC_DIR/$SRC" ] || ! gzip -t "$SRC_DIR/$SRC" 2> /dev/null; then
+  wget "$URL" -O "$SRC_DIR/$SRC" || exit $ERROR_WGET
+fi
+
+# Untar
+cd "$PKG_WORK"
+tar --no-same-owner --no-same-permissions -xvf "$SRC_DIR/$SRC" || exit $ERROR_TAR
+PKG_SRC=`ls -l | awk '/^d/ { print $8 }'`
+cd "$PKG_SRC"
+
+# Install
+if [ -z "$PREFIX" ]; then
+  RPM_BUILD_ROOT="$PKG" \
+    ./installer.sh --layout RPM --striproot "$PKG" --install || exit $ERROR_INSTALL
+  mv -f "$PKG"/etc/rkhunter.conf "$PKG"/etc/rkhunter.conf.new
+  mv -f "$PKG"/usr/local/share/* "$PKG"/usr
+  rm -rf "$PKG"/usr/local/share
+else
+  mkdir -p "$PKG/$PREFIX" || exit $ERROR_MKDIR
+  ./installer.sh --layout custom "$PKG/$PREFIX" --striproot "$PKG" --install || exit $ERROR_INSTALL
+  mv -f "$PKG/$PREFIX"/etc/rkhunter.conf "$PKG/$PREFIX"/etc/rkhunter.conf.new
+  mv -f "$PKG/$PREFIX"/share/* "$PKG"/usr
+  rm -rf "$PKG/$PREFIX"/share
+  if ! echo "$PATH" | grep -q "$PREFIX"/bin; then
+    mkdir -p "$PKG"/usr/local/bin || exit $ERROR_MKDIR
+    ln -sf "$PREFIX"/bin/rkhunter "$PKG"/usr/local/bin/rkhunter
+  fi
+fi
+
+# Compress and link manpages
+if [ -d "$PKG"/usr/man ]; then
+  ( cd "$PKG"/usr/man
+    for manpagedir in $(find . -type d -name "man*") ; do
+      ( cd $manpagedir
+        for eachpage in $( find . -type l -maxdepth 1) ; do
+          ln -s $( readlink $eachpage ).gz $eachpage.gz
+          rm $eachpage
+        done
+        gzip -9 *.?
+      )
+    done
+  )
+fi
+
+# Add package description (slack-desc)
+mkdir -p "$PKG/install" || exit $ERROR_MKDIR
+cat << EODESC > "$PKG/install/slack-desc"
+# HOW TO EDIT THIS FILE:
+# The "handy ruler" below makes it easier to edit a package description.  Line
+# up the first '|' above the ':' following the base package name, and the '|'
+# on the right side marks the last column you can put a character in.  You must
+# make exactly 11 lines for the formatting to be correct.  It's also
+# customary to leave one space after the ':'.
+
+        |-----handy-ruler------------------------------------------------------|
+rkhunter: Rootkit Hunter
+rkhunter: 
+rkhunter: Rootkit Hunter (RKH) is a security monitoring and analyzing tool for
+rkhunter: POSIX compliant systems. It checks your computer for the presence of
+rkhunter: rootkits and other unwanted tools.
+rkhunter: 
+rkhunter: For more information, http://rkhunter.sourceforge.net/
+rkhunter: 
+rkhunter: 
+rkhunter: 
+rkhunter: 
+EODESC
+
+# Add a post-installation script (doinst.sh)
+cat << EOSCRIPT > "$PKG/install/doinst.sh"
+config() {
+  NEW="\$1"
+  OLD="\$(dirname \$NEW)/\$(basename \$NEW .new)"
+  # If there's no config file by that name, mv it over:
+  if [ ! -r \$OLD ]; then
+    mv \$NEW \$OLD
+  elif [ "\$(cat \$OLD | md5sum)" = "\$(cat \$NEW | md5sum)" ]; then
+    # toss the redundant copy
+    rm \$NEW
+  fi
+  # Otherwise, we leave the .new copy for the admin to consider...
+}
+
+config $PREFIX/etc/rkhunter.conf.new
+EOSCRIPT
+
+# Build the package
+cd "$PKG"
+makepkg -l y -c n "$REPOS/$PKG_NAME-$PKG_VERSION-$ARCH-$BUILD.tgz" || exit $ERROR_MKPKG
+
+# Delete source and build directories if requested
+if [ "$CLEANUP" == "yes" ]; then
+  rm -rf "$PKG_WORK" "$PKG"
+fi
