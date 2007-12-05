@@ -126,7 +126,7 @@ find "$PKG/$PREFIX/share/ivi/modules" -name "*.vpi" -exec chmod 755 {} \;
 # Install documentation
 DOCS="LIMITATIONS README *.txt"
 mkdir -p "$PKG/usr/doc/$PKG_NAME-$PKG_VERSION" || exit $ERROR_MKDIR
-cp -a $DOCS "$PKG/usr/doc/$PKG_NAME-$PKG_VERSION"
+cp -a $DOCS "$PKG/usr/doc/$PKG_NAME-$PKG_VERSION" 2> /dev/null
 mv "$PKG/$PREFIX/share/ivi/doc/"{getting_started,ivi_commands} \
   "$PKG/usr/doc/$PKG_NAME-$PKG_VERSION"
 rmdir "$PKG/$PREFIX/share/ivi/doc"
@@ -181,5 +181,5 @@ makepkg -l y -c n "$REPOS/$PKG_NAME-$PKG_VERSION-$ARCH-$BUILD.tgz" || exit $ERRO
 
 # Delete source and build directories if requested
 if [ "$CLEANUP" == "yes" ]; then
-  rm -rf "$PKG_SRC" "$PKG"
+  rm -rf "$PKG_WORK" "$PKG"
 fi

@@ -183,7 +183,7 @@ DOCS="ABOUT-NLS AUTHORS COPYING ChangeLog INSTALL NEWS README* THANKS TODO \
       VERSION doc/DETAILS doc/HACKING doc/KEYSERVER doc/OpenPGP doc/TRANSLATE \
       doc/examples doc/*.png"
 mkdir -p "$PKG/usr/doc/$PKG_NAME-$PKG_VERSION" || exit $ERROR_MKDIR
-cp -a $DOCS "$PKG/usr/doc/$PKG_NAME-$PKG_VERSION"
+cp -a $DOCS "$PKG/usr/doc/$PKG_NAME-$PKG_VERSION" 2> /dev/null
 
 # Build HTML documentation
 ( cd doc
@@ -245,5 +245,5 @@ makepkg -l y -c n "$REPOS/$PKG_NAME-$PKG_VERSION-$ARCH-$BUILD.tgz" || exit $ERRO
 
 # Delete source and build directories if requested
 if [ "$CLEANUP" == "yes" ]; then
-  rm -rf "$PKG_SRC" "$PKG"
+  rm -rf "$PKG_WORK" "$PKG"
 fi

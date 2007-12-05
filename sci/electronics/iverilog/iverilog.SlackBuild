@@ -130,8 +130,8 @@ fi
 
 # Install documentation
 mkdir -p "$PKG/usr/doc/$PKG_NAME-$PKG_VERSION/vvp" || exit $ERROR_MKDIR
-cp -a COPYING INSTALL *.txt examples "$PKG/usr/doc/$PKG_NAME-$PKG_VERSION"
-cp -a vvp/*.txt vvp/examples "$PKG/usr/doc/$PKG_NAME-$PKG_VERSION/vvp"
+cp -a COPYING INSTALL *.txt examples "$PKG/usr/doc/$PKG_NAME-$PKG_VERSION" 2> /dev/null
+cp -a vvp/*.txt vvp/examples "$PKG/usr/doc/$PKG_NAME-$PKG_VERSION/vvp" 2> /dev/null
 
 # Add package description (slack-desc)
 mkdir -p "$PKG/install" || exit $ERROR_MKDIR
@@ -163,5 +163,5 @@ makepkg -l y -c n "$REPOS/$PKG_NAME-$PKG_VERSION-$ARCH-$BUILD.tgz" || exit $ERRO
 
 # Delete source and build directories if requested
 if [ "$CLEANUP" == "yes" ]; then
-  rm -rf "$PKG_SRC" "$PKG"
+  rm -rf "$PKG_WORK" "$PKG"
 fi

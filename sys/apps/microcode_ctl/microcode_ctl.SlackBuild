@@ -110,7 +110,7 @@ fi
 # Install documentation
 DOCS="Changelog README intel-*.txt"
 mkdir -p "$PKG/usr/doc/$PKG_NAME-$PKG_VERSION" || exit $ERROR_MKDIR
-cp -a $DOCS "$PKG/usr/doc/$PKG_NAME-$PKG_VERSION"
+cp -a $DOCS "$PKG/usr/doc/$PKG_NAME-$PKG_VERSION" 2> /dev/null
 
 # Move the initialization script to /etc/rc.d/, renaming it to rc.*
 ( cd "$PKG/etc/rc.d"
@@ -171,5 +171,5 @@ makepkg -l y -c n "$REPOS/$PKG_NAME-$PKG_VERSION-$ARCH-$BUILD.tgz" || exit $ERRO
 
 # Delete source and build directories if requested
 if [ "$CLEANUP" == "yes" ]; then
-  rm -rf "$PKG_SRC" "$PKG"
+  rm -rf "$PKG_WORK" "$PKG"
 fi
