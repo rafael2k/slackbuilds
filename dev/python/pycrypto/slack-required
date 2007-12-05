@@ -1,0 +1,4 @@
+# Dependency list to pycrypto
+#
+# dependency [condition] [version]]
+python				
