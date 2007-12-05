@@ -1,0 +1,4 @@
+# Dependency list to kedpm
+#
+# dependency [condition] [version]]
+pycrypto				
