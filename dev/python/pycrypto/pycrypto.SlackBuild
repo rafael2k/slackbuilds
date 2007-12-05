@@ -102,7 +102,7 @@ python setup.py build install --root=$PKG
 )
 
 # Install documentation
-DOCS="NEWS TODO README AUTHORS INSTALL ChangeLog MAINTAINERS COPYING readme.*"
+DOCS="ChangeLog LICENSE README TODO"
 mkdir -p "$PKG/usr/doc/$PKG_NAME-$PKG_VERSION" || exit $ERROR_MKDIR
 for doc in $DOCS; do
   if [ -f "$doc" ]; then
