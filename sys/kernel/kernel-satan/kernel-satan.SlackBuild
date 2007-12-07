@@ -26,11 +26,11 @@ fi
 
 PACKAGE="kernel-satan"
 KERNEL_VERSION="2.6.22"
-EXTRAVERSION="14"
+EXTRAVERSION="10"
 ARCH="x86_64"
-BUILD="2rha"
+BUILD="1rha"
 PATCHSET="vs2.2.0.5"
-PATCH_VERSION="2.6.22.14-$PATCHSET"
+PATCH_VERSION="2.6.22.10-$PATCHSET"
 TMP=${TMP:=/tmp}
 SRC_DIR=${SRC:=$CWD}
 REPOS=${REPOS:=$TMP}
@@ -43,7 +43,7 @@ RTOOL="wget"
 KERNEL="linux-$KERNEL_VERSION.tar.bz2"
 PATCH="patch-$PATCH_VERSION.diff"
 KERNEL_URL="http://www.kernel.org/pub/linux/kernel/v2.6/$KERNEL"
-PATCH_URL="http://vserver.13thfloor.at/Experimental/$PATCH"
+PATCH_URL="http://ftp.linux-vserver.org/pub/kernel/vs2.2/$PATCH"
 SRC_DIR="$SRC_DIR/kernel"
 
 mkdir -p $SRC_DIR
