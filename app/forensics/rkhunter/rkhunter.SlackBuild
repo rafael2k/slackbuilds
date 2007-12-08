@@ -76,6 +76,40 @@ if [ ! -s "$SRC_DIR/$SRC" ] || ! gzip -t "$SRC_DIR/$SRC" 2> /dev/null; then
   wget "$URL" -O "$SRC_DIR/$SRC" || exit $ERROR_WGET
 fi
 
+# Import minimized signing key from
+# http://keyserver.noreply.org/pks/lookup?op=get&search=0xEA5F4CD3A65F5E17
+gpg --import << EOKEY || exit $ERROR_GPG
+-----BEGIN PGP PUBLIC KEY BLOCK-----
+
+mIsERqMwPQEEAI0vYVqBSHTexjttt9iFOItnJy56vIKnBNaG/PqPMvTY3HHzWfRN
+p62YPB+F+htLzfKwUSDVaC0BYP8zl09lzNcTeb5JkUcT/qaSEssdBQFLI2H/7A2y
+2HXzkntijiWTLw7YzWk45d8YzJ8SMJMu1CFX26VqgDZJ27hdDEJ7+t97AAQLtC8i
+cmtodW50ZXJAaHVzaG1haWwuY29tIiA8cmtodW50ZXJAaHVzaG1haWwuY29tPoiq
+BBABAgAUBhUICQoDAgYLCQgHCgQFAkajMD0ACgkQ6l9M06ZfXhdc5QP/ewqGepun
+BTAd7K35OpGdbwRBWhGL7hk3Ek0Ai0rHOCJVFHgX6ihzKqcpPLTnBie/QUd7XoV6
+3jrwIbrgXADckg3sTKnMgxFowtEgrJgGYtZTPaQEW5bkWrZwSxl/lgYs61yjSsDB
+8lBON2tM8/OwkJQtv4WfFQ9xXqs0sRH8DQO5AQsERqMwPQEIAJvaygqO3Z3qYVe+
+aff2Zd9Bm7r2JhjcIIjz7ul53MyQF3dxkPrh70Ix3azupdrZvirn5mMa2oC5ZdDr
+zIw5c43ztRV4Ia3nFG7hdrDkMmYoUbxnLU0qLhGep/kadPvdLlEVyKvSHKLen5Wd
+XPE6iLaTUQj/PuALhJ/Ll6hJyk6KohBV+Y0ZTkmdBp+r/jI4DEQ8HGc0J3tLuzWJ
+fZcQNvV/m5UyyDOfmD9rcXkowhhVtMeX5epS3CfskhJzeQfwJnFr5d8Wq76a0FL3
+dQLFqLBIZlechSDsfTu1FndjxMDAymR9aMBMPRP/CR3PKI7LN/l1822QQf1pBNne
+/JKilMEABAuInAQYAQIABgUCRqMwQAAKCRDqX0zTpl9eFzfEBACJLzcgMUAFYE5F
+R8XqRS2zfv13XPaTJD9cs2rut0RgsG7wtUdkXJ52kwM/2MmFkJBahK5jrJoPnZ2U
+1xHJ1LgS+xeHtHCxees30lJrMU2uCcqLZtm7MRp/NCVtBeC2615XEQ3wF3nyzJSA
+oiiAs08RzKzUAiEhUTJbKiySdp3xSQ==
+=OxBn
+-----END PGP PUBLIC KEY BLOCK-----
+EOKEY
+
+# Dowload source's signature if necessary and check it
+if [ ! -s "$SRC_DIR/$SRC.asc" ]; then
+  wget "$URL.asc" -O "$SRC_DIR/$SRC.asc" || exit $ERROR_WGET
+fi
+
+gpg --verify "$SRC_DIR/$SRC.asc" "$SRC_DIR/$SRC" || exit $ERROR_GPG
+
+
 # Untar
 cd "$PKG_WORK"
 tar --no-same-owner --no-same-permissions -xvf "$SRC_DIR/$SRC" || exit $ERROR_TAR
