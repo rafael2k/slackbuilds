@@ -39,27 +39,28 @@ if [ ! -z "$EXTRAVERSION" ]; then
   KERNEL_VERSION=$KERNEL_VERSION.$EXTRAVERSION
 fi
 
-RTOOL="wget"
 KERNEL="linux-$KERNEL_VERSION.tar.bz2"
 PATCH="patch-$PATCH_VERSION.diff"
 KERNEL_URL="http://www.kernel.org/pub/linux/kernel/v2.6/$KERNEL"
 PATCH_URL="http://ftp.linux-vserver.org/pub/kernel/vs2.2/$PATCH"
 SRC_DIR="$SRC_DIR/kernel"
 
+# -------  error codes for createpkg  --------------
+ERROR_WGET=31;      ERROR_MAKE=32;      ERROR_INSTALL=33
+ERROR_MD5=34;       ERROR_CONF=35;      ERROR_HELP=36
+ERROR_TAR=37;       ERROR_MKPKG=38;     ERROR_GPG=39
+ERROR_PATCH=40
+
 mkdir -p $SRC_DIR
 
-if [ "$RTOOL" == "wget" ]; then
+if [ ! -f "$SRC_DIR/$KERNEL" ]; then
+  rm -f $SRC_DIR/$KERNEL.sign
+  wget "$KERNEL_URL" -O "$SRC_DIR/$KERNEL" || exit $ERROR_WGET
+  wget "$KERNEL_URL.sign" -O "$SRC_DIR/$KERNEL.sign" || exit $ERROR_WGET
+fi
 
-  if [ ! -f "$SRC_DIR/$KERNEL" ]; then
-    rm -f $SRC_DIR/$KERNEL.sign
-    wget "$KERNEL_URL" -O "$SRC_DIR/$KERNEL"
-    wget "$KERNEL_URL.sign" -O "$SRC_DIR/$KERNEL.sign"
-  fi
-
-  if [ ! -f "$SRC_DIR/$PATCH" ]; then
-    wget "$PATCH_URL" -O "$SRC_DIR/$PATCH"
-  fi
-
+if [ ! -f "$SRC_DIR/$PATCH" ]; then
+  wget "$PATCH_URL" -O "$SRC_DIR/$PATCH" || exit $ERROR_WGET
 fi
 
 TMP="$TMP/$PACKAGE"
@@ -67,17 +68,17 @@ mkdir -p $TMP
 cd $TMP
 
 rm -rf linux-$KERNEL_VERSION*
-tar jxvf $SRC_DIR/$KERNEL || exit 1
+tar jxvf $SRC_DIR/$KERNEL || exit $ERROR_TAR
 
 if [ ! -z "$PATCHSET" ]; then
   mv linux-$KERNEL_VERSION linux-$KERNEL_VERSION-$PATCHSET
   KERNEL_VERSION="$KERNEL_VERSION-$PATCHSET"
 fi
 
-cp $CWD/config-$KERNEL_VERSION linux-$KERNEL_VERSION/.config || exit 1
+cp $CWD/config-$KERNEL_VERSION linux-$KERNEL_VERSION/.config || exit $ERROR_CONF
 cd linux-$KERNEL_VERSION
 
-patch -p1 < $SRC_DIR/$PATCH || exit 1
+patch -p1 < $SRC_DIR/$PATCH || exit $ERROR_PATCH
 
 if [ ! -z "$EXTRAVERSION" ] && [ ! -z "$PATCHSET" ]; then
   sed -e "s/^EXTRAVERSION =*$/EXTRAVERSION = \.$EXTRAVERSION-$PATCHSET/" Makefile > Makefile.tmp
@@ -86,8 +87,8 @@ elif [ ! -z "$PATCHSET" ]; then
 fi
 mv Makefile.tmp Makefile
 
-make oldconfig
-time make
+make oldconfig || exit $ERROR_CONF
+time make || exit $ERROR_MAKE
 
 # make the package
 
@@ -127,7 +128,7 @@ cd $PKG
 ( cd boot && ln -s config-$KERNEL_VERSION config )
 ( cd boot && ln -s System.map-$KERNEL_VERSION System.map )
 
-makepkg -c y -l y $REPOS/$PACKAGE-$VERSION-$ARCH-$BUILD.tgz
+makepkg -c y -l y $REPOS/$PACKAGE-$VERSION-$ARCH-$BUILD.tgz || exit $ERROR_MKPKG
 
 if [ "$CLEANUP" == "yes" ]; then
   rm -rf $TMP
