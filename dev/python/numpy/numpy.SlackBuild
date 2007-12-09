@@ -15,7 +15,7 @@
 #  Place - Suite 330, Boston, MA 02111-1307, USA
 #
 # slackbuild for numpy, by Silvio Rhatto
-# requires: 
+# requires: python
 # tested: numpy-1.0.4
 #
 
@@ -102,9 +102,13 @@ python setup.py build install --root=$PKG
 )
 
 # Install documentation
-DOCS="NEWS TODO README AUTHORS INSTALL ChangeLog MAINTAINERS COPYING readme.*"
+DOCS="COMPATIBILITY DEV_README.txt LICENSE.txt MANIFEST.in PKG-INFO README.txt THANKS.txt"
 mkdir -p "$PKG/usr/doc/$PKG_NAME-$PKG_VERSION" || exit $ERROR_MKDIR
-cp -a $DOCS "$PKG/usr/doc/$PKG_NAME-$PKG_VERSION"
+for doc in $DOCS; do
+  if [ -f "$doc" ]; then
+    cp -a $doc "$PKG/usr/doc/$PKG_NAME-$PKG_VERSION"
+  fi
+done
 
 # Add package description (slack-desc)
 mkdir -p "$PKG/install" || exit $ERROR_MKDIR
@@ -117,15 +121,15 @@ cat << EODESC > "$PKG/install/slack-desc"
 # customary to leave one space after the ':'.
 
      |-----handy-ruler--------------------------------------------------------|
-numpy: numpy
+numpy: NumPy: array processing for numbers, strings, records, and objects.
 numpy:
-numpy: 
-numpy:
-numpy:
-numpy:
-numpy:
-numpy:
-numpy:
+numpy: NumPy is a general-purpose array-processing package designed to efficiently
+numpy: manipulate large multi-dimensional arrays of arbitrary records without
+numpy: sacrificing too much speed for small multi-dimensional arrays. NumPy is
+numpy: built on the Numeric code base and adds features introduced by numarray as
+numpy: well as an extended C-API and the ability to create arrays of arbitrary
+numpy: type which also makes NumPy suitable for interfacing with general-purpose
+numpy: data-base applications.
 numpy:
 numpy:
 EODESC
@@ -136,5 +140,5 @@ makepkg -l y -c n "$REPOS/$PKG_NAME-$PKG_VERSION-$ARCH-$BUILD.tgz" || exit $ERRO
 
 # Delete source and build directories if requested
 if [ "$CLEANUP" == "yes" ]; then
-  rm -rf "$PKG_SRC" "$PKG"
+  rm -rf "$PKG_WORK" "$PKG"
 fi
