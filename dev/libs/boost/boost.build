@@ -61,14 +61,8 @@ if [ ! -d "$SRC_DIR" ]; then
   mkdir -p $SRC_DIR
 fi
 
-if [ "$PACKAGE_EXT" == "bz2" ]; then
-  tarflag="j"
-else
-  tarflag="z"
-fi
-
-if [ "$RTOOL" == "wget" ] && [ ! -f "$SRC_DIR/$SRC" ]; then
-  wget "$URL" -O "$SRC_DIR/$SRC"
+if [ ! -f "$SRC_DIR/$SRC" ]; then
+  wget "$URL" -O "$SRC_DIR/$SRC" || exit $ERROR_WGET
 fi
 
 TMP="$TMP/$PACKAGE"
@@ -79,16 +73,16 @@ fi
 
 cd $TMP
 
-tar xvf$tarflag $SRC_DIR/$SRC
+tar xvf $SRC_DIR/$SRC || exit $ERROR_TAR
 cd ${PACKAGE}_${VERSION_UNDERLINE}
 
 if [ -f "$CWD/$PACKAGE-$VERSION.diff" ]; then
-  patch -p0 < $CWD/$PACKAGE-$VERSION.diff
+  patch -p0 < $CWD/$PACKAGE-$VERSION.diff || exit $ERROR_PATCH
 fi
 
-./configure --prefix=/usr --libdir=$LIBDIR --with-libraries=all
-make || exit 32
-make install
+./configure --prefix=/usr --libdir=$LIBDIR --with-libraries=all || exit $ERROR_CONF
+make || exit $ERROR_MAKE
+make install || exit $ERROR_INSTALL
 
 cd /usr/include && ln -s /usr/include/boost-$VERSION_UNDERLINE/ /usr/include/boost
 
