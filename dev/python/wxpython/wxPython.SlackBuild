@@ -86,7 +86,7 @@ fi
 
 # Untar
 cd "$PKG_WORK"
-[[UNPACKER]] [[UNPACKER FLAGS]] "$SRC_DIR/$SRC" || exit $ERROR_TAR
+tar xvf "$SRC_DIR/$SRC" || exit $ERROR_TAR
 PKG_SRC=`ls -l | awk '/^d/ { print $8 }'`
 cd "$PKG_SRC/$PKG_NAME"
 
