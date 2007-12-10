@@ -1,0 +1,5 @@
+# Dependency list to wxPython-src
+#
+# dependency [condition] [version]]
+python				
+wxWidgets				
