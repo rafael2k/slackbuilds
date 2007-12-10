@@ -1,1 +1,4 @@
-wxWidgets
+# Dependency list to audacity-src
+#
+# dependency [condition] [version]]
+wxWidgets				
