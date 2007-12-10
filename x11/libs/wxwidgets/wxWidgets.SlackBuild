@@ -40,7 +40,7 @@ PKG=${PKG:=$TMP/package-$PKG_NAME}
 REPOS=${REPOS:=$TMP}
 PREFIX=${PREFIX:=/usr}
 PKG_WORK="$TMP/$SRC_NAME"
-CONF_OPTIONS=${CONF_OPTIONS:=""}
+CONF_OPTIONS=${CONF_OPTIONS:="--enable-unicode"}
 NUMJOBS=${NUMJOBS:=""}
 
 # Set system libraries' path and optmization flags based on $ARCH
@@ -111,7 +111,7 @@ make install DESTDIR="$PKG" || exit $ERROR_INSTALL
 )
 
 # Install documentation
-DOCS="CHANGES.txt COPYING.LIB INSTALL-MAC.txt INSTALL-MGL.txt INSTALL-MOTIF.txt INSTALL-OS2.txt INSTALL-X11.txt LICENCE .txt README.txx"
+DOCS="docs/gpl.txt docs/licence.txt docs/changes.txt"
 mkdir -p "$PKG/usr/doc/$PKG_NAME-$PKG_VERSION" || exit $ERROR_MKDIR
 for doc in $DOCS; do
   if [ -f "$doc" ]; then
