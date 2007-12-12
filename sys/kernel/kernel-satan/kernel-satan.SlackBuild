@@ -59,7 +59,7 @@ if [ ! -f "$SRC_DIR/$KERNEL" ]; then
   wget "$KERNEL_URL.sign" -O "$SRC_DIR/$KERNEL.sign" || exit $ERROR_WGET
 fi
 
-if [ ! -f "$SRC_DIR/$PATCH" ]; then
+if [ ! -f "$SRC_DIR/$PATCH" ] || [ ! -f "$CWD/$PATCH" ]; then
   wget "$PATCH_URL" -O "$SRC_DIR/$PATCH" || exit $ERROR_WGET
 fi
 
@@ -78,7 +78,11 @@ fi
 cp $CWD/config-$KERNEL_VERSION linux-$KERNEL_VERSION/.config || exit $ERROR_CONF
 cd linux-$KERNEL_VERSION
 
-patch -p1 < $SRC_DIR/$PATCH || exit $ERROR_PATCH
+if [ -f "$CWD/$PATCH" ]; then
+  patch -p1 < $CWD/$PATCH || exit $ERROR_PATCH
+else
+  patch -p1 < $SRC_DIR/$PATCH || exit $ERROR_PATCH
+fi
 
 if [ ! -z "$EXTRAVERSION" ] && [ ! -z "$PATCHSET" ]; then
   sed -e "s/^EXTRAVERSION =*$/EXTRAVERSION = \.$EXTRAVERSION-$PATCHSET/" Makefile > Makefile.tmp
