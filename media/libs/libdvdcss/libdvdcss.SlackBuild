@@ -15,7 +15,7 @@
 #  Place - Suite 330, Boston, MA 02111-1307, USA
 #
 # slackbuild for libdvdcss, by Rudson R. Alves
-# requires: 
+# requires:  
 # tested: libdvdcss-1.2.9
 #
 
@@ -66,7 +66,7 @@ ERROR_TAR=37;       ERROR_MKPKG=38;     ERROR_GPG=39
 ERROR_PATCH=40;     ERROR_VCS=41;       ERROR_MKDIR=42
 
 # Clean up any leftovers of previous builds
-rm -rf "$PKG_SRC" 2> /dev/null
+rm -rf "$PKG_WORK" 2> /dev/null
 rm -rf "$PKG" 2> /dev/null
 
 # Create directories if necessary
@@ -83,10 +83,10 @@ if [ ! -s "$SRC_DIR/$SRC" ] || ! bunzip2 -t "$SRC_DIR/$SRC" 2> /dev/null; then
   wget "$URL" -O "$SRC_DIR/$SRC" || exit $ERROR_WGET
 fi
 
-
 # Untar
-cd "$TMP"
-tar --no-same-owner --no-same-permissions -xvf "$SRC_DIR/$SRC" || exit $ERROR_TA
+cd "$PKG_WORK"
+tar --no-same-owner --no-same-permissions -xvf "$SRC_DIR/$SRC" || exit $ERROR_TAR
+PKG_SRC=`ls -l | awk '/^d/ { print $8 }'`
 cd "$PKG_SRC"
 
 # Slackware 12.0 TeX set
@@ -118,7 +118,11 @@ make install DESTDIR="$PKG" || exit $ERROR_INSTALL
 # Install documentation
 DOCS="AUTHORS ChangeLog README COPYING INSTALL NEWS"
 mkdir -p "$PKG/usr/doc/$PKG_NAME-$PKG_VERSION" || exit $ERROR_MKDIR
-cp -a $DOCS "$PKG/usr/doc/$PKG_NAME-$PKG_VERSION"
+for doc in $DOCS; do
+  if [ -f "$doc" ]; then
+    cp -a $doc "$PKG/usr/doc/$PKG_NAME-$PKG_VERSION"
+  fi
+done
 
 # Add package description (slack-desc)
 mkdir -p "$PKG/install" || exit $ERROR_MKDIR
@@ -149,5 +153,5 @@ makepkg -l y -c n "$REPOS/$PKG_NAME-$PKG_VERSION-$ARCH-$BUILD.tgz" || exit $ERRO
 
 # Delete source and build directories if requested
 if [ "$CLEANUP" == "yes" ]; then
-  rm -rf "$PKG_SRC" "$PKG"
+  rm -rf "$PKG_WORK" "$PKG"
 fi

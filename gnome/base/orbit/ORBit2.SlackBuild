@@ -1,11 +1,11 @@
 #!/bin/bash
 #
-#  gconf.SlackBuild is free software; you can redistribute
+#  ORBit2.SlackBuild is free software; you can redistribute
 #  it and/or modify it under the terms of the GNU General Public License as
 #  published by the Free Software Foundation; either version 2 of the License,
 #  or any later version.
 #
-#  gconf.SlackBuild is distributed in the hope that it will
+#  ORBit2.SlackBuild is distributed in the hope that it will
 #  be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
 #  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General
 #  Public License for more details.
@@ -14,9 +14,9 @@
 #  this program; if not, write to the Free Software Foundation, Inc., 59 Temple
 #  Place - Suite 330, Boston, MA 02111-1307, USA
 #
-# slackbuild for gconf, by Rudson R. Alves
-# requires: glib orbit2
-# tested: gconf-2.20.1
+# slackbuild for ORBit2, by Rudson R. Alves
+# requires:  
+# tested: ORBit2-2.14.10
 #
 
 # Look for slackbuildrc
@@ -28,10 +28,10 @@ fi
 
 # Set variables
 CWD="$(pwd)"
-SRC_NAME="GConf"
-PKG_NAME="gconf"
+SRC_NAME="ORBit2"
+PKG_NAME="ORBit2"
 ARCH=${ARCH:=i486}
-SRC_VERSION=${VERSION:=2.20.1}
+SRC_VERSION=${VERSION:=2.14.10}
 PKG_VERSION="$(echo "$SRC_VERSION" | tr '[[:blank:]-]' '_')"
 BUILD=${BUILD:=1rra}
 SRC_DIR=${SRC_DIR:=$CWD}/$PKG_NAME
@@ -41,7 +41,7 @@ REPOS=${REPOS:=$TMP}
 PREFIX=${PREFIX:=/usr}
 PKG_WORK="$TMP/$SRC_NAME"
 CONF_OPTIONS=${CONF_OPTIONS:=""}
-NUMJOBS=${NUMJOBS:="-j7"}
+NUMJOBS=${NUMJOBS:=""}
 
 # Set system libraries' path and optmization flags based on $ARCH
 LIBDIR="$PREFIX/lib"
@@ -66,7 +66,7 @@ ERROR_TAR=37;       ERROR_MKPKG=38;     ERROR_GPG=39
 ERROR_PATCH=40;     ERROR_VCS=41;       ERROR_MKDIR=42
 
 # Clean up any leftovers of previous builds
-rm -rf "$PKG_SRC" 2> /dev/null
+rm -rf "$PKG_WORK" 2> /dev/null
 rm -rf "$PKG" 2> /dev/null
 
 # Create directories if necessary
@@ -77,12 +77,11 @@ mkdir -p "$PKG_WORK" || exit $ERROR_MKDIR
 
 # Dowload source if necessary
 SRC="$SRC_NAME-$VERSION.tar.bz2"
-URL="http://ftp.acc.umu.se/pub/gnome/sources/GConf/2.20/$SRC"
+URL="http://ftp.acc.umu.se/pub/gnome/sources/ORBit2/2.14/$SRC"
 
 if [ ! -s "$SRC_DIR/$SRC" ] || ! bunzip2 -t "$SRC_DIR/$SRC" 2> /dev/null; then
   wget "$URL" -O "$SRC_DIR/$SRC" || exit $ERROR_WGET
 fi
-
 
 # Untar
 cd "$PKG_WORK"
@@ -111,9 +110,13 @@ make install DESTDIR="$PKG" || exit $ERROR_INSTALL
 )
 
 # Install documentation
-DOCS="ABOUT-NLS AUTHORS COPYING ChangeLog INSTALL NEWS README TODO"
+DOCS="AUTHORS COPYING COPYING.LIB ChangeLog HACKING INSTALL MAINTAINERS NEWS README README.win32 TODO"
 mkdir -p "$PKG/usr/doc/$PKG_NAME-$PKG_VERSION" || exit $ERROR_MKDIR
-cp -a $DOCS "$PKG/usr/doc/$PKG_NAME-$PKG_VERSION"
+for doc in $DOCS; do
+  if [ -f "$doc" ]; then
+    cp -a $doc "$PKG/usr/doc/$PKG_NAME-$PKG_VERSION"
+  fi
+done
 
 # Add package description (slack-desc)
 mkdir -p "$PKG/install" || exit $ERROR_MKDIR
@@ -125,18 +128,18 @@ cat << EODESC > "$PKG/install/slack-desc"
 # make exactly 11 lines for the formatting to be correct.  It's also
 # customary to leave one space after the ':'.
 
-     |-----handy-ruler--------------------------------------------------------|
-gconf: gconf by Slack.Sarava
-gconf:
-gconf: GConf is a configuration database system, functionally similar to the
-gconf: Windows registry but lots better. :-) It's being written for the GNOME
-gconf: desktop but does not require GNOME; configure should notice if GNOME
-gconf: is not installed and compile the basic GConf library anyway.
-gconf:
-gconf:
-gconf:
-gconf:
-gconf:
+      |-----handy-ruler-------------------------------------------------------|
+ORBit2: ORBit2 by Slack.Sarava
+ORBit2:
+ORBit2: ORBit is part of the GNU project, and is a GNU program. For more
+ORBit2: information on the Free Software Foundation and GNU, visit
+ORBit2: http://www.gnu.org/
+ORBit2:
+ORBit2:
+ORBit2:
+ORBit2:
+ORBit2:
+ORBit2:
 EODESC
 
 # Build the package
@@ -145,5 +148,5 @@ makepkg -l y -c n "$REPOS/$PKG_NAME-$PKG_VERSION-$ARCH-$BUILD.tgz" || exit $ERRO
 
 # Delete source and build directories if requested
 if [ "$CLEANUP" == "yes" ]; then
-  rm -rf "$PKG_SRC" "$PKG"
+  rm -rf "$PKG_WORK" "$PKG"
 fi

@@ -1,0 +1,4 @@
+# Dependency list to scilab
+#
+# dependency [condition] [version]]
+gtk+2				

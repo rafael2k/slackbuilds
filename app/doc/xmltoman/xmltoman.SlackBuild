@@ -15,7 +15,7 @@
 #  Place - Suite 330, Boston, MA 02111-1307, USA
 #
 # slackbuild for xmltoman, by Rudson R. Alves
-# requires: perl
+# requires: perl 
 # tested: xmltoman-0.3
 #
 
@@ -66,7 +66,7 @@ ERROR_TAR=37;       ERROR_MKPKG=38;     ERROR_GPG=39
 ERROR_PATCH=40;     ERROR_VCS=41;       ERROR_MKDIR=42
 
 # Clean up any leftovers of previous builds
-rm -rf "$PKG_SRC" 2> /dev/null
+rm -rf "$PKG_WORK" 2> /dev/null
 rm -rf "$PKG" 2> /dev/null
 
 # Create directories if necessary
@@ -83,7 +83,6 @@ if [ ! -s "$SRC_DIR/$SRC" ] || ! gunzip -t "$SRC_DIR/$SRC" 2> /dev/null; then
   wget "$URL" -O "$SRC_DIR/$SRC" || exit $ERROR_WGET
 fi
 
-
 # Untar
 cd "$PKG_WORK"
 tar --no-same-owner --no-same-permissions -xvf "$SRC_DIR/$SRC" || exit $ERROR_TAR
@@ -96,9 +95,9 @@ patches="http://ftp.debian.org/debian/pool/main/x/xmltoman/xmltoman_0.3-1.diff.g
          $PKG_NAME-$PKG_VERSION-$ARCH.diff $PKG_NAME-$ARCH.diff"
 for patch in $patches; do
   if [ -f "$CWD/$patch" ]; then
-    patch -Np[[NUMBER OF PREFIX SLASHES TO STRIP]] < "$CWD/$patch" || exit $ERROR_PATCH
+    patch -Np1 < "$CWD/$patch" || exit $ERROR_PATCH
   elif [ -f "$CWD/patches/$patch" ]; then
-    patch -Np[[NUMBER OF PREFIX SLASHES TO STRIP]] < "$CWD/patches/$patch" || exit $ERROR_PATCH
+    patch -Np1 < "$CWD/patches/$patch" || exit $ERROR_PATCH
   fi
 done
 
@@ -119,7 +118,11 @@ make install PREFIX=$PKG/usr
 # Install documentation
 DOCS="NEWS TODO README AUTHORS INSTALL ChangeLog MAINTAINERS COPYING readme.*"
 mkdir -p "$PKG/usr/doc/$PKG_NAME-$PKG_VERSION" || exit $ERROR_MKDIR
-cp -a $DOCS "$PKG/usr/doc/$PKG_NAME-$PKG_VERSION"
+for doc in $DOCS; do
+  if [ -f "$doc" ]; then
+    cp -a $doc "$PKG/usr/doc/$PKG_NAME-$PKG_VERSION"
+  fi
+done
 
 # Add package description (slack-desc)
 mkdir -p "$PKG/install" || exit $ERROR_MKDIR
@@ -151,5 +154,5 @@ makepkg -l y -c n "$REPOS/$PKG_NAME-$PKG_VERSION-$ARCH-$BUILD.tgz" || exit $ERRO
 
 # Delete source and build directories if requested
 if [ "$CLEANUP" == "yes" ]; then
-  rm -rf "$PKG_SRC" "$PKG"
+  rm -rf "$PKG_WORK" "$PKG"
 fi
