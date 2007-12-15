@@ -1,0 +1,4 @@
+# Dependency list to babytrans
+#
+# dependency [condition] [version]]
+gtk+				
