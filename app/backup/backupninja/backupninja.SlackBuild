@@ -107,7 +107,7 @@ done
 CFLAGS="$SLKCFLAGS" \
   CXXFLAGS="$SLKCFLAGS" \
   ./configure \
-  --prefix="$PREFIX" --libdir="$LIBDIR" $CONF_OPTIONS || exit $ERROR_CONF
+  --prefix="$PREFIX" --libdir="$LIBDIR" --sysconfdir=/etc $CONF_OPTIONS || exit $ERROR_CONF
 
 # Compile
 make $NUMJOBS || exit $ERROR_MAKE
@@ -139,7 +139,11 @@ mv $PKG/etc/logrotate.d/backupninja.new $PKG/etc/logrotate.d/backupninja
 # Install documentation
 DOCS="AUTHORS COPYING ChangeLog INSTALL NEWS README TODO"
 mkdir -p "$PKG/usr/doc/$PKG_NAME-$PKG_VERSION" || exit $ERROR_MKDIR
-cp -a $DOCS "$PKG/usr/doc/$PKG_NAME-$PKG_VERSION"
+for doc in $DOCS; do
+  if [ -f "$doc" ]; then
+    cp -a $doc "$PKG/usr/doc/$PKG_NAME-$PKG_VERSION"
+  fi
+done
 
 # Add package description (slack-desc)
 mkdir -p "$PKG/install" || exit $ERROR_MKDIR
@@ -171,5 +175,5 @@ makepkg -l y -c n "$REPOS/$PKG_NAME-$PKG_VERSION-$ARCH-$BUILD.tgz" || exit $ERRO
 
 # Delete source and build directories if requested
 if [ "$CLEANUP" == "yes" ]; then
-  rm -rf "$PKG_SRC" "$PKG"
+  rm -rf "$PKG_WORK" "$PKG"
 fi
