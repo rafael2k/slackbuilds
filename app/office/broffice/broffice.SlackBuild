@@ -16,7 +16,7 @@
 #
 # slackbuild for broffice, by Rudson R. Alves
 # requires:  
-# tested: broffice-2.3.0
+# tested: broffice-2.3.1
 #
 
 # Look for slackbuildrc
@@ -31,7 +31,7 @@ CWD="$(pwd)"
 SRC_NAME="BrOo"
 PKG_NAME="broffice"
 ARCH=${ARCH:=i486}
-SRC_VERSION=${VERSION:=2.3.0}
+SRC_VERSION=${VERSION:=2.3.1}
 PKG_VERSION="$(echo "$SRC_VERSION" | tr '[[:blank:]-]' '_')"
 BUILD=${BUILD:=1rra}
 SRC_DIR=${SRC_DIR:=$CWD}/$PKG_NAME
@@ -60,21 +60,23 @@ mkdir -p "$REPOS" || exit $ERROR_MKDIR
 mkdir -p "$PKG_WORK" || exit $ERROR_MKDIR
 
 # Dowload source if necessary
-SRC="${SRC_NAME}_${VERSION}_LinuxIntel_install_pt-BR_rpm.tar.gz"
-URL="http://linorg.usp.br/BrOffice.org/stable/2.3.0//$SRC"
+SRC="${SRC_NAME}_${VERSION}rc1_20071113_LinuxIntel_install_pt-BR.tar.gz"
+URL="ftp://ftp.unicamp.br/pub/broffice/stable/2.3.1//$SRC"
 
 if [ ! -s "$SRC_DIR/$SRC" ] || ! gunzip -t "$SRC_DIR/$SRC" 2> /dev/null; then
   wget "$URL" -O "$SRC_DIR/$SRC" || exit $ERROR_WGET
 fi
 
 # Untar
-mkdir -p $PKG_SRC
-cd $PKG_SRC
+cd $PKG_WORK
 tar --no-same-owner --no-same-permissions -xvf "$SRC_DIR/$SRC" || exit $ERROR_TAR
 
-mv $PKG_SRC/OOG680_m5_native_packed-1_pt-BR.9221/* $PKG_SRC/
-rm -rf $PKG_SRC/OOG680_m5_native_packed-1_pt-BR.9221
-cd $PKG_SRC/RPMS
+BR_OFFICE=`ls`
+mv $PKG_WORK/$BR_OFFICE/* $PKG_WORK/
+rm -rf $PKG_WORK/$BR_OFFICE
+cd $PKG_WORK/RPMS
+
+ARCH=i686
 
 # Convert packges and install
 for i in *.rpm; do
@@ -92,7 +94,7 @@ rm *.rpm *.deb 2>/dev/null
 cd ..
 
 # Change opt directory
-#mkdir $PKG/usr
+mkdir -p $PKG/usr/share
 mv $PKG/opt/broffice.org2.3 $PKG/usr/share/
 
 mv $PKG/opt/kde/share/* $PKG/usr/share/
