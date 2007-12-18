@@ -1,6 +1,6 @@
 diff -Naur backupninja-0.9.5.orig/handlers/mysql.in backupninja-0.9.5/handlers/mysql.in
 --- backupninja-0.9.5.orig/handlers/mysql.in	2007-11-19 23:28:49.000000000 -0200
-+++ backupninja-0.9.5/handlers/mysql.in	2007-12-03 18:20:25.000000000 -0200
++++ backupninja-0.9.5/handlers/mysql.in	2007-12-18 19:45:07.000000000 -0200
 @@ -91,8 +91,7 @@
  then
      if [ $usevserver = yes ]
@@ -19,18 +19,18 @@ diff -Naur backupninja-0.9.5.orig/handlers/mysql.in backupninja-0.9.5/handlers/m
 -    if [ -f $mycnf ]
 +
 +    if [ $usevserver = yes ]
-+    then
+     then
+-	# rename temporarily
+-	tmpcnf="$home/my.cnf.disable"
+-	debug "mv $mycnf $tmpcnf"
+-	mv $mycnf $tmpcnf
 +      workcnf="$vroot$mycnf"
 +    else
 +      workcnf="$mycnf"
 +    fi
 +
 +    if [ -f $workcnf ]
-     then
--	# rename temporarily
--	tmpcnf="$home/my.cnf.disable"
--	debug "mv $mycnf $tmpcnf"
--	mv $mycnf $tmpcnf
++    then
 +      # rename temporarily
 +      tmpcnf="$workcnf.disable"
 +      debug "mv $workcnf $tmpcnf"
@@ -58,7 +58,7 @@ diff -Naur backupninja-0.9.5.orig/handlers/mysql.in backupninja-0.9.5/handlers/m
  fi
  
  # if a user is not set, use $configfile, otherwise use $mycnf
-@@ -145,18 +146,21 @@
+@@ -145,22 +146,23 @@
  	userset=true;
  	if [ $usevserver = yes ]
  	then
@@ -77,12 +77,17 @@ diff -Naur backupninja-0.9.5.orig/handlers/mysql.in backupninja-0.9.5/handlers/m
  	    then
  	    	fatal "User $user not found in /etc/passwd"
  	    fi
+-       	fi
 +	    debug "User home set to: $userhome"
 +	    [ -f $userhome/.my.cnf ] || fatal "Can't find config file in $userhome/.my.cnf"
-        	fi
++	fi
  	
- 	debug "User home set to: $userhome"
-@@ -310,12 +314,12 @@
+-	debug "User home set to: $userhome"
+-	[ -f $userhome/.my.cnf ] || fatal "Can't find config file in $userhome/.my.cnf"
+ 	defaultsfile="--defaults-extra-file=$userhome/.my.cnf"
+ 	debug "using $defaultsfile"
+ fi
+@@ -310,12 +312,12 @@
  if [ "$dbusername" != "" -a "$dbpassword" != "" ]
  then
  	## clean up tmp config file
