@@ -28,7 +28,7 @@ diff -Naur backupninja-0.9.5.orig/handlers/mysql.in backupninja-0.9.5/handlers/m
 +    if [ -f $workcnf ]
      then
 -	# rename temporarily
--	tmpcnf="$home/.my.cnf.disable"
+-	tmpcnf="$home/my.cnf.disable"
 -	debug "mv $mycnf $tmpcnf"
 -	mv $mycnf $tmpcnf
 +      # rename temporarily
