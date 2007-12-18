@@ -1,6 +1,6 @@
 diff -Naur backupninja-0.9.5.orig/handlers/mysql.in backupninja-0.9.5/handlers/mysql.in
 --- backupninja-0.9.5.orig/handlers/mysql.in	2007-11-19 23:28:49.000000000 -0200
-+++ backupninja-0.9.5/handlers/mysql.in	2007-12-18 19:45:07.000000000 -0200
++++ backupninja-0.9.5/handlers/mysql.in	2007-12-18 20:09:48.000000000 -0200
 @@ -91,8 +91,7 @@
  then
      if [ $usevserver = yes ]
@@ -19,18 +19,18 @@ diff -Naur backupninja-0.9.5.orig/handlers/mysql.in backupninja-0.9.5/handlers/m
 -    if [ -f $mycnf ]
 +
 +    if [ $usevserver = yes ]
-     then
--	# rename temporarily
--	tmpcnf="$home/my.cnf.disable"
--	debug "mv $mycnf $tmpcnf"
--	mv $mycnf $tmpcnf
++    then
 +      workcnf="$vroot$mycnf"
 +    else
 +      workcnf="$mycnf"
 +    fi
 +
 +    if [ -f $workcnf ]
-+    then
+     then
+-	# rename temporarily
+-	tmpcnf="$home/my.cnf.disable"
+-	debug "mv $mycnf $tmpcnf"
+-	mv $mycnf $tmpcnf
 +      # rename temporarily
 +      tmpcnf="$workcnf.disable"
 +      debug "mv $workcnf $tmpcnf"
@@ -44,8 +44,15 @@ diff -Naur backupninja-0.9.5.orig/handlers/mysql.in backupninja-0.9.5/handlers/m
  # auto generated backupninja mysql conf
  [mysql]
  host=$dbhost
-@@ -129,12 +135,7 @@
+@@ -127,14 +133,14 @@
+ host=$dbhost
+ user=$dbusername
  password="$dbpassword"
++
++[mysqladmin]
++host=$dbhost
++user=$dbusername
++password="$dbpassword"
  EOF
  	umask $oldmask
 -	if [ $usevserver = yes ] 
@@ -58,7 +65,7 @@ diff -Naur backupninja-0.9.5.orig/handlers/mysql.in backupninja-0.9.5/handlers/m
  fi
  
  # if a user is not set, use $configfile, otherwise use $mycnf
-@@ -145,22 +146,23 @@
+@@ -145,22 +151,23 @@
  	userset=true;
  	if [ $usevserver = yes ]
  	then
@@ -87,7 +94,7 @@ diff -Naur backupninja-0.9.5.orig/handlers/mysql.in backupninja-0.9.5/handlers/m
  	defaultsfile="--defaults-extra-file=$userhome/.my.cnf"
  	debug "using $defaultsfile"
  fi
-@@ -310,12 +312,12 @@
+@@ -310,12 +317,12 @@
  if [ "$dbusername" != "" -a "$dbpassword" != "" ]
  then
  	## clean up tmp config file
