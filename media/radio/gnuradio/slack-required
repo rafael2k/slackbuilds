@@ -7,4 +7,6 @@ fftw
 sdcc				
 cppunit				
 jack				
+numpy				
 wxWidgets				
+wxPython				
