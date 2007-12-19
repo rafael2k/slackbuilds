@@ -105,7 +105,7 @@ CFLAGS="$SLKCFLAGS" \
   CXXFLAGS="$SLKCFLAGS" \
   ./configure \
   --prefix="$PREFIX" --libdir="$LIBDIR" --sysconfdir=/etc \
-  --with-boost-include-dir=/usr/include/boost-$boost_version --enable-gr-wxgui $CONF_OPTIONS || exit $ERROR_CONF
+  --with-boost-include-dir=/usr/include/boost-$boost_version $CONF_OPTIONS || exit $ERROR_CONF
 
 # Compile
 make $NUMJOBS || exit $ERROR_MAKE
