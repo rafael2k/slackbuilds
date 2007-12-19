@@ -91,7 +91,7 @@ PKG_SRC=`ls -l | awk '/^d/ { print $8 }'`
 cd "$PKG_SRC/$PKG_NAME"
 
 # Build and install package
-python setup.py build install --root=$PKG
+python setup.py build_ext --inplace install --root=$PKG
 
 # Strip binaries
 ( cd "$PKG"
