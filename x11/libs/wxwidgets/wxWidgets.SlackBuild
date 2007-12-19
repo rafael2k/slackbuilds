@@ -98,9 +98,13 @@ CFLAGS="$SLKCFLAGS" \
 
 # Compile
 make $NUMJOBS || exit $ERROR_MAKE
+make -C contrib/src/gizmos $NUMJOBS || exit $ERROR_MAKE
+make -C contrib/src/stc $NUMJOBS || exit $ERROR_MAKE
 
 # Install
 make install DESTDIR="$PKG" || exit $ERROR_INSTALL
+make -C contrib/src/gizmos install DESTDIR="$PKG" || exit $ERROR_INSTALL
+make -C contrib/src/stc install DESTDIR="$PKG" || exit $ERROR_INSTALL
 
 # Strip binaries
 ( cd "$PKG"
