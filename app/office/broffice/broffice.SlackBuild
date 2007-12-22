@@ -30,7 +30,7 @@ fi
 CWD="$(pwd)"
 SRC_NAME="BrOo"
 PKG_NAME="broffice"
-ARCH=${ARCH:=i486}
+ARCH=${ARCH:=i686}
 SRC_VERSION=${VERSION:=2.3.1}
 PKG_VERSION="$(echo "$SRC_VERSION" | tr '[[:blank:]-]' '_')"
 BUILD=${BUILD:=1rra}

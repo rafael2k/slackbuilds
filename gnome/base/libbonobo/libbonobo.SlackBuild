@@ -110,7 +110,7 @@ make install DESTDIR="$PKG" || exit $ERROR_INSTALL
 )
 
 # Install documentation
-DOCS="AUTHORS COPYING COPYING.LIB ChangeLog INSTALL MAINTAINERS "
+DOCS="AUTHORS COPYING COPYING.LIB ChangeLog INSTALL MAINTAINERS"
 mkdir -p "$PKG/usr/doc/$PKG_NAME-$PKG_VERSION" || exit $ERROR_MKDIR
 for doc in $DOCS; do
   if [ -f "$doc" ]; then
