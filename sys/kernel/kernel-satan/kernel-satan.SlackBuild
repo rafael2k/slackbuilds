@@ -59,7 +59,7 @@ if [ ! -f "$SRC_DIR/$KERNEL" ]; then
   wget "$KERNEL_URL.sign" -O "$SRC_DIR/$KERNEL.sign" || exit $ERROR_WGET
 fi
 
-if [ ! -f "$SRC_DIR/$PATCH" ] || [ ! -f "$CWD/$PATCH" ]; then
+if [ ! -f "$CWD/$PATCH" ] && [ ! -f "$SRC_DIR/$PATCH" ]; then
   wget "$PATCH_URL" -O "$SRC_DIR/$PATCH" || exit $ERROR_WGET
 fi
 
