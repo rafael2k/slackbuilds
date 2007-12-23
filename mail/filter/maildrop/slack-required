@@ -1,0 +1,4 @@
+# Dependency list to maildrop
+#
+# dependency [condition] [version]]
+courier-authlib				
