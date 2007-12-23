@@ -40,7 +40,7 @@ PKG=${PKG:=$TMP/package-$PKG_NAME}
 REPOS=${REPOS:=$TMP}
 PREFIX=${PREFIX:=/usr}
 PKG_WORK="$TMP/$SRC_NAME"
-CONF_OPTIONS=${CONF_OPTIONS:="--enable-maildrop-uid=mail --enable-maildrop-gid=mail"}
+CONF_OPTIONS=${CONF_OPTIONS:="--enable-maildrop-uid=vmail --enable-maildrop-gid=vmail"}
 NUMJOBS=${NUMJOBS:=""}
 
 # Set system libraries' path and optmization flags based on $ARCH
@@ -88,6 +88,10 @@ cd "$PKG_WORK"
 tar --no-same-owner --no-same-permissions -xvf "$SRC_DIR/$SRC" || exit $ERROR_TAR
 PKG_SRC=`ls -l | awk '/^d/ { print $8 }'`
 cd "$PKG_SRC"
+
+echo Creating user and group vmail, if they does not exist...
+groupadd vmail -g 5000
+useradd vmail -u 5000 -g 5000
 
 # Configure
 CFLAGS="$SLKCFLAGS" \
@@ -141,6 +145,25 @@ maildrop:
 maildrop:
 maildrop:
 EODESC
+
+# Add a post-installation script (doinst.sh)
+cat << EOSCRIPT > "$PKG/install/doinst.sh"
+config() {
+  NEW="\$1"
+  OLD="\$(dirname \$NEW)/\$(basename \$NEW .new)"
+  # If there's no config file by that name, mv it over:
+  if [ ! -r \$OLD ]; then
+    mv \$NEW \$OLD
+  elif [ "\$(cat \$OLD | md5sum)" = "\$(cat \$NEW | md5sum)" ]; then
+    # toss the redundant copy
+    rm \$NEW
+  fi
+  # Otherwise, we leave the .new copy for the admin to consider...
+}
+
+config path/to/config_file.new
+echo Trying to create user/group vmail with UID/GID 5000... ; groupadd vmail -g 5000 ; useradd vmail -u 5000 -g 5000
+EOSCRIPT
 
 # Build the package
 cd "$PKG"
