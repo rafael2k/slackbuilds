@@ -39,7 +39,7 @@ fi
 # default settings
 PACKAGE="glew"
 ARCH=${ARCH:=i486}
-VERSION=${VERSION:=1.3.4}
+VERSION=${VERSION:=1.4.0}
 BUILD=${BUILD:=1rd}
 SRC_DIR=${SRC:=$CWD}
 TMP=${TMP:=/tmp}
