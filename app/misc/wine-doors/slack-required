@@ -1,0 +1,7 @@
+# Dependency list to wine-doors
+#
+# dependency [condition] [version]]
+python				
+cairo				
+libxml2				
+glade				

@@ -1,0 +1,6 @@
+# Dependency list to glade
+#
+# dependency [condition] [version]]
+scrollkeeper				
+gtk+2				
+libxml2				
