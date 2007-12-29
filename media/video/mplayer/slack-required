@@ -7,7 +7,6 @@ libungif
 arts
 audiofile
 sdl
-gdk-pixbuf
 cdparanoia
 libtheora
 speex
