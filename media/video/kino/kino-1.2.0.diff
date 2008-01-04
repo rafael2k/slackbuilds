@@ -1,0 +1,11 @@
+--- src/filehandler.h.old	2008-01-04 18:45:15.000000000 -0200
++++ src/filehandler.h	2008-01-04 18:45:29.000000000 -0200
+@@ -179,7 +179,7 @@
+ 
+ 
+ #ifdef HAVE_LIBQUICKTIME
+-#include <quicktime.h>
++#include <lqt/quicktime.h>
+ 
+ class QtHandler: public FileHandler
+ {
