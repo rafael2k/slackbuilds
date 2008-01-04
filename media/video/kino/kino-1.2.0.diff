@@ -1,11 +1,20 @@
---- src/filehandler.h.old	2008-01-04 18:45:15.000000000 -0200
-+++ src/filehandler.h	2008-01-04 18:45:29.000000000 -0200
-@@ -179,7 +179,7 @@
- 
- 
- #ifdef HAVE_LIBQUICKTIME
--#include <quicktime.h>
-+#include <lqt/quicktime.h>
- 
- class QtHandler: public FileHandler
- {
+--- src/dvtitler/Makefile.am.orig	2007-12-23 09:55:27.000000000 +0100
++++ src/dvtitler/Makefile.am	2007-12-23 09:55:38.000000000 +0100
+@@ -13,6 +13,7 @@
+ 	$(GTK2_CFLAGS) \
+ 	$(PANGOFT_CFLAGS) \
+ 	$(AVCODEC_CFLAGS) \
++	$(LIBQUICKTIME_CFLAGS) \
+ 	-D_FILE_OFFSET_BITS=64 \
+ 	-DKINO_PLUGINDIR=\""$(pkglibdir)-gtk2"\" \
+ 	-DDATADIR=\""$(datadir)"\" \
+--- src/dvtitler/Makefile.in.orig	2007-12-23 09:58:54.000000000 +0100
++++ src/dvtitler/Makefile.in	2007-12-23 09:59:15.000000000 +0100
+@@ -227,6 +227,7 @@
+ 	$(GTK2_CFLAGS) \
+ 	$(PANGOFT_CFLAGS) \
+ 	$(AVCODEC_CFLAGS) \
++	$(LIBQUICKTIME_CFLAGS) \
+ 	-D_FILE_OFFSET_BITS=64 \
+ 	-DKINO_PLUGINDIR=\""$(pkglibdir)-gtk2"\" \
+ 	-DDATADIR=\""$(datadir)"\" \
