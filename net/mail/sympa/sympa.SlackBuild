@@ -89,7 +89,7 @@ fi
 
 ./configure --with-initdir=/etc/rc.d/ --prefix=/usr/local/sympa --with-confdir=/usr/local/sympa/conf \
             --with-etcdir=/usr/local/sympa/etc || exit $ERROR_CONF
-make || exit $ERROR_MAKE
+make DESTDIR=$TMP/package-$PACKAGE || exit $ERROR_MAKE
 make DESTDIR=$TMP/package-$PACKAGE install | tee $TMP/install.log || exit $ERROR_INSTALL
 
 CWD="`pwd`"

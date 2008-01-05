@@ -1,0 +1,14 @@
+diff -Naur sympa-5.3.4.orig/check_perl_modules.pl sympa-5.3.4/check_perl_modules.pl
+--- sympa-5.3.4.orig/check_perl_modules.pl      2007-09-28 05:26:57.000000000 -0300
++++ sympa-5.3.4/check_perl_modules.pl   2008-01-05 01:57:45.000000000 -0200
+@@ -123,8 +123,8 @@
+ 
+ print "\nChecking for REQUIRED modules:\n------------------------------------------\n";
+ &check_modules('y', %req_CPAN);
+-print "\nChecking for OPTIONAL modules:\n------------------------------------------\n";
+-&check_modules('n', %opt_CPAN);
++#print "\nChecking for OPTIONAL modules:\n------------------------------------------\n";
++#&check_modules('n', %opt_CPAN);
+ 
+ print <<EOM;
+ ******* NOTE *******
