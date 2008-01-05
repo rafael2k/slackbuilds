@@ -90,7 +90,7 @@ mkdir -p /install
 
 perl Makefile.PL || exit $ERROR_CONF
 make || exit $ERROR_MAKE
-make test
+#make test
 make install DESTDIR=$TMP/package-$PACKAGE || exit $ERROR_INSTALL
 
 # make the package
