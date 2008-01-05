@@ -77,6 +77,7 @@ if [ "$RTOOL" == "wget" ] && [ ! -f "$SRC_DIR/$SRC" ]; then
 fi
 
 TMP="$TMP/$PACKAGE"
+PKG="$TMP/package-$PACKAGE"
 
 if [ ! -d "$TMP" ]; then
   mkdir -p $TMP
@@ -85,17 +86,15 @@ fi
 tar xvf $SRC_DIR/$SRC || exit $ERROR_TAR
 cd $FILE_NAME-$VERSION
 
-# config and install!
+# config, make and install!
 eval $(perl '-V:sitelibexp') 
-sed -i -e "s,\(-MXML::SAX\),-I$PKG/${sitelibexp} \1," Makefile.PL
+sed -i -e "s,\(-MXML::SAX\),-I${PKG}/${sitelibexp} \1," Makefile.PL
 perl Makefile.PL || exit $ERROR_CONF
 make || exit $ERROR_MAKE
 make test
-make install DESTDIR=$TMP/package-$PACKAGE || exit $ERROR_INSTALL
+make install DESTDIR=$PKG || exit $ERROR_INSTALL
 
-# make the package
-
-cd $TMP/package-$PACKAGE
+cd $PKG
 
 # we need to fix .packlist
 string="`echo $TMP/package-$PACKAGE | sed -e 's/\//\\\\\//g'`"
