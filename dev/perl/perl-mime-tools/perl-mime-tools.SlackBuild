@@ -64,7 +64,7 @@ PACKAGE_EXT="gz"
 SRC="$PACKAGE-$VERSION.tar.$PACKAGE_EXT"
 FILE_NAME="`echo $NAME | sed -e 's/::/-/g'`"
 SRC="$FILE_NAME-$VERSION.tar.gz"
-URL="http://search.cpan.org/CPAN/authors/id/D/DS/DSKOLL/$SRC"
+URL="http://search.cpan.org/CPAN/authors/id/D/DO/DONEILL/$SRC"
 
 SRC_DIR="$SRC_DIR/$PACKAGE"
 
