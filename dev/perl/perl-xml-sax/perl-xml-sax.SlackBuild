@@ -86,9 +86,8 @@ tar xvf $SRC_DIR/$SRC || exit $ERROR_TAR
 cd $FILE_NAME-$VERSION
 
 # config and install!
-# TODO!!!
-mkdir -p /install
-
+eval $(perl '-V:sitelibexp') 
+sed -i -e "s,\(-MXML::SAX\),-I$PKG/${sitelibexp} \1," Makefile.PL
 perl Makefile.PL || exit $ERROR_CONF
 make || exit $ERROR_MAKE
 make test
