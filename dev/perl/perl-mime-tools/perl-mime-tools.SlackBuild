@@ -41,7 +41,7 @@ fi
 NAME="MIME-tools"
 PACKAGE="perl-`echo $NAME | sed -e 's/::/-/g' | tr '[:upper:]' '[:lower:]'`"
 TMP=${TMP:=/tmp}
-VERSION=${VERSION:=5.420}
+VERSION=${VERSION:=5.425}
 ARCH=${ARCH:=i386}
 BUILD=${BUILD:=1rha}
 SRC_DIR=${SRC:=$CWD}
