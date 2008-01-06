@@ -1,1 +1,4 @@
-perl-xml-namespacesupport
+# Dependency list to XML-SAX
+#
+# dependency [condition] [version]]
+perl-xml-namespacesupport				
