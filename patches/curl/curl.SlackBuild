@@ -72,7 +72,7 @@ cd $TMP
 tar xvf$tarflag $SRC_DIR/$SRC
 cd curl-$VERSION
 
-zcat $CWD/libcurl-ntlmbuf.patch.gz | patch -p0 --verbose || exit
+# zcat $CWD/libcurl-ntlmbuf.patch.gz | patch -p0 --verbose || exit
 
 chown -R root.root .
 find . -perm 777 -exec chmod 755 {} \;
