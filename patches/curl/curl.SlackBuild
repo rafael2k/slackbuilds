@@ -13,7 +13,7 @@ elif [ -f /etc/slackbuildrc ]; then
 fi
 
 PACKAGE="curl"
-VERSION=7.12.2
+VERSION=7.17.1
 ARCH=${ARCH:=i486}
 BUILD=${BUILD:=1rha}
 TMP=${TMP:=/tmp}
