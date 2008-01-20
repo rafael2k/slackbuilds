@@ -1,0 +1,4 @@
+# Dependency list to snownews
+#
+# dependency [condition] [version]]
+libiconv				
