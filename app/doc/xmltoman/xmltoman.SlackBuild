@@ -86,7 +86,7 @@ fi
 # Untar
 cd "$PKG_WORK"
 tar --no-same-owner --no-same-permissions -xvf "$SRC_DIR/$SRC" || exit $ERROR_TAR
-PKG_SRC=`ls -l | awk '/^d/ { print $8 }'`
+PKG_SRC="$PWD/`ls -l | awk '/^d/ { print $8 }'`"
 cd "$PKG_SRC"
 
 # Patch source
@@ -101,11 +101,11 @@ for patch in $patches; do
   fi
 done
 
-# Buils package
-make PREFIX=$PREFIX
+# Compile
+make PREFIX=$PREFIX || exit $ERROR_MAKE
 
-# Install package
-make install PREFIX=$PKG/usr
+# Install
+make install PREFIX=$PKG/usr  || exit $ERROR_INSTALL
 
 # Strip binaries
 ( cd "$PKG"

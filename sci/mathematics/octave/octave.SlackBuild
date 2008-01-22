@@ -16,7 +16,7 @@
 #
 # slackbuild for octave, by Rudson R. Alves
 # requires: gcc flex bison gperf 
-# tested: octave-2.9.13
+# tested: octave-3.0.0
 #
 
 # Look for slackbuildrc
@@ -31,7 +31,7 @@ CWD="$(pwd)"
 SRC_NAME="octave"
 PKG_NAME="octave"
 ARCH=${ARCH:=i486}
-SRC_VERSION=${VERSION:=2.9.13}
+SRC_VERSION=${VERSION:=3.0.0}
 PKG_VERSION="$(echo "$SRC_VERSION" | tr '[[:blank:]-]' '_')"
 BUILD=${BUILD:=1rra}
 SRC_DIR=${SRC_DIR:=$CWD}/$PKG_NAME
@@ -86,7 +86,7 @@ fi
 # Untar
 cd "$PKG_WORK"
 tar --no-same-owner --no-same-permissions -xvf "$SRC_DIR/$SRC" || exit $ERROR_TAR
-PKG_SRC=`ls -l | awk '/^d/ { print $8 }'`
+PKG_SRC="$PWD/`ls -l | awk '/^d/ { print $8 }'`"
 cd "$PKG_SRC"
 
 # Configure

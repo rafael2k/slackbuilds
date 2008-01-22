@@ -87,7 +87,7 @@ fi
 # Get dictionaries
 DIC_LIST="EngtoDut.dic.gz EngtoEng.dic.gz EngtoFre.dic.gz 
         EngtoGer.dic.gz EngtoHeb.dic.gz EngtoIta.dic.gz EngtoJpn.dic.gz 
-	EngtoPor.dic.gz EngtoSpa.dic.gz english.dic.gz english2.dic.gz"
+        EngtoPor.dic.gz EngtoSpa.dic.gz english.dic.gz english2.dic.gz"
 
 for i in $DIC_LIST; do
     [ ! -e $SRC_DIR/$i ] && wget $DIC_URL/$i -P $SRC_DIR/
@@ -98,7 +98,7 @@ done
 # Untar
 cd "$PKG_WORK"
 tar --no-same-owner --no-same-permissions -xvf "$SRC_DIR/$SRC" || exit $ERROR_TAR
-PKG_SRC=`ls -l | awk '/^d/ { print $8 }'`
+PKG_SRC="$PWD/`ls -l | awk '/^d/ { print $8 }'`"
 cd "$PKG_SRC"
 
 # Configure
@@ -169,12 +169,12 @@ cat << EODESC > "$PKG/install/slack-desc"
          |-----handy-ruler----------------------------------------------------|
 babytrans: babytrans by Slack.Sarava
 babytrans:
-babytrans: BabyTrans is a graphical interface for the Babylon Translator dictionaries (available
-babytrans: under Windows). (More information: <http://www.babylon.com>)
-babytrans:
-babytrans: Copy the dictionary files from Babylon Translator either in the /usr/share/babytrans
-babytrans: directory or in another directory that you indicate in the configuration.
-babytrans:
+babytrans: BabyTrans is a graphical interface for the Babylon Translator
+babytrans: dictionaries (available under Windows). (More information:
+babytrans: <http://www.babylon.com>)
+babytrans: Copy the dictionary files from Babylon Translator either in the
+babytrans: /usr/share/babytrans directory or in another directory that you
+babytrans: indicate in the configuration.
 babytrans: The files to copy are:
 babytrans: - english.dic (common for all languages)
 babytrans: - Engto***.dic (with *** depending on the language)

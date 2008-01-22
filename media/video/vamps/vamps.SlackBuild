@@ -86,14 +86,13 @@ fi
 # Untar
 cd "$PKG_WORK"
 tar --no-same-owner --no-same-permissions -xvf "$SRC_DIR/$SRC" || exit $ERROR_TAR
-PKG_SRC=`ls -l | awk '/^d/ { print $8 }'`
+PKG_SRC="$PWD/`ls -l | awk '/^d/ { print $8 }'`"
 cd "$PKG_SRC"
 
 # Compile
 PREFIX=$PREFIX make $NUMJOBS || exit $ERROR_MAKE
 
 # Install
-cp 
 PREFIX=$PKG/$PREFIX make install || exit $ERROR_INSTALL
 
 # Strip binaries

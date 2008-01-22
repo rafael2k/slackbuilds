@@ -86,7 +86,7 @@ fi
 # Untar
 cd "$PKG_WORK"
 tar --no-same-owner --no-same-permissions -xvf "$SRC_DIR/$SRC" || exit $ERROR_TAR
-PKG_SRC=`ls -l | awk '/^d/ { print $8 }'`
+PKG_SRC="$PWD/`ls -l | awk '/^d/ { print $8 }'`"
 cd "$PKG_SRC"
 
 # Configure
@@ -100,7 +100,8 @@ make all || exit $ERROR_MAKE
 
 # Change intall path
 eval "sed -i 's¦^PREFIX=$PREFIX¦PREFIX=$PKG/${PREFIX:1}¦' Makefile"
-make install
+# Install
+make install || exit $ERROR_INSTALL
 
 cd $PKG
 for i in `grep -Rl '/tmp/package-scilab' usr/*`; do 

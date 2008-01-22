@@ -86,7 +86,7 @@ fi
 # Untar
 cd "$PKG_WORK"
 tar --no-same-owner --no-same-permissions -xvf "$SRC_DIR/$SRC" || exit $ERROR_TAR
-PKG_SRC=`ls -l | awk '/^d/ { print $8 }'`
+PKG_SRC="$PWD/`ls -l | awk '/^d/ { print $8 }'`"
 cd "$PKG_SRC"
 
 # Configure
@@ -131,13 +131,13 @@ cat << EODESC > "$PKG/install/slack-desc"
             |-----handy-ruler-------------------------------------------------|
 scrollkeeper: scrollkeeper by Slack.Sarava
 scrollkeeper:
-scrollkeeper: ScrollKeeper is a cataloging system for documentation on open systems. It manages
-scrollkeeper: documentation metadata (as specified by the Open Source Metadata Framework(OMF))
-scrollkeeper: and provides a simple API to allow help browsers to find, sort, and search the
-scrollkeeper: document catalog. It will also be able to communicate with catalog servers on the
-scrollkeeper: Net to search for documents which are not on the local system.
-scrollkeeper:
-scrollkeeper:
+scrollkeeper: ScrollKeeper is a cataloging system for documentation on open
+scrollkeeper: systems. It manages documentation metadata (as specified by the
+scrollkeeper: Open Source Metadata Framework(OMF)) and provides a simple API
+scrollkeeper: to allow help browsers to find, sort, and search the document
+scrollkeeper: catalog. It will also be able to communicate with catalog
+scrollkeeper: servers on the Net to search for documents which are not on the
+scrollkeeper: local system.
 scrollkeeper:
 scrollkeeper:
 EODESC

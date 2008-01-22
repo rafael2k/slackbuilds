@@ -86,7 +86,7 @@ fi
 # Untar
 cd "$PKG_WORK"
 tar --no-same-owner --no-same-permissions -xvf "$SRC_DIR/$SRC" || exit $ERROR_TAR
-PKG_SRC=`ls -l | awk '/^d/ { print $8 }'`
+PKG_SRC="$PWD/`ls -l | awk '/^d/ { print $8 }'`"
 cd "$PKG_SRC"
 
 # Configure
@@ -131,8 +131,8 @@ cat << EODESC > "$PKG/install/slack-desc"
                     |-----handy-ruler-----------------------------------------|
 gnome-python-desktop: gnome-python-desktop by Slack.Sarava
 gnome-python-desktop:
-gnome-python-desktop: This package contains a few python modules that used to live in 
-gnome-python-desktop: gnome-python-extras:
+gnome-python-desktop: This package contains a few python modules that used to
+gnome-python-desktop: live in gnome-python-extras:
 gnome-python-desktop: - gnomeapplet
 gnome-python-desktop: - gnomeprint, gnomeprint.ui
 gnome-python-desktop: - gtksourceview

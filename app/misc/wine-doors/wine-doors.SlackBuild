@@ -86,7 +86,7 @@ fi
 # Untar
 cd "$PKG_WORK"
 tar --no-same-owner --no-same-permissions -xvf "$SRC_DIR/$SRC" || exit $ERROR_TAR
-PKG_SRC=`ls -l | awk '/^d/ { print $8 }'`
+PKG_SRC="$PWD/`ls -l | awk '/^d/ { print $8 }'`"
 cd "$PKG_SRC"
 
 # Install winedoors in $DESTDIR
@@ -114,15 +114,15 @@ cat << EODESC > "$PKG/install/slack-desc"
           |-----handy-ruler---------------------------------------------------|
 wine-doors: wine-doors by Slack.Sarava
 wine-doors:
-wine-doors: Wine-doors is an application designed to make installing windows software on Linux,
-wine-doors: Solaris or other Unix systems easier. Wine-doors is essentially a package management
-wine-doors: tool for windows software on Linux systems. Most Linux desktop users are familiar
-wine-doors: with package management style application delivery, so it made sense to apply this
-wine-doors: model to windows software.
-wine-doors:
-wine-doors: Wine-doors works by leveraging the exquisite software, libraries and tools created
-wine-doors: over at WineHQ, there are also plans to support Cedega, cvscedega and Crossover
-wine-doors: Office.
+wine-doors: Wine-doors is an application designed to make installing windows
+wine-doors: software on Linux, Solaris or other Unix systems easier. Wine-
+wine-doors: doors is essentially a package management tool for windows software
+wine-doors: on Linux systems. Most Linux desktop users are familiar with
+wine-doors: package management style application delivery, so it made sense to
+wine-doors: apply this model to windows software.
+wine-doors: Wine-doors works by leveraging the exquisite software, libraries
+wine-doors: and tools created over at WineHQ, there are also plans to support
+wine-doors: Cedega, cvscedega and Crossover Office.
 EODESC
 
 # Build the package
