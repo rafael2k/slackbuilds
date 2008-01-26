@@ -51,7 +51,7 @@ ERROR_MD5=34;       ERROR_CONF=35;      ERROR_HELP=36
 ERROR_TAR=37;       ERROR_MKPKG=38;     ERROR_GPG=39
 ERROR_PATCH=40
 
-PACKAGE_EXT="gz"
+PACKAGE_EXT="bz2"
 SRC="$PACKAGE-$VERSION.tar.$PACKAGE_EXT"
 URL="http://dl.lm-sensors.org/lm-sensors/releases/$SRC"
 
