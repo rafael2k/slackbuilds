@@ -54,9 +54,6 @@ CWD=`pwd`
 if [ "$INTERACT" != "no" ]; then
   echo "Hit ENTER do continue, Crtl-C to abort"
   read crap
-else
-  echo sleeping 3 seconds...
-  sleep 3
 fi
 
 if [ -f ~/.slackbuildrc ]; then
@@ -88,7 +85,7 @@ else
 fi
 
 SRC="$PRGNAM-$VERSION.tar.gz"
-URL="http://people.ee.ethz.ch/~oetiker/webtools/$PRGNAM/pub/$SRC"
+URL="http://oss.oetiker.ch/rrdtool/pub/$SRC"
 
 SRC_DIR="$SRC_DIR/$PACKAGE"
 mkdir -p $SRC_DIR
