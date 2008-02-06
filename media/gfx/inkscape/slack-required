@@ -1,4 +1,9 @@
-libgc
-libsigc++
-glibmm
-gtkmm
+# Dependency list to inkscape
+#
+# dependency [condition] [version]]
+gtk+2		>=		2.10.7
+gtkmm		>=		2.4
+glib2		>=		2.6.5
+libsigc++		>=		2.0.12
+libxslt		>=		1.0.15
+libxml2		>=		2.6.20
