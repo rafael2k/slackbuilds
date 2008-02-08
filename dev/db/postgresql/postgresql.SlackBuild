@@ -1,117 +1,144 @@
 #!/bin/bash
 #
-#  postgresql.SlackBuild is free software; you can redistribute it and/or modify it under the
-#  terms of the GNU General Public License as published by the Free Software
-#  Foundation; either version 2 of the License, or any later version.
+#  postgresql.SlackBuild is free software; you can redistribute
+#  it and/or modify it under the terms of the GNU General Public License as
+#  published by the Free Software Foundation; either version 2 of the License,
+#  or any later version.
 #
-#  postgresql.SlackBuild is distributed in the hope that it will be useful, but WITHOUT ANY
-#  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
-#  A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
+#  postgresql.SlackBuild is distributed in the hope that it will
+#  be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General
+#  Public License for more details.
 #
 #  You should have received a copy of the GNU General Public License along with
 #  this program; if not, write to the Free Software Foundation, Inc., 59 Temple
 #  Place - Suite 330, Boston, MA 02111-1307, USA
 #
-# slackbuild script for postgresql
-# by rhatto at riseup.net
+# slackbuild for postgresql, by Rudson R. Alves
+# requires:  
+# tested: postgresql-8.3.0
 #
 
-if [ -s "slack-required" ]; then
-  echo Recomended and required packages for building postgresql are:
-  cat slack-required | sed -e 's/^/\t/'
-  if [ "$INTERACT" != "no" ]; then
-    echo If you dont have those installed, press Ctrl-C. Otherwise, hit ENTER.
-    read crap
-#  else
-#    echo Sleeping 3 seconds...
-#    sleep 3
-  fi
-fi
-
-CWD="`pwd`"
-
+# Look for slackbuildrc
 if [ -f ~/.slackbuildrc ]; then
   source ~/.slackbuildrc
 elif [ -f /etc/slackbuildrc ]; then
   source /etc/slackbuildrc
 fi
 
-# default settings
-PACKAGE="postgresql"
+# Set variables
+CWD="$(pwd)"
+SRC_NAME="postgresql"
+PKG_NAME="postgresql"
 ARCH=${ARCH:=i486}
-VERSION=${VERSION:=7.4.14}
-BUILD=${BUILD:=1rha}
-SRC_DIR=${SRC:=$CWD}
+SRC_VERSION=${VERSION:=8.3.0}
+PKG_VERSION="$(echo "$SRC_VERSION" | tr '[[:blank:]-]' '_')"
+BUILD=${BUILD:=1rra}
+SRC_DIR=${SRC_DIR:=$CWD}/$PKG_NAME
 TMP=${TMP:=/tmp}
+PKG=${PKG:=$TMP/package-$PKG_NAME}
 REPOS=${REPOS:=$TMP}
+PREFIX=${PREFIX:=/usr}
+PKG_WORK="$TMP/$SRC_NAME"
+CONF_OPTIONS=${CONF_OPTIONS:="--sysconfdir=/etc --localstatedir=/var --with-perl --with-python --with-openssl --enable-thread-safety"}
+NUMJOBS=${NUMJOBS:="-j4"}
 
-if [ "$ARCH" == "x86_64" ]; then
-  export LDFLAGS="-L/lib64 -L/usr/lib64"
-  LIBDIR=/usr/lib64
-else
-  LIBDIR=/usr/lib
+# Set system libraries' path and optmization flags based on $ARCH
+LIBDIR="$PREFIX/lib"
+
+if [ "$ARCH" = "i386" ]; then
+  SLKCFLAGS="-O2 -march=i386 -mcpu=i686"
+elif [ "$ARCH" = "i486" ]; then
+  SLKCFLAGS="-O2 -march=i486 -mcpu=i686"
+elif [ "$ARCH" = "i686" ]; then
+  SLKCFLAGS="-O2 -march=i686"
+elif [ "$ARCH" = "s390" ]; then
+  SLKCFLAGS="-O2"
+elif [ "$ARCH" = "x86_64" ]; then
+  SLKCFLAGS="-O2"
+  LIBDIR="$PREFIX/lib64"
 fi
 
-# -------  error codes for createpkg  --------------
+# Set error codes (used by createpkg)
 ERROR_WGET=31;      ERROR_MAKE=32;      ERROR_INSTALL=33
 ERROR_MD5=34;       ERROR_CONF=35;      ERROR_HELP=36
 ERROR_TAR=37;       ERROR_MKPKG=38;     ERROR_GPG=39
-ERROR_PATCH=40
+ERROR_PATCH=40;     ERROR_VCS=41;       ERROR_MKDIR=42
 
-RTOOL="wget"
-PACKAGE_EXT="bz2"
-SRC="$PACKAGE-$VERSION.tar.$PACKAGE_EXT"
-MD5="$SRC.md5"
-URL="ftp://ftp.us.postgresql.org/pub/mirrors/postgresql/source/v$VERSION/$SRC"
-MD5_URL="$URL.md5"
+# Clean up any leftovers of previous builds
+rm -rf "$PKG_WORK" 2> /dev/null
+rm -rf "$PKG" 2> /dev/null
 
-SRC_DIR="$SRC_DIR/$PACKAGE"
-mkdir -p $SRC_DIR
+# Create directories if necessary
+mkdir -p "$SRC_DIR" || exit $ERROR_MKDIR
+mkdir -p "$PKG" || exit $ERROR_MKDIR
+mkdir -p "$REPOS" || exit $ERROR_MKDIR
+mkdir -p "$PKG_WORK" || exit $ERROR_MKDIR
 
-if [ "$RTOOL" == "wget" ]; then
-  if [ ! -f "$SRC_DIR/$SRC" ]; then
-    wget "$URL" -O "$SRC_DIR/$SRC" || exit $ERROR_WGET
-  fi
-  if [ ! -f "$SRC_DIR/$MD5" ]; then
-    wget "$MD5_URL" -O "$SRC_DIR/$MD5" || exit $ERROR_WGET
-  fi
+# Dowload source if necessary
+SRC="$SRC_NAME-$VERSION.tar.bz2"
+URL="http://ftp7.us.postgresql.org/pub/postgresql/v$VERSION/$SRC"
+
+if [ ! -s "$SRC_DIR/$SRC" ] || ! bunzip2 -t "$SRC_DIR/$SRC" 2> /dev/null; then
+  wget "$URL" -O "$SRC_DIR/$SRC" || exit $ERROR_WGET
 fi
 
-cat $SRC_DIR/$MD5 | cut -d = -f 2 | sed -e "s/^ //" > $SRC_DIR/$MD5.tmp
-mv $SRC_DIR/$MD5.tmp $SRC_DIR/$MD5
-md5sum $SRC_DIR/$SRC | awk '{ print $1 }' | diff - $SRC_DIR/$MD5 || exit $ERROR_MD5
-
-TMP="$TMP/$PACKAGE"
-rm -rf $TMP
-mkdir -p $TMP
-cd $TMP
-
-tar xvf $SRC_DIR/$SRC || exit $ERROR_TAR
-cd $PACKAGE-$VERSION
-
-if [ -f "$CWD/$PACKAGE-$VERSION.diff" ]; then
-  patch -p1 < $CWD/$PACKAGE-$VERSION.diff || exit $ERROR_PATCH
+# Download source's MD5 checksum if necessary and check it
+if [ ! -s "$SRC_DIR/$SRC.md5" ]; then
+   wget "$URL.md5" -O "$SRC_DIR/$SRC.md5" || exit $ERROR_WGET
 fi
 
-./configure --prefix=/usr --sysconfdir=/etc --libdir=$LIBDIR --enable-thread-safety || exit $ERROR_CONF
-make || exit $ERROR_MAKE
-make DESTDIR=$TMP/package-$PACKAGE install || exit $ERROR_INSTALL
+MD5SUM_SRC="$(md5sum "$SRC_DIR/$SRC" | cut -d " " -f 1)"
+MD5SUM_URL=`awk '{ print $4 }' $SRC_DIR/$SRC.md5`
 
-CWD="`pwd`"
+[ "$MD5SUM_SRC" == "$MD5SUM_URL" ] || exit $ERROR_MD5
 
-cd $TMP/package-$PACKAGE
+# Untar
+cd "$PKG_WORK"
+tar --no-same-owner --no-same-permissions -xvf "$SRC_DIR/$SRC" || exit $ERROR_TAR
+PKG_SRC="$PWD/`ls -l | awk '/^d/ { print $8 }'`"
+cd "$PKG_SRC"
 
+# Configure
+CFLAGS="$SLKCFLAGS" \
+  CXXFLAGS="$SLKCFLAGS" \
+  ./configure \
+  --prefix="$PREFIX" --libdir="$LIBDIR" $CONF_OPTIONS || exit $ERROR_CONF
+
+# Compile
+make $NUMJOBS || exit $ERROR_MAKE
+
+# Install
+make install DESTDIR="$PKG" || exit $ERROR_INSTALL
+
+cd $PKG
 mkdir -p etc/rc.d
 sed -e 's/\/usr\/local\/pgsql\/data/\/var\/lib\/postgresql\/data/' \
-    -e 's/\/usr\/local\/postgresql/\/usr/' $CWD/contrib/start-scripts/linux > etc/rc.d/rc.postgresql.new
+    -e 's/\/usr\/local\/postgresql/\/usr/' $PKG_SRC/contrib/start-scripts/linux > etc/rc.d/rc.postgresql.new
 
 chmod 755 etc/rc.d/rc.postgresql.new
+cd - 2>/dev/null
 
-find . | xargs file | grep "executable" | grep ELF | cut -f 1 -d : | xargs strip --strip-unneeded 2> /dev/null
-find . | xargs file | grep "shared object" | grep ELF | cut -f 1 -d : | xargs strip --strip-unneeded 2> /dev/null
+# Strip binaries
+( cd "$PKG"
+  find . | xargs file | grep "executable" | grep ELF | cut -f 1 -d : | \
+    xargs strip --strip-unneeded 2> /dev/null
+  find . | xargs file | grep "shared object" | grep ELF | cut -f 1 -d : | \
+    xargs strip --strip-unneeded 2> /dev/null
+)
 
-mkdir install
-cat << EOF > install/slack-desc
+# Install documentation
+DOCS="COPYRIGHT HISTORY INSTALL README doc/FAQ* /doc/KNOWN_BUGS /doc/README*"
+mkdir -p "$PKG/usr/doc/$PKG_NAME-$PKG_VERSION" || exit $ERROR_MKDIR
+for doc in $DOCS; do
+  if [ -f "$doc" ]; then
+    cp -a $doc "$PKG/usr/doc/$PKG_NAME-$PKG_VERSION"
+  fi
+done
+
+# Add package description (slack-desc)
+mkdir -p "$PKG/install" || exit $ERROR_MKDIR
+cat << EODESC > "$PKG/install/slack-desc"
 # HOW TO EDIT THIS FILE:
 # The "handy ruler" below makes it easier to edit a package description.  Line
 # up the first '|' above the ':' following the base package name, and the '|'
@@ -119,8 +146,8 @@ cat << EOF > install/slack-desc
 # make exactly 11 lines for the formatting to be correct.  It's also
 # customary to leave one space after the ':'.
 
-          |-----handy-ruler-----------------------------------------------------|
-postgresql: postgresql (A robust Object-Relational DBMS)
+          |-----handy-ruler---------------------------------------------------|
+postgresql: postgresql by Slack.Sarava
 postgresql:
 postgresql: PostgreSQL is a robust, next-generation, Object-Relational DBMS
 postgresql: (ORDBMS), derived from the Berkeley Postgres database management
@@ -131,25 +158,32 @@ postgresql:
 postgresql:
 postgresql:
 postgresql:
-EOF
+EODESC
 
-# docs
-mkdir -p usr/doc/$PACKAGE-$VERSION
+# Add a post-installation script (doinst.sh)
+cat << EOSCRIPT > "$PKG/install/doinst.sh"
 
-DOCS="COPYRIGHT HISTORY INSTALL README"
-
-for file in $DOCS; do
-  cp $CWD/$file* usr/doc/$PACKAGE-$VERSION/
-done
-
-# install script
-echo '( if ! grep -qe "^postgres:" etc/group; then echo creating group postgres... ; chroot . /usr/sbin/groupadd postgres; fi )' >> install/doinst.sh
-echo '( if ! grep -qe "^postgres:" etc/passwd; then echo creating user postgres... ; chroot . /usr/sbin/useradd postgres -g postgres; fi )' >> install/doinst.sh
-echo '( if [ ! -f "etc/rc.d/rc.postgresql" ]; then mv etc/rc.d/rc.postgresql.new etc/rc.d/rc.postgresql; fi )' >> install/doinst.sh
-
-makepkg -c y -l y $REPOS/$PACKAGE-$VERSION-$ARCH-$BUILD.tgz || exit $ERROR_MKPKG
-
-if [ "$CLEANUP" == "yes" ]; then
-  rm -rf $TMP
+if ! grep -qe "^postgres:" etc/group; then 
+    echo "Creating group postgres..."
+    chroot . /usr/sbin/groupadd postgres
 fi
 
+if ! grep -qe "^postgres:" etc/passwd; then 
+    echo "Creating user postgres..."
+    chroot . /usr/sbin/useradd postgres -g postgres
+fi
+
+if [ ! -f "etc/rc.d/rc.postgresql" ]; then 
+    mv etc/rc.d/rc.postgresql.new etc/rc.d/rc.postgresql
+fi
+
+EOSCRIPT
+
+# Build the package
+cd "$PKG"
+makepkg -l y -c n "$REPOS/$PKG_NAME-$PKG_VERSION-$ARCH-$BUILD.tgz" || exit $ERROR_MKPKG
+
+# Delete source and build directories if requested
+if [ "$CLEANUP" == "yes" ]; then
+  rm -rf "$PKG_WORK" "$PKG"
+fi
