@@ -1,0 +1,7 @@
+# Dependency list to kaffeine
+#
+# dependency [condition] [version]]
+xine-lib				
+kdelibs				
+lame				
+libdvdcss				
