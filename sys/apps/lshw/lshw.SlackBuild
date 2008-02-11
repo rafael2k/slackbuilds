@@ -90,7 +90,7 @@ PKG_SRC="$PWD/`ls -l | awk '/^d/ { print $8 }'`"
 cd "$PKG_SRC"
 
 # Compile
-make $NUMJOBS && cd "$PKG_SRC/src/gui" && mkdir -p "$PKG/usr/sbin" && make && mv gtk-lshw "$PKG/usr/sbin/" || Exit $ERROR_MAKE
+make $NUMJOBS && cd "$PKG_SRC/src/gui" && mkdir -p "$PKG/usr/sbin" && make && mv gtk-lshw "$PKG/usr/sbin/" || exit $ERROR_MAKE
 cd "$PKG_SRC"
 
 # Install
