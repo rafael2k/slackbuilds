@@ -31,7 +31,7 @@ CWD="$(pwd)"
 SRC_NAME="jack-audio-connection-kit"
 PKG_NAME="jack"
 ARCH=${ARCH:=i486}
-SRC_VERSION=${VERSION:=0.109.0}
+SRC_VERSION=${VERSION:=0.109.2}
 PKG_VERSION="$(echo "$SRC_VERSION" | tr '[[:blank:]-]' '_')"
 BUILD=${BUILD:=1rra}
 SRC_DIR=${SRC_DIR:=$CWD}/$PKG_NAME
