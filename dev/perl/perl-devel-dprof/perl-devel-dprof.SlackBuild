@@ -66,7 +66,7 @@ ERROR_TAR=37;       ERROR_MKPKG=38;     ERROR_GPG=39
 ERROR_PATCH=40;     ERROR_VCS=41;       ERROR_MKDIR=42
 
 # Clean up any leftovers of previous builds
-rm -rf "$PKG_WORK" 2> /dev/null
+rm -rf "$PKG_SRC" 2> /dev/null
 rm -rf "$PKG" 2> /dev/null
 
 # Create directories if necessary
@@ -86,20 +86,26 @@ fi
 # Untar
 cd "$PKG_WORK"
 tar --no-same-owner --no-same-permissions -xvf "$SRC_DIR/$SRC" || exit $ERROR_TAR
-PKG_SRC="$PWD/`ls -l | awk '/^d/ { print $8 }'`"
+PKG_SRC=`ls -l | awk '/^d/ { print $8 }'`
 cd "$PKG_SRC"
 
 # Configure
-CFLAGS="$SLKCFLAGS" \
-  CXXFLAGS="$SLKCFLAGS" \
-  ./configure \
-  --prefix="$PREFIX" --libdir="$LIBDIR" $CONF_OPTIONS || exit $ERROR_CONF
+perl Makefile.PL || exit $ERROR_CONF
 
 # Compile
 make $NUMJOBS || exit $ERROR_MAKE
 
 # Install
 make install DESTDIR="$PKG" || exit $ERROR_INSTALL
+
+# Fix .packlist
+cd $PKG
+
+string="`echo $PKG | sed -e 's/\//\\\\\//g'`"
+for file in `find -name .packlist`; do
+  sed -e "s/^$string//g" $file > $file.tmp
+  mv $file.tmp $file
+done
 
 # Strip binaries
 ( cd "$PKG"
