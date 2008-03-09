@@ -29,7 +29,7 @@ fi
 # default settings
 PACKAGE="libevent"
 ARCH=${ARCH:=i486}
-VERSION=${VERSION:=1.1b}
+VERSION=${VERSION:=1.4.2-rc}
 BUILD=${BUILD:=1rha}
 SRC_DIR=${SRC:=$CWD}
 TMP=${TMP:=/tmp}
