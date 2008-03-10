@@ -94,6 +94,12 @@ elif [ "$VERSION" == "3.0.3.4" ]; then
   cd $INSTALL_FOLDER/azureus/plugins/azupnpav/
   unzip azupnpav_0.1.7.zip && rm azupnpav_0.1.7.zip
   cd -
+elif [ "$VERSION" == "3.0.5.0" ]; then
+  rm $INSTALL_FOLDER/azureus/plugins/azupnpav/*
+  wget "http://azureus.sourceforge.net/plugins/azupnpav_0.2.0.zip" -O "$INSTALL_FOLDER/azureus/plugins/azupnpav/azupnpav_0.2.0.zip"
+  cd $INSTALL_FOLDER/azureus/plugins/azupnpav/
+  unzip azupnpav_0.2.0.zip && rm azupnpav_0.2.0.zip
+  cd -
 fi
 
 cat << EOF > install/slack-desc
