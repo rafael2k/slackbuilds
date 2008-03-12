@@ -1,1 +1,6 @@
-lesstif
+# Dependency list to ddd
+#
+# dependency [condition] [version]]
+gdb				
+bashdb				
+pydb				
