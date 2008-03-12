@@ -33,7 +33,7 @@ CWD="$(pwd)"
 SRC_NAME="arno-iptables-firewall"
 PKG_NAME="arno-iptables-firewall"
 ARCH="noarch"
-SRC_VERSION=${VERSION:=1.8.8n}
+SRC_VERSION=${VERSION:=1.8.8o}
 PKG_VERSION="$(echo "$SRC_VERSION" | tr '[[:blank:]-]' '_')"
 BUILD=${BUILD:=1ls}
 SRC_DIR=${SRC_DIR:=$CWD}/$PKG_NAME
