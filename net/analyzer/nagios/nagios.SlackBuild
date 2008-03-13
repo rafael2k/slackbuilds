@@ -32,7 +32,7 @@ CWD="$(pwd)"
 SRC_NAME="nagios"
 PKG_NAME="nagios"
 ARCH=${ARCH:=i486}
-SRC_VERSION=${VERSION:=2.10}
+SRC_VERSION=${VERSION:=2.11}
 PKG_VERSION="$(echo "$SRC_VERSION" | tr '[[:blank:]-]' '_')"
 BUILD=${BUILD:=1ls}
 SRC_DIR=${SRC_DIR:=$CWD}/$PKG_NAME
@@ -101,7 +101,8 @@ make install DESTDIR="$PKG" || exit $ERROR_INSTALL
 make install-init DESTDIR="$PKG" || exit $ERROR_INSTALL
 make install-commandmode DESTDIR="$PKG" || exit $ERROR_INSTALL
 make install-config DESTDIR="$PKG" || exit $ERROR_INSTALL
-mv "$PKG/etc/rc.d/nagios" "$PKG/etc/rc.d/rc.nagios.new"
+mv "$PKG/etc/rc.d/init.d/nagios" "$PKG/etc/rc.d/rc.nagios.new"
+rmdir "$PKG/etc/rc.d/init.d"
 for file in $(ls -1 "$PKG/$PREFIX"/etc/*); do
   mv "$file" "$file".new
 done
@@ -115,7 +116,7 @@ done
 )
 
 # Install documentation
-DOCS="Changelog INSTALLING LEGAL LICENSE README UPGRADING"
+DOCS="Changelog INSTALLING LEGAL LICENSE README THANKS UPGRADING"
 mkdir -p "$PKG/usr/doc/$PKG_NAME-$PKG_VERSION" || exit $ERROR_MKDIR
 cp -a $DOCS "$PKG/usr/doc/$PKG_NAME-$PKG_VERSION" 2> /dev/null
 
