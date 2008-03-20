@@ -16,7 +16,7 @@
 #
 # slackbuild for pygtk, by Rudson R. Alves
 # requires: pygobject 
-# tested: pygtk-2.12.0
+# tested: pygtk-2.12.1
 #
 
 # Look for slackbuildrc
@@ -31,7 +31,7 @@ CWD="$(pwd)"
 SRC_NAME="pygtk"
 PKG_NAME="pygtk"
 ARCH=${ARCH:=i486}
-SRC_VERSION=${VERSION:=2.12.0}
+SRC_VERSION=${VERSION:=2.12.1}
 PKG_VERSION="$(echo "$SRC_VERSION" | tr '[[:blank:]-]' '_')"
 BUILD=${BUILD:=1rra}
 SRC_DIR=${SRC_DIR:=$CWD}/$PKG_NAME
