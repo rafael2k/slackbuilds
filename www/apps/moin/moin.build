@@ -40,7 +40,7 @@ TMP=${TMP:=/tmp}
 RTOOL="wget"
 PACKAGE_EXT="gz"
 SRC="$PACKAGE-$VERSION.tar.$PACKAGE_EXT"
-URL="http://easynews.dl.sourceforge.net/sourceforge/moin/$SRC"
+URL="http://static.moinmo.in/files/moin-1.6.1.tar.gz/$SRC"
 
 SRC_DIR="$SRC_DIR/$PACKAGE"
 
