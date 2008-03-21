@@ -89,12 +89,6 @@ tar --no-same-owner --no-same-permissions -xvf "$SRC_DIR/$SRC" || exit $ERROR_TA
 PKG_SRC="$PWD/`ls -l | awk '/^d/ { print $8 }'`"
 cd "$PKG_SRC"
 
-# Configure
-CFLAGS="$SLKCFLAGS" \
-  CXXFLAGS="$SLKCFLAGS" \
-  ./configure \
-  --prefix="$PREFIX" --libdir="$LIBDIR" $CONF_OPTIONS || exit $ERROR_CONF
-
 # Build and install package
 python setup.py build install --root=$PKG
 
