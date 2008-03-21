@@ -108,7 +108,7 @@ cd $PKG_DIR
 CFLAGS="$SLKCFLAGS" \
         ./configure --target-list="$TARGET_LIST" \
                 --prefix=$PREFIX \
-                --libdir=$LIBDIR $OPTCONF || exit $ERROR_CONF
+                $OPTCONF || exit $ERROR_CONF
 
 # ----------------  Compila programa  ---------------------
 make -j1 || exit $ERROR_MAKE
