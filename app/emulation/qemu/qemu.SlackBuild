@@ -14,7 +14,7 @@
 #
 # slackbuild for qemu, by Rudson R. Alves
 # requires: none
-# tested: qemu-0.9.0
+# tested: qemu-0.9.0, qemu-0.9.1
 
 CWD=`pwd`
 
@@ -28,7 +28,7 @@ fi
 # --------  Variáveis de controle de versão  --------------
 # Nome da fonte para a qual o slackbuild foi construído e
 # o seu md5sum
-SRC_ORIG="qemu-0.9.0.tar.gz"
+SRC_ORIG="qemu-0.9.1.tar.gz"
 #MD5_ORIG=""
 PACKAGE_ORIG=`echo $SRC_ORIG | sed -r 's/(.*)-(.*)\.(.*\..*)$/\1/'`
 VERSION_ORIG=`echo $SRC_ORIG | sed -r 's/(.*)-(.*)\.(.*\..*)$/\2/'`
