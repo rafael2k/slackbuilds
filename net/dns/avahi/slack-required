@@ -7,3 +7,4 @@ libdaemon
 mono				
 monodoc				
 xmltoman				
+dbus-python
