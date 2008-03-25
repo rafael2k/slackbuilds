@@ -16,7 +16,7 @@
 #
 # slackbuild for avahi, by Rudson R. Alves
 # requires: glib2 expat libdaemon mono monodoc xmltoman 
-# tested: avahi-0.6.21
+# tested: avahi-0.6.21, avahi-0.6.22
 #
 
 # Look for slackbuildrc
@@ -31,7 +31,7 @@ CWD="$(pwd)"
 SRC_NAME="avahi"
 PKG_NAME="avahi"
 ARCH=${ARCH:=i486}
-SRC_VERSION=${VERSION:=0.6.21}
+SRC_VERSION=${VERSION:=0.6.22}
 PKG_VERSION="$(echo "$SRC_VERSION" | tr '[[:blank:]-]' '_')"
 BUILD=${BUILD:=1rra}
 SRC_DIR=${SRC_DIR:=$CWD}/$PKG_NAME
@@ -40,7 +40,8 @@ PKG=${PKG:=$TMP/package-$PKG_NAME}
 REPOS=${REPOS:=$TMP}
 PREFIX=${PREFIX:=/usr}
 PKG_WORK="$TMP/$SRC_NAME"
-CONF_OPTIONS=${CONF_OPTIONS:="--sysconfdir=/etc --localstatedir=/var --program-prefix= --program-suffix= --disable-qt4 --with-avahi-priv-access-group=root  --disable-static"}
+# disabled mono, as it does not compile in slackware 12.1!
+CONF_OPTIONS=${CONF_OPTIONS:="--sysconfdir=/etc --localstatedir=/var --program-prefix= --program-suffix= --with-distro=slackware --disable-mono --disable-qt4 --with-avahi-priv-access-group=root  --disable-static"}
 NUMJOBS=${NUMJOBS:="-j7"}
 
 # Set system libraries' path and optmization flags based on $ARCH
