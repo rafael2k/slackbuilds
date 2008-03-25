@@ -107,7 +107,8 @@ if [ "$ARCH" == "i586" ] || [ "$ARCH" == "i686" ]; then
 fi
 
 # add --enable-runtime-cpudetection for package creation!
-./configure --prefix=/usr --libdir=$LIBDIR --confdir=/etc --language=pt_BR --enable-largefiles --enable-gui --enable-real $EXTRA_ARGS || exit $ERROR_CONF
+# removing ivtv as for slack 12.1 it`s not compiling
+./configure --disable-ivtv --prefix=/usr --libdir=$LIBDIR --confdir=/etc --language=pt_BR --enable-largefiles --enable-gui --enable-real $EXTRA_ARGS || exit $ERROR_CONF
 make || exit $ERROR_MAKE
 echo "$TMP/package-$PACKAGE/$PACKAGE"
 make DESTDIR=$TMP/package-$PACKAGE/$PACKAGE install || exit $ERROR_INSTALL
