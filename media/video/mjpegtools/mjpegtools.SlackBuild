@@ -39,7 +39,7 @@ fi
 # default settings
 PACKAGE="mjpegtools"
 ARCH=${ARCH:=i486}
-VERSION=${VERSION:=1.9.0rc2}
+VERSION=${VERSION:=1.9.0rc3}
 BUILD=${BUILD:=1rd}
 SRC_DIR=${SRC:=$CWD}
 TMP=${TMP:=/tmp}
