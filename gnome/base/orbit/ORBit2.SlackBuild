@@ -41,7 +41,8 @@ REPOS=${REPOS:=$TMP}
 PREFIX=${PREFIX:=/usr}
 PKG_WORK="$TMP/$SRC_NAME"
 CONF_OPTIONS=${CONF_OPTIONS:=""}
-NUMJOBS=${NUMJOBS:="-j4"}
+# Paralell build is not working for me...
+# NUMJOBS=${NUMJOBS:="-j4"}
 
 # Set system libraries' path and optmization flags based on $ARCH
 LIBDIR="$PREFIX/lib"
@@ -96,7 +97,7 @@ CFLAGS="$SLKCFLAGS" \
   --prefix="$PREFIX" --libdir="$LIBDIR" $CONF_OPTIONS || exit $ERROR_CONF
 
 # Compile
-make $NUMJOBS || exit $ERROR_MAKE
+make || exit $ERROR_MAKE
 
 # Install
 make install DESTDIR="$PKG" || exit $ERROR_INSTALL
