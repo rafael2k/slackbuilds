@@ -38,7 +38,7 @@ fi
 
 # default settings
 PACKAGE="sympa"
-VERSION=${VERSION:=5.3.4}
+VERSION=${VERSION:=5.4}
 ARCH=${ARCH:=i486}
 BUILD=${BUILD:=1rha}
 SRC_DIR=${SRC:=$CWD}
