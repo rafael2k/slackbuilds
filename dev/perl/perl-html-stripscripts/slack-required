@@ -1,0 +1,4 @@
+# Dependency list to HTML-StripScripts
+#
+# dependency [condition] [version]]
+perl-html-parser				
