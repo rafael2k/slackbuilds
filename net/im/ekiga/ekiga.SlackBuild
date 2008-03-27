@@ -14,6 +14,8 @@
 #
 # slackbuild script for ekiga
 # by rafael at riseup.net
+# 
+# ps: ekiga is hard to compile, some patching is always needed
 #
 
 if [ -s "slack-required" ]; then
@@ -82,7 +84,11 @@ if [ -f "$CWD/$PACKAGE-$VERSION.diff" ]; then
   patch -p0 < $CWD/$PACKAGE-$VERSION.diff
 fi
 
-./configure --prefix=/usr --disable-gnome --disable-avahi --sysconfdir=/etc --libdir=$LIBDIR 
+# lets regenerate configure, as its broken in 2.0.12 ...
+# aclocal
+# autoconf
+
+./configure --prefix=/usr --enable-dbus --disable-gnome --sysconfdir=/etc --libdir=$LIBDIR 
 make || exit 32
 make DESTDIR=$TMP/package-$PACKAGE install
 

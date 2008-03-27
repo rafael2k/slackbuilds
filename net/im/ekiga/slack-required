@@ -1,3 +1,7 @@
 openldap-client
 pwlib
 opal
+avahi
+gnome-doc-utils
+intltool
+gconf

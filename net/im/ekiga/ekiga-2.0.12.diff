@@ -1,0 +1,16 @@
+--- configure.in.orig	2008-03-25 16:19:32.000000000 -0300
++++ configure.in	2008-03-25 16:07:12.000000000 -0300
+@@ -58,10 +58,10 @@
+ fi
+ 
+ if test ${enable_gnome} = yes && test ${enable_doc} = yes; then
+-GNOME_DOC_INIT
++   GNOME_DOC_INIT
+ else
+-ENABLE_SK_TRUE="#"
+-ENABLE_SK_FALSE=""
++   dnl Do not care if GDU is not found
++   GNOME_DOC_INIT(,,[:]) 
+ fi
+ 
+ AM_CONDITIONAL(DISABLE_DOC, test ${enable_doc} = no)
