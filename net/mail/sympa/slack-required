@@ -39,5 +39,7 @@ perl-db_file
 perl-io-socket-ssl
 perl-io-compress-base
 perl-compress-raw-zlib
+perl-html-stripscripts
+perl-html-stripscripts-parser
 MHonArc
 mod_fastcgi
