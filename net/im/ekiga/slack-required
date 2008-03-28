@@ -4,4 +4,4 @@ opal
 avahi
 gnome-doc-utils
 intltool
-gconf
+GConf
