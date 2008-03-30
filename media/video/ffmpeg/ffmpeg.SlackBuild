@@ -88,7 +88,7 @@ if [ "$ARCH" == "powerpc" ]; then
 fi
 
 
-./configure --prefix=/usr --libdir=$LIBDIR $EXTRA_AC_FLAGS --enable-shared --enable-pthreads --enable-swscale --enable-x11grab --enable-libmp3lame --enable-libogg --enable-libvorbis --enable-libtheora --enable-pp --enable-gpl
+./configure --prefix=/usr --libdir=$LIBDIR $EXTRA_AC_FLAGS --enable-shared --enable-pthreads --enable-swscale --enable-x11grab --enable-libmp3lame --enable-libvorbis --enable-libtheora --enable-postproc --enable-gpl
 make || exit 32
 make DESTDIR=$TMP/package-$PACKAGE install
 
