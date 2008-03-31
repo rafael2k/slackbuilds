@@ -1,6 +1,6 @@
 diff -Naur sympa-5.4.orig/wwsympa/Makefile sympa-5.4/wwsympa/Makefile
 --- sympa-5.4.orig/wwsympa/Makefile     2008-01-30 15:10:56.000000000 -0200
-+++ sympa-5.4/wwsympa/Makefile  2008-03-31 16:15:54.000000000 -0300
++++ sympa-5.4/wwsympa/Makefile  2008-03-31 16:19:30.000000000 -0300
 @@ -101,7 +101,7 @@
  installicons:
         @echo "Installing icons..."
@@ -10,4 +10,3 @@ diff -Naur sympa-5.4.orig/wwsympa/Makefile sympa-5.4/wwsympa/Makefile
  
  installwrapper:
         @echo "Installing wwsympa-wrapper binary..."
-
