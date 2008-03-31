@@ -1,0 +1,9 @@
+# Dependency list to libgnome
+#
+# dependency [condition] [version]]
+glib		>=		2.8.0
+gnome-vfs		>=		2.5.3
+libbonobo		>=		2.13.0
+GConf		>=		1.1.11
+esound		>=		0.2.26
+audiofile		>=		0.2.3

@@ -1,0 +1,12 @@
+# Dependency list to libgnomeui
+#
+# dependency [condition] [version]]
+libxml2		>=		2.4.20
+libgnome		>=		2.13.7
+libgnomecanvas		>=		2.0.0
+libbonoboui		>=		2.13.1
+GConf		>=		1.1.11
+pango		>=		1.1.2
+glib		>=		2.15.0
+gnome-vfs		>=		2.7.3
+gnome-keyring		>=		0.4

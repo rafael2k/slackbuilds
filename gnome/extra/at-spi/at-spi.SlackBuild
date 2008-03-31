@@ -15,7 +15,7 @@
 #  Place - Suite 330, Boston, MA 02111-1307, USA
 #
 # slackbuild for at-spi, by Rudson R. Alves
-# requires: atk 
+# requires: atk libbonobo 
 # tested: at-spi-1.21.1
 #
 

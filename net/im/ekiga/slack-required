@@ -1,7 +1,8 @@
-openldap-client
-pwlib
-opal
-avahi
-gnome-doc-utils
-intltool
-GConf
+# Dependency list to ekiga
+#
+# dependency [condition] [version]]
+opal				
+gnome-doc-utils				
+GConf				
+libgnome				
+libgnomeui				

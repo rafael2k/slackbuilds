@@ -1,0 +1,8 @@
+# Dependency list to gnome-vfs
+#
+# dependency [condition] [version]]
+glib		>=		2.9.3
+GConf		>=		1.1.1
+libxml2		>=		2.6.0
+gnome-mime-data		>=		2.0
+dbus-glib		>=		0.60
