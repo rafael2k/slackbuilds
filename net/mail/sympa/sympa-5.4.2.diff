@@ -1,0 +1,12 @@
+diff -Naur sympa-5.4.2.orig/wwsympa/Makefile sympa-5.4.2/wwsympa/Makefile
+--- sympa-5.4.2.orig/wwsympa/Makefile	2008-01-30 15:10:56.000000000 -0200
++++ sympa-5.4.2/wwsympa/Makefile	2008-03-31 16:26:03.000000000 -0300
+@@ -101,7 +101,7 @@
+ installicons:
+ 	@echo "Installing icons..."
+ 	@echo $(DIR)/static_content/icons
+-	cp icons/*.png $(DIR)/static_content/icons
++	cp icons/*.png $(DESTDIR)$/$(DIR)/static_content/icons
+ 
+ installwrapper:
+ 	@echo "Installing wwsympa-wrapper binary..."
