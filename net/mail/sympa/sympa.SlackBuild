@@ -40,7 +40,7 @@ fi
 PACKAGE="sympa"
 VERSION=${VERSION:=5.4.2}
 ARCH=${ARCH:=i486}
-BUILD=${BUILD:=2rha}
+BUILD=${BUILD:=1rha}
 SRC_DIR=${SRC:=$CWD}
 TMP=${TMP:=/tmp}
 REPOS=${REPOS:=$TMP}
