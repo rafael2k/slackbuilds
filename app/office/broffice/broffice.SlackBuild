@@ -16,7 +16,7 @@
 #
 # slackbuild for broffice, by Rudson R. Alves
 # requires:  
-# tested: broffice-2.3.1
+# tested: broffice-2.4.0
 #
 
 # Look for slackbuildrc
@@ -31,14 +31,14 @@ CWD="$(pwd)"
 SRC_NAME="BrOo"
 PKG_NAME="broffice"
 ARCH=${ARCH:=i686}
-SRC_VERSION=${VERSION:=2.3.1}
+SRC_VERSION=${VERSION:=2.4.0}
 PKG_VERSION="$(echo "$SRC_VERSION" | tr '[[:blank:]-]' '_')"
 BUILD=${BUILD:=1rra}
 SRC_DIR=${SRC_DIR:=$CWD}/$PKG_NAME
 TMP=${TMP:=/tmp}
 PKG=${PKG:=$TMP/package-$PKG_NAME}
 REPOS=${REPOS:=$TMP}
-PREFIX=${PREFIX:=/usr/share/broffice.org2.3}
+PREFIX=${PREFIX:=/usr/share/broffice.org2.4}
 PKG_WORK="$TMP/$SRC_NAME"
 CONF_OPTIONS=${CONF_OPTIONS:=""}
 NUMJOBS=${NUMJOBS:=""}
@@ -60,8 +60,8 @@ mkdir -p "$REPOS" || exit $ERROR_MKDIR
 mkdir -p "$PKG_WORK" || exit $ERROR_MKDIR
 
 # Dowload source if necessary
-SRC="${SRC_NAME}_${VERSION}rc1_20071113_LinuxIntel_install_pt-BR.tar.gz"
-URL="ftp://ftp.unicamp.br/pub/broffice/stable/2.3.1//$SRC"
+SRC="${SRC_NAME}_${VERSION}_LinuxIntel_install_pt-BR.tar.gz"
+URL="http://ftp.unicamp.br/pub/broffice/stable/$VERSION/$SRC"
 
 if [ ! -s "$SRC_DIR/$SRC" ] || ! gunzip -t "$SRC_DIR/$SRC" 2> /dev/null; then
   wget "$URL" -O "$SRC_DIR/$SRC" || exit $ERROR_WGET
@@ -88,20 +88,20 @@ rm *.rpm 2>/dev/null
 
 # Convert links to KDE
 cd desktop-integration
-echo -e "\ninstall broffice.org-slackware-menus-2.3*.rpm"
-tar xvf broffice.org-slackware-menus-2.3*.tgz -C $PKG || exit $ERROR_TAR
+echo -e "\ninstall broffice.org-slackware-menus-2.4*.rpm"
+tar xvf broffice.org-slackware-menus-2.4*.tgz -C $PKG || exit $ERROR_TAR
 rm *.rpm *.deb 2>/dev/null
 cd ..
 
 # Change opt directory
 mkdir -p $PKG/usr/share
-mv $PKG/opt/broffice.org2.3 $PKG/usr/share/
+mv $PKG/opt/broffice.org2.4 $PKG/usr/share/
 
 mv $PKG/opt/kde/share/* $PKG/usr/share/
 rm -rf $PKG/opt
 
 # Change doinstall install directory
-sed 's/\/opt\/broffice.org2.3/\/usr\/share\/broffice.org2.3\//' $PKG/install/doinst.sh > $PKG/install/doinst.sh.new
+sed 's/\/opt\/broffice.org2.4/\/usr\/share\/broffice.org2.4\//' $PKG/install/doinst.sh > $PKG/install/doinst.sh.new
 mv $PKG/install/doinst.sh.new $PKG/install/doinst.sh
 
 # Strip binaries

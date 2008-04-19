@@ -15,8 +15,8 @@
 #  Place - Suite 330, Boston, MA 02111-1307, USA
 #
 # slackbuild for k9copy, by Rudson R. Alves
-# requires: vamps qt kdelibs libdvdread libdvdcss 
-# tested: k9copy-1.1.3
+# requires: ffmpeg vamps qt kdelibs libdvdread libdvdcss 
+# tested: k9copy-1.2.3
 #
 
 # Look for slackbuildrc
@@ -31,7 +31,7 @@ CWD="$(pwd)"
 SRC_NAME="k9copy"
 PKG_NAME="k9copy"
 ARCH=${ARCH:=i486}
-SRC_VERSION=${VERSION:=1.1.3}
+SRC_VERSION=${VERSION:=1.2.3}
 PKG_VERSION="$(echo "$SRC_VERSION" | tr '[[:blank:]-]' '_')"
 BUILD=${BUILD:=1rra}
 SRC_DIR=${SRC_DIR:=$CWD}/$PKG_NAME
@@ -40,7 +40,7 @@ PKG=${PKG:=$TMP/package-$PKG_NAME}
 REPOS=${REPOS:=$TMP}
 PREFIX=${PREFIX:=/usr}
 PKG_WORK="$TMP/$SRC_NAME"
-CONF_OPTIONS=${CONF_OPTIONS:=""}
+CONF_OPTIONS=${CONF_OPTIONS:="--disable-debug --program-prefix= --program-suffix= "}
 NUMJOBS=${NUMJOBS:="-j7"}
 
 # Set system libraries' path and optmization flags based on $ARCH
@@ -95,6 +95,9 @@ CFLAGS="$SLKCFLAGS" \
   ./configure \
   --prefix="$PREFIX" --libdir="$LIBDIR" $CONF_OPTIONS || exit $ERROR_CONF
 
+# Small patch
+sed -i 's/^#include <ffmpeg\/avformat.h>/#include <libavformat\/avformat.h>/' k9author/k9avidecode.h
+sed -i 's/#include <ffmpeg\/avcodec.h>/#include <libavcodec\/avcodec.h>/' k9author/k9avidecode.cpp
 # Compile
 make $NUMJOBS || exit $ERROR_MAKE
 

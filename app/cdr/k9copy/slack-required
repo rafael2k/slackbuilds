@@ -1,6 +1,7 @@
 # Dependency list to k9copy
 #
 # dependency [condition] [version]]
+ffmpeg				
 vamps				
 qt				
 kdelibs				
