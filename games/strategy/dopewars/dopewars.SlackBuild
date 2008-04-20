@@ -1,117 +1,143 @@
 #!/bin/bash
 #
-#  dopewars.SlackBuild is free software; you can redistribute it and/or modify it under the
-#  terms of the GNU General Public License as published by the Free Software
-#  Foundation; either version 2 of the License, or any later version.
+#  dopewars.SlackBuild is free software; you can redistribute
+#  it and/or modify it under the terms of the GNU General Public License as
+#  published by the Free Software Foundation; either version 2 of the License,
+#  or any later version.
 #
-#  dopewars.SlackBuild is distributed in the hope that it will be useful, but WITHOUT ANY
-#  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
-#  A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
+#  dopewars.SlackBuild is distributed in the hope that it will
+#  be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General
+#  Public License for more details.
 #
 #  You should have received a copy of the GNU General Public License along with
 #  this program; if not, write to the Free Software Foundation, Inc., 59 Temple
 #  Place - Suite 330, Boston, MA 02111-1307, USA
 #
-# slackbuild script for dopewars
-# by rhatto at riseup.net
+# slackbuild for dopewars, by Silvio Rhatto
+# requires:  
+# tested: dopewars-1.5.12
 #
 
-CWD="`pwd`"
-
+# Look for slackbuildrc
 if [ -f ~/.slackbuildrc ]; then
   source ~/.slackbuildrc
 elif [ -f /etc/slackbuildrc ]; then
   source /etc/slackbuildrc
 fi
 
-# default settings
-PACKAGE="dopewars"
+# Set variables
+CWD="$(pwd)"
+SRC_NAME="dopewars"
+PKG_NAME="dopewars"
 ARCH=${ARCH:=i486}
-VERSION=${VERSION:=1.5.12}
+SRC_VERSION=${VERSION:=1.5.12}
+PKG_VERSION="$(echo "$SRC_VERSION" | tr '[[:blank:]-]' '_')"
 BUILD=${BUILD:=1rha}
-SRC_DIR=${SRC:=$CWD}
+SRC_DIR=${SRC_DIR:=$CWD}/$PKG_NAME
 TMP=${TMP:=/tmp}
+PKG=${PKG:=$TMP/package-$PKG_NAME}
 REPOS=${REPOS:=$TMP}
+PREFIX=${PREFIX:=/usr}
+PKG_WORK="$TMP/$SRC_NAME"
+CONF_OPTIONS=${CONF_OPTIONS:=""}
+NUMJOBS=${NUMJOBS:=""}
 
-# -------  error codes for createpkg  --------------
+# Set system libraries' path and optmization flags based on $ARCH
+LIBDIR="$PREFIX/lib"
+
+if [ "$ARCH" = "i386" ]; then
+  SLKCFLAGS="-O2 -march=i386 -mcpu=i686"
+elif [ "$ARCH" = "i486" ]; then
+  SLKCFLAGS="-O2 -march=i486 -mcpu=i686"
+elif [ "$ARCH" = "i686" ]; then
+  SLKCFLAGS="-O2 -march=i686"
+elif [ "$ARCH" = "s390" ]; then
+  SLKCFLAGS="-O2"
+elif [ "$ARCH" = "x86_64" ]; then
+  SLKCFLAGS="-O2"
+  LIBDIR="$PREFIX/lib64"
+fi
+
+# Set error codes (used by createpkg)
 ERROR_WGET=31;      ERROR_MAKE=32;      ERROR_INSTALL=33
 ERROR_MD5=34;       ERROR_CONF=35;      ERROR_HELP=36
 ERROR_TAR=37;       ERROR_MKPKG=38;     ERROR_GPG=39
-ERROR_PATCH=40
+ERROR_PATCH=40;     ERROR_VCS=41;       ERROR_MKDIR=42
 
-if [ "$ARCH" == "x86_64" ]; then
-  LIBDIR=/usr/lib64
-else
-  LIBDIR=/usr/lib
-fi
+# Clean up any leftovers of previous builds
+rm -rf "$PKG_WORK" 2> /dev/null
+rm -rf "$PKG" 2> /dev/null
 
-gpg --import <<EOF
------BEGIN PGP PUBLIC KEY BLOCK-----
-Version: GnuPG v1.2.1 (GNU/Linux)
+# Create directories if necessary
+mkdir -p "$SRC_DIR" || exit $ERROR_MKDIR
+mkdir -p "$PKG" || exit $ERROR_MKDIR
+mkdir -p "$REPOS" || exit $ERROR_MKDIR
+mkdir -p "$PKG_WORK" || exit $ERROR_MKDIR
 
-mQGiBD+FrAMRBACyEqh7S8vqlbYzptrQGHCpsrG8Djo3pCBkXWJ/Pfv4bZPf2voU
-bn19j+8fVncE527hWvlLY4dYR04jRVAifBvgTUbXNrl/3IxAelKmq0T22/qSCy8X
-DEHB2g9qgwhLPK44lVN7bN93VN8JEFrcFrFYanYQekq2xux0aL9digsX7wCgog+T
-xoUngcKQh8Pvt1mjWC5W5aUD/3OeX4ZEITchxh0E5OKWrpVvSRz4mpk4F1BrUe9y
-A3v4d8pyQurd5tCcwnZLKI8hqeKZ6ozZJEkO6NG9QYDNkHzPEdh4yi46JhnjP+9S
-KY3AAOSF0aR9r4k/iw7GbeuAxcRJp5zUxtUuASoVewMt46qkrIeBGXHMjy+yjgIg
-Uik2A/9v9yizDH/dIDWodlCK+GzpgZuy7IwgW+5H9fOfMj4GIzS7JoiCHNYRtsx6
-bJbAzYG9g86KXnMzEzkpZHs1C5lb8HFUgbpx6+zxi5FOwir08Gk7RA14b2xy7pYM
-1pNoWaM4XWCnttP9IgP15YcW0oqsnb9pC0GnzNbUFnSFVprr+bQaQmVuIFdlYmIg
-PGJlbkBzYWxpbGFiLm9yZz6IWQQTEQIAGQUCP4WsAwQLBwMCAxUCAwMWAgECHgEC
-F4AACgkQHMfQWXReYJONxACeOmq1bvpQ1dbX9Ns9X+SQnCeV5TwAnA/Kl5LC81eT
-iXvWhS87vkSYGpt+uQENBD+FrAUQBADYv786KL918UBe22Fa/cyC9pdSGmJNWMTW
-fFt/jQRc87voaWR5xHowO0W9j+Vw453nxdpGw5sBtL0UYHWd1LHYwu8atC+gP8yI
-7REyczt1vgZE+MJe13Skd1hKIBxOUPb0Ib3j+XAl+8aaf1OZ0l5/bw6hX38xSo8z
-cYj/x+Ba1wADBQQAnFNWQ8HjgXjg6rWR/85mLUlovwlfWu5RVMvBxdkslM9vTIFZ
-HlWIMcAh2eisesbJLXne+9CYLvKiPVmN5jK5umj9CSy7+5ubrpEfkPI4TtETtw7+
-k1A+jquMTa+oEr245vgQud+Jopou7P+zSnGiduMUIh3ummHcZwKSsXQ3jrmIRgQY
-EQIABgUCP4WsBQAKCRAcx9BZdF5gk7lPAJ9OtD+wr4mZTz7kkbMAJUpzGonfegCe
-LOV9WF3BhJoMhxVgqbLDywOcjb8=
-=4zKp
------END PGP PUBLIC KEY BLOCK-----
-EOF
+# Dowload source if necessary
+SRC="$SRC_NAME-$VERSION.tar.gz"
+URL="http://prdownloads.sourceforge.net/dopewars/dopewars-1.5.12.tar.gz"
 
-RTOOL="wget"
-PACKAGE_EXT="gz"
-SRC="$PACKAGE-$VERSION.tar.$PACKAGE_EXT"
-URL="http://easynews.dl.sourceforge.net/sourceforge/dopewars/$SRC"
-
-SRC_DIR="$SRC_DIR/$PACKAGE"
-mkdir -p $SRC_DIR
-
-if [ "$RTOOL" == "wget" ] && [ ! -f "$SRC_DIR/$SRC" ]; then
+if [ ! -s "$SRC_DIR/$SRC" ] || ! gunzip -t "$SRC_DIR/$SRC" 2> /dev/null; then
   wget "$URL" -O "$SRC_DIR/$SRC" || exit $ERROR_WGET
-  wget "$URL.gpg" -O "$SRC_DIR/$SRC.gpg" || exit $ERROR_WGET
 fi
 
-gpg --verify $SRC_DIR/$SRC.gpg $SRC_DIR/$SRC || exit $ERROR_GPG
-
-TMP="$TMP/$PACKAGE"
-rm -rf $TMP
-mkdir -p $TMP
-cd $TMP
-
-tar xvf $SRC_DIR/$SRC || exit $ERROR_TAR
-cd $PACKAGE-$VERSION
-
-if [ -f "$CWD/$PACKAGE-$VERSION.diff" ]; then
-  patch -p1 < $CWD/$PACKAGE-$VERSION.diff || exit $ERROR_PATCH
+# Import minimized signing key from
+if echo [[SIGNING KEY URL]] | grep -q -v "SIGNING KEY URL"; then
+  lynx -dump [[SIGNING KEY URL]] | gpg --import || exit $ERROR_GPG
+else
+  gpg --import << EOKEY || exit $ERROR_GPG
+`cat dopewars.key`
+EOKEY
 fi
 
-./configure --prefix=/usr --sysconfdir=/etc --libdir=$LIBDIR || exit $ERROR_CONF
-make || exit $ERROR_MAKE
-make DESTDIR=$TMP/package-$PACKAGE install || exit $ERROR_INSTALL
+# Download source's signature if necessary and check it
+SIGNATURE="`basename http://download.sourceforge.net/dopewars/dopewars-1.5.12.tar.gz.gpg`"
+if [ ! -s "$SRC_DIR/$SRC.sig" ]; then
+  wget "http://prdownloads.sourceforge.net/dopewars/dopewars-1.5.12.tar.gz.gpg" -O "$SRC_DIR/$SIGNATURE" || exit $ERROR_WGET
+fi
 
-CWD="`pwd`"
+gpg --verify "$SRC_DIR/$SIGNATURE" "$SRC_DIR/$SRC" || exit $ERROR_GPG
 
-cd $TMP/package-$PACKAGE
+# Untar
+cd "$PKG_WORK"
+tar --no-same-owner --no-same-permissions -xvf "$SRC_DIR/$SRC" || exit $ERROR_TAR
+PKG_SRC="$PWD/`ls -l | awk '/^d/ { print $8 }'`"
+cd "$PKG_SRC"
 
-find . | xargs file | grep "executable" | grep ELF | cut -f 1 -d : | xargs strip --strip-unneeded 2> /dev/null
-find . | xargs file | grep "shared object" | grep ELF | cut -f 1 -d : | xargs strip --strip-unneeded 2> /dev/null
+# Configure
+CFLAGS="$SLKCFLAGS" \
+  CXXFLAGS="$SLKCFLAGS" \
+  ./configure \
+  --prefix="$PREFIX" --libdir="$LIBDIR" $CONF_OPTIONS || exit $ERROR_CONF
 
-mkdir install
-cat << EOF > install/slack-desc
+# Compile
+make $NUMJOBS || exit $ERROR_MAKE
+
+# Install
+make install DESTDIR="$PKG" || exit $ERROR_INSTALL
+
+# Strip binaries
+( cd "$PKG"
+  find . | xargs file | grep "executable" | grep ELF | cut -f 1 -d : | \
+    xargs strip --strip-unneeded 2> /dev/null
+  find . | xargs file | grep "shared object" | grep ELF | cut -f 1 -d : | \
+    xargs strip --strip-unneeded 2> /dev/null
+)
+
+# Install documentation
+DOCS="NEWS TODO README AUTHORS INSTALL ChangeLog MAINTAINERS COPYING readme.*"
+mkdir -p "$PKG/usr/doc/$PKG_NAME-$PKG_VERSION" || exit $ERROR_MKDIR
+for doc in $DOCS; do
+  if [ -f "$doc" ]; then
+    cp -a $doc "$PKG/usr/doc/$PKG_NAME-$PKG_VERSION"
+  fi
+done
+
+# Add package description (slack-desc)
+mkdir -p "$PKG/install" || exit $ERROR_MKDIR
+cat << EODESC > "$PKG/install/slack-desc"
 # HOW TO EDIT THIS FILE:
 # The "handy ruler" below makes it easier to edit a package description.  Line
 # up the first '|' above the ':' following the base package name, and the '|'
@@ -131,20 +157,13 @@ dopewars: interest, and the cops take a rather dim view of drug dealing...
 dopewars:
 dopewars:
 dopewars:
-EOF
+EODESC
 
-# docs
-mkdir -p usr/doc
-mv usr/share/doc/$PACKAGE-$VERSION usr/doc/$PACKAGE-$VERSION
-rmdir usr/share/doc
+# Build the package
+cd "$PKG"
+makepkg -l y -c n "$REPOS/$PKG_NAME-$PKG_VERSION-$ARCH-$BUILD.tgz" || exit $ERROR_MKPKG
 
-# for file in ABOUT-NLS AUTHORS COPYING ChangeLog INSTALL LICENCE NEWS README TODO; do 
-#  cp $CWD/$file* usr/doc/$PACKAGE-$VERSION/
-# done
-
-makepkg -c y -l y $REPOS/$PACKAGE-$VERSION-$ARCH-$BUILD.tgz || exit $ERROR_MKPKG
-
+# Delete source and build directories if requested
 if [ "$CLEANUP" == "yes" ]; then
-  rm -rf $TMP
+  rm -rf "$PKG_WORK" "$PKG"
 fi
-
