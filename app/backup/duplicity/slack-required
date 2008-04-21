@@ -1,0 +1,4 @@
+# Dependency list to duplicity
+#
+# dependency [condition] [version]]
+librsync				
