@@ -1,1 +1,4 @@
-librsync
+# Dependency list to rdiff-backup
+#
+# dependency [condition] [version]]
+librsync				
