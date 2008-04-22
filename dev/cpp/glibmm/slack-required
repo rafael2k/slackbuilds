@@ -1,7 +1,7 @@
 # Dependency list to glibmm
-# 
+#
 # dependency [condition] [version]]
-libsigc++        >=          2.0.0
-glib             >=          2.9.0
-#gobject         >=          2.9.0 
-#gmodule         >=          2.9.0
+libsigc++		>=		2.0.0
+glib		>=		2.9.0
+#gobject		>=		2.9.0
+#gmodule		>=		2.9.0
