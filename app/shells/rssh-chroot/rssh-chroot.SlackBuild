@@ -1,121 +1,110 @@
 #!/bin/bash
 #
-#  rssh-chroot.SlackBuild is free software; you can redistribute it and/or modify it under the
-#  terms of the GNU General Public License as published by the Free Software
-#  Foundation; either version 2 of the License, or any later version.
+#  rssh-chroot.SlackBuild is free software; you can redistribute
+#  it and/or modify it under the terms of the GNU General Public License as
+#  published by the Free Software Foundation; either version 2 of the License,
+#  or any later version.
 #
-#  rssh-chroot.SlackBuild is distributed in the hope that it will be useful, but WITHOUT ANY
-#  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
-#  A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
+#  rssh-chroot.SlackBuild is distributed in the hope that it will
+#  be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General
+#  Public License for more details.
 #
 #  You should have received a copy of the GNU General Public License along with
 #  this program; if not, write to the Free Software Foundation, Inc., 59 Temple
 #  Place - Suite 330, Boston, MA 02111-1307, USA
 #
-# slackbuild for rssh-chroot
-# 
+# slackbuild for rssh-chroot, by Silvio Rhatto
+# requires: rssh 
+# tested: rssh-chroot-2.3.2
+#
 
-if [ -s "slack-required" ]; then
-  echo Recomended and required packages for building rssh-chroot are:
-  cat slack-required | sed -e 's/^/\t/'
-  if [ "$INTERACT" != "no" ]; then
-    echo If you dont have those installed, press Ctrl-C. Otherwise, hit ENTER.
-    read crap
-#  else
-#    echo Sleeping 3 seconds...
-#    sleep 3
-  fi
-fi
-
-CWD="`pwd`"
-
-if [ "$INTERACT" != "no" ]; then
-  echo "Hit ENTER do continue, Crtl-C to abort"
-  read crap
-else
-  echo sleeping 3 seconds...
-  sleep 3
-fi
-
+# Look for slackbuildrc
 if [ -f ~/.slackbuildrc ]; then
   source ~/.slackbuildrc
 elif [ -f /etc/slackbuildrc ]; then
   source /etc/slackbuildrc
 fi
 
-# default settings
-PRGNAM="rssh-chroot"
-PACKAGE="$PRGNAM"
+# Set variables
+CWD="$(pwd)"
+SRC_NAME="rssh"
+PKG_NAME="rssh-chroot"
 ARCH=${ARCH:=i486}
-VERSION=${VERSION:=2.3.2}
-BUILD=${BUILD:=4rha}
-SRC_DIR=${SRC:=$CWD}
+SRC_VERSION=${VERSION:=2.3.2}
+PKG_VERSION="$(echo "$SRC_VERSION" | tr '[[:blank:]-]' '_')"
+BUILD=${BUILD:=1rha}
+SRC_DIR=${SRC_DIR:=$CWD}/$PKG_NAME
 TMP=${TMP:=/tmp}
+PKG=${PKG:=$TMP/package-$PKG_NAME}
 REPOS=${REPOS:=$TMP}
+PREFIX=${PREFIX:=/usr}
+PKG_WORK="$TMP/$SRC_NAME"
+CONF_OPTIONS=${CONF_OPTIONS:=""}
+NUMJOBS=${NUMJOBS:=""}
 
-# -------  error codes for createpkg  --------------
+# Set error codes (used by createpkg)
 ERROR_WGET=31;      ERROR_MAKE=32;      ERROR_INSTALL=33
 ERROR_MD5=34;       ERROR_CONF=35;      ERROR_HELP=36
 ERROR_TAR=37;       ERROR_MKPKG=38;     ERROR_GPG=39
-ERROR_PATCH=40
+ERROR_PATCH=40;     ERROR_VCS=41;       ERROR_MKDIR=42
 
-if [ "$ARCH" == "x86_64" ]; then
-  LIBDIR=/usr/lib64
-else
-  LIBDIR=/usr/lib
-fi
+# Clean up any leftovers of previous builds
+rm -rf "$PKG_WORK" 2> /dev/null
+rm -rf "$PKG" 2> /dev/null
 
-# adjust to where your rssh chroot system will be located
+# Create directories if necessary
+mkdir -p "$SRC_DIR" || exit $ERROR_MKDIR
+mkdir -p "$PKG" || exit $ERROR_MKDIR
+mkdir -p "$REPOS" || exit $ERROR_MKDIR
+mkdir -p "$PKG_WORK" || exit $ERROR_MKDIR
+
+# Adjust to where your rssh chroot system will be located
 CHROOT_BASE="/var/users"
-
-TMP="$TMP/$PACKAGE"
-rm -rf $TMP
-mkdir -p $TMP
-cd $TMP
-
-rm -rf $TMP/package-$PACKAGE
-mkdir -p $TMP/package-$PACKAGE/install
-cd $TMP/package-$PACKAGE
-
-mkdir -p ./$CHROOT_BASE/{bin,etc,lib,lib/tls,usr/lib,usr/libexec,usr/bin,usr/doc,home,dev}
+mkdir -p $PKG/$CHROOT_BASE/{bin,etc,lib,lib/tls,usr/lib,usr/libexec,usr/bin,usr/doc,home,dev}
 
 if [ "$ARCH" == "x86_64" ]; then
-  mkdir -p ./$CHROOT_BASE/{lib64/tls,usr/lib64}
+  mkdir -p $PKG/$CHROOT_BASE/{lib64/tls,usr/lib64}
 fi
 
 for ldfile in ld.so.cache ld.so.conf ld.so.preload; do
   if [ -f "/etc/$ldfile" ]; then
-    cp /etc/$ldfile ./$CHROOT_BASE/etc
+    cp /etc/$ldfile $PKG/$CHROOT_BASE/etc
   fi
 done
 
-# inspired by http://www.howtoforge.com/chrooted_ssh_howto_debian_p2
+# Inspired by http://www.howtoforge.com/chrooted_ssh_howto_debian_p2
 APPS="/usr/bin/rssh /usr/bin/scp /usr/libexec/sftp-server /usr/libexec/rssh_chroot_helper"
 for app in $APPS; do
-  cp $app ./$CHROOT_BASE/$app
+  cp $app $PKG/$CHROOT_BASE/$app
 
-  # obtain a list of related libraries
+  # Get a list of related libraries
   ldd $app > /dev/null
   if [ "$?" = 0 ] ; then
     libs="`ldd $app | sed -e 's/=>//' -e 's/(.*)//' | awk '{ print $1 "\n" $2 }'`"
     for lib in $libs; do
       if [ -a "$lib" ]; then
-        mkdir -p ./$CHROOT_BASE/`dirname $lib` > /dev/null 2>&1
-        cp $lib ./$CHROOT_BASE/$lib
+        mkdir -p $PKG/$CHROOT_BASE/`dirname $lib` > /dev/null 2>&1
+        cp $lib $PKG/$CHROOT_BASE/$lib
       fi
     done
   fi
 done
 
-# dont work inside vservers:
-echo "trying to create /dev/null inside this jail..."
-echo "may not work if you're creating this package inside a vserver"
-mknod -m 666 ./$CHROOT_BASE/dev/null c 1 3 || exit $ERROR_INSTALL
+# Might not work inside vservers
+echo "Trying to create /dev/null inside this jail..."
+echo "May not work if you're creating this package inside a vserver"
+mknod -m 666 $PKG/$CHROOT_BASE/dev/null c 1 3 || exit $ERROR_INSTALL
 
-mkdir -p usr/doc/$PACKAGE-$VERSION
-cp $CWD/COPYING* usr/doc/$PACKAGE-$VERSION/
+mkdir -p $PKG/usr/doc/$PACKAGE-$VERSION
+cp $CWD/COPYING* $PKG/usr/doc/$PACKAGE-$VERSION/
 
-cat << EOF > install/slack-desc
+chmod 755 $PKG/$CHROOT_BASE/{bin,etc,lib,lib/tls,usr/lib,usr/libexec,usr/bin,usr/doc,dev}
+chmod 111 $PKG/$CHROOT_BASE/home
+
+# Add package description (slack-desc)
+mkdir -p "$PKG/install" || exit $ERROR_MKDIR
+cat << EODESC > "$PKG/install/slack-desc"
 # HOW TO EDIT THIS FILE:
 # The "handy ruler" below makes it easier to edit a package description.  Line
 # up the first '|' above the ':' following the base package name, and the '|'
@@ -123,7 +112,7 @@ cat << EOF > install/slack-desc
 # make exactly 11 lines for the formatting to be correct.  It's also
 # customary to leave one space after the ':'.
 
-           |-----handy-ruler-----------------------------------------------------|
+           |-----handy-ruler--------------------------------------------------|
 rssh-chroot: rssh-chroot: a chroot jail to use with rssh restricted secure shell 
 rssh-chroot: 
 rssh-chroot: 
@@ -135,17 +124,52 @@ rssh-chroot:
 rssh-chroot: 
 rssh-chroot: 
 rssh-chroot: 
-EOF
+EODESC
 
-chmod 755 ./$CHROOT_BASE/{bin,etc,lib,lib/tls,usr/lib,usr/libexec,usr/bin,usr/doc,dev}
-chmod 111 ./$CHROOT_BASE/home
+# Add a post-installation script (doinst.sh)
+cat << EOSCRIPT > "$PKG/install/doinst.sh"
+config() {
+  NEW="\$1"
+  OLD="\$(dirname \$NEW)/\$(basename \$NEW .new)"
+  # If there's no config file by that name, mv it over:
+  if [ ! -r \$OLD ]; then
+    mv \$NEW \$OLD
+  elif [ "\$(cat \$OLD | md5sum)" = "\$(cat \$NEW | md5sum)" ]; then
+    # toss the redundant copy
+    rm \$NEW
+  fi
+  # Otherwise, we leave the .new copy for the admin to consider...
+}
 
-# install script
-echo '( echo please check if /var/users/dev/null was correctly created )' > install/doinst.sh
+mkgroup() {
+  GROUP="\$1"
+  if ! grep -qe "^\$GROUP:" etc/group; then
+    echo Creating group \$GROUP...
+    chroot . /usr/sbin/groupadd \$GROUP
+  fi 
+}
 
-makepkg -c n $REPOS/$PACKAGE-$VERSION-$ARCH-$BUILD.tgz || exit $ERROR_MKPKG
+mkuser() {
+  USER="\$1"
+  if [ ! -z "\$2" ]; then
+    GROUP="\$2"
+  else
+    GROUP="\$USER"
+  fi
+  if ! grep -qe "^\$USER:" etc/passwd; then
+    echo Creating user \$USER...
+    chroot . /usr/sbin/useradd \$USER -g \$GROUP
+  fi
+}
 
+( echo Please check if $CHROOT_BASE/dev/null was correctly created )
+EOSCRIPT
+
+# Build the package
+cd "$PKG"
+makepkg -l y -c n "$REPOS/$PKG_NAME-$PKG_VERSION-$ARCH-$BUILD.tgz" || exit $ERROR_MKPKG
+
+# Delete source and build directories if requested
 if [ "$CLEANUP" == "yes" ]; then
-  rm -rf $TMP
+  rm -rf "$PKG_WORK" "$PKG"
 fi
-
