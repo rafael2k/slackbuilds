@@ -1,2 +1,4 @@
-rssh
-libsafe
+# Dependency list to rssh
+#
+# dependency [condition] [version]]
+rssh				
