@@ -116,7 +116,7 @@ done
 )
 
 # Install documentation
-DOCS="NEWS TODO README AUTHORS INSTALL ChangeLog MAINTAINERS COPYING readme.*"
+DOCS="NEWS TODO README AUTHORS INSTALL ChangeLog MAINTAINERS COPYING LICENSE SIGNATURE readme.*"
 mkdir -p "$PKG/usr/doc/$PKG_NAME-$PKG_VERSION" || exit $ERROR_MKDIR
 for doc in $DOCS; do
   if [ -f "$doc" ]; then
