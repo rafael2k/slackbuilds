@@ -1,3 +1,6 @@
-perl-xml-libxml-common
-perl-xml-sax
-perl-xml-namespacesupport
+# Dependency list to XML-LibXML
+#
+# dependency [condition] [version]]
+perl-xml-libxml-common				
+perl-xml-sax				
+perl-xml-namespacesupport				
