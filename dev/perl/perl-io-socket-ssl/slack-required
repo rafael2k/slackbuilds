@@ -1,4 +1,4 @@
 # Dependency list to IO-Socket-SSL
 #
 # dependency [condition] [version]]
-perl-net_ssleay.pm				
+perl-net-ssleay				
