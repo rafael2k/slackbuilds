@@ -1,4 +1,7 @@
-perl-test-simple
-perl-mime-base64
-perl-digest-md5
-perl-net-ip
+# Dependency list to Net-DNS
+#
+# dependency [condition] [version]]
+perl-test-simple				
+perl-mime-base64				
+perl-digest-md5				
+perl-net-ip				
