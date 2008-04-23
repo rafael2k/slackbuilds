@@ -1,1 +1,4 @@
-perl-io-zlib
+# Dependency list to Archive-Tar
+#
+# dependency [condition] [version]]
+perl-io-zlib				
