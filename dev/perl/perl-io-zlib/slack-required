@@ -1,1 +1,4 @@
-perl-compress-zlib
+# Dependency list to IO-Zlib
+#
+# dependency [condition] [version]]
+perl-compress-zlib				
