@@ -14,7 +14,7 @@
 #  this program; if not, write to the Free Software Foundation, Inc., 59 Temple
 #  Place - Suite 330, Boston, MA 02111-1307, USA
 #
-# slackbuild for perl-html-stripscripts-parser, by rha
+# slackbuild for perl-html-stripscripts-parser, by Silvio Rhatto
 # requires: perl-html-stripscripts 
 # tested: perl-html-stripscripts-parser-1.02
 #
@@ -99,10 +99,8 @@ make $NUMJOBS || exit $ERROR_MAKE
 make install DESTDIR="$PKG" || exit $ERROR_INSTALL
 
 # Fix .packlist
-cd $PKG
-
 string="`echo $PKG | sed -e 's/\//\\\\\//g'`"
-for file in `find -name .packlist`; do
+for file in `find $PKG -name .packlist`; do
   sed -e "s/^$string//g" $file > $file.tmp
   mv $file.tmp $file
 done
