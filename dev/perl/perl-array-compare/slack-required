@@ -1,1 +1,4 @@
-perl-module-build
+# Dependency list to Array-Compare
+#
+# dependency [condition] [version]]
+perl-module-build				
