@@ -15,7 +15,7 @@
 #  Place - Suite 330, Boston, MA 02111-1307, USA
 #
 # slackbuild for perl-net-ssleay, by Silvio Rhatto
-# requires:  
+# requires: perl-sub-uplevel perl-test-exception perl-array-compare perl-tree-dag_node perl-test-warn perl-mime-base64 
 # tested: perl-net-ssleay-1.32
 #
 
