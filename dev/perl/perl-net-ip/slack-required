@@ -1,1 +1,4 @@
-perl-math-bigint
+# Dependency list to Net-IP
+#
+# dependency [condition] [version]]
+perl-math-bigint				
