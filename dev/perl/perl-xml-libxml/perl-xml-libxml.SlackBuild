@@ -89,6 +89,10 @@ tar --no-same-owner --no-same-permissions -xvf "$SRC_DIR/$SRC" || exit $ERROR_TA
 PKG_SRC=`ls -l | awk '/^d/ { print $8 }'`
 cd "$PKG_SRC"
 
+# Makefile fix
+eval $(perl '-V:sitelibexp') 
+sed -i -e "s,\(-MXML::SAX\),-I${PKG}/${sitelibexp} \1," Makefile.PL
+
 # Configure
 perl Makefile.PL || exit $ERROR_CONF
 
