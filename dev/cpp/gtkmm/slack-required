@@ -1,2 +1,4 @@
-cairomm
-glibmm
+# Dependency list to gtkmm
+#
+# dependency [condition] [version]]
+cairomm		glibmm		
