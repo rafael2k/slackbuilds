@@ -3,3 +3,5 @@
 # dependency [condition] [version]]
 perl-file-temp				
 perl-mime-base64				
+perl-mailtools				
+perl-io-stringy				
