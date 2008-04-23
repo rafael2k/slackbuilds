@@ -16,7 +16,7 @@
 #
 # slackbuild for perl-inline, by Silvio Rhatto
 # requires: perl-parse-recdescent 
-# tested: perl-inline-0.01
+# tested: perl-inline-0.44
 #
 
 # Look for slackbuildrc
@@ -28,10 +28,10 @@ fi
 
 # Set variables
 CWD="$(pwd)"
-SRC_NAME="Inline-Perl"
+SRC_NAME="Inline"
 PKG_NAME="perl-inline"
 ARCH=${ARCH:=i486}
-SRC_VERSION=${VERSION:=0.01}
+SRC_VERSION=${VERSION:=0.44}
 PKG_VERSION="$(echo "$SRC_VERSION" | tr '[[:blank:]-]' '_')"
 BUILD=${BUILD:=1rha}
 SRC_DIR=${SRC_DIR:=$CWD}/$PKG_NAME
@@ -77,7 +77,7 @@ mkdir -p "$PKG_WORK" || exit $ERROR_MKDIR
 
 # Dowload source if necessary
 SRC="$SRC_NAME-$VERSION.tar.gz"
-URL="http://search.cpan.org/CPAN/authors/id/A/AU/AUTRIJUS/$SRC"
+URL="http://search.cpan.org/CPAN/authors/id/I/IN/INGY/$SRC"
 
 if [ ! -s "$SRC_DIR/$SRC" ] || ! gunzip -t "$SRC_DIR/$SRC" 2> /dev/null; then
   wget "$URL" -O "$SRC_DIR/$SRC" || exit $ERROR_WGET

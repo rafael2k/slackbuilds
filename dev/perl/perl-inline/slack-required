@@ -1,4 +1,4 @@
-# Dependency list to Inline-Perl
+# Dependency list to Inline
 #
 # dependency [condition] [version]]
 perl-parse-recdescent				
