@@ -16,7 +16,7 @@
 #
 # slackbuild for perl-mail-clamav, by Silvio Rhatto
 # requires: clamav perl-inline 
-# tested: perl-mail-clamav-0.21
+# tested: perl-mail-clamav-0.17
 #
 
 # Look for slackbuildrc
@@ -31,7 +31,7 @@ CWD="$(pwd)"
 SRC_NAME="Mail-ClamAV"
 PKG_NAME="perl-mail-clamav"
 ARCH=${ARCH:=i486}
-SRC_VERSION=${VERSION:=0.21}
+SRC_VERSION=${VERSION:=0.17}
 PKG_VERSION="$(echo "$SRC_VERSION" | tr '[[:blank:]-]' '_')"
 BUILD=${BUILD:=1rha}
 SRC_DIR=${SRC_DIR:=$CWD}/$PKG_NAME
