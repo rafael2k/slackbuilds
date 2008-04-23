@@ -1,2 +1,5 @@
-perl-io-compress-base
-perl-compress-raw-zlib
+# Dependency list to Compress-Zlib-Perl
+#
+# dependency [condition] [version]]
+perl-io-compress-base				
+perl-compress-raw-zlib				
