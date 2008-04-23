@@ -1,0 +1,4 @@
+# Dependency list to Template-Toolkit
+#
+# dependency [condition] [version]]
+perl-appconfig				
