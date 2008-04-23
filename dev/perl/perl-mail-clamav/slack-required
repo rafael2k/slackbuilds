@@ -1,2 +1,4 @@
-clamav
-perl-inline
+# Dependency list to Mail-ClamAV
+#
+# dependency [condition] [version]]
+clamav		perl-inline		
