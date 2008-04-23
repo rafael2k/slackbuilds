@@ -1,2 +1,5 @@
-perl-file-temp
-perl-mime-base64
+# Dependency list to MIME-tools
+#
+# dependency [condition] [version]]
+perl-file-temp				
+perl-mime-base64				
