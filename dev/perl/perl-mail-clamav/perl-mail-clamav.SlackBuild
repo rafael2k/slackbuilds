@@ -15,7 +15,7 @@
 #  Place - Suite 330, Boston, MA 02111-1307, USA
 #
 # slackbuild for perl-mail-clamav, by Silvio Rhatto
-# requires: clamav 
+# requires: clamav perl-inline 
 # tested: perl-mail-clamav-0.21
 #
 

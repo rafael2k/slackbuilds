@@ -1,4 +1,8 @@
 # Dependency list to libwww-perl
 #
 # dependency [condition] [version]]
-perl-uri		perl-mime-base64		perl-html-parser
+perl-uri				
+perl-mime-base64				
+perl-html-parser				
+perl-digest-md5				
+perl-compress-zlib				
