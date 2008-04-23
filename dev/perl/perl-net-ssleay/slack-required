@@ -1,0 +1,9 @@
+# Dependency list to Net-SSLeay
+#
+# dependency [condition] [version]]
+perl-sub-uplevel				
+perl-test-exception				
+perl-array-compare				
+perl-tree-dag_node				
+perl-test-warn				
+perl-mime-base64				
