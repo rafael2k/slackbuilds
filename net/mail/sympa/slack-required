@@ -20,7 +20,7 @@ perl-mime-tools
 perl-mime-charset
 perl-mime-encwords
 perl-module-build
-perl-net_ssleay.pm
+perl-net-ssleay
 perl-pathtools
 perl-regexp-common
 perl-sub-uplevel
