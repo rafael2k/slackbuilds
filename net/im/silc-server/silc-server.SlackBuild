@@ -40,7 +40,7 @@ PKG=${PKG:=$TMP/package-$PKG_NAME}
 REPOS=${REPOS:=$TMP}
 PREFIX=${PREFIX:=/usr}
 PKG_WORK="$TMP/$SRC_NAME"
-CONF_OPTIONS=${CONF_OPTIONS:=""}
+CONF_OPTIONS=${CONF_OPTIONS:="--sysconfdir=/etc --docdir=/usr/doc/$PKG_NAME-$PKG_VERSION"}
 NUMJOBS=${NUMJOBS:=""}
 
 # Set system libraries' path and optmization flags based on $ARCH
@@ -141,6 +141,50 @@ silc-server: protocol supports AES, SHA-1, PKCS#1, PKCS#3, X.509, OpenPGP is
 silc-server: being developed in the IETF.
 silc-server: 
 EODESC
+
+# Move config files to .new to avoid overwriting any system config
+for config_file in etc/silcd.conf etc/silcalgs.conf; do
+  mv $PKG/$config_file $PKG/$config_file.new
+done
+
+# Add a post-installation script (doinst.sh)
+cat << EOSCRIPT > "$PKG/install/doinst.sh"
+config() {
+  NEW="\$1"
+  OLD="\$(dirname \$NEW)/\$(basename \$NEW .new)"
+  # If there's no config file by that name, mv it over:
+  if [ ! -r \$OLD ]; then
+    mv \$NEW \$OLD
+  elif [ "\$(cat \$OLD | md5sum)" = "\$(cat \$NEW | md5sum)" ]; then
+    # toss the redundant copy
+    rm \$NEW
+  fi
+  # Otherwise, we leave the .new copy for the admin to consider...
+}
+
+mkgroup() {
+  GROUP="\$1"
+  if ! grep -qe "^\$GROUP:" etc/group; then
+    echo Creating group \$GROUP...
+    chroot . /usr/sbin/groupadd \$GROUP
+  fi 
+}
+
+mkuser() {
+  USER="\$1"
+  if [ ! -z "\$2" ]; then
+    GROUP="\$2"
+  else
+    GROUP="\$USER"
+  fi
+  if ! grep -qe "^\$USER:" etc/passwd; then
+    echo Creating user \$USER...
+    chroot . /usr/sbin/useradd \$USER -g \$GROUP
+  fi
+}
+
+config etc/silcd.conf.new config etc/silcalgs.conf.new
+EOSCRIPT
 
 # Build the package
 cd "$PKG"
