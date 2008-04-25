@@ -1,1 +1,4 @@
-sqlite
+# Dependency list to pysqlite
+#
+# dependency [condition] [version]]
+sqlite				
