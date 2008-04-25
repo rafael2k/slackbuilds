@@ -104,6 +104,7 @@ python setup.py build install --root=$PKG
 DOCS="NEWS TODO README AUTHORS INSTALL ChangeLog MAINTAINERS COPYING LICENSE SIGNATURE readme.*"
 mkdir -p "$PKG/usr/doc/$PKG_NAME-$PKG_VERSION" || exit $ERROR_MKDIR
 mv $PKG/usr/pysqlite2-doc/* $PKG/usr/doc/$PKG_NAME-$PKG_VERSION
+rm -rf $PKG/usr/pysqlite2-doc
 for doc in $DOCS; do
   if [ -f "$doc" ]; then
     cp -a $doc "$PKG/usr/doc/$PKG_NAME-$PKG_VERSION"
