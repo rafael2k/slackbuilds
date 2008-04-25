@@ -89,6 +89,34 @@ tar --no-same-owner --no-same-permissions -xvf "$SRC_DIR/$SRC" || exit $ERROR_TA
 PKG_SRC="$PWD/`ls -l | awk '/^d/ { print $8 }'`"
 cd "$PKG_SRC"
 
+# Patch source
+patches="
+         $PKG_NAME.diff $PKG_NAME-$PKG_VERSION.diff
+         $PKG_NAME-$PKG_VERSION-$ARCH.diff $PKG_NAME-$ARCH.diff"
+for patch in $patches; do
+  if [ -f "$CWD/$patch" ]; then
+    patch -Np1 < "$CWD/$patch" || exit $ERROR_PATCH
+  elif [ -f "$CWD/patches/$patch" ]; then
+    patch -Np1 < "$CWD/patches/$patch" || exit $ERROR_PATCH
+  fi
+done
+
+if echo [[PATCH URLS]] | grep -q -v "PATCH URLS"; then
+  for patch_url in [[PATCH URLS]]; do
+    patch="`basename $patch_url`" 
+    if [ ! -s "$SRC_DIR/$patch" ]; then
+      wget "$patch_url" -O "$SRC_DIR/$patch" || exit $ERROR_WGET
+    fi
+    if [ "`basename $patch .gz`" != "$patch" ]; then
+      gzip -dc $SRC_DIR/$patch | patch -Np1 || exit $ERROR_PATCH
+    elif [ "`basename $patch .bz2`" != "$patch" ]; then
+      bzip2 -dc $SRC_DIR/$patch | patch -Np1 || exit $ERROR_PATCH
+    else
+      patch -Np1 < "$SRC_DIR/$patch" || exit $ERROR_PATCH
+    fi
+  done
+fi
+
 # Configure
 sh ./bootstrap
 CFLAGS="$SLKCFLAGS" \
