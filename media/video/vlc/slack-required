@@ -1,11 +1,13 @@
-jack
-libavc1394
-libraw1394
-libdc1394
-mpeg2dec
-liba52
-faac
-lame
-wxWidgets
-libshout
-ffmpeg
+# Dependency list to vlc
+#
+# dependency [condition] [version]]
+jack		libavc1394		
+libraw1394				
+libdc1394				
+mpeg2dec				
+liba52				
+faac				
+lame				
+wxWidgets				
+libshout				
+ffmpeg				
