@@ -123,6 +123,7 @@ fi
 
 # Configure
 sh ./bootstrap
+chmod +x configure
 CFLAGS="$SLKCFLAGS" \
   CXXFLAGS="$SLKCFLAGS" \
   ./configure \
