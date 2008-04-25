@@ -58,8 +58,7 @@ elif [ "$ARCH" = "x86_64" ]; then
   CONF_OPTIONS="--with-pic"
   SLKCFLAGS="-O2 -fPIC"
   LIBDIR="$PREFIX/lib64"
-  export LDFLAGS="-L/lib64 -L/usr/lib64"
-  export CFLAGS="-fPIC"
+  LDFLAGS="-L/lib64 -L/usr/lib64"
 fi
 
 # Set error codes (used by createpkg)
