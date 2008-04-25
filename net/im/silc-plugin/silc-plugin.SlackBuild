@@ -94,6 +94,7 @@ cd "$PKG_SRC"
 CFLAGS="$SLKCFLAGS" \
   CXXFLAGS="$SLKCFLAGS" \
   ./configure \
+  --docdir="/usr/doc/$PKG_NAME-$PKG_VERSION" --with-silc-plugin="$LIBDIR/irssi" \
   --prefix="$PREFIX" --libdir="$LIBDIR" $CONF_OPTIONS || exit $ERROR_CONF
 
 # Compile
