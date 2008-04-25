@@ -1,1 +1,4 @@
-silc-toolkit
+# Dependency list to silc-server
+#
+# dependency [condition] [version]]
+silc-toolkit				
