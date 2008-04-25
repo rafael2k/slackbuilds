@@ -1,1 +1,4 @@
-libiconv
+# Dependency list to silc-toolkit
+#
+# dependency [condition] [version]]
+libiconv				
