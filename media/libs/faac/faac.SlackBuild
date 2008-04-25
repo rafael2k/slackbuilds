@@ -98,6 +98,10 @@ for patch in $patches; do
     patch -Np1 < "$CWD/$patch" || exit $ERROR_PATCH
   elif [ -f "$CWD/patches/$patch" ]; then
     patch -Np1 < "$CWD/patches/$patch" || exit $ERROR_PATCH
+  elif [ -f "$CWD/$patch.gz" ]; then
+    gzip -dc "$CWD/$patch.gz" | patch -Np1 || exit $ERROR_PATCH
+  elif [ -f "$CWD/patches/$patch.gz" ]; then
+    gzip -dc "$CWD/patches/$patch.gz" | patch -Np1 || exit $ERROR_PATCH
   fi
 done
 
