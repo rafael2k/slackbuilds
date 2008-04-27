@@ -55,7 +55,7 @@ elif [ "$ARCH" = "i686" ]; then
 elif [ "$ARCH" = "s390" ]; then
   SLKCFLAGS="-O2"
 elif [ "$ARCH" = "x86_64" ]; then
-  SLKCFLAGS="-O2"
+  SLKCFLAGS="-O2 -fPIC"
   LIBDIR="$PREFIX/lib64"
 fi
 
@@ -101,7 +101,7 @@ python setup.py build install --root=$PKG
 )
 
 # Install documentation
-DOCS="NEWS TODO README AUTHORS INSTALL ChangeLog MAINTAINERS COPYING readme.*"
+DOCS="NEWS TODO README AUTHORS INSTALL ChangeLog MAINTAINERS COPYING LICENSE SIGNATURE readme.*"
 mkdir -p "$PKG/usr/doc/$PKG_NAME-$PKG_VERSION" || exit $ERROR_MKDIR
 for doc in $DOCS; do
   if [ -f "$doc" ]; then
