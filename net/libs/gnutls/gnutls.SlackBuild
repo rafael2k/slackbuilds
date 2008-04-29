@@ -1,258 +1,197 @@
 #!/bin/bash
 #
-# slackbuild for gnutls from http://www.slacky.it/download/libraries/gnutls/1.2.11/
+#  gnutls.SlackBuild is free software; you can redistribute
+#  it and/or modify it under the terms of the GNU General Public License as
+#  published by the Free Software Foundation; either version 2 of the License,
+#  or any later version.
 #
-# Heavily based on the Slackware 10.2 SlackBuild
-# ftp://ftp.gnutls.org/pub/gnutls/
-# Requirements: libgpg-error, libgcrypt and optionally opencdk, libtasn1, libcfg+, lzo
+#  gnutls.SlackBuild is distributed in the hope that it will
+#  be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General
+#  Public License for more details.
 #
-# small changes by rhatto
+#  You should have received a copy of the GNU General Public License along with
+#  this program; if not, write to the Free Software Foundation, Inc., 59 Temple
+#  Place - Suite 330, Boston, MA 02111-1307, USA
+#
+# slackbuild for gnutls, by Silvio Rhatto
+# requires:  
+# tested: gnutls-2.0.4
 #
 
-if [ -s "slack-required" ]; then
-  echo Recomended and required packages for building gnutls are:
-  cat slack-required | sed -e 's/^/\t/'
-  if [ "$INTERACT" != "no" ]; then
-    echo If you dont have those installed, press Ctrl-C. Otherwise, hit ENTER.
-    read crap
-#  else
-#    echo Sleeping 3 seconds...
-#    sleep 3
-  fi
-fi
-
-CWD=`pwd`
-
+# Look for slackbuildrc
 if [ -f ~/.slackbuildrc ]; then
   source ~/.slackbuildrc
 elif [ -f /etc/slackbuildrc ]; then
   source /etc/slackbuildrc
 fi
 
-# default settings
-PACKAGE="gnutls"
+# Set variables
+CWD="$(pwd)"
+SRC_NAME="gnutls"
+PKG_NAME="gnutls"
 ARCH=${ARCH:=i486}
-VERSION=${VERSION:=1.6.1}
+SRC_VERSION=${VERSION:=2.0.4}
+PKG_VERSION="$(echo "$SRC_VERSION" | tr '[[:blank:]-]' '_')"
 BUILD=${BUILD:=1rha}
-SRC_DIR=${SRC:=$CWD}
+SRC_DIR=${SRC_DIR:=$CWD}/$PKG_NAME
 TMP=${TMP:=/tmp}
+PKG=${PKG:=$TMP/package-$PKG_NAME}
 REPOS=${REPOS:=$TMP}
+PREFIX=${PREFIX:=/usr}
+PKG_WORK="$TMP/$SRC_NAME"
+CONF_OPTIONS=${CONF_OPTIONS:="--disable-static" "}
+NUMJOBS=${NUMJOBS:=""}
 
-# -------  error codes for createpkg  --------------
+# Set system libraries' path and optmization flags based on $ARCH
+LIBDIR="$PREFIX/lib"
+
+if [ "$ARCH" = "i386" ]; then
+  SLKCFLAGS="-O2 -march=i386 -mcpu=i686"
+elif [ "$ARCH" = "i486" ]; then
+  SLKCFLAGS="-O2 -march=i486 -mcpu=i686"
+elif [ "$ARCH" = "i686" ]; then
+  SLKCFLAGS="-O2 -march=i686"
+elif [ "$ARCH" = "s390" ]; then
+  SLKCFLAGS="-O2"
+elif [ "$ARCH" = "x86_64" ]; then
+  SLKCFLAGS="-O2 -fPIC"
+  LIBDIR="$PREFIX/lib64"
+  LDFLAGS="-L/lib64 -L/usr/lib64"
+fi
+
+# Set error codes (used by createpkg)
 ERROR_WGET=31;      ERROR_MAKE=32;      ERROR_INSTALL=33
 ERROR_MD5=34;       ERROR_CONF=35;      ERROR_HELP=36
 ERROR_TAR=37;       ERROR_MKPKG=38;     ERROR_GPG=39
-ERROR_PATCH=40
+ERROR_PATCH=40;     ERROR_VCS=41;       ERROR_MKDIR=42
 
-if [ "$ARCH" == "x86_64" ]; then
-  export LDFLAGS="-L/lib64 -L/usr/lib64"
-  LIBDIR=/usr/lib64
+# Clean up any leftovers of previous builds
+rm -rf "$PKG_WORK" 2> /dev/null
+rm -rf "$PKG" 2> /dev/null
+
+# Create directories if necessary
+mkdir -p "$SRC_DIR" || exit $ERROR_MKDIR
+mkdir -p "$PKG" || exit $ERROR_MKDIR
+mkdir -p "$REPOS" || exit $ERROR_MKDIR
+mkdir -p "$PKG_WORK" || exit $ERROR_MKDIR
+
+# Dowload source if necessary
+SRC="$SRC_NAME-$VERSION.tar.bz2"
+URL="ftp://ftp.gnupg.org/gcrypt/alpha/gnutls/$SRC"
+
+if [ ! -s "$SRC_DIR/$SRC" ] || ! bunzip2 -t "$SRC_DIR/$SRC" 2> /dev/null; then
+  wget "$URL" -O "$SRC_DIR/$SRC" || exit $ERROR_WGET
+fi
+
+# Import minimized signing key from
+if echo http://josefsson.org/key.txt | grep -q -v "SIGNING KEY URL"; then
+  lynx -dump http://josefsson.org/key.txt | gpg --import || exit $ERROR_GPG
+elif echo [[SIGNING KEY ID]] | grep -q -v "SIGNING KEY ID"; then
+  gpg --recv-keys [[SIGNING KEY ID]] || exit $ERROR_GPG
 else
-  LIBDIR=/usr/lib
+  gpg --import << EOKEY || exit $ERROR_GPG
+[[SIGNING KEY]]
+EOKEY
 fi
 
-RTOOL="wget"
-TARGET="$ARCH"
-NAME="$PACKAGE"
-PACKAGE_EXT="bz2"
-SRC="$PACKAGE-$VERSION.tar.$PACKAGE_EXT"
-URL="ftp://ftp.gnupg.org/gcrypt/alpha/$PACKAGE/$SRC"
-
-SRC_DIR="$SRC_DIR/$PACKAGE"
-mkdir -p $SRC_DIR
-
-if [ "$RTOOL" == "wget" ]; then
-  if [ ! -f "$SRC_DIR/$SRC" ]; then
-    wget "$URL" -O "$SRC_DIR/$SRC" || exit $ERROR_WGET
+# Download source's signature if necessary and check it
+if echo [[SIGNING URL]] | grep -q -v "SIGNING URL"; then
+  SIGNATURE="`basename [[SIGNING URL]]`"
+  if [ ! -s "$SRC_DIR/$SIGNATURE" ]; then
+    wget "[[SIGNING URL]]" -O "$SRC_DIR/$SIGNATURE" || exit $ERROR_WGET
   fi
-  if [ ! -f "$SRC_DIR/$SRC.sig" ]; then
-    wget "$URL.sig" -O "$SRC_DIR/$SRC.sig" || exit $ERROR_WGET
+else
+  if [ -s "$SRC_DIR/$SRC.sig" ]; then
+    SIGNATURE="$SRC.sig"
+  elif [ -s "$SRC_DIR/$SRC.asc" ]; then
+    SIGNATURE="$SRC.asc"
+  else
+    echo Trying to get signature file from $URL.sig...
+    if wget "$URL.sig" -O "$SRC_DIR/$SRC.sig"; then
+      SIGNATURE="$SRC.sig"
+    else
+      rm $SRC_DIR/$SRC.sig
+      echo Trying to get signature file from $URL.asc...
+      if wget "$URL.asc" -O "$SRC_DIR/$SRC.asc"; then
+        SIGNATURE="$SRC.asc"
+      else
+        rm $SRC_DIR/$SRC.asc
+        echo "Error getting source's signature file"
+        exit $ERROR_GPG
+      fi
+    fi
   fi
 fi
 
-gpg --import <<EOF
------BEGIN PGP PUBLIC KEY BLOCK-----
-Version: GnuPG v1.4.5 (GNU/Linux)
+echo Checking $SRC_DIR/$SRC with gpg using $SRC_DIR/$SIGNATURE...
+gpg --verify "$SRC_DIR/$SIGNATURE" "$SRC_DIR/$SRC" || exit $ERROR_GPG
+echo Success.
 
-mQGiBDmUO7kRBADJPqpr72gKNfZT9YdtYOaDXKwQwwjEwAQGz8Bo0tMcz6w1+npv
-8PEzdvDBohH2wufbfbEbOI1fDi/GVoTL3Ut5v8C+nOLB7MuBx2l6f4m3Rf3kO7Qu
-1pFfaXmS9J2uM/+Joqbubco+u/HENuCKqqlidjY/7RhZi/6Q3qzMAiF8pwCglB8Q
-jlysMxwTcXtIm0KSbXbmoYkD/AiVcE8Q6CsJU4CndFkDrL6jc/szoE5vaClmDrGW
-tVg3AzFakQZ2iKQtxUO22I909yj/rkl+KcmCOO7GD1Fm2t6YrctBCOnOM+gcBE7I
-o6jSsQrS3NqwaCkLMwNjpmoQz23QSGIhfihfEjyi6FEcfga7tTmB//hiYpXjyrnW
-zhszA/9XGfnhZrGt2MLnAVQvD6ohjvsMHrzsvXBxVCan5A5sHlakjuxqYGERfTW/
-/tCAUlaUzxbiO8Y5fzxSC4kno1wDxAtCTJJINEXi+gVsvLodqpwv5FtB0VePBBsg
-TIaRH2H39GPqVlxsNfcjUDhBuvNUz0t59ju6TGp6DWsGsJ7f6LQnTmlrb3MgTWF2
-cm95YW5vcG91bG9zIDxubWF2QGdudXRscy5vcmc+iGAEExECACAFCwcKAwQDFQMC
-AxYCAQIXgAIZAQUCQW96SAUJDX7ZDAAKCRDhXdhXsVw30YbVAJ9w9/Ww8kwkj7mQ
-9O1b0R7laiow3wCfchaGAjrat3GXCnS7iAUwVbO6fRe0PE5pa29zIE1hdnJvZ2lh
-bm5vcG91bG9zIDxuLm1hdnJvZ2lhbm5vcG91bG9zQHN0dWRlbnQudHVlLm5sPohf
-BDARAgAfBQJDeSGGGB0gRG9uJ3QgdXNlIGl0IGFueSBtb3JlLgAKCRDhXdhXsVw3
-0SIeAJ4vxSHl0POqJuRO7F0SwSgaU99fOwCfRFpV8wO9c24qsv41mashBHHKoGO0
-Jk5pa29zIE1hdnJveWFub3BvdWxvcyA8bm1hdkBoZWxsdWcuZ3I+iF4EMBECAB4F
-AkN5Ic8XHSBEb24ndCB1c2UgaXQgYW55IG1vcmUACgkQ4V3YV7FcN9FzNwCggTzP
-PlhzR8euuHLzROiHY+ikVXMAoJBIdgrEfhisOJPIEbPe+wH+LFuLtCROaWtvcyBN
-YXZyb3lhbm9wb3Vsb3MgPG5tYXZAZ251Lm9yZz6IXQQTEQIAHQULBwoDBAMVAwID
-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
-JzzMHb4=
-=VT3T
------END PGP PUBLIC KEY BLOCK-----
------BEGIN PGP PUBLIC KEY BLOCK-----
-Version: GnuPG v1.4.5 (GNU/Linux)
+# Untar
+cd "$PKG_WORK"
+tar --no-same-owner --no-same-permissions -xvf "$SRC_DIR/$SRC" || exit $ERROR_TAR
+PKG_SRC="$PWD/`ls -l | awk '/^d/ { print $8 }'`"
+cd "$PKG_SRC"
 
-mKsEPNUHKwEFALqJSBHn6Qk5ex138kwymxA3idCFoTi5Q6mVooEVVaYVfeDG+5uV
-T5rhTFDfDcT9SO0eIlfKOraSRnVEHyDDH2PAgJFxyneFELcmLUQ66D+m8z+ziGro
-6bcDSBBDMRkHIX6/kH/vnevjqivIld+j8WTcVX+SArcKyzgQ58uMTrfQdLqzh6D9
-sE/838+ZPZkabmKKWMVWccoaUbWGYOcNwO0ABim0IVNpbW9uIEpvc2Vmc3NvbiA8
-amFzQGV4dHVuZG8uY29tPoj7BBMBAgBFAhsDBAsHAwIDFQIDAxYCAQIeAQIXgCIY
-ZG5zOnNpbW9uLmpvc2Vmc3Nvbi5vcmc/dHlwZT1DRVJUBQJE5uh1BQkI/y9IAAoJ
-EO2iHpS1ZXFvgWQE/20EMJJ151G/XmiF8fmkmwHqDuYHKMMhc5YHIp2lMh7uif9a
-IDsIpZKED7MYYEROgP7p5N2WnJLwa86TdpsPWJ1RkQvjXParnkVihYQXyjVBcDAn
-KVSMtSIwkf3wM9cZVeJKSeUEF+Wz3vE2FKnykUuoX1kbwWXdElLgtbNeSMqoCqvU
-WREJ6uxjs8kLzG0gXkZK2+Brr2SHcHW0fqg9j5m0JVNpbW9uIEpvc2Vmc3NvbiA8
-c2ltb25Aam9zZWZzc29uLm9yZz6I+wQTAQIARQIbAwQLBwMCAxUCAwMWAgECHgEC
-F4AiGGRuczpzaW1vbi5qb3NlZnNzb24ub3JnP3R5cGU9Q0VSVAUCRObocwUJCP8v
-SAAKCRDtoh6UtWVxb9fhBQCRE0dBfP855Vv2fPCzIxnu1I0GM9BjmAC4uMNdW6o7
-I4yQMXNYpP8RdxDzPTon1JYQZqQW77EdqtwjFeguScudF8+85I2FtKDmzl0NNubm
-X6ckxdCbuUmOk2VuH0IQ8O0f1htk0h4dQB97YA8zu9AtqyASkdCDbRC7RgoaeUaV
-7N7v8RM3KpEJm6pceQT1DLqOQIFAp/cDa76xXK2Xrd4IuKsEPNUHewEFANj02qE/
-ETZBQ5V+1Ajgfb2kRca1/nTe5ekDvjtDIO3VXYyLRJ2mmJCfq+C13nCOOx6ILFBh
-MUXQ2Bk9A6u2mfBpAuFCj13N6tilkN4m98I96pwhptyF/yNuPcnWCwM0MlqjFtPc
-Cweb8YT4uMo3reBUxlprWFJRsw2+/ulWYpWEU7ctL4RReHFV5Ttkfr4D8RTL1HO6
-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
-2SN1HuoO+KLbYxMku5qc0eHmK4eGog==
-=5IXo
------END PGP PUBLIC KEY BLOCK-----
-EOF
-
-gpg --verify $SRC_DIR/$SRC.sig $SRC_DIR/$SRC || exit $ERROR_GPG
-
-if [ "$ARCH" = "i486" ]; then
-  SLKCFLAGS="-O2 -march=i486 -mcpu=i686"
-elif [ "$ARCH" = "i686" ]; then
-  SLKCFLAGS="-O2 -march=i686 -mcpu=i686"
-elif [ "$ARCH" = "x86_64" ]; then
-  SLKCFLAGS="-O2"
-fi
-
-TMP="$TMP/$PACKAGE"
-PKG=$TMP/package-gnutls
-rm -rf $TMP
-mkdir -p $PKG
-
-cd $TMP
-
-tar xvf $SRC_DIR/$SRC || exit $ERROR_TAR
-cd $NAME-$VERSION
-
-chown -R root.root .
-
+# Configure
 CFLAGS="$SLKCFLAGS" \
-CXXFLAGS="$SLKCFLAGS" \
-./configure --prefix=/usr --libdir=$LIBDIR \
---disable-static \
---program-prefix="" \
---program-suffix="" \
-$TARGET-slackware-linux || exit $ERROR_CONF
+  CXXFLAGS="$SLKCFLAGS" \
+  ./configure \
+  --prefix="$PREFIX" --libdir="$LIBDIR" $CONF_OPTIONS || exit $ERROR_CONF
 
-make || exit $ERROR_MAKE
-make install DESTDIR=$PKG || exit $ERROR_INSTALL
+# Compile
+make $NUMJOBS || exit $ERROR_MAKE
 
-mkdir -p $PKG/usr/doc/$NAME-$VERSION
-cp -a AUTHORS COPYING* ChangeLog INSTALL NEWS README THANKS $PKG/usr/doc/$NAME-$VERSION
-cd $PKG
-find . | xargs file | grep "executable" | grep ELF | cut -f 1 -d : | xargs strip --strip-unneeded 2> /dev/null
-find . | xargs file | grep "shared object" | grep ELF | cut -f 1 -d : | xargs strip --strip-unneeded 2> /dev/null
-chown -R root.bin $PKG/usr/bin
-gzip -9 $PKG/usr/man/*/*
-rm $PKG/usr/info/dir
-gzip -9 $PKG/usr/info/*
-mkdir -p $PKG/install
-cat $CWD/slack-desc > $PKG/install/slack-desc
-cat $CWD/slack-desc > $PKG/usr/doc/$NAME-$VERSION/slack-desc
-cat $CWD/$NAME.SlackBuild > $PKG/usr/doc/$NAME-$VERSION/$NAME.SlackBuild
-#requiredbuilder -v -y -s $CWD $PKG
-makepkg -l y -c n $REPOS/$NAME-$VERSION-$ARCH-$BUILD.tgz || exit $ERROR_MKPKG
+# Install
+make install DESTDIR="$PKG" || exit $ERROR_INSTALL
 
+# Strip binaries
+( cd "$PKG"
+  find . | xargs file | grep "executable" | grep ELF | cut -f 1 -d : | \
+    xargs strip --strip-unneeded 2> /dev/null
+  find . | xargs file | grep "shared object" | grep ELF | cut -f 1 -d : | \
+    xargs strip --strip-unneeded 2> /dev/null
+)
+
+# Install documentation
+DOCS="AUTHORS COPYING* ChangeLog INSTALL NEWS README THANKS"
+mkdir -p "$PKG/usr/doc/$PKG_NAME-$PKG_VERSION" || exit $ERROR_MKDIR
+for doc in $DOCS; do
+  if [ -f "$doc" ]; then
+    cp -a $doc "$PKG/usr/doc/$PKG_NAME-$PKG_VERSION"
+  fi
+done
+
+# Add package description (slack-desc)
+mkdir -p "$PKG/install" || exit $ERROR_MKDIR
+cat << EODESC > "$PKG/install/slack-desc"
+# HOW TO EDIT THIS FILE:
+# The "handy ruler" below makes it easier to edit a package description.  Line
+# up the first '|' above the ':' following the base package name, and the '|'
+# on the right side marks the last column you can put a character in.  You must
+# make exactly 11 lines for the formatting to be correct.  It's also
+# customary to leave one space after the ':'.
+
+      |-----handy-ruler-------------------------------------------------------|
+gnutls: Gnutls (Transport Layer Security)
+gnutls: 
+gnutls: This is the GNU TLS library. More up to date information can be found
+gnutls: at http://www.gnu.org/software/gnutls/ and http://www.gnutls.org/
+gnutls: 
+gnutls: 
+gnutls: 
+gnutls: 
+gnutls: 
+gnutls: 
+gnutls:
+EODESC
+
+# Build the package
+cd "$PKG"
+makepkg -l y -c n "$REPOS/$PKG_NAME-$PKG_VERSION-$ARCH-$BUILD.tgz" || exit $ERROR_MKPKG
+
+# Delete source and build directories if requested
 if [ "$CLEANUP" == "yes" ]; then
-  rm -rf $TMP
+  rm -rf "$PKG_WORK" "$PKG"
 fi
-
