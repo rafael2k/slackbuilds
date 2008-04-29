@@ -1,5 +1,4 @@
-# Dependency list to sdl_image
-# 
+# Dependency list to SDL_mixer
+#
 # dependency [condition] [version]]
-sdl
-vorbis-tools
+sdl				

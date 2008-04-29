@@ -1,5 +1,4 @@
-# Dependency list to SDL_net
+# Dependency list to GUIlib
 #
 # dependency [condition] [version]]
 sdl				
-GUIlib				

@@ -1,5 +1,5 @@
-# Dependency list to SDL_net
+# Dependency list to smpeg
 #
 # dependency [condition] [version]]
 sdl				
-GUIlib				
+SDL_mixer				
