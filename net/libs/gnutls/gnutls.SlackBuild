@@ -40,7 +40,7 @@ PKG=${PKG:=$TMP/package-$PKG_NAME}
 REPOS=${REPOS:=$TMP}
 PREFIX=${PREFIX:=/usr}
 PKG_WORK="$TMP/$SRC_NAME"
-CONF_OPTIONS=${CONF_OPTIONS:="--disable-static" "}
+CONF_OPTIONS=${CONF_OPTIONS:="--disable-static"}
 NUMJOBS=${NUMJOBS:=""}
 
 # Set system libraries' path and optmization flags based on $ARCH
