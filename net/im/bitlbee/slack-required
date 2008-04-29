@@ -1,2 +1,4 @@
-gnutls
-libiconv
+# Dependency list to bitlbee
+#
+# dependency [condition] [version]]
+gnutls				
