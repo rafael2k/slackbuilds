@@ -107,6 +107,12 @@ tar xvf $SOURCE -C $PKG_SRC || exit $ERROR_TAR
 PKG_DIR="$PKG_SRC/$( ls $PKG_SRC/ )"
 cd $PKG_DIR
 
+# aplicando o patch para o kqemu
+if [ -f "$CWD/kqemu-$VERSION.diff" ]; then
+    patch -p1 < $CWD/kqemu-$VERSION.diff || exit $ERROR_PATCH
+fi 
+
+
 # --------------  Configura programa  ---------------------
 # Configura programa
 CFLAGS="$SLKCFLAGS" ./configure --prefix=$PREFIX --libdir=$LIBDIR $OPTCONF || exit $ERROR_CONF
