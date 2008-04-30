@@ -154,6 +154,29 @@ make install DESTDIR="$PKG" || exit $ERROR_INSTALL
     xargs strip --strip-unneeded 2> /dev/null
 )
 
+# Compress and link manpages
+if [ -d "$PKG/$PREFIX/man" ]; then
+  ( cd "$PKG/$PREFIX/man"
+    for manpagedir in $(find . -type d -name "man*") ; do
+      ( cd $manpagedir
+        for eachpage in $( find . -type l -maxdepth 1) ; do
+          ln -s $( readlink $eachpage ).gz $eachpage.gz
+          rm $eachpage
+        done
+        gzip -9 *.?
+      )
+    done
+  )
+fi
+
+# Compress info files
+if [ -d "$PKG/$PREFIX/info" ]; then
+  ( cd "$PKG/$PREFIX/info"
+    rm -f dir
+    gzip -9 *
+  )
+fi
+
 # Install documentation
 DOCS="AUTHORS COPYING* ChangeLog INSTALL NEWS README THANKS"
 mkdir -p "$PKG/usr/doc/$PKG_NAME-$PKG_VERSION" || exit $ERROR_MKDIR
