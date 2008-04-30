@@ -97,10 +97,6 @@ CFLAGS="$SLKCFLAGS" \
   --prefix="$PREFIX" --libdir="$LIBDIR" $CONF_OPTIONS || exit $ERROR_CONF
 
 # Compile
-if [ "$ARCH" == "x86_64" ]; then
-  cat Makefile.settings | sed -e 's/^LFLAGS=$/LFLAGS=-L\/lib64 -L\/usr\/lib64 -liconv/' > Makefile.settings.new
-  mv Makefile.settings.new Makefile.settings
-fi
 make $NUMJOBS || exit $ERROR_MAKE
 
 # Install
