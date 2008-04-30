@@ -188,6 +188,7 @@ config etc/bitlbee/bitlbee.conf.new
 EOSCRIPT
 
 # Build the package
+cp bitlbee.conf $PKG/etc/bitlbee/bitlbee.conf.new
 cd "$PKG"
 makepkg -l y -c n "$REPOS/$PKG_NAME-$PKG_VERSION-$ARCH-$BUILD.tgz" || exit $ERROR_MKPKG
 
