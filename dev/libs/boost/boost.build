@@ -29,7 +29,7 @@ fi
 # default settings
 PACKAGE="boost"
 ARCH=${ARCH:=i486}
-VERSION=${VERSION:=1.34.1}
+VERSION=${VERSION:=1.35.0}
 BUILD=${BUILD:=1rd}
 SRC_DIR=${SRC:=$CWD}
 TMP=${TMP:=/tmp}
@@ -84,9 +84,9 @@ fi
 make || exit $ERROR_MAKE
 make install || exit $ERROR_INSTALL
 
-cd /usr/include && ln -s /usr/include/boost-$VERSION_UNDERLINE/ /usr/include/boost
-
 CWD="`pwd`"
+
+cd /usr/include && ln -s /usr/include/boost-$VERSION_UNDERLINE/ /usr/include/boost
 
 # docs
 mkdir -p /usr/doc/$PACKAGE-$VERSION
