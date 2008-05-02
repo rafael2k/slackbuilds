@@ -1,0 +1,5 @@
+# Dependency list to trunk
+#
+# dependency [condition] [version]]
+gnuradio				
+Cheetah				
