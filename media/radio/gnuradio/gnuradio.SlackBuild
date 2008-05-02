@@ -15,8 +15,8 @@
 #  Place - Suite 330, Boston, MA 02111-1307, USA
 #
 # slackbuild for gnuradio, by Silvio Rhatto - rhatto at riseup.net
-# requires: boost swig fftw sdcc cppunit jack numpy wxWidgets wxPython
-# tested: gnuradio-3.1.1
+# requires: boost swig fftw sdcc cppunit jack numpy wxWidgets wxPython 
+# tested: gnuradio-3.1.2
 #
 
 # Look for slackbuildrc
@@ -55,8 +55,9 @@ elif [ "$ARCH" = "i686" ]; then
 elif [ "$ARCH" = "s390" ]; then
   SLKCFLAGS="-O2"
 elif [ "$ARCH" = "x86_64" ]; then
-  SLKCFLAGS="-O2"
+  SLKCFLAGS="-O2 -fPIC"
   LIBDIR="$PREFIX/lib64"
+  LDFLAGS="-L/lib64 -L/usr/lib64"
 fi
 
 # Set error codes (used by createpkg)
@@ -83,11 +84,10 @@ if [ ! -s "$SRC_DIR/$SRC" ] || ! gunzip -t "$SRC_DIR/$SRC" 2> /dev/null; then
   wget "$URL" -O "$SRC_DIR/$SRC" || exit $ERROR_WGET
 fi
 
-
 # Untar
 cd "$PKG_WORK"
 tar --no-same-owner --no-same-permissions -xvf "$SRC_DIR/$SRC" || exit $ERROR_TAR
-PKG_SRC=`ls -l | awk '/^d/ { print $8 }'`
+PKG_SRC="$PWD/`ls -l | awk '/^d/ { print $8 }'`"
 cd "$PKG_SRC"
 
 # get boost version
@@ -99,7 +99,8 @@ if [ -z "$boost" ]; then
 fi
 
 pack="`basename $boost | sed -e 's/-[^-]*-[^-]*-[^-]*$//'`"
-boost_version="`echo $boost | sed -e "s/^$pack-//" | cut -d "-" -f 1 | sed -e 's/\./_/g'`"
+boost_version="`echo $boost | sed -e "s/^$pack-//" | cut -d "-" -f 1 | \
+                              sed -e 's/\./_/g' -e 's/\([0-9]\+\)_\([0-9]\+\)_0/\1_\2/'`"
 
 CFLAGS="$SLKCFLAGS" \
   CXXFLAGS="$SLKCFLAGS" \
@@ -154,16 +155,52 @@ gnuradio:
 gnuradio:
 EODESC
 
-cd "$PKG"
-
-# config files
-echo '( chroot . /sbin/ldconfig )' > install/doinst.sh
-for conf in gnuradio-core gr-audio-alsa gr-audio-jack gr-audio-oss; do
-  mv etc/gnuradio/conf.d/$conf.conf etc/gnuradio/conf.d/$conf.conf.new
-  echo "( if [ ! -f "etc/gnuradio/conf.d/$conf.conf" ]; then mv etc/gnuradio/conf.d/$conf.conf.new etc/gnuradio/conf.d/$conf.conf ; fi )" >> install/doinst.sh
+# Move config files to .new to avoid overwriting any system config
+for config_file in etc/gnuradio/conf.d/gnuradio-core.conf etc/gnuradio/conf.d/gr-audio-alsa.conf etc/gnuradio/conf.d/gr-audio-jack.conf etc/gnuradio/conf.d/gr-audio-oss.conf etc/gnuradio/conf.d/gr-wxgui.conf; do
+  mv $PKG/$config_file $PKG/$config_file.new
 done
 
+# Add a post-installation script (doinst.sh)
+cat << EOSCRIPT > "$PKG/install/doinst.sh"
+config() {
+  NEW="\$1"
+  OLD="\$(dirname \$NEW)/\$(basename \$NEW .new)"
+  # If there's no config file by that name, mv it over:
+  if [ ! -r \$OLD ]; then
+    mv \$NEW \$OLD
+  elif [ "\$(cat \$OLD | md5sum)" = "\$(cat \$NEW | md5sum)" ]; then
+    # toss the redundant copy
+    rm \$NEW
+  fi
+  # Otherwise, we leave the .new copy for the admin to consider...
+}
+
+mkgroup() {
+  GROUP="\$1"
+  if ! grep -qe "^\$GROUP:" etc/group; then
+    echo Creating group \$GROUP...
+    chroot . /usr/sbin/groupadd \$GROUP
+  fi 
+}
+
+mkuser() {
+  USER="\$1"
+  if [ ! -z "\$2" ]; then
+    GROUP="\$2"
+  else
+    GROUP="\$USER"
+  fi
+  if ! grep -qe "^\$USER:" etc/passwd; then
+    echo Creating user \$USER...
+    chroot . /usr/sbin/useradd \$USER -g \$GROUP
+  fi
+}
+
+config etc/gnuradio/conf.d/gnuradio-core.conf.new ; config etc/gnuradio/conf.d/gr-audio-alsa.conf.new ; config etc/gnuradio/conf.d/gr-audio-jack.new ; etc/gnuradio/conf.d/gr-audio-oss.conf.new ; config etc/gnuradio/conf.d/gr-wxgui.conf.new
+EOSCRIPT
+
 # Build the package
+cd "$PKG"
 makepkg -l y -c n "$REPOS/$PKG_NAME-$PKG_VERSION-$ARCH-$BUILD.tgz" || exit $ERROR_MKPKG
 
 # Delete source and build directories if requested
