@@ -30,7 +30,7 @@ fi
 PACKAGE="boost"
 ARCH=${ARCH:=i486}
 VERSION=${VERSION:=1.35.0}
-BUILD=${BUILD:=1rd}
+BUILD=${BUILD:=2rd}
 SRC_DIR=${SRC:=$CWD}
 TMP=${TMP:=/tmp}
 REPOS=${REPOS:=$TMP}
@@ -41,7 +41,8 @@ ERROR_MD5=34;       ERROR_CONF=35;      ERROR_HELP=36
 ERROR_TAR=37;       ERROR_MKPKG=38;     ERROR_GPG=39
 ERROR_PATCH=40
 
-VERSION_UNDERLINE="`echo $VERSION | sed -e 's/\./_/g'`"
+# Version with underline and without minor version if minor version is 0 (workaround)
+VERSION_UNDERLINE="`echo $VERSION | sed -e 's/\./_/g' -e 's/\([0-9]\+\)_\([0-9]\+\)_0/\1_\2/'`"
 
 if [ "$ARCH" == "x86_64" ]; then
   export LDFLAGS="-L/lib64 -L/usr/lib64"
