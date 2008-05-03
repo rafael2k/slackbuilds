@@ -30,7 +30,7 @@ fi
 PACKAGE="boost"
 ARCH=${ARCH:=i486}
 VERSION=${VERSION:=1.35.0}
-BUILD=${BUILD:=2rd}
+BUILD=${BUILD:=1rd}
 SRC_DIR=${SRC:=$CWD}
 TMP=${TMP:=/tmp}
 REPOS=${REPOS:=$TMP}
@@ -88,7 +88,8 @@ make install || exit $ERROR_INSTALL
 CWD="`pwd`"
 
 # Underline version without minor version if minor version is 0 (workaround)
-cd /usr/include && ln -s /usr/include/boost-`echo $VERSION_UNDERLINE | sed -e 's/\([0-9]\+\)_\([0-9]\+\)_0/\1_\2/'`/ /usr/include/boost
+VERSION_UNDERLINE="`echo $VERSION | sed -e 's/\([0-9]\+\)_\([0-9]\+\)_0/\1_\2/'`"
+cd /usr/include && ln -s boost-$VERSION_UNDERLINE/ boost
 
 # docs
 mkdir -p /usr/doc/$PACKAGE-$VERSION

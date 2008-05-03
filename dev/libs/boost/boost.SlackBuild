@@ -42,7 +42,7 @@ fi
 PACKAGE="boost"
 ARCH=${ARCH:=i486}
 VERSION=${VERSION:=1.35.0}
-BUILD=${BUILD:=2rd}
+BUILD=${BUILD:=1rd}
 SRC_DIR=${SRC:=$CWD}
 TMP=${TMP:=/tmp}
 REPOS=${REPOS:=$TMP}
