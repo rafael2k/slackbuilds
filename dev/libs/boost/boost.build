@@ -41,8 +41,8 @@ ERROR_MD5=34;       ERROR_CONF=35;      ERROR_HELP=36
 ERROR_TAR=37;       ERROR_MKPKG=38;     ERROR_GPG=39
 ERROR_PATCH=40
 
-# Version with underline and without minor version if minor version is 0 (workaround)
-VERSION_UNDERLINE="`echo $VERSION | sed -e 's/\./_/g' -e 's/\([0-9]\+\)_\([0-9]\+\)_0/\1_\2/'`"
+# Version with underline
+VERSION_UNDERLINE="`echo $VERSION | sed -e 's/\./_/g'`"
 
 if [ "$ARCH" == "x86_64" ]; then
   export LDFLAGS="-L/lib64 -L/usr/lib64"
@@ -87,7 +87,8 @@ make install || exit $ERROR_INSTALL
 
 CWD="`pwd`"
 
-cd /usr/include && ln -s /usr/include/boost-$VERSION_UNDERLINE/ /usr/include/boost
+# Underline version without minor version if minor version is 0 (workaround)
+cd /usr/include && ln -s /usr/include/boost-`echo $VERSION_UNDERLINE | sed -e 's/\([0-9]\+\)_\([0-9]\+\)_0/\1_\2/'`/ /usr/include/boost
 
 # docs
 mkdir -p /usr/doc/$PACKAGE-$VERSION
