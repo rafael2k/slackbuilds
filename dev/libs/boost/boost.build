@@ -88,13 +88,13 @@ make install || exit $ERROR_INSTALL
 CWD="`pwd`"
 
 # Underline version without minor version if minor version is 0 (workaround)
-VERSION_UNDERLINE="`echo $VERSION | sed -e 's/\([0-9]\+\)_\([0-9]\+\)_0/\1_\2/'`"
+VERSION_UNDERLINE="`echo $VERSION_UNDERLINE | sed -e 's/\([0-9]\+\)_\([0-9]\+\)_0/\1_\2/'`"
 cd /usr/include && ln -s boost-$VERSION_UNDERLINE/ boost
 
 # docs
 mkdir -p /usr/doc/$PACKAGE-$VERSION
 
-for file in LICENSE_1_0.txt README; do
+for file in LICENSE_1_0.txt; do
   cp $CWD/$file* /usr/doc/$PACKAGE-$VERSION/
 done
 
