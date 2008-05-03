@@ -29,7 +29,7 @@ fi
 # default settings
 PACKAGE="ardour"
 ARCH=${ARCH:=i486}
-VERSION=${VERSION:=0.99.3}
+VERSION=${VERSION:=2.4.1}
 BUILD=${BUILD:=1rha}
 SRC_DIR=${SRC:=$CWD}
 TMP=${TMP:=/tmp}

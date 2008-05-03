@@ -5,3 +5,7 @@ ladspa
 libsamplerate
 libsndfile
 jack
+libgnomecanvas
+liblo
+fftw
+boost
