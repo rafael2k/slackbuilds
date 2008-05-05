@@ -1,0 +1,12 @@
+# Dependency list to pygame
+#
+# dependency [condition] [version]]
+libjpeg				
+libpng				
+sdl				
+python				
+SDL_image				
+SDL_mixer				
+SDL_ttf				
+smpeg				
+SDL_rotozoom				
