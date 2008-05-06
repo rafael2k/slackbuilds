@@ -25,7 +25,7 @@ elif [ -f /etc/slackbuildrc ]; then
 fi
 
 PRGNAM=freetype
-VERSION=${VERSION:-2.3.4}
+VERSION=${VERSION:-2.3.5}
 ARCH=${ARCH:-i486}
 BUILD=${BUILD:-1rha}
 TMP=${TMP:-/tmp}
