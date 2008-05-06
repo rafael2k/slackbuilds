@@ -1,73 +1,194 @@
 #!/bin/bash
 #
-#  simplepkg.SlackBuild is free software; you can redistribute it and/or modify it under the
-#  terms of the GNU General Public License as published by the Free Software
-#  Foundation; either version 2 of the License, or any later version.
+#  simplepkg.SlackBuild is free software; you can redistribute
+#  it and/or modify it under the terms of the GNU General Public License as
+#  published by the Free Software Foundation; either version 2 of the License,
+#  or any later version.
 #
-#  simplepkg.SlackBuild is distributed in the hope that it will be useful, but WITHOUT ANY
-#  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
-#  A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
+#  simplepkg.SlackBuild is distributed in the hope that it will
+#  be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General
+#  Public License for more details.
 #
-#  You should have received a copy of the GNU General Public License along with
-#  this program; if not, write to the Free Software Foundation, Inc., 59 Temple
-#  Place - Suite 330, Boston, MA 02111-1307, USA
+#  You should have received a copy of the GNU General Public License along
+#  with this program; if not, write to the Free Software Foundation, Inc.,
+#  59 Temple Place - Suite 330, Boston, MA 02111-1307, USA
 #
-# slackbuild script for simplepkg
-# by rhatto at riseup.net
+# slackbuild for simplepkg, by Rudson R. Alves
+# requires:  
+# tested: simplepkg-svn_version
 #
 
-if [ -s "slack-required" ]; then
-  echo Recomended and required packages for building simplepkg are:
-  cat slack-required | sed -e 's/^/\t/'
-  if [ "$INTERACT" != "no" ]; then
-    echo If you dont have those installed, press Ctrl-C. Otherwise, hit ENTER.
-    read crap
-#  else
-#    echo Sleeping 3 seconds...
-#    sleep 3
-  fi
-fi
-
-CWD="`pwd`"
-
+# Look for slackbuildrc
 if [ -f ~/.slackbuildrc ]; then
   source ~/.slackbuildrc
 elif [ -f /etc/slackbuildrc ]; then
   source /etc/slackbuildrc
 fi
 
-# default settings
-PACKAGE="simplepkg"
+# Set variables
+CWD="$(pwd)"
+SRC_NAME="simplepkg"
+PKG_NAME="simplepkg"
 ARCH="noarch"
-VERSION=${VERSION:=0.5.1}
-BUILD=${BUILD:=1rha}
-SRC_DIR=${SRC:=$CWD}
+SRC_VERSION=${VERSION:=svn_version}
+PKG_VERSION="$(echo "$SRC_VERSION" | tr '[[:blank:]-]' '_')"
+BUILD=${BUILD:=1srv}
+SRC_DIR=${SRC_DIR:=$CWD}/$PKG_NAME
 TMP=${TMP:=/tmp}
+PKG=${PKG:=$TMP/package-$PKG_NAME}
 REPOS=${REPOS:=$TMP}
+PREFIX=${PREFIX:=/usr}
+PKG_WORK="$TMP/$SRC_NAME"
+CONF_OPTIONS=${CONF_OPTIONS:=""}
+NUMJOBS=${NUMJOBS:=""}
 
-# -------  error codes for createpkg  --------------
+# Set system libraries' path and optmization flags based on $ARCH
+LIBDIR="$PREFIX/lib"
+
+if [ "$ARCH" = "i386" ]; then
+  SLKCFLAGS="-O2 -march=i386 -mcpu=i686"
+elif [ "$ARCH" = "i486" ]; then
+  SLKCFLAGS="-O2 -march=i486 -mcpu=i686"
+elif [ "$ARCH" = "i686" ]; then
+  SLKCFLAGS="-O2 -march=i686"
+elif [ "$ARCH" = "s390" ]; then
+  SLKCFLAGS="-O2"
+elif [ "$ARCH" = "x86_64" ]; then
+  SLKCFLAGS="-O2 -fPIC"
+  LIBDIR="$PREFIX/lib64"
+  LDFLAGS="-L/lib64 -L/usr/lib64"
+fi
+
+# Set error codes (used by createpkg)
 ERROR_WGET=31;      ERROR_MAKE=32;      ERROR_INSTALL=33
 ERROR_MD5=34;       ERROR_CONF=35;      ERROR_HELP=36
 ERROR_TAR=37;       ERROR_MKPKG=38;     ERROR_GPG=39
-ERROR_PATCH=40;     ERROR_VCS=41;
+ERROR_PATCH=40;     ERROR_VCS=41;       ERROR_MKDIR=42
 
-TMP="$TMP/$PACKAGE"
-rm -rf $TMP
-mkdir -p $TMP
-cd $TMP
+# Clean up any leftovers of previous builds
+rm -rf "$PKG_WORK" 2> /dev/null
+rm -rf "$PKG" 2> /dev/null
 
-svn checkout svn://slack.sarava.org/simplepkg/tags/$VERSION simplepkg-$VERSION || exit $ERROR_VCS
-cd $PACKAGE-$VERSION
+# Create directories if necessary
+mkdir -p "$SRC_DIR" || exit $ERROR_MKDIR
+mkdir -p "$PKG" || exit $ERROR_MKDIR
+mkdir -p "$REPOS" || exit $ERROR_MKDIR
+mkdir -p "$PKG_WORK" || exit $ERROR_MKDIR
 
-if [ -f "$CWD/$PACKAGE-$VERSION.diff" ]; then
-  patch -p1 < $CWD/$PACKAGE-$VERSION.diff || exit $ERROR_PATCH
+# Get svn source code
+[ "`find "$SRC_DIR/" -name .svn`" != "" ] && SVN_ACTION="update" || SVN_ACTION="checkout"
+cd "$SRC_DIR"
+svn $SVN_ACTION svn://slack.sarava.org/simplepkg/trunk $PKG_SRC || exit $ERROR_VCS
+SND_DIR="`ls -l | awk '/^d/ { print $NF }'`"
+cd $SND_DIR
+PKG_VERSION="`svn info | awk '/Last Changed Rev:/ { print $4 }'`_svn"
+
+# Copy svn source
+cd "$PKG_WORK"
+cp -a $SRC_DIR/* .
+PKG_SRC="$PWD/$SND_DIR"
+cd "$PKG_SRC"
+
+# Build
+mkdir -p $PKG/install
+cp doinst.sh $PKG/install
+
+BIN_DIR=$PKG/usr/bin
+SBIN_DIR=$PKG/usr/sbin
+ETC_DIR=$PKG/etc
+LIB_DIR=$PKG/usr/libexec/$PKG_NAME
+DOC_DIR=$PKG/usr/doc/$PKG_NAME-$VERSION
+
+mkdir -p $BIN_DIR
+mkdir -p $SBIN_DIR
+mkdir -p $ETC_DIR
+mkdir -p $LIB_LIST
+mkdir -p $DOC_DIR
+mkdir -p $PKG/install
+
+# Install lists
+BIN_LIST="simplaret repos lspkg mkbuild mkpatch"
+SBIN_LIST="mkjail templatepkg jail-update jail-commit metapkg rebuildpkg createpkg exec-slackbuild simpletrack"
+LIB_LIST="common.sh"
+DOC_LIST="CHANGELOG README.pt_BR TODO simplaret-pt_BR.tex COPYING README.simplaret mkbuild-pt_BR.tex simplepkg-en.tex README README.simplaret.pt_BR simplaret-en.tex simplepkg-pt_BR.tex"
+
+# Install binaries
+for binary in $BIN_LIST; do
+  if [ -f "src/$binary" ]; then
+    cp src/$binary $BIN_DIR/
+    chmod +x $BIN_DIR/$binary
+  fi
+done
+
+for binary in $SBIN_LIST; do
+  if [ -f "src/$binary" ]; then
+    cp src/$binary $SBIN_DIR/
+    chmod +x $SBIN_DIR/$binary
+  fi
+done
+
+# Install libs
+for lib in $LIB_LIST; do
+  [ -f "lib/$lib" ] && cp lib/$lib $LIB_DIR/
+done
+
+mkdir -p $PKG/etc/$PKG_NAME/{defaults/mkbuild,templates}
+rsync -av --exclude=.svn templates/* $PKG/etc/$PKG_NAME/defaults/templates/
+chmod +x $PKG/etc/$PKG_NAME/defaults/templates/vserver/vserver.s/*.sh
+chmod +x $PKG/etc/$PKG_NAME/defaults/templates/vserver-legacy/vserver-legacy.s/*.sh
+cp conf/simplepkg.conf.new $PKG/etc/$PKG_NAME/
+cp conf/repos.conf.new $PKG/etc/$PKG_NAME/
+cp mkbuild/* $PKG/etc/$PKG_NAME/defaults/mkbuild/
+
+# Install jails
+if [ -f "$PKG/usr/sbin/jail-upgrade" ]; then
+  ( cd $PKG/usr/sbin && ln -s jail-upgrade vserver-upgrade )
 fi
 
-./simplepkg.SlackBuild || exit $ERROR_MAKE
+# Install documentation
+for file in $DOC_LIST; do
+  cp doc/$file $DOC_DIR/
+done
 
-mv $PACKAGE-$VERSION-$ARCH-$BUILD.tgz $REPOS/
+# Install Script
+cp install/slack-desc $PKG/install
+cp install/doinst.sh $PKG/install
 
+cd $PKG
+
+# Change permission
+chown -R root.root *
+
+# Add package description (slack-desc)
+mkdir -p "$PKG/install" || exit $ERROR_MKDIR
+cat << EODESC > "$PKG/install/slack-desc"
+# HOW TO EDIT THIS FILE:
+# The "handy ruler" below makes it easier to edit a package description. Line
+# up the first '|' above the ':' following the base package name, and the '|'
+# on the right side marks the last column you can put a character in. You must
+# make exactly 11 lines for the formatting to be correct.  It's also
+# customary to leave one space after the ':'.
+
+         |-----handy-ruler----------------------------------------------------|
+simplepkg: simplepkg (slackware management system)
+simplepkg:
+simplepkg: simplepkg is a very small set of scripts intended to help slackware
+simplepkg: users and developers, like the createpkg packaging tool, simplaret
+simplepkg: package retrieval, mkjail chroot installer and templatepkg template
+simplepkg: management system.
+simplepkg: 
+simplepkg:
+simplepkg:
+simplepkg:
+simplepkg:
+EODESC
+
+# Build the package
+cd "$PKG"
+makepkg -l y -c n "$REPOS/$PKG_NAME-$PKG_VERSION-$ARCH-$BUILD.tgz" || exit $ERROR_MKPKG
+
+# Delete source and build directories if requested
 if [ "$CLEANUP" == "yes" ]; then
-  rm -rf $TMP
+  rm -rf "$PKG_WORK" "$PKG"
 fi
-
