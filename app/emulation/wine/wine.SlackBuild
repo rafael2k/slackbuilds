@@ -16,7 +16,7 @@
 #
 # slackbuild for wine, by Rudson R. Alves
 # requires:  
-# tested: wine-0.9.59
+# tested: wine-0.9.59, 0.9.61
 #
 
 # Look for slackbuildrc
@@ -31,7 +31,7 @@ CWD="$(pwd)"
 SRC_NAME="wine"
 PKG_NAME="wine"
 ARCH=${ARCH:=i486}
-SRC_VERSION=${VERSION:=0.9.59}
+SRC_VERSION=${VERSION:=0.9.61}
 PKG_VERSION="$(echo "$SRC_VERSION" | tr '[[:blank:]-]' '_')"
 BUILD=${BUILD:=1rra}
 SRC_DIR=${SRC_DIR:=$CWD}/$PKG_NAME
