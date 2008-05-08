@@ -90,75 +90,8 @@ cp -a $SRC_DIR/* .
 PKG_SRC="$PWD/$SND_DIR"
 cd "$PKG_SRC"
 
-# Build
-mkdir -p $PKG/install
-cp doinst.sh $PKG/install
-
-BIN_DIR=$PKG/usr/bin
-SBIN_DIR=$PKG/usr/sbin
-ETC_DIR=$PKG/etc
-LIB_DIR=$PKG/usr/libexec/$PKG_NAME
-DOC_DIR=$PKG/usr/doc/$PKG_NAME-$VERSION
-
-mkdir -p $BIN_DIR
-mkdir -p $SBIN_DIR
-mkdir -p $ETC_DIR
-mkdir -p $LIB_LIST
-mkdir -p $DOC_DIR
-mkdir -p $PKG/install
-
-# Install lists
-BIN_LIST="simplaret repos lspkg mkbuild mkpatch"
-SBIN_LIST="mkjail templatepkg jail-update jail-commit metapkg rebuildpkg createpkg exec-slackbuild simpletrack"
-LIB_LIST="common.sh"
-DOC_LIST="CHANGELOG README.pt_BR TODO simplaret-pt_BR.tex COPYING README.simplaret mkbuild-pt_BR.tex simplepkg-en.tex README README.simplaret.pt_BR simplaret-en.tex simplepkg-pt_BR.tex"
-
-# Install binaries
-for binary in $BIN_LIST; do
-  if [ -f "src/$binary" ]; then
-    cp src/$binary $BIN_DIR/
-    chmod +x $BIN_DIR/$binary
-  fi
-done
-
-for binary in $SBIN_LIST; do
-  if [ -f "src/$binary" ]; then
-    cp src/$binary $SBIN_DIR/
-    chmod +x $SBIN_DIR/$binary
-  fi
-done
-
-# Install libs
-for lib in $LIB_LIST; do
-  [ -f "lib/$lib" ] && cp lib/$lib $LIB_DIR/
-done
-
-mkdir -p $PKG/etc/$PKG_NAME/{defaults/mkbuild,templates}
-rsync -av --exclude=.svn templates/* $PKG/etc/$PKG_NAME/defaults/templates/
-chmod +x $PKG/etc/$PKG_NAME/defaults/templates/vserver/vserver.s/*.sh
-chmod +x $PKG/etc/$PKG_NAME/defaults/templates/vserver-legacy/vserver-legacy.s/*.sh
-cp conf/simplepkg.conf.new $PKG/etc/$PKG_NAME/
-cp conf/repos.conf.new $PKG/etc/$PKG_NAME/
-cp mkbuild/* $PKG/etc/$PKG_NAME/defaults/mkbuild/
-
-# Install jails
-if [ -f "$PKG/usr/sbin/jail-upgrade" ]; then
-  ( cd $PKG/usr/sbin && ln -s jail-upgrade vserver-upgrade )
-fi
-
-# Install documentation
-for file in $DOC_LIST; do
-  cp doc/$file $DOC_DIR/
-done
-
-# Install Script
-cp install/slack-desc $PKG/install
-cp install/doinst.sh $PKG/install
-
-cd $PKG
-
-# Change permission
-chown -R root.root *
+# Install
+make install DESTDIR="$PKG" || exit $ERROR_INSTALL
 
 # Add package description (slack-desc)
 mkdir -p "$PKG/install" || exit $ERROR_MKDIR
