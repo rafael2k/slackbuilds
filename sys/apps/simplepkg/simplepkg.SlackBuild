@@ -77,11 +77,17 @@ mkdir -p "$REPOS" || exit $ERROR_MKDIR
 mkdir -p "$PKG_WORK" || exit $ERROR_MKDIR
 
 # Get svn source code
-[ "`find "$SRC_DIR/" -name .svn`" != "" ] && SVN_ACTION="update" || SVN_ACTION="checkout"
 cd "$SRC_DIR"
-svn $SVN_ACTION svn://slack.sarava.org/simplepkg/trunk $PKG_SRC || exit $ERROR_VCS
-SND_DIR="`ls -l | awk '/^d/ { print $NF }'`"
-cd $SND_DIR
+SND_DIR="`basename svn://slack.sarava.org/simplepkg/trunk`"
+
+if [ "`find "$SRC_DIR/" -name .svn`" != "" && -d "$SRC_DIR/$SND_DIR" ]; then
+  cd $SND_DIR
+  svn update || exit $ERROR_VCS
+else
+  svn checkout svn://slack.sarava.org/simplepkg/trunk $SND_DIR || exit $ERROR_VCS
+  cd $SND_DIR
+fi
+
 PKG_VERSION="`svn info | awk '/Last Changed Rev:/ { print $4 }'`_svn"
 
 # Copy svn source
@@ -92,30 +98,6 @@ cd "$PKG_SRC"
 
 # Install
 make install DESTDIR="$PKG" || exit $ERROR_INSTALL
-
-# Add package description (slack-desc)
-mkdir -p "$PKG/install" || exit $ERROR_MKDIR
-cat << EODESC > "$PKG/install/slack-desc"
-# HOW TO EDIT THIS FILE:
-# The "handy ruler" below makes it easier to edit a package description. Line
-# up the first '|' above the ':' following the base package name, and the '|'
-# on the right side marks the last column you can put a character in. You must
-# make exactly 11 lines for the formatting to be correct.  It's also
-# customary to leave one space after the ':'.
-
-         |-----handy-ruler----------------------------------------------------|
-simplepkg: simplepkg (slackware management system)
-simplepkg:
-simplepkg: simplepkg is a very small set of scripts intended to help slackware
-simplepkg: users and developers, like the createpkg packaging tool, simplaret
-simplepkg: package retrieval, mkjail chroot installer and templatepkg template
-simplepkg: management system.
-simplepkg: 
-simplepkg:
-simplepkg:
-simplepkg:
-simplepkg:
-EODESC
 
 # Build the package
 cd "$PKG"
