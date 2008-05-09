@@ -80,7 +80,7 @@ mkdir -p "$PKG_WORK" || exit $ERROR_MKDIR
 cd "$SRC_DIR"
 SND_DIR="`basename svn://slack.sarava.org/simplepkg/trunk`"
 
-if [ "`find "$SRC_DIR/" -name .svn`" != "" && -d "$SRC_DIR/$SND_DIR" ]; then
+if [ "`find "$SRC_DIR/" -name .svn`" != "" ] && [ -d "$SRC_DIR/$SND_DIR" ]; then
   cd $SND_DIR
   svn update || exit $ERROR_VCS
 else
