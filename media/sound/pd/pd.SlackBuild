@@ -129,6 +129,7 @@ CFLAGS="$SLKCFLAGS" \
   --prefix="$PREFIX" --libdir="$LIBDIR" $CONF_OPTIONS || exit $ERROR_CONF
 
 # Compile
+make depend || exit $ERROR_MAKE
 make $NUMJOBS || exit $ERROR_MAKE
 
 # Install
