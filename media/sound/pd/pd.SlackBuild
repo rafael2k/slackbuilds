@@ -212,7 +212,7 @@ mkuser() {
   fi
 }
 
-ln -s /usr/lib64/pd/bin/pd-gui usr/bin/pd-gui ; ln -s /usr/bin/pd usr/lib64/pd//bin/pd
+ln -sf /usr/lib64/pd/bin/pd-gui usr/bin/pd-gui ; ln -sf /usr/bin/pd usr/lib64/pd//bin/pd ; ln -sf /usr/lib64/pd/bin/pd.tk usr/bin/pd.tk ; ln -s /usr/lib64/pd/bin/pd-watchdog usr/bin/pd-watchdog
 EOSCRIPT
 
 # Build the package
