@@ -1,0 +1,69 @@
+diff -u pd-0.41-4.orig/src/makefile.in pd-0.41-4/src/makefile.in
+--- pd-0.41-4.orig/src/makefile.in	2008-03-14 21:03:00.000000000 -0300
++++ pd-0.41-4/src/makefile.in	2008-05-11 18:41:38.000000000 -0300
+@@ -163,39 +163,39 @@
+ 
+ ABOUT_FILE=$(pddocdir)/1.manual/1.introduction.txt
+ install:  all
+-	install -d $(libpdbindir)
+-	install $(BIN_DIR)/$(GUINAME) $(libpdbindir)/$(GUINAME)
+-	install $(BIN_DIR)/pd-watchdog $(libpdbindir)/pd-watchdog
+-	install -m644 $(BIN_DIR)/pd.tk $(libpdbindir)/pd.tk
++	install -d $(DESTDIR)/$(libpdbindir)
++	install $(BIN_DIR)/$(GUINAME) $(DESTDIR)/$(libpdbindir)/$(GUINAME)
++	install $(BIN_DIR)/pd-watchdog $(DESTDIR)/$(libpdbindir)/pd-watchdog
++	install -m644 $(BIN_DIR)/pd.tk $(DESTDIR)/$(libpdbindir)/pd.tk
+ 	install -d $(DESTDIR)$(bindir)
+-	install $(BINARYMODE) $(PDEXEC) $(DESTDIR)$(bindir)/pd
+-	install -m755 $(BIN_DIR)/pdsend $(DESTDIR)$(bindir)/pdsend
+-	install -m755 $(BIN_DIR)/pdreceive $(DESTDIR)$(bindir)/pdreceive 
++	install $(BINARYMODE) $(PDEXEC) $(DESTDIR)/$(bindir)/pd
++	install -m755 $(BIN_DIR)/pdsend $(DESTDIR)/$(bindir)/pdsend
++	install -m755 $(BIN_DIR)/pdreceive $(DESTDIR)/$(bindir)/pdreceive 
+ 	for dir in $(shell ls -1 ../doc | grep -v CVS); do \
+ 		echo "installing $$dir"; \
+-		install -d $(pddocdir)/$$dir ; \
+-		install -m644 -p ../doc/$$dir/*.* $(pddocdir)/$$dir ; \
++		install -d $(DESTDIR)/$(pddocdir)/$$dir ; \
++		install -m644 ../doc/$$dir/*.* $(DESTDIR)/$(pddocdir)/$$dir ; \
+ 	done
+ 	for dir in $(shell ls -1 ../doc/7.stuff | grep -v CVS); do \
+ 		echo "installing 7.stuff/$$dir"; \
+-		install -d $(pddocdir)/7.stuff/$$dir ; \
+-		install -m644 -p ../doc/7.stuff/$$dir/*.* $(pddocdir)/7.stuff/$$dir ; \
++		install -d $(DESTDIR)/$(pddocdir)/7.stuff/$$dir ; \
++		install -m644 ../doc/7.stuff/$$dir/*.* $(DESTDIR)/$(pddocdir)/7.stuff/$$dir ; \
+ 	done
+-	mv $(ABOUT_FILE) $(ABOUT_FILE).tmp
+-	cat $(ABOUT_FILE).tmp | sed 's|PD_VERSION|Pd version $(PD_VERSION)|' \
+-		> $(ABOUT_FILE)
+-	rm $(ABOUT_FILE).tmp
+-	cp -pr ../extra $(libpddir)/
+-	rm -f $(libpddir)/extra/*/*.o
+-	install -d $(DESTDIR)$(includedir)
+-	install -m644 m_pd.h $(DESTDIR)$(includedir)/m_pd.h
+-	install -d $(DESTDIR)$(mandir)/man1
+-	gzip < ../man/pd.1 >  $(DESTDIR)$(mandir)/man1/pd.1.gz
+-	chmod 644 $(DESTDIR)$(mandir)/man1/pd.1.gz
+-	gzip < ../man/pdsend.1 >  $(DESTDIR)$(mandir)/man1/pdsend.1.gz
+-	chmod 644 $(DESTDIR)$(mandir)/man1/pdsend.1.gz
+-	gzip < ../man/pdreceive.1 >  $(DESTDIR)$(mandir)/man1/pdreceive.1.gz
+-	chmod 644 $(DESTDIR)$(mandir)/man1/pdreceive.1.gz
++	mv $(DESTDIR)/$(ABOUT_FILE) $(DESTDIR)/$(ABOUT_FILE).tmp
++	cat $(DESTDIR)/$(ABOUT_FILE).tmp | sed 's|PD_VERSION|Pd version $(PD_VERSION)|' \
++		> $(DESTDIR)/$(ABOUT_FILE)
++	rm $(DESTDIR)/$(ABOUT_FILE).tmp
++	cp -pr ../extra $(DESTDIR)/$(libpddir)/
++	rm -f $(DESTDIR)/$(libpddir)/extra/*/*.o
++	install -d $(DESTDIR)/$(includedir)
++	install -m644 m_pd.h $(DESTDIR)/$(includedir)/m_pd.h
++	install -d $(DESTDIR)/$(mandir)/man1
++	gzip < ../man/pd.1 >  $(DESTDIR)/$(mandir)/man1/pd.1.gz
++	chmod 644 $(DESTDIR)/$(mandir)/man1/pd.1.gz
++	gzip < ../man/pdsend.1 >  $(DESTDIR)/$(mandir)/man1/pdsend.1.gz
++	chmod 644 $(DESTDIR)/$(mandir)/man1/pdsend.1.gz
++	gzip < ../man/pdreceive.1 >  $(DESTDIR)/$(mandir)/man1/pdreceive.1.gz
++	chmod 644 $(DESTDIR)/$(mandir)/man1/pdreceive.1.gz
+ 	@echo "Pd install succeeded."
+ 
+ local-clean:
