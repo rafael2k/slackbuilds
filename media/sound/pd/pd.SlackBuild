@@ -181,7 +181,7 @@ cd "$PKG"
 ln -s usr/lib64/pd/bin/pd-gui usr/bin/pd-gui
 ln -s usr/bin/pd usr/lib64/pd//bin/pd
 ln -s usr/lib64/pd/bin/pd.tk usr/bin/pd.tk
-ln -s usr/lib64/pd/bin/pd-watchdog usr/bin/pd-watchdog"
+ln -s usr/lib64/pd/bin/pd-watchdog usr/bin/pd-watchdog
 makepkg -l y -c n "$REPOS/$PKG_NAME-$PKG_VERSION-$ARCH-$BUILD.tgz" || exit $ERROR_MKPKG
 
 # Delete source and build directories if requested
