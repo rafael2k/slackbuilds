@@ -1,7 +1,7 @@
 Only in pd-0.41-4/src/: .makefile.in.swp
 diff -u pd-0.41-4.orig/src/makefile.in pd-0.41-4/src/makefile.in
 --- pd-0.41-4.orig/src/makefile.in	2008-03-14 21:03:00.000000000 -0300
-+++ pd-0.41-4/src/makefile.in	2008-05-11 20:43:55.000000000 -0300
++++ pd-0.41-4/src/makefile.in	2008-05-11 20:46:39.000000000 -0300
 @@ -163,39 +163,41 @@
  
  ABOUT_FILE=$(pddocdir)/1.manual/1.introduction.txt
@@ -16,10 +16,10 @@ diff -u pd-0.41-4.orig/src/makefile.in pd-0.41-4/src/makefile.in
 -	install -m755 $(BIN_DIR)/pdreceive $(DESTDIR)$(bindir)/pdreceive 
 +	install -d $(DESTDIR)/$(libpdbindir)
 +	install $(BIN_DIR)/$(GUINAME) $(DESTDIR)/$(libpdbindir)/$(GUINAME)
-+	install $(BIN_DIR)/$(GUINAME) $(DESTDIR)/$(bindir)/$(GUINAME)
 +	install $(BIN_DIR)/pd-watchdog $(DESTDIR)/$(libpdbindir)/pd-watchdog
 +	install -m644 $(BIN_DIR)/pd.tk $(DESTDIR)/$(libpdbindir)/pd.tk
 +	install -d $(DESTDIR)/$(bindir)
++	install $(BIN_DIR)/$(GUINAME) $(DESTDIR)/$(bindir)/$(GUINAME)
 +	install -m644 $(BIN_DIR)/pd.tk $(DESTDIR)/$(bindir)/pd.tk
 +	install $(BINARYMODE) $(PDEXEC) $(DESTDIR)/$(bindir)/pd
 +	install -m755 $(BIN_DIR)/pdsend $(DESTDIR)/$(bindir)/pdsend
