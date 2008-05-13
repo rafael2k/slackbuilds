@@ -39,7 +39,7 @@ fi
 # default settings
 PACKAGE="libx264"
 ARCH=${ARCH:=i486}
-VERSION=${VERSION:=20070807}
+VERSION=${VERSION:=20080512}
 BUILD=${BUILD:=1rd}
 SRC_DIR=${SRC:=$CWD}
 TMP=${TMP:=/tmp}
