@@ -1,0 +1,7 @@
+# Dependency list to kiwi
+#
+# dependency [condition] [version]]
+python				
+gtk+				
+pygtk				
+				
