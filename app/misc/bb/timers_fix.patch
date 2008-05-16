@@ -1,0 +1,18 @@
+--- timers.c	2001-04-26 12:10:33.000000000 -0300
++++ timers.c.new	2008-05-16 00:16:07.000000000 -0300
+@@ -306,6 +306,7 @@
+ #endif
+ #endif
+ }
++REGISTERS(3)
+ int
+ tl_lookup_timer (tl_timer * t)
+ {
+@@ -382,6 +383,7 @@
+ #endif
+ }
+ 
++REGISTERS(3)
+ void
+ tl_reset_timer (tl_timer * t)
+ {

@@ -1,0 +1,11 @@
+--- tex.c	2001-04-26 12:52:27.000000000 -0300
++++ tex.c.new	2008-05-16 00:18:45.000000000 -0300
+@@ -92,7 +92,7 @@
+ 
+ static inline void clear_zbuff()
+ {
+-    memset(zbuff, 0x55, (X_s * Y_s * sizeof(long)));
++    memset(zbuff, 0x55, (X_s * Y_s * sizeof(int)));
+ }
+ 
+ 
