@@ -1,0 +1,22 @@
+--- src/daemon/caps.h.old	2008-06-29 20:37:31.000000000 -0300
++++ src/daemon/caps.h	2008-06-29 20:38:09.000000000 -0300
+@@ -25,7 +25,7 @@
+ ***/
+ 
+ void pa_drop_root(void);
+-void pa_drop_caps(void);
++int pa_drop_caps(void);
+ int pa_limit_caps(void);
+ 
+ #endif
+--- src/daemon/caps.c.old	2008-06-29 20:37:24.000000000 -0300
++++ src/daemon/caps.c	2008-06-29 20:38:07.000000000 -0300
+@@ -113,7 +113,7 @@
+ }
+ 
+ /* Drop all capabilities, effectively becoming a normal user */
+-void pa_drop_caps(void) {
++int pa_drop_caps(void) {
+     cap_t caps;
+ 
+     pa_assert_se(prctl(PR_SET_KEEPCAPS, 0, 0, 0, 0) == 0);

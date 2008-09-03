@@ -1,7 +1,10 @@
-eet
-evas
-ecore
-embryo
-edje
-imlib2
-esmart
+# Dependency list to entrance
+#
+# dependency [condition] [version]]
+eet				
+evas				
+ecore				
+embryo				
+edje				
+imlib2				
+esmart				

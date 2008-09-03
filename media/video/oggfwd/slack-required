@@ -1,2 +1,5 @@
-speex
-libshout
+# Dependency list to oggfwd
+#
+# dependency [condition] [version]]
+speex				
+libshout				

@@ -1,0 +1,270 @@
+#
+# Configuration file for syslog-ng under Debian.
+# First customized for riseup.net and then to sarava.org.
+#
+# see http://www.campin.net/syslog-ng/expanded-syslog-ng.conf
+# for examples.
+#
+# levels: emerg alert crit err warning notice info debug
+#
+
+############################################################
+## global options
+
+options {
+    chain_hostnames(0);
+    time_reopen(10);
+    time_reap(360);
+    sync(0);
+    log_fifo_size(2048);
+    create_dirs(yes);
+    owner(root);
+    group(wheel);
+    perm(0640);
+    dir_perm(0755);
+    use_dns(no);
+};
+
+############################################################
+## universal source
+
+source s_all {
+    internal();
+    unix-stream("/dev/log");
+    file("/proc/kmsg" log_prefix("kernel: "));
+};
+
+############################################################
+## generic destinations
+
+destination df_facility_dot_info   { file("/var/log/$FACILITY.info");   };
+destination df_facility_dot_notice { file("/var/log/$FACILITY.notice"); };
+destination df_facility_dot_warn   { file("/var/log/$FACILITY.warn");   };
+destination df_facility_dot_err    { file("/var/log/$FACILITY.err");    };
+destination df_facility_dot_crit   { file("/var/log/$FACILITY.crit");   };
+
+############################################################
+## generic filters
+
+filter f_strip { strip(ips); };
+filter f_at_least_info   { level(info..emerg);   };
+filter f_at_least_notice { level(notice..emerg); };
+filter f_at_least_warn   { level(warn..emerg);   };
+filter f_at_least_err    { level(err..emerg);    };
+filter f_at_least_crit   { level(crit..emerg);   };
+
+############################################################
+## secure
+
+filter f_auth { facility(auth, authpriv); };
+destination df_auth { file("/var/log/secure"); };
+log {
+    source(s_all);
+    filter(f_auth);
+    # comment the following line if you don't want to strip IPs
+	  filter(f_strip);
+    destination(df_auth);
+};
+
+############################################################
+## daemon log
+#
+#filter f_daemon { facility(daemon); };
+#destination df_daemon { file("/var/log/daemon.log"); };
+#log {
+#    source(s_all);
+#    filter(f_daemon);
+#    destination(df_daemon);
+#};
+
+############################################################
+## kern log
+#
+#filter f_kern { facility(kern); };
+#destination df_kern { file("/var/log/kernel"); };
+#log {
+#    source(s_all);
+#    filter(f_kern);
+#    destination(df_kern);
+#};
+
+############################################################
+## user log
+
+#filter f_user { facility(user); };
+#destination df_user { file("/var/log/user.log"); };
+#log {
+#    source(s_all);
+#    filter(f_user);
+#    destination(df_user);
+#};
+
+############################################################
+## sympa log
+
+filter f_sympa { program("^(sympa|bounced|archived|task_manager)"); };
+destination d_sympa { file("/var/log/sympa"); };
+log {
+	source(s_all);
+	filter(f_sympa);
+	destination(d_sympa);
+	flags(final);
+};
+
+############################################################
+## wwsympa log
+
+filter f_wwsympa { program("^wwsympa"); };
+destination d_wwsympa { file("/var/log/sympa"); };
+log {
+	source(s_all);
+	filter(f_wwsympa);
+  # comment the following line if you don't want to strip IPs
+	filter(f_strip);
+	destination(d_wwsympa);
+	flags(final);
+};
+
+############################################################
+## ldap log
+#
+#filter f_ldap { program("slapd"); };
+#destination d_ldap { file("/var/log/ldap"); };
+#log {
+#	source(s_all);
+#	filter(f_ldap);
+#	destination(d_ldap);
+#	flags(final);
+#};
+
+############################################################
+## mail log
+
+filter f_postfix {
+  program("^postfix/") or
+  program("courier|imap|pop|dovecot") or
+  program("^maildrop") or
+  facility(mail);
+};
+destination d_postfix { file("/var/log/maillog"); };
+log {
+	source(s_all);
+	filter(f_postfix);
+  # comment the following line if you don't want to strip IPs
+	filter(f_strip);
+	destination(d_postfix);
+	flags(final);
+};
+
+############################################################
+## messages log
+
+filter f_messages {
+	facility(auth,authpriv,daemon,mail,user,kern,cron,news) or
+	level(info);
+};
+destination df_messages { file("/var/log/messages"); };
+log {
+    source(s_all);
+    filter(f_messages);
+    # comment the following line if you don't want to strip IPs
+	  filter(f_strip);
+    destination(df_messages);
+};
+
+############################################################
+## system log
+
+filter f_system {
+	facility(auth,authpriv,daemon,mail,user,kern,cron,news) or
+  level(warn,err,crit,alert,emerg);
+};
+destination df_system { file("/var/log/syslog"); };
+log {
+    source(s_all);
+    filter(f_system);
+    # comment the following line if you don't want to strip IPs
+	  filter(f_strip);
+    destination(df_system);
+};
+
+############################################################
+## cron log
+
+filter f_cron { facility(cron); };
+destination df_cron { file("/var/log/cron"); };
+log {
+    source(s_all);
+    filter(f_cron);
+    destination(df_cron);
+};
+
+############################################################
+## spooler log
+
+filter f_spooler { facility(uucp) and (facility(news) and level(crit)); };
+destination df_spooler { file("/var/log/spooler"); };
+log {
+    source(s_all);
+    filter(f_spooler);
+    # comment the following line if you don't want to strip IPs
+	  filter(f_strip);
+    destination(df_spooler);
+};
+
+############################################################
+## debug log
+
+filter f_debug { level(debug); };
+destination df_debug { file("/var/log/debug"); };
+log {
+    source(s_all);
+    filter(f_debug);
+    # comment the following line if you don't want to strip IPs
+	  filter(f_strip);
+    destination(df_debug);
+};
+
+############################################################
+## errors log
+#
+#filter f_errors {
+#	level(warn,err,crit,alert,emerg)
+#	and not facility(auth,authpriv,daemon,mail,user,kern);
+#};
+#destination df_errors { file("/var/log/errors"); };
+#log {
+#	source(s_all);
+#	filter(f_errors);
+#	destination(df_errors);
+#};
+
+############################################################
+## emergencies
+
+filter f_emerg { level(emerg); };
+destination du_all { usertty("*"); };
+log {
+	source(s_all);
+	filter(f_emerg);
+  # comment the following line if you don't want to strip IPs
+	filter(f_strip);
+	destination(du_all);
+};
+
+############################################################
+## console messages
+
+#filter f_xconsole {
+#    facility(daemon,mail)
+#    or level(debug,info,notice,warn)
+#    or (facility(news)
+#    and level(crit,err,notice));
+#};
+#destination dp_xconsole { pipe("/dev/xconsole"); };
+#log {
+#    source(s_all);
+#    filter(f_xconsole);
+#    destination(dp_xconsole);
+#};
+

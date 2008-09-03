@@ -1,95 +1,112 @@
 #!/bin/bash
 #
-#  theorur.SlackBuild is free software; you can redistribute it and/or modify it under the
-#  terms of the GNU General Public License as published by the Free Software
-#  Foundation; either version 2 of the License, or any later version.
+#  theorur.SlackBuild is free software; you can redistribute
+#  it and/or modify it under the terms of the GNU General Public License as
+#  published by the Free Software Foundation; either version 2 of the License,
+#  or any later version.
 #
-#  theorur.SlackBuild is distributed in the hope that it will be useful, but WITHOUT ANY
-#  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
-#  A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
+#  theorur.SlackBuild is distributed in the hope that it will
+#  be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General
+#  Public License for more details.
 #
-#  You should have received a copy of the GNU General Public License along with
-#  this program; if not, write to the Free Software Foundation, Inc., 59 Temple
-#  Place - Suite 330, Boston, MA 02111-1307, USA
+#  You should have received a copy of the GNU General Public License along
+#  with this program; if not, write to the Free Software Foundation, Inc.,
+#  59 Temple Place - Suite 330, Boston, MA 02111-1307, USA
 #
-# slackbuild script for theorur
-# by rafael at riseup.net
+# slackbuild for theorur, by Silvio Rhatto
+# requires: dvgrab ffmpeg2theora oggfwd 
+# tested: theorur-0.5.3
 #
 
-if [ -s "slack-required" ]; then
-  echo Recomended and required packages for building theorur are:
-  cat slack-required | sed -e 's/^/\t/'
-  if [ "$INTERACT" != "no" ]; then
-    echo If you dont have those installed, press Ctrl-C. Otherwise, hit ENTER.
-    read crap
-#  else
-#    echo Sleeping 3 seconds...
-#    sleep 3
-  fi
-fi
-
-CWD="`pwd`"
-
+# Look for slackbuildrc
 if [ -f ~/.slackbuildrc ]; then
   source ~/.slackbuildrc
 elif [ -f /etc/slackbuildrc ]; then
   source /etc/slackbuildrc
 fi
 
-# default settings
-PACKAGE="theorur"
+# Set variables
+CWD="$(pwd)"
+SRC_NAME="theorur"
+PKG_NAME="theorur"
 ARCH=${ARCH:=i486}
-VERSION=${VERSION:=0.5.3}
-BUILD=${BUILD:=1rd}
-SRC_DIR=${SRC:=$CWD}
+SRC_VERSION=${VERSION:=0.5.3}
+PKG_VERSION="$(echo "$SRC_VERSION" | tr '[[:blank:]-]' '_')"
+BUILD=${BUILD:=1rha}
+SRC_DIR=${SRC_DIR:=$CWD}/$PKG_NAME
 TMP=${TMP:=/tmp}
+PKG=${PKG:=$TMP/package-$PKG_NAME}
 REPOS=${REPOS:=$TMP}
+PREFIX=${PREFIX:=/usr}
+PKG_WORK="$TMP/$SRC_NAME"
+CONF_OPTIONS=${CONF_OPTIONS:="--sysconfdir=/etc"}
+NUMJOBS=${NUMJOBS:=""}
 
-if [ "$ARCH" == "x86_64" ]; then
-  export LDFLAGS="-L/lib64 -L/usr/lib64"
-  LIBDIR=/usr/lib64
-else
-  LIBDIR=/usr/lib
+# Set system libraries' path and optmization flags based on $ARCH
+LIBDIR="$PREFIX/lib"
+
+if [ "$ARCH" = "i386" ]; then
+  SLKCFLAGS="-O2 -march=i386 -mcpu=i686"
+elif [ "$ARCH" = "i486" ]; then
+  SLKCFLAGS="-O2 -march=i486 -mcpu=i686"
+elif [ "$ARCH" = "i686" ]; then
+  SLKCFLAGS="-O2 -march=i686"
+elif [ "$ARCH" = "s390" ]; then
+  SLKCFLAGS="-O2"
+elif [ "$ARCH" = "x86_64" ]; then
+  SLKCFLAGS="-O2 -fPIC"
+  LIBDIR="$PREFIX/lib64"
+  LDFLAGS="-L/lib64 -L/usr/lib64"
 fi
 
-RTOOL="wget"
-PACKAGE_EXT="gz"
-SRC="$PACKAGE-$VERSION.tar.$PACKAGE_EXT"
+# Set error codes (used by createpkg)
+ERROR_WGET=31;      ERROR_MAKE=32;      ERROR_INSTALL=33
+ERROR_MD5=34;       ERROR_CONF=35;      ERROR_HELP=36
+ERROR_TAR=37;       ERROR_MKPKG=38;     ERROR_GPG=39
+ERROR_PATCH=40;     ERROR_VCS=41;       ERROR_MKDIR=42
+
+# Clean up any leftovers of previous builds
+rm -rf "$PKG_WORK" 2> /dev/null
+rm -rf "$PKG" 2> /dev/null
+
+# Create directories if necessary
+mkdir -p "$SRC_DIR" || exit $ERROR_MKDIR
+mkdir -p "$PKG" || exit $ERROR_MKDIR
+mkdir -p "$REPOS" || exit $ERROR_MKDIR
+mkdir -p "$PKG_WORK" || exit $ERROR_MKDIR
+
+# Dowload source if necessary
+SRC="$SRC_NAME-$VERSION.tar.gz"
 URL="http://theorur.tvlivre.org/$SRC"
 
-SRC_DIR="$SRC_DIR/$PACKAGE"
-mkdir -p $SRC_DIR
-
-if [ "$PACKAGE_EXT" == "bz2" ]; then
-  tarflag="j"
-else
-  tarflag="z"
+if [ ! -s "$SRC_DIR/$SRC" ] || ! gunzip -t "$SRC_DIR/$SRC" 2> /dev/null; then
+  wget "$URL" -O "$SRC_DIR/$SRC" || exit $ERROR_WGET
 fi
 
-if [ "$RTOOL" == "wget" ] && [ ! -f "$SRC_DIR/$SRC" ]; then
-  wget "$URL" -O "$SRC_DIR/$SRC"
-fi
+# Untar
+cd "$PKG_WORK"
+tar --no-same-owner --no-same-permissions -xvf "$SRC_DIR/$SRC" || exit $ERROR_TAR
+PKG_SRC="$PWD/`ls -l | awk '/^d/ { print $NF }'`"
+cd "$PKG_SRC"
 
-TMP="$TMP/$PACKAGE"
-rm -rf $TMP
-mkdir -p $TMP
-cd $TMP
+# Configure
+CFLAGS="$SLKCFLAGS" \
+  CXXFLAGS="$SLKCFLAGS" \
+  ./configure \
+  --prefix="$PREFIX" --libdir="$LIBDIR" $CONF_OPTIONS || exit $ERROR_CONF
 
-tar xvf$tarflag $SRC_DIR/$SRC
-cd $PACKAGE-$VERSION
+# Compile
+make $NUMJOBS || exit $ERROR_MAKE
 
-if [ -f "$CWD/$PACKAGE-$VERSION.diff" ]; then
-  patch -p1 < $CWD/$PACKAGE-$VERSION.diff
-fi
-
-./configure --prefix=/usr --sysconfdir=/etc --libdir=$LIBDIR 
-make || exit 32
-strip darksnow
+# Install
+strip theorur
 make make_pkg
 
-mv *-1rd.tgz $REPOS/$PACKAGE-$VERSION-$ARCH-$BUILD.tgz
+# Build the package
+mv *-1rd.tgz $REPOS/$PKG_NAME-$PKG_VERSION-$ARCH-$BUILD.tgz || exit $ERROR_MKPKG
 
+# Delete source and build directories if requested
 if [ "$CLEANUP" == "yes" ]; then
-  rm -rf $TMP
+  rm -rf "$PKG_WORK" "$PKG"
 fi
-

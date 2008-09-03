@@ -15,7 +15,8 @@
 #  Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 #  MA 02111-1307, USA
 #
-# SlackBuild for Nagios Plugins (http://nagiosplugins.org/)
+# SlackBuild for Nagios Plugins
+# http://nagiosplugins.org/
 #
 # Author: Luis ( luis at riseup d0t net )
 #
@@ -32,7 +33,7 @@ CWD="$(pwd)"
 SRC_NAME="nagios-plugins"
 PKG_NAME="nagios-plugins"
 ARCH=${ARCH:=i486}
-SRC_VERSION=${VERSION:=1.4.11}
+SRC_VERSION=${VERSION:=1.4.12}
 PKG_VERSION="$(echo "$SRC_VERSION" | tr '[[:blank:]-]' '_')"
 BUILD=${BUILD:=1ls}
 SRC_DIR=${SRC_DIR:=$CWD}/$PKG_NAME

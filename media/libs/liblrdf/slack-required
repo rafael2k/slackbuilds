@@ -1,1 +1,5 @@
-ladspa
+# Dependency list to liblrdf
+#
+# dependency [condition] [version]]
+raptor				
+ladspa				

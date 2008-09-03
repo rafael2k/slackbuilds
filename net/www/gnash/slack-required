@@ -1,0 +1,6 @@
+# Dependency list to gnash
+#
+# dependency [condition] [version]]
+agg				
+boost				
+ffmpeg				

@@ -1,1 +1,4 @@
-libevent
+# Dependency list to tor
+#
+# dependency [condition] [version]]
+libevent				

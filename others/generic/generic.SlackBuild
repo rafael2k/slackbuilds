@@ -1,7 +1,7 @@
 ###################################################
 ## Generic template for SlackBuilds
 ##
-## Version 0.8.5 - Luis ( luis at riseup d0t net)
+## Version 0.8.6 - Luis ( luis at riseup d0t net)
 ##
 ###################################################
 #!/bin/bash
@@ -49,7 +49,7 @@ REPOS=${REPOS:=$TMP}
 PREFIX=${PREFIX:=[[PREFIX]]}
 PKG_SRC="$TMP/$SRC_NAME-$SRC_VERSION"
 CONF_OPTIONS=${CONF_OPTIONS:=[[OTHER CONFIGURE ARGS]]}
-NUMJOBS=${NUMJOBS:=-j4}
+NUMJOBS=${NUMJOBS:=-j3}
 
 # Set system libraries' path and optmization flags based on $ARCH
 LIBDIR="$PREFIX/lib"

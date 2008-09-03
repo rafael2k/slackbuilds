@@ -1,0 +1,277 @@
+diff -Naur syslog-ng-2.0.5.orig/doc/Makefile.am syslog-ng-2.0.5/doc/Makefile.am
+--- syslog-ng-2.0.5.orig/doc/Makefile.am	2007-04-19 21:37:16.000000000 +0200
++++ syslog-ng-2.0.5/doc/Makefile.am	2007-11-03 00:28:59.000000000 +0100
+@@ -6,6 +6,7 @@
+ 	reference/syslog-ng.xml \
+ 	reference/syslog-ng.txt \
+ 	reference/syslog-ng.xsl \
++	reference/README.syslog-ng-anon \
+ 	examples/syslog-ng.conf.sample \
+ 	examples/syslog-ng.conf.solaris
+ 
+diff -Naur syslog-ng-2.0.5.orig/doc/Makefile.in syslog-ng-2.0.5/doc/Makefile.in
+--- syslog-ng-2.0.5.orig/doc/Makefile.in	2007-07-22 15:40:04.000000000 +0200
++++ syslog-ng-2.0.5/doc/Makefile.in	2007-11-03 00:28:59.000000000 +0100
+@@ -135,6 +135,7 @@
+ 	reference/syslog-ng.xml \
+ 	reference/syslog-ng.txt \
+ 	reference/syslog-ng.xsl \
++	reference/README/syslog-ng-anon \
+ 	examples/syslog-ng.conf.sample \
+ 	examples/syslog-ng.conf.solaris
+ 
+diff -Naur syslog-ng-2.0.5.orig/doc/reference/README.syslog-ng-anon syslog-ng-2.0.5/doc/reference/README.syslog-ng-anon
+--- syslog-ng-2.0.5.orig/doc/reference/README.syslog-ng-anon	1970-01-01 01:00:00.000000000 +0100
++++ syslog-ng-2.0.5/doc/reference/README.syslog-ng-anon	2007-11-03 00:42:04.000000000 +0100
+@@ -0,0 +1,88 @@
++syslog-ng-anon
++
++ This patch adds the capability to syslog-ng that allows you to strip
++ out any given regexp or all IP addresses from log messages before
++ they are written to disk. The goal is to give the system administrator
++ the means to implement site logging policies, by allowing them easy
++ control over exactly what data they retain in their logfiles,
++ regardless of what a particular daemon might think is best.
++
++Background:
++
++ Data retention has become a hot legal topic for ISPs and other Online
++ Service Providers (OSPs). There are many instances where it is preferable
++ to keep less information on users than is collected by default on many
++ systems. In the United States it is not currently required to retain
++ data on users of a server, but you may be required to provide all data
++ on a user which you have retained. OSPs can protect themselves from legal
++ hassles and added work by choosing what data they wish to retain.
++
++ From "Best Practices for Online Service Providers"
++ (http://www.eff.org/osp):
++
++  As an intermediary, the OSP [Online Service Provider] finds itself in
++  a position to collect and store detailed information about its users
++  and their online activities that may be of great interest to third
++  parties. The USA PATRIOT Act also provides the government with
++  expanded powers to request this information. As a result, OSP owners
++  must deal with requests from law enforcement and lawyers to hand over
++  private user information and logs. Yet, compliance with these demands
++  takes away from an OSP's goal of providing users with reliable,
++  secure network services. In this paper, EFF offers some suggestions,
++  both legal and technical, for best practices that balance the needs
++  of OSPs and their users' privacy and civil liberties.
++ 
++  Rather than scrubbing the information you don't want in logs, this patch
++  ensures that the information is never written to disk. Also, for those 
++  daemons which log through syslog facilities, this patch provides a 
++  convenient single configuration to limit what you wish to log.
++  
++  Here are some related links:
++  
++  Best Practices for Online Service Providers
++  http://www.eff.org/osp
++  http://www.eff.org/osp/20040819_OSPBestPractices.pdf
++  
++  EPIC International Data Retention Page
++  http://www.epic.org/privacy/intl/data_retention.html
++  
++  Working Paper on Usage Log Data Management (from Computer, Freedom, and 
++  Privacy conference) http://cryptome.org/usage-logs.htm
++  
++
++Installing syslog-ng-anon 
++  
++ Applying the patch
++
++  This patch has been tested against the following versions of syslog-ng:
++ 	. Debian package syslog-ng_2.0.5-2
++
++  To use this patch, obtain the source for syslog-ng
++  (apt-get source syslog-ng) and the
++  syslog-ng-anon patch (http://dev.riseup.net/patches/syslog-ng/). 
++  Apply the patch the patch:
++
++  % cd syslog-ng-2.0.5
++  % patch -p1 < ../syslog-ng-anon.diff
++ 
++  Then compile and install syslog-ng:
++
++  % dpkg-buildpackage -rfakeroot -b
++  % dpkg -i ../syslog-ng_2.0.5-2_i386.deb
++
++ How to use it
++
++  This patch adds the filter "strip". For example:
++
++ 	filter f_strip {strip(<regexp>);};
++
++  This will strip out all matches of the regular expression on logs to
++  which the filter is applied and replaces all matches with the fixed length
++  four dashes ("----").
++
++  In place of a regular expression, you can put "ips", which will replace all
++  internet addresses with 0.0.0.0. For example:
++
++ 	filter f_strip {strip(ips);};
++
++  You can alter what the replacement strings are by using replace:
+diff -Naur syslog-ng-2.0.5.orig/src/cfg-grammar.y syslog-ng-2.0.5/src/cfg-grammar.y
+--- syslog-ng-2.0.5.orig/src/cfg-grammar.y	2007-05-21 19:21:07.000000000 +0200
++++ syslog-ng-2.0.5/src/cfg-grammar.y	2007-11-03 00:28:59.000000000 +0100
+@@ -107,7 +107,7 @@
+ %token KW_USE_TIME_RECVD
+ 
+ /* filter items*/
+-%token KW_FACILITY KW_LEVEL KW_HOST KW_MATCH KW_NETMASK
++%token KW_FACILITY KW_LEVEL KW_HOST KW_MATCH KW_NETMASK KW_STRIP KW_REPLACE
+ 
+ /* yes/no switches */
+ %token KW_YES KW_NO
+@@ -802,6 +802,8 @@
+ 	| KW_PROGRAM '(' string ')'		{ $$ = filter_prog_new($3); free($3); }
+ 	| KW_HOST '(' string ')'		{ $$ = filter_host_new($3); free($3); }	
+ 	| KW_MATCH '(' string ')'		{ $$ = filter_match_new($3); free($3); }
++	| KW_STRIP '(' string ')'               { $$ = filter_strip_new($3); free($3); }
++	| KW_REPLACE '(' string string ')'      { $$ = filter_replace_new($3, $4); free($3); free($4); }
+ 	| KW_FILTER '(' string ')'		{ $$ = filter_call_new($3, configuration); free($3); }
+ 	| KW_NETMASK '(' string ')'		{ $$ = filter_netmask_new($3); free($3); }
+ 	;
+@@ -907,4 +909,4 @@
+   last_reader_options = NULL;
+   last_writer_options = NULL;
+   last_template = NULL;
+-}
+\ No newline at end of file
++}
+diff -Naur syslog-ng-2.0.5.orig/src/cfg-lex.l syslog-ng-2.0.5/src/cfg-lex.l
+--- syslog-ng-2.0.5.orig/src/cfg-lex.l	2007-05-21 19:21:07.000000000 +0200
++++ syslog-ng-2.0.5/src/cfg-lex.l	2007-11-03 00:28:59.000000000 +0100
+@@ -165,6 +165,8 @@
+         { "host",               KW_HOST },
+         { "match",		KW_MATCH },
+         { "netmask",		KW_NETMASK },
++        { "strip",              KW_STRIP },
++        { "replace",            KW_REPLACE },
+ 
+ 	/* on/off switches */
+ 	{ "yes",		KW_YES },
+diff -Naur syslog-ng-2.0.5.orig/src/filter.c syslog-ng-2.0.5/src/filter.c
+--- syslog-ng-2.0.5.orig/src/filter.c	2007-05-21 19:21:07.000000000 +0200
++++ syslog-ng-2.0.5/src/filter.c	2007-11-03 00:30:22.000000000 +0100
+@@ -226,6 +226,7 @@
+ typedef struct _FilterRE
+ {
+   FilterExprNode super;
++  GString *replace;
+   regex_t regex;
+ } FilterRE;
+ 
+@@ -310,6 +311,9 @@
+ filter_re_free(FilterExprNode *s)
+ {
+   FilterRE *self = (FilterRE *) s;
++
++  if (self->replace != NULL)
++	  g_string_free(self->replace, TRUE);
+   
+   regfree(&self->regex);
+   g_free(s);
+@@ -494,3 +498,89 @@
+   self->super.eval = filter_netmask_eval;
+   return &self->super;
+ }
++
++FilterExprNode *
++filter_strip_new(const gchar *re)
++{
++	if (g_ascii_strcasecmp(re, "ips") == 0)
++		return filter_replace_new(re, "0.0.0.0");
++	return filter_replace_new(re, "----");
++}
++
++#define FMIN(a, b) (a) < (b) ? (a) : (b)
++#define NEW_MSG_SIZE 2048
++
++static gboolean
++filter_replace_eval(FilterExprNode *s, LogMessage *log)
++{
++  FilterRE *self = (FilterRE *) s;
++  gchar *buffer = log->msg.str;
++  gint snippet_size;
++  regmatch_t pmatch;
++  gchar new_msg[NEW_MSG_SIZE];
++  gchar *new_msg_max = new_msg + NEW_MSG_SIZE;
++  gchar *new_msg_ptr = new_msg;
++  gint replace_length = self->replace->len;
++  gint error;
++
++  error = regexec(&self->regex, buffer, 1, &pmatch, 0);
++  if (error)
++    return TRUE;
++  while (!error)
++    {
++      /* copy string snippet which preceeds matched text */
++      snippet_size = FMIN(pmatch.rm_so, new_msg_max - new_msg_ptr);
++      memcpy(new_msg_ptr, buffer, snippet_size);
++      new_msg_ptr += snippet_size;
++	
++      /* copy replacement */
++      snippet_size = FMIN(replace_length, new_msg_max - new_msg_ptr);
++      memcpy(new_msg_ptr, self->replace->str, snippet_size);
++      new_msg_ptr += snippet_size;
++		
++      /* search for next match */
++      buffer += pmatch.rm_eo;
++      error = regexec(&self->regex, buffer, 1, &pmatch, REG_NOTBOL);
++    }
++		
++  /* copy the rest of the old message */
++  snippet_size = log->msg.len - (buffer - log->msg.str) + 1;
++  snippet_size = FMIN(snippet_size, new_msg_max - new_msg_ptr);
++  memcpy(new_msg_ptr, buffer, snippet_size);
++  new_msg[NEW_MSG_SIZE-1] = '\0';
++			
++  g_string_erase(&(log->msg), 0, -1);
++  g_string_append(&(log->msg), new_msg);
++			
++  return TRUE;
++}
++			
++FilterExprNode *
++filter_replace_new(const gchar *re, const gchar *replacement)
++{
++  FilterRE *self = g_new0(FilterRE, 1);
++  gint regerr;
++		
++  if (!g_ascii_strcasecmp(re, "ips"))
++    re = "(25[0-5]|2[0-4][0-9]|[0-1]?[0-9]?[0-9])([\\.\\-](25[0-5]|2[0-4][0-9]|[0-1]?[0-9]?[0-9])){3}";
++		
++  regerr = regcomp(&self->regex, re, REG_ICASE | REG_EXTENDED);
++  if (regerr)
++    {
++      gchar errorbuf[256];
++      regerror(regerr, &self->regex, errorbuf, sizeof(errorbuf));
++      msg_error("Error compiling regular expression:",
++                evt_tag_str("re", re),
++                evt_tag_str("error", errorbuf),
++                NULL);
++      g_free(self);
++      return NULL;
++    }
++				
++  self->replace = g_string_new(replacement);
++  self->super.eval = filter_replace_eval;
++  self->super.free_fn = filter_re_free;
++		
++  return &self->super;
++}
++
+diff -Naur syslog-ng-2.0.5.orig/src/filter.h syslog-ng-2.0.5/src/filter.h
+--- syslog-ng-2.0.5.orig/src/filter.h	2007-05-21 19:21:07.000000000 +0200
++++ syslog-ng-2.0.5/src/filter.h	2007-11-03 00:28:59.000000000 +0100
+@@ -54,6 +54,8 @@
+ FilterExprNode *filter_match_new(gchar *re);
+ FilterExprNode *filter_call_new(gchar *rule, struct _GlobalConfig *cfg);
+ FilterExprNode *filter_netmask_new(gchar *cidr);
++FilterExprNode *filter_strip_new(const gchar *re);
++FilterExprNode *filter_replace_new(const gchar *re, const gchar *replacement);
+ 
+ typedef struct _LogFilterRule
+ {

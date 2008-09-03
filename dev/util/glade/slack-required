@@ -1,6 +1,5 @@
-# Dependency list to glade
+# Dependency list to glade3
 #
 # dependency [condition] [version]]
-scrollkeeper				
-gtk+2				
-libxml2				
+gtk+2		>=		2.10.0
+libxml2		>=		2.4.1

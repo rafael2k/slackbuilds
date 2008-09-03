@@ -1,1 +1,5 @@
-libjackasyn
+# Dependency list to xmms-jackasyn
+#
+# dependency [condition] [version]]
+xmms				
+jack				

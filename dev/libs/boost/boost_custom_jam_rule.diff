@@ -1,0 +1,25 @@
+--- Jamroot	2008-03-25 21:47:24.000000000 +0100
++++ boost_1_35_0/Jamroot	2008-04-02 18:13:48.000000000 +0200
+@@ -127,7 +127,7 @@
+ # which builds only the "release <threading>multi <link>shared" variant.
+ local build-type = [ MATCH "^--build-type=(.*)" : [ modules.peek : ARGV ] ] ;
+ build-type ?= minimal ;
+-if ! ( $(build-type) in minimal complete )
++if ! ( $(build-type) in minimal complete custom )
+ {
+     build-type = minimal ;
+ }
+@@ -145,6 +145,13 @@
+     <link>shared <link>static
+     <runtime-link>shared <runtime-link>static
+     ;
++local default-build,custom =
++    release
++    <optimization>speed <inlining>full
++    <threading>single <threading>multi
++    <link>shared
++    <runtime-link>shared
++    ;
+ 
+ # Set the default build.
+ local default-build = $(default-build,$(build-type)) ;

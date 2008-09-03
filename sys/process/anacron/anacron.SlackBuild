@@ -1,115 +1,177 @@
 #!/bin/bash
 #
-#  anacron.SlackBuild is free software; you can redistribute it and/or modify it under the
-#  terms of the GNU General Public License as published by the Free Software
-#  Foundation; either version 2 of the License, or any later version.
+#  anacron.SlackBuild is free software; you can redistribute
+#  it and/or modify it under the terms of the GNU General Public License as
+#  published by the Free Software Foundation; either version 2 of the License,
+#  or any later version.
 #
-#  anacron.SlackBuild is distributed in the hope that it will be useful, but WITHOUT ANY
-#  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
-#  A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
+#  anacron.SlackBuild is distributed in the hope that it will
+#  be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General
+#  Public License for more details.
 #
-#  You should have received a copy of the GNU General Public License along with
-#  this program; if not, write to the Free Software Foundation, Inc., 59 Temple
-#  Place - Suite 330, Boston, MA 02111-1307, USA
+#  You should have received a copy of the GNU General Public License along
+#  with this program; if not, write to the Free Software Foundation, Inc.,
+#  59 Temple Place - Suite 330, Boston, MA 02111-1307, USA
 #
-# slackbuild script for anacron
-# by rhatto at riseup.net
+# slackbuild for anacron, by Sivio Rhatto
+# requires:  
+# tested: anacron-2.3
 #
 
-if [ -s "slack-required" ]; then
-  echo Recomended and required packages for building anacron are:
-  cat slack-required | sed -e 's/^/\t/'
-  if [ "$INTERACT" != "no" ]; then
-    echo If you dont have those installed, press Ctrl-C. Otherwise, hit ENTER.
-    read crap
-#  else
-#    echo Sleeping 3 seconds...
-#    sleep 3
-  fi
-fi
-
-CWD="`pwd`"
-
+# Look for slackbuildrc
 if [ -f ~/.slackbuildrc ]; then
   source ~/.slackbuildrc
 elif [ -f /etc/slackbuildrc ]; then
   source /etc/slackbuildrc
 fi
 
-# default settings
-PACKAGE="anacron"
+# Set variables
+CWD="$(pwd)"
+SRC_NAME="anacron"
+PKG_NAME="anacron"
 ARCH=${ARCH:=i486}
-VERSION=${VERSION:=2.3}
+SRC_VERSION=${VERSION:=2.3}
+PKG_VERSION="$(echo "$SRC_VERSION" | tr '[[:blank:]-]' '_')"
 BUILD=${BUILD:=1rha}
-SRC_DIR=${SRC:=$CWD}
+SRC_DIR=${SRC_DIR:=$CWD}/$PKG_NAME
 TMP=${TMP:=/tmp}
+PKG=${PKG:=$TMP/package-$PKG_NAME}
 REPOS=${REPOS:=$TMP}
+PREFIX=${PREFIX:=/usr}
+PKG_WORK="$TMP/$SRC_NAME"
+CONF_OPTIONS=${CONF_OPTIONS:=""}
+NUMJOBS=${NUMJOBS:=""}
 
-if [ "$ARCH" == "x86_64" ]; then
-  export LDFLAGS="-L/lib64 -L/usr/lib64"
-  LIBDIR=/usr/lib64
-else
-  LIBDIR=/usr/lib
+# Set system libraries' path and optmization flags based on $ARCH
+LIBDIR="$PREFIX/lib"
+
+if [ "$ARCH" = "i386" ]; then
+  SLKCFLAGS="-O2 -march=i386 -mcpu=i686"
+elif [ "$ARCH" = "i486" ]; then
+  SLKCFLAGS="-O2 -march=i486 -mcpu=i686"
+elif [ "$ARCH" = "i686" ]; then
+  SLKCFLAGS="-O2 -march=i686"
+elif [ "$ARCH" = "s390" ]; then
+  SLKCFLAGS="-O2"
+elif [ "$ARCH" = "x86_64" ]; then
+  SLKCFLAGS="-O2 -fPIC"
+  LIBDIR="$PREFIX/lib64"
+  LDFLAGS="-L/lib64 -L/usr/lib64"
 fi
 
-# -------  error codes for createpkg  --------------
+# Set error codes (used by createpkg)
 ERROR_WGET=31;      ERROR_MAKE=32;      ERROR_INSTALL=33
 ERROR_MD5=34;       ERROR_CONF=35;      ERROR_HELP=36
 ERROR_TAR=37;       ERROR_MKPKG=38;     ERROR_GPG=39
-ERROR_PATCH=40
+ERROR_PATCH=40;     ERROR_VCS=41;       ERROR_MKDIR=42
 
-RTOOL="wget"
-PACKAGE_EXT="gz"
-SRC="$PACKAGE-$VERSION.tar.$PACKAGE_EXT"
-URL="http://easynews.dl.sourceforge.net/sourceforge/anacron/$SRC"
+# Clean up any leftovers of previous builds
+rm -rf "$PKG_WORK" 2> /dev/null
+rm -rf "$PKG" 2> /dev/null
 
-SRC_DIR="$SRC_DIR/$PACKAGE"
-mkdir -p $SRC_DIR
+# Create directories if necessary
+mkdir -p "$SRC_DIR" || exit $ERROR_MKDIR
+mkdir -p "$PKG" || exit $ERROR_MKDIR
+mkdir -p "$REPOS" || exit $ERROR_MKDIR
+mkdir -p "$PKG_WORK" || exit $ERROR_MKDIR
 
-if [ "$RTOOL" == "wget" ] && [ ! -f "$SRC_DIR/$SRC" ]; then
+# Creating build user and group
+if ! grep -qe "^$PKG_NAME:" /etc/group; then
+  groupadd $PKG_NAME
+fi
+if ! grep -qe "^$PKG_NAME:" /etc/passwd; then
+  useradd $PKG_NAME -g $PKG_NAME
+fi
+
+# Dowload source if necessary
+SRC="$SRC_NAME-$VERSION.tar.gz"
+URL="http://downloads.sourceforge.net/anacron/$SRC"
+
+if [ ! -s "$SRC_DIR/$SRC" ] || ! gunzip -t "$SRC_DIR/$SRC" 2> /dev/null; then
   wget "$URL" -O "$SRC_DIR/$SRC" || exit $ERROR_WGET
 fi
 
-TMP="$TMP/$PACKAGE"
-rm -rf $TMP
-mkdir -p $TMP
-cd $TMP
+# Untar
+cd "$PKG_WORK"
+tar --no-same-owner --no-same-permissions -xvf "$SRC_DIR/$SRC" || exit $ERROR_TAR
+PKG_SRC="$PWD/`ls -l | awk '/^d/ { print $NF }'`"
+cd "$PKG_SRC"
 
-tar xvf $SRC_DIR/$SRC || exit $ERROR_TAR
-cd $PACKAGE-$VERSION
+# Patch source
+patches="
+         $PKG_NAME.diff $PKG_NAME-$PKG_VERSION.diff
+         $PKG_NAME-$PKG_VERSION-$ARCH.diff $PKG_NAME-$ARCH.diff"
+for patch in $patches; do
+  if [ -f "$CWD/$patch" ]; then
+    patch -Np1 < "$CWD/$patch" || exit $ERROR_PATCH
+  elif [ -f "$CWD/patches/$patch" ]; then
+    patch -Np1 < "$CWD/patches/$patch" || exit $ERROR_PATCH
+  elif [ -f "$CWD/$patch.gz" ]; then
+    gzip -dc "$CWD/$patch.gz" | patch -Np1 || exit $ERROR_PATCH
+  elif [ -f "$CWD/patches/$patch.gz" ]; then
+    gzip -dc "$CWD/patches/$patch.gz" | patch -Np1 || exit $ERROR_PATCH
+  fi
+done
 
-if [ -f "$CWD/$PACKAGE-$VERSION.diff" ]; then
-  patch -p1 < $CWD/$PACKAGE-$VERSION.diff || exit $ERROR_PATCH
+if echo [[PATCH URLS]] | grep -q -v "PATCH URLS"; then
+  for patch_url in [[PATCH URLS]]; do
+    patch="`basename $patch_url`"
+    if [ ! -s "$SRC_DIR/$patch" ]; then
+      wget "$patch_url" -O "$SRC_DIR/$patch" || exit $ERROR_WGET
+    fi
+    if [ "`basename $patch .gz`" != "$patch" ]; then
+      gzip -dc $SRC_DIR/$patch | patch -Np1 || exit $ERROR_PATCH
+    elif [ "`basename $patch .bz2`" != "$patch" ]; then
+      bzip2 -dc $SRC_DIR/$patch | patch -Np1 || exit $ERROR_PATCH
+    else
+      patch -Np1 < "$SRC_DIR/$patch" || exit $ERROR_PATCH
+    fi
+  done
 fi
 
-make || exit $ERROR_MAKE
+# Compile
+make $NUMJOBS || exit $ERROR_MAKE
 
-CWD="`pwd`"
+# Install
+mkdir -p $PKG
+mkdir -p $PKG/usr/sbin $PKG/var/spool/anacron $PKG/usr/man/man5 $PKG/usr/man/man8
 
-mkdir $TMP/package-$PACKAGE
-cd $TMP/package-$PACKAGE
+cp anacron $PKG/usr/sbin
+cp anacrontab.5 $PKG/usr/man/man5
+cp anacron.8 $PKG/usr/man/man8
 
-mkdir -p usr/sbin var/spool/anacron usr/man/man5 usr/man/man8
-cp $CWD/anacron usr/sbin
-cp $CWD/anacrontab.5 usr/man/man5
-cp $CWD/anacron.8 usr/man/man8
+gzip $PKG/usr/man/man5/anacrontab.5
+gzip $PKG/usr/man/man8/anacron.8
 
-gzip usr/man/man5/anacrontab.5
-gzip usr/man/man8/anacron.8
+# Strip binaries
+( cd "$PKG"
+  find . | xargs file | grep "executable" | grep ELF | cut -f 1 -d : | \
+    xargs strip --strip-unneeded 2> /dev/null
+  find . | xargs file | grep "shared object" | grep ELF | cut -f 1 -d : | \
+    xargs strip --strip-unneeded 2> /dev/null
+)
 
-find . | xargs file | grep "executable" | grep ELF | cut -f 1 -d : | xargs strip --strip-unneeded 2> /dev/null
-find . | xargs file | grep "shared object" | grep ELF | cut -f 1 -d : | xargs strip --strip-unneeded 2> /dev/null
+# Install documentation
+DOCS="COPYING ChangeLog README TODO"
+mkdir -p "$PKG/usr/doc/$PKG_NAME-$PKG_VERSION" || exit $ERROR_MKDIR
+for doc in $DOCS; do
+  if [ -f "$doc" ]; then
+    cp -a $doc "$PKG/usr/doc/$PKG_NAME-$PKG_VERSION"
+  fi
+done
 
-mkdir install
-cat << EOF > install/slack-desc
+# Add package description (slack-desc)
+mkdir -p "$PKG/install" || exit $ERROR_MKDIR
+cat << EODESC > "$PKG/install/slack-desc"
 # HOW TO EDIT THIS FILE:
-# The "handy ruler" below makes it easier to edit a package description.  Line
+# The "handy ruler" below makes it easier to edit a package description. Line
 # up the first '|' above the ':' following the base package name, and the '|'
-# on the right side marks the last column you can put a character in.  You must
+# on the right side marks the last column you can put a character in. You must
 # make exactly 11 lines for the formatting to be correct.  It's also
 # customary to leave one space after the ':'.
 
-       |-----handy-ruler-----------------------------------------------------|
+       |-----handy-ruler------------------------------------------------------|
 anacron: anacron (periodic command scheduler)
 anacron:
 anacron: Anacron is a periodic command scheduler. It executes commands at
@@ -121,20 +183,13 @@ anacron: installed and configured properly, Anacron will make sure that the
 anacron: commands are run at the specified intervals as closely as
 anacron: machine-uptime permits.
 anacron:
-EOF
+EODESC
 
-# docs
-mkdir -p usr/doc/$PACKAGE-$VERSION
+# Build the package
+cd "$PKG"
+makepkg -l y -c n "$REPOS/$PKG_NAME-$PKG_VERSION-$ARCH-$BUILD.tgz" || exit $ERROR_MKPKG
 
-DOCS="COPYING ChangeLog README TODO"
-
-for file in $DOCS; do
-  cp $CWD/$file* usr/doc/$PACKAGE-$VERSION/
-done
-
-makepkg -c y -l y $REPOS/$PACKAGE-$VERSION-$ARCH-$BUILD.tgz || exit $ERROR_MKPKG
-
+# Delete source and build directories if requested
 if [ "$CLEANUP" == "yes" ]; then
-  rm -rf $TMP
+  rm -rf "$PKG_WORK" "$PKG"
 fi
-

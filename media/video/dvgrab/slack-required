@@ -1,4 +1,7 @@
-libraw1394
-libavc1394
-libiec61883
-libdv
+# Dependency list to dvgrab
+#
+# dependency [condition] [version]]
+libraw1394				
+libavc1394				
+libiec61883				
+libdv				

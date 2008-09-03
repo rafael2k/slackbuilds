@@ -1,0 +1,4 @@
+# Dependency list to bogofilter
+#
+# dependency [condition] [version]]
+sqlite				

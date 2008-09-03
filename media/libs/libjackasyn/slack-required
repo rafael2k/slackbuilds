@@ -1,1 +1,4 @@
-jack
+# Dependency list to libjackasyn
+#
+# dependency [condition] [version]]
+jack				

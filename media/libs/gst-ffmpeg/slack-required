@@ -1,0 +1,6 @@
+# Dependency list to gst-ffmpeg
+#
+# dependency [condition] [version]]
+gstreamer				
+gst-plugins-base				
+ffmpeg				

@@ -1,74 +1,263 @@
 #!/bin/bash
 #
-#  boost.SlackBuild is free software; you can redistribute it and/or modify it under the
-#  terms of the GNU General Public License as published by the Free Software
-#  Foundation; either version 2 of the License, or any later version.
+#  boost.SlackBuild is free software; you can redistribute
+#  it and/or modify it under the terms of the GNU General Public License as
+#  published by the Free Software Foundation; either version 2 of the License,
+#  or any later version.
 #
-#  boost.SlackBuild is distributed in the hope that it will be useful, but WITHOUT ANY
-#  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
-#  A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
+#  boost.SlackBuild is distributed in the hope that it will
+#  be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General
+#  Public License for more details.
 #
-#  You should have received a copy of the GNU General Public License along with
-#  this program; if not, write to the Free Software Foundation, Inc., 59 Temple
-#  Place - Suite 330, Boston, MA 02111-1307, USA
+#  You should have received a copy of the GNU General Public License along
+#  with this program; if not, write to the Free Software Foundation, Inc.,
+#  59 Temple Place - Suite 330, Boston, MA 02111-1307, USA
 #
-# slackbuild script for boost
-# by rafael at riseup.net
+# slackbuild for boost, by Silvio Rhatto
+# requires:  
+# tested: boost-1.35.0
 #
 
-if [ -s "slack-required" ]; then
-  echo Recomended and required packages for building boost are:
-  cat slack-required | sed -e 's/^/\t/'
-  if [ "$INTERACT" != "no" ]; then
-    echo If you dont have those installed, press Ctrl-C. Otherwise, hit ENTER.
-    read crap
-  else
-    echo Sleeping 3 seconds...
-    sleep 3
-  fi
-fi
-
-CWD="`pwd`"
-
-if [ -f "/etc/slackbuildrc" ]; then
+# Look for slackbuildrc
+if [ -f ~/.slackbuildrc ]; then
+  source ~/.slackbuildrc
+elif [ -f /etc/slackbuildrc ]; then
   source /etc/slackbuildrc
 fi
 
-if [ -f "~/.slackbuildrc" ]; then
-  source ~/.slackbuildrc
-fi
-
-# default settings
-PACKAGE="boost"
+# Set variables
+CWD="$(pwd)"
+SRC_NAME="boost"
+PKG_NAME="boost"
 ARCH=${ARCH:=i486}
-VERSION=${VERSION:=1.35.0}
-BUILD=${BUILD:=1rd}
-SRC_DIR=${SRC:=$CWD}
+SRC_VERSION=${VERSION:=1.35.0}
+PKG_VERSION="$(echo "$SRC_VERSION" | tr '[[:blank:]-]' '_')"
+BUILD=${BUILD:=1rha}
+SRC_DIR=${SRC_DIR:=$CWD}/$PKG_NAME
 TMP=${TMP:=/tmp}
+PKG=${PKG:=$TMP/package-$PKG_NAME}
 REPOS=${REPOS:=$TMP}
+PREFIX=${PREFIX:=/usr}
+PKG_WORK="$TMP/$SRC_NAME"
+CONF_OPTIONS=${CONF_OPTIONS:="--with-libraries=all"}
+NUMJOBS=${NUMJOBS:=""}
 
-rm -rf $TMP/$PACKAGE
-mkdir -p $SRC_DIR/$PACKAGE $TMP/$PACKAGE
+# Set system libraries' path and optmization flags based on $ARCH
+LIBDIR="$PREFIX/lib"
 
-export PACKAGE VERSION ARCH BUILD SRC_DIR TMP REPOS
+if [ "$ARCH" = "i386" ]; then
+  SLKCFLAGS="-O2 -march=i386 -mcpu=i686"
+elif [ "$ARCH" = "i486" ]; then
+  SLKCFLAGS="-O2 -march=i486 -mcpu=i686"
+elif [ "$ARCH" = "i686" ]; then
+  SLKCFLAGS="-O2 -march=i686"
+elif [ "$ARCH" = "s390" ]; then
+  SLKCFLAGS="-O2"
+elif [ "$ARCH" = "x86_64" ]; then
+  SLKCFLAGS="-O2 -fPIC"
+  LIBDIR="$PREFIX/lib64"
+  LDFLAGS="-L/lib64 -L/usr/lib64"
+fi
 
-if which simpletrack &> /dev/null; then
-  simpletrack $PACKAGE.build
+# Set error codes (used by createpkg)
+ERROR_WGET=31;      ERROR_MAKE=32;      ERROR_INSTALL=33
+ERROR_MD5=34;       ERROR_CONF=35;      ERROR_HELP=36
+ERROR_TAR=37;       ERROR_MKPKG=38;     ERROR_GPG=39
+ERROR_PATCH=40;     ERROR_VCS=41;       ERROR_MKDIR=42
+
+# Clean up any leftovers of previous builds
+rm -rf "$PKG_WORK" 2> /dev/null
+rm -rf "$PKG" 2> /dev/null
+
+# Create directories if necessary
+mkdir -p "$SRC_DIR" || exit $ERROR_MKDIR
+mkdir -p "$PKG" || exit $ERROR_MKDIR
+mkdir -p "$REPOS" || exit $ERROR_MKDIR
+mkdir -p "$PKG_WORK" || exit $ERROR_MKDIR
+
+# Dowload source if necessary
+SRC="$SRC_NAME"_"1_35_0.tar.bz2"
+URL="http://downloads.sourceforge.net/boost/$SRC"
+
+if [ ! -s "$SRC_DIR/$SRC" ] || ! bunzip2 -t "$SRC_DIR/$SRC" 2> /dev/null; then
+  wget "$URL" -O "$SRC_DIR/$SRC" || exit $ERROR_WGET
+fi
+
+# Untar
+cd "$PKG_WORK"
+tar --no-same-owner --no-same-permissions -xvf "$SRC_DIR/$SRC" || exit $ERROR_TAR
+PKG_SRC="$PWD/`ls -l | awk '/^d/ { print $NF }'`"
+cd "$PKG_SRC"
+
+# Configure
+
+# That's the old way we did
+#CFLAGS="$SLKCFLAGS" \
+#  CXXFLAGS="$SLKCFLAGS" \
+#  ./configure \
+#  --prefix="$PREFIX" --libdir="$LIBDIR" $CONF_OPTIONS || exit $ERROR_CONF
+#
+# Add DESTDIR support into Makefile
+#sed -i -e 's/\$(PREFIX)/\$(DESTDIR)\/\$(PREFIX)/'   \
+#       -e 's/\$(EPREFIX)/\$(DESTDIR)\/\$(EPREFIX)/' \
+#       -e 's/\$(LIBDIR)/\$(DESTDIR)\/\$(LIBDIR)/'   \
+#       -e 's/\$(INCLUDEDIR)/\$(DESTDIR)\/\$(INCLUDEDIR)/' Makefile
+
+# New way, using stuff from http://slackbuilds.org/repository/12.1/development/boost/,
+# wich has the following copyright note:
+
+# Copyright 2007-2008 Eric Hameleers <alien@slackware.com>
+# Copyright 2007-2008 Heinz Wiesinger <HMWiesinger@gmx.at>
+# All rights reserved.
+#
+# Redistribution and use of this script, with or without modification, is
+# permitted provided that the following conditions are met:
+#
+# 1. Redistributions of this script must retain the above copyright
+#    notice, this list of conditions and the following disclaimer.
+#
+# THIS SOFTWARE IS PROVIDED ''AS IS'' AND ANY EXPRESS OR IMPLIED
+# WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+# MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO
+# EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+# SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+# PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
+# OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+# WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
+# OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+# ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+# bjam-build system mostly taken from SlackBuild by Eric Hameleers
+
+# Script modified by Robby Workman <rworkman@slackbuilds.org>
+# -- no additional license terms and no copyright
+
+# Small changes from Rhatto <rhatto at riseup.net>
+
+if [ "$ICU" = "YES" ]; then
+    do_icu="-sICU_PATH=/usr"
 else
-  slacktrack -b $REPOS -x $TMP,$SRC_DIR,/dev -jefkzp "$PACKAGE-$VERSION-$ARCH-$BUILD.tgz" "./$PACKAGE.build"
+    do_icu=""
 fi
 
-# doinst fix
-if [ -f "$CWD/$PACKAGE-$VERSION-doinst.diff" ]; then
-  rm -rf $TMP/package-$PACKAGE
-  mkdir $TMP/package-$PACKAGE
-  cd $TMP/package-$PACKAGE
-  explodepkg $TMP/$PACKAGE-$VERSION-$ARCH-$BUILD.tgz
-  patch -p0 < $CWD/$PACKAGE-$VERSION-doinst.diff
-  makepkg -c y -l y $REPOS/$PACKAGE-$VERSION-$ARCH-$BUILD.tgz
-fi
+# This is the python we build against:
+PYTHON_VERSION=$(python -c 'import sys; print sys.version[:3]')
+PYTHON_FLAGS="-sPYTHON_ROOT=/usr -sPYTHON_VERSION=$PYTHON_VERSION"
 
+# First build bjam, the boost build system:
+cd tools/jam/src
+  CFLAGS="$SLKCFLAGS -fno-strict-aliasing" CC=gcc ./build.sh cc || exit $ERROR_CONF
+cd -
+
+BJAM=$(find tools/jam/src/ -name bjam -a -type f)
+
+# Patch Jamroot to include our custom build rule
+patch -p1 -i $CWD/boost_custom_jam_rule.diff || exit $ERROR_PATCH
+
+# Build procedure also thanks to slackbuilds.org and with the same copyright
+# note from the configure section above
+
+# Create build subdirectory
+mkdir obj
+
+# Next, we build boost using bjam
+ $BJAM \
+  release \
+  "-sNO_COMPRESSION=0" \
+  "-sZLIB_INCLUDE=/usr/include" \
+  "-sZLIB_LIBPATH=$LIBDIR" \
+  "-sBZIP2_INCLUDE=/usr/include" \
+  "-sBZIP2_LIBPATH=$LIBDIR" \
+  "-sEXPAT_INCLUDE=/usr/include" \
+  "-sEXPAT_LIBPATH=$LIBDIR" \
+  --toolset=gcc \
+  --layout=system \
+  --builddir=obj \
+  --prefix=/usr \
+  --build-type=custom \
+  $PYTHON_FLAGS \
+  $do_icu \
+  ${NUMJOBS} || exit ERROR_MAKE
+
+# Install
+
+# That's the old way we did
+#make install DESTDIR="$PKG" || exit $ERROR_INSTALL
+
+# New way, thanks to slackbuilds.org and with the same copyright
+# note from the configure section above
+
+# And then install boost..
+mkdir -p $PKG/usr/{lib,include}
+
+$BJAM \
+  release \
+  "-sEXPAT_INCLUDE=/usr/include" \
+  "-sEXPAT_LIBPATH=$LIBDIR" \
+  --toolset=gcc \
+  --layout=system \
+  --builddir=obj \
+  --prefix=$PKG/usr \
+  --build-type=custom \
+  $PYTHON_FLAGS \
+  $do_icu \
+  install || exit $ERROR_INSTALL
+
+# This is old stuff also
+# Version with underline
+#VERSION_UNDERLINE="`echo $SRC_VERSION | sed -e 's/\./_/g'`"
+#
+# Underline version without minor version if minor version is 0 (workaround)
+#VERSION_UNDERLINE="`echo $VERSION_UNDERLINE | sed -e 's/\([0-9]\+\)_\([0-9]\+\)_0/\1_\2/'`"
+#cd /usr/include && ln -s boost-$VERSION_UNDERLINE/ boost
+
+# Strip binaries
+( cd "$PKG"
+  find . | xargs file | grep "executable" | grep ELF | cut -f 1 -d : | \
+    xargs strip --strip-unneeded 2> /dev/null
+  find . | xargs file | grep "shared object" | grep ELF | cut -f 1 -d : | \
+    xargs strip --strip-unneeded 2> /dev/null
+)
+
+# Install documentation
+DOCS="LICENSE_1_0.tx"
+mkdir -p "$PKG/usr/doc/$PKG_NAME-$PKG_VERSION" || exit $ERROR_MKDIR
+for doc in $DOCS; do
+  if [ -f "$doc" ]; then
+    cp -a $doc "$PKG/usr/doc/$PKG_NAME-$PKG_VERSION"
+  fi
+done
+
+# Add package description (slack-desc)
+mkdir -p "$PKG/install" || exit $ERROR_MKDIR
+cat << EODESC > "$PKG/install/slack-desc"
+# HOW TO EDIT THIS FILE:
+# The "handy ruler" below makes it easier to edit a package description. Line
+# up the first '|' above the ':' following the base package name, and the '|'
+# on the right side marks the last column you can put a character in. You must
+# make exactly 11 lines for the formatting to be correct.  It's also
+# customary to leave one space after the ':'.
+
+     |-----handy-ruler--------------------------------------------------------|
+boost: boost
+boost:
+boost: Boost provides free peer-reviewed portable C++ source libraries.
+boost: 
+boost: We emphasize libraries that work well with the C++ Standard Library. 
+boost: Boost libraries are intended to be widely useful, and usable across 
+boost: a broad spectrum of applications.
+boost:
+boost:
+boost: http://www.boost.org/
+boost:
+EODESC
+
+# Build the package
+cd "$PKG"
+makepkg -l y -c n "$REPOS/$PKG_NAME-$PKG_VERSION-$ARCH-$BUILD.tgz" || exit $ERROR_MKPKG
+
+# Delete source and build directories if requested
 if [ "$CLEANUP" == "yes" ]; then
-  rm -rf $TMP/$PACKAGE
+  rm -rf "$PKG_WORK" "$PKG"
 fi
-

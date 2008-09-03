@@ -84,50 +84,6 @@ if [ ! -s "$SRC_DIR/$SRC" ] || ! bunzip2 -t "$SRC_DIR/$SRC" 2> /dev/null; then
   wget "$URL" -O "$SRC_DIR/$SRC" || exit $ERROR_WGET
 fi
 
-# Import minimized signing key from
-if echo [[SIGNING KEY URL]] | grep -q -v "SIGNING KEY URL"; then
-  lynx -dump [[SIGNING KEY URL]] | gpg --import || exit $ERROR_GPG
-elif echo [[SIGNING KEY ID]] | grep -q -v "SIGNING KEY ID"; then
-  gpg --recv-keys [[SIGNING KEY ID]] || exit $ERROR_GPG
-else
-  gpg --import << EOKEY || exit $ERROR_GPG
-[[SIGNING KEY]]
-EOKEY
-fi
-
-# Download source's signature if necessary and check it
-if echo http://download.savannah.gnu.org/releases/hddtemp | grep -q -v "SIGNING URL"; then
-  SIGNATURE="`basename http://download.savannah.gnu.org/releases/hddtemp`"
-  if [ ! -s "$SRC_DIR/$SIGNATURE" ]; then
-    wget "http://download.savannah.gnu.org/releases/hddtemp" -O "$SRC_DIR/$SIGNATURE" || exit $ERROR_WGET
-  fi
-else
-  if [ -s "$SRC_DIR/$SRC.sig" ]; then
-    SIGNATURE="$SRC.sig"
-  elif [ -s "$SRC_DIR/$SRC.asc" ]; then
-    SIGNATURE="$SRC.asc"
-  else
-    echo Trying to get signature file from $URL.sig...
-    if wget "$URL.sig" -O "$SRC_DIR/$SRC.sig"; then
-      SIGNATURE="$SRC.sig"
-    else
-      rm $SRC_DIR/$SRC.sig
-      echo Trying to get signature file from $URL.asc...
-      if wget "$URL.asc" -O "$SRC_DIR/$SRC.asc"; then
-        SIGNATURE="$SRC.asc"
-      else
-        rm $SRC_DIR/$SRC.asc
-        echo "Error getting source's signature file"
-        exit $ERROR_GPG
-      fi
-    fi
-  fi
-fi
-
-echo Checking $SRC_DIR/$SRC with gpg using $SRC_DIR/$SIGNATURE...
-gpg --verify "$SRC_DIR/$SIGNATURE" "$SRC_DIR/$SRC" || exit $ERROR_GPG
-echo Success.
-
 # Untar
 cd "$PKG_WORK"
 tar --no-same-owner --no-same-permissions -xvf "$SRC_DIR/$SRC" || exit $ERROR_TAR
@@ -148,7 +104,11 @@ make install DESTDIR="$PKG" || exit $ERROR_INSTALL
 
 # Get new hddtemp.db
 mkdir -p $PKG/usr/share/misc
-wget http://download.savannah.gnu.org/releases/hddtemp/hddtemp.db -P $PKG/usr/share/misc/
+if [ ! -e $CWD/hddtemp.db ]; then
+  wget http://download.savannah.gnu.org/releases/hddtemp/hddtemp.db -P $CWD/ || exit $ERROR_WGET
+fi
+mkdir -p $PKG/usr/share/misc
+cp $CWD/hddtemp.db $PKG/usr/share/misc/
 
 # Strip binaries
 ( cd "$PKG"

@@ -1,2 +1,5 @@
-libdv
-libquicktime
+# Dependency list to mjpegtools
+#
+# dependency [condition] [version]]
+libdv				
+libquicktime				

@@ -1,0 +1,4 @@
+# Dependency list to libopenraw
+#
+# dependency [condition] [version]]
+boost		>=		1.34.1

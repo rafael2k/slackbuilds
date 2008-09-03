@@ -1,1 +1,4 @@
-ladspa
+# Dependency list to lmms
+#
+# dependency [condition] [version]]
+ladspa				

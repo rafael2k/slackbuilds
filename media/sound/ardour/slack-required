@@ -1,11 +1,15 @@
-scons
-raptor
-liblrdf
-ladspa
-libsamplerate
-libsndfile
-jack
-libgnomecanvas
-liblo
-fftw
-boost
+# Dependency list to ardour
+#
+# dependency [condition] [version]]
+scons				
+raptor				
+liblrdf				
+ladspa				
+libsamplerate				
+libsndfile				
+jack				
+libgnomecanvas				
+liblo				
+fftw				
+boost				
+aubio				

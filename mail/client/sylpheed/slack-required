@@ -15,7 +15,6 @@ glib2		>=		2.12.12
 glibc-solibs		>=		2.5
 gpgme		>=		1.1.4
 gtk+2		>=		2.10.13
-gtkspell		>=		2.0.11
 libX11		>=		1.1.1
 libXau		>=		1.0.3
 libXcursor		>=		1.1.8
@@ -32,5 +31,6 @@ libxcb		>=		1.0
 openldap-client		>=		2.3.32
 openssl		>=		0.9.8
 openssl-solibs		>=		0.9.8
-pango		>=		1.16.4
 zlib		>=		1.2.3
+bogofilter				
+gtkspell				

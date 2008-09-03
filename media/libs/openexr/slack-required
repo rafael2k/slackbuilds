@@ -1,0 +1,4 @@
+# Dependency list to openexr
+#
+# dependency [condition] [version]]
+ilmbase				

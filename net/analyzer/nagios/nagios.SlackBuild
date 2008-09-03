@@ -15,7 +15,8 @@
 #  Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
 #  MA 02111-1307, USA
 #
-# SlackBuild for Nagios (http://www.nagios.org/)
+# SlackBuild for Nagios
+# http://www.nagios.org/
 #
 # Author: Luis ( luis at riseup d0t net )
 #
@@ -32,7 +33,7 @@ CWD="$(pwd)"
 SRC_NAME="nagios"
 PKG_NAME="nagios"
 ARCH=${ARCH:=i486}
-SRC_VERSION=${VERSION:=2.11}
+SRC_VERSION=${VERSION:=3.0.3}
 PKG_VERSION="$(echo "$SRC_VERSION" | tr '[[:blank:]-]' '_')"
 BUILD=${BUILD:=1ls}
 SRC_DIR=${SRC_DIR:=$CWD}/$PKG_NAME
@@ -103,9 +104,17 @@ make install-commandmode DESTDIR="$PKG" || exit $ERROR_INSTALL
 make install-config DESTDIR="$PKG" || exit $ERROR_INSTALL
 mv "$PKG/etc/rc.d/init.d/nagios" "$PKG/etc/rc.d/rc.nagios.new"
 rmdir "$PKG/etc/rc.d/init.d"
-for file in $(ls -1 "$PKG/$PREFIX"/etc/*); do
-  mv "$file" "$file".new
-done
+( cd "$PKG/$PREFIX"/etc
+  for file in $(ls -1); do
+    if [ -f "$file" ]; then
+      mv "$file" "$file".new
+    fi
+  done
+  cd objects
+  for file in $(ls -1); do
+    mv "$file" "$file".new
+  done
+)
 
 # Strip binaries
 ( cd "$PKG"

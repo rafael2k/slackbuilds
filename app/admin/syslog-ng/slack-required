@@ -1,0 +1,4 @@
+# Dependency list to syslog-ng
+#
+# dependency [condition] [version]]
+eventlog				

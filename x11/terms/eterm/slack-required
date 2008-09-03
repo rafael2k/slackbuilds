@@ -1,0 +1,5 @@
+# Dependency list to Eterm
+#
+# dependency [condition] [version]]
+libast		>=		0.7
+imlib2		>=		1.4.1

@@ -10,13 +10,13 @@
 #  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General
 #  Public License for more details.
 #
-#  You should have received a copy of the GNU General Public License along with
-#  this program; if not, write to the Free Software Foundation, Inc., 59 Temple
-#  Place - Suite 330, Boston, MA 02111-1307, USA
+#  You should have received a copy of the GNU General Public License along
+#  with this program; if not, write to the Free Software Foundation, Inc.,
+#  59 Temple Place - Suite 330, Boston, MA 02111-1307, USA
 #
 # slackbuild for broffice, by Rudson R. Alves
 # requires:  
-# tested: broffice-2.4.0
+# tested: broffice-2.4.1
 #
 
 # Look for slackbuildrc
@@ -31,7 +31,7 @@ CWD="$(pwd)"
 SRC_NAME="BrOo"
 PKG_NAME="broffice"
 ARCH=${ARCH:=i686}
-SRC_VERSION=${VERSION:=2.4.0}
+SRC_VERSION=${VERSION:=2.4.1}
 PKG_VERSION="$(echo "$SRC_VERSION" | tr '[[:blank:]-]' '_')"
 BUILD=${BUILD:=1rra}
 SRC_DIR=${SRC_DIR:=$CWD}/$PKG_NAME
@@ -116,9 +116,9 @@ mv $PKG/install/doinst.sh.new $PKG/install/doinst.sh
 mkdir -p "$PKG/install" || exit $ERROR_MKDIR
 cat << EODESC > "$PKG/install/slack-desc"
 # HOW TO EDIT THIS FILE:
-# The "handy ruler" below makes it easier to edit a package description.  Line
+# The "handy ruler" below makes it easier to edit a package description. Line
 # up the first '|' above the ':' following the base package name, and the '|'
-# on the right side marks the last column you can put a character in.  You must
+# on the right side marks the last column you can put a character in. You must
 # make exactly 11 lines for the formatting to be correct.  It's also
 # customary to leave one space after the ':'.
 

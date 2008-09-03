@@ -1,3 +1,6 @@
-eet
-evas
-ecore
+# Dependency list to efreet
+#
+# dependency [condition] [version]]
+eet				
+evas				
+ecore				

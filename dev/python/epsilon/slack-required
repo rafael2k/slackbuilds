@@ -1,6 +1,9 @@
-eet
-evas
-ecore
-embryo
-edje
-imlib2
+# Dependency list to epsilon
+#
+# dependency [condition] [version]]
+eet				
+evas				
+ecore				
+embryo				
+edje				
+imlib2				

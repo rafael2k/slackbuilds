@@ -1,3 +1,6 @@
-lame
-faac
-libx264
+# Dependency list to ffmpeg
+#
+# dependency [condition] [version]]
+lame				
+faac				
+libx264				

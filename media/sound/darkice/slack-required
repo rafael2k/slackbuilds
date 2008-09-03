@@ -1,3 +1,6 @@
-lame
-jack
-twolame
+# Dependency list to darkice
+#
+# dependency [condition] [version]]
+lame				
+jack				
+twolame				

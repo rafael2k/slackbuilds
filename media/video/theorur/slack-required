@@ -1,3 +1,6 @@
-dvgrab
-ffmpeg2theora
-oggfwd
+# Dependency list to theorur
+#
+# dependency [condition] [version]]
+dvgrab				
+ffmpeg2theora				
+oggfwd				

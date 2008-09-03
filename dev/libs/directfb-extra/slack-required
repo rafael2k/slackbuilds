@@ -1,0 +1,5 @@
+# Dependency list to DirectFB-extra
+#
+# dependency [condition] [version]]
+DirectFB				
+swfdec				

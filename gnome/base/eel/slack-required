@@ -1,0 +1,4 @@
+# Dependency list to eel
+#
+# dependency [condition] [version]]
+gnome-desktop		>=		2.22.0

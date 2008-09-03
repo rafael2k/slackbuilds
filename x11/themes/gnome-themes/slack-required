@@ -1,0 +1,4 @@
+# Dependency list to gnome-themes
+#
+# dependency [condition] [version]]
+gtk-engines		>=		2.14.2

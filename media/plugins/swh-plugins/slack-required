@@ -1,2 +1,5 @@
-fftw
-ladspa
+# Dependency list to swh-plugins
+#
+# dependency [condition] [version]]
+fftw				
+ladspa				

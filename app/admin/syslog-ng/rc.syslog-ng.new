@@ -1,0 +1,37 @@
+#!/bin/sh
+# Start/stop/restart the system logging daemons.
+#
+# Written for Slackware Linux by Patrick J. Volkerding <volkerdi@slackware.com>.
+# Modyfied for syslog-ng by Kanedaaa <kaneda@bohater.net>
+
+syslogng_start() {
+  if [ -x /usr/sbin/syslog-ng ]; then
+    echo -n "Starting syslog-ng daemon:  "
+    echo " /usr/sbin/syslog-ng"
+    /usr/sbin/syslog-ng
+  fi
+}
+
+syslogng_stop() {
+  killall syslog-ng 2> /dev/null
+}
+
+syslogng_restart() {
+  syslogng_stop
+  sleep 1
+  syslogng_start
+}
+
+case "$1" in
+'start')
+  syslogng_start
+  ;;
+'stop')
+  syslogng_stop
+  ;;
+'restart')
+  syslogng_restart
+  ;;
+*)
+  echo "usage $0 start|stop|restart"
+esac

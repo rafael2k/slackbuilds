@@ -1,0 +1,4 @@
+# Dependency list to xbindkeys
+#
+# dependency [condition] [version]]
+guile				

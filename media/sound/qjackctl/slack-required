@@ -1,2 +1,4 @@
-jack
-qt
+# Dependency list to qjackctl
+#
+# dependency [condition] [version]]
+jack				

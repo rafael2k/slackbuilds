@@ -1,0 +1,4 @@
+# Dependency list to gnome-menus
+#
+# dependency [condition] [version]]
+glib2		>=		2.16.3

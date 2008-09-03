@@ -1,2 +1,8 @@
-pysqlite
-swig
+# Dependency list to Trac
+#
+# dependency [condition] [version]]
+setuptools				
+pysqlite				
+swig				
+Pygments				
+Genshi				

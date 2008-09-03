@@ -1,1 +1,4 @@
-yasm
+# Dependency list to libx264
+#
+# dependency [condition] [version]]
+yasm				

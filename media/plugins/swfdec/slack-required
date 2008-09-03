@@ -1,3 +1,13 @@
-liboil
-ffmpeg
-libsoup
+# Dependency list to swfdec
+#
+# dependency [condition] [version]]
+liboil				
+ffmpeg				
+libsoup		>=		2.4.0
+glib2		>=		2.16.0
+cairo		>=		1.6.0
+gstreamer				
+gst-ffmpeg				
+gst-plugins-base				
+gst-plugins-good				
+gst-plugins-ugly				

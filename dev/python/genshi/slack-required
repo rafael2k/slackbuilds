@@ -1,0 +1,4 @@
+# Dependency list to Genshi
+#
+# dependency [condition] [version]]
+setuptools				

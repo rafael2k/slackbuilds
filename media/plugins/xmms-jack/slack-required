@@ -1,2 +1,5 @@
-jack
-libsamplerate
+# Dependency list to xmms-jack
+#
+# dependency [condition] [version]]
+xmms				
+jack				

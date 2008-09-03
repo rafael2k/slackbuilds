@@ -1,1 +1,4 @@
-ffmpeg
+# Dependency list to ffmpeg2theora
+#
+# dependency [condition] [version]]
+ffmpeg				

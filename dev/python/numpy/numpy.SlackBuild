@@ -10,12 +10,12 @@
 #  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General
 #  Public License for more details.
 #
-#  You should have received a copy of the GNU General Public License along with
-#  this program; if not, write to the Free Software Foundation, Inc., 59 Temple
-#  Place - Suite 330, Boston, MA 02111-1307, USA
+#  You should have received a copy of the GNU General Public License along
+#  with this program; if not, write to the Free Software Foundation, Inc.,
+#  59 Temple Place - Suite 330, Boston, MA 02111-1307, USA
 #
-# slackbuild for numpy, by Silvio Rhatto
-# requires: python
+# slackbuild for numpy, by Rudson R. Alves
+# requires: python lapack 
 # tested: numpy-1.0.4
 #
 
@@ -33,7 +33,7 @@ PKG_NAME="numpy"
 ARCH=${ARCH:=i486}
 SRC_VERSION=${VERSION:=1.0.4}
 PKG_VERSION="$(echo "$SRC_VERSION" | tr '[[:blank:]-]' '_')"
-BUILD=${BUILD:=1rha}
+BUILD=${BUILD:=1srv}
 SRC_DIR=${SRC_DIR:=$CWD}/$PKG_NAME
 TMP=${TMP:=/tmp}
 PKG=${PKG:=$TMP/package-$PKG_NAME}
@@ -41,7 +41,7 @@ REPOS=${REPOS:=$TMP}
 PREFIX=${PREFIX:=/usr}
 PKG_WORK="$TMP/$SRC_NAME"
 CONF_OPTIONS=${CONF_OPTIONS:=""}
-NUMJOBS=${NUMJOBS:=""}
+NUMJOBS=${NUMJOBS:="-j4"}
 
 # Set system libraries' path and optmization flags based on $ARCH
 LIBDIR="$PREFIX/lib"
@@ -55,8 +55,9 @@ elif [ "$ARCH" = "i686" ]; then
 elif [ "$ARCH" = "s390" ]; then
   SLKCFLAGS="-O2"
 elif [ "$ARCH" = "x86_64" ]; then
-  SLKCFLAGS="-O2"
+  SLKCFLAGS="-O2 -fPIC"
   LIBDIR="$PREFIX/lib64"
+  LDFLAGS="-L/lib64 -L/usr/lib64"
 fi
 
 # Set error codes (used by createpkg)
@@ -83,15 +84,17 @@ if [ ! -s "$SRC_DIR/$SRC" ] || ! gunzip -t "$SRC_DIR/$SRC" 2> /dev/null; then
   wget "$URL" -O "$SRC_DIR/$SRC" || exit $ERROR_WGET
 fi
 
-
 # Untar
 cd "$PKG_WORK"
 tar --no-same-owner --no-same-permissions -xvf "$SRC_DIR/$SRC" || exit $ERROR_TAR
-PKG_SRC=`ls -l | awk '/^d/ { print $8 }'`
+PKG_SRC="$PWD/`ls -l | awk '/^d/ { print $NF }'`"
 cd "$PKG_SRC"
 
-# Build and install package
-python setup.py build install --root=$PKG
+# Compile
+python setup.py build || exit $ERROR_MAKE
+
+# Install
+python setup.py install --prefix=$PKG/usr || exit $ERROR_INSTALL
 
 # Strip binaries
 ( cd "$PKG"
@@ -114,22 +117,22 @@ done
 mkdir -p "$PKG/install" || exit $ERROR_MKDIR
 cat << EODESC > "$PKG/install/slack-desc"
 # HOW TO EDIT THIS FILE:
-# The "handy ruler" below makes it easier to edit a package description.  Line
+# The "handy ruler" below makes it easier to edit a package description. Line
 # up the first '|' above the ':' following the base package name, and the '|'
-# on the right side marks the last column you can put a character in.  You must
+# on the right side marks the last column you can put a character in. You must
 # make exactly 11 lines for the formatting to be correct.  It's also
 # customary to leave one space after the ':'.
 
      |-----handy-ruler--------------------------------------------------------|
-numpy: NumPy: array processing for numbers, strings, records, and objects.
+numpy: numpy by Slack.Sarava
 numpy:
-numpy: NumPy is a general-purpose array-processing package designed to efficiently
-numpy: manipulate large multi-dimensional arrays of arbitrary records without
-numpy: sacrificing too much speed for small multi-dimensional arrays. NumPy is
-numpy: built on the Numeric code base and adds features introduced by numarray as
-numpy: well as an extended C-API and the ability to create arrays of arbitrary
-numpy: type which also makes NumPy suitable for interfacing with general-purpose
-numpy: data-base applications.
+numpy: NumPy is a replacement of Numeric Python that adds the features
+numpy: of numarray.
+numpy:
+numpy:
+numpy:
+numpy:
+numpy:
 numpy:
 numpy:
 EODESC

@@ -1,1 +1,4 @@
-libx264
+# Dependency list to libquicktime
+#
+# dependency [condition] [version]]
+libx264				

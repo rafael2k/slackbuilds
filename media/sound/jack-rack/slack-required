@@ -1,2 +1,5 @@
-jack
-ladspa
+# Dependency list to jack-rack
+#
+# dependency [condition] [version]]
+jack				
+ladspa				

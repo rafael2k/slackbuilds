@@ -1,5 +1,8 @@
-eet
-evas
-ecore
-efreet
-embryo
+# Dependency list to edje
+#
+# dependency [condition] [version]]
+eet				
+evas				
+ecore				
+efreet				
+embryo				

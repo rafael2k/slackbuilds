@@ -1,4 +1,7 @@
-eet
-evas
-ecore
-efreet
+# Dependency list to embryo
+#
+# dependency [condition] [version]]
+eet				
+evas				
+ecore				
+efreet				

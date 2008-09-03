@@ -1,7 +1,10 @@
-eet
-evas
-ecore
-embryo
-edje
-efreet
-imlib2
+# Dependency list to enlightenment
+#
+# dependency [condition] [version]]
+eet				
+evas				
+ecore				
+embryo				
+edje				
+efreet				
+imlib2				

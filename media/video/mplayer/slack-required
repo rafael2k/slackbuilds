@@ -1,14 +1,8 @@
-libmad
-esound
-glib
-libogg
-libvorbis
-libungif
-arts
-audiofile
-sdl
-cdparanoia
-libtheora
-speex
-jack
-libx264
+# Dependency list to MPlayer
+#
+# dependency [condition] [version]]
+speex				
+jack				
+libx264				
+faac				
+faad2				

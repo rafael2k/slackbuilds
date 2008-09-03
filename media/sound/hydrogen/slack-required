@@ -1,1 +1,4 @@
-libsndfile
+# Dependency list to hydrogen
+#
+# dependency [condition] [version]]
+libsndfile				

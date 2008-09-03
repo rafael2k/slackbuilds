@@ -1,0 +1,4 @@
+# Dependency list to gst-plugins-base
+#
+# dependency [condition] [version]]
+gstreamer				

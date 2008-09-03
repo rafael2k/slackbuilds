@@ -1,0 +1,7 @@
+# Dependency list to gazpacho
+#
+# dependency [condition] [version]]
+python				
+gtk+				
+pygtk				
+kiwi				

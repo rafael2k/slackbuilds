@@ -1,0 +1,12 @@
+diff -Naur bitlbee-1.2.1.orig/configure bitlbee-1.2.1/configure
+--- bitlbee-1.2.1.orig/configure	2008-06-09 20:09:06.000000000 -0300
++++ bitlbee-1.2.1/configure	2008-07-15 12:40:40.000000000 -0300
+@@ -340,7 +340,7 @@
+ 
+ echo 'SSL_CLIENT=ssl_'$ssl'.o' >> Makefile.settings
+ 
+-for i in /lib /usr/lib /usr/local/lib; do
++for i in /lib64 /usr/lib64 /usr/local/lib64 /lib /usr/lib /usr/local/lib; do
+ 	if [ -f $i/libresolv.a ]; then
+ 		echo '#define HAVE_RESOLV_A' >> config.h
+ 		echo 'EFLAGS+='$i'/libresolv.a' >> Makefile.settings

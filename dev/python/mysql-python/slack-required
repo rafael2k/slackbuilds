@@ -1,0 +1,6 @@
+# Dependency list to MySQL-python
+#
+# dependency [condition] [version]]
+python				
+Pyrex				
+setuptools				

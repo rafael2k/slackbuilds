@@ -77,11 +77,17 @@ mkdir -p "$REPOS" || exit $ERROR_MKDIR
 mkdir -p "$PKG_WORK" || exit $ERROR_MKDIR
 
 # Get svn source code
-[ "`find "$SRC_DIR/" -name .svn`" != "" ] && SVN_ACTION="update" || SVN_ACTION="checkout"
 cd "$SRC_DIR"
-svn $SVN_ACTION svn://svn.icculus.org/smpeg/trunk $PKG_SRC || exit $ERROR_VCS
-SND_DIR="`ls -l | awk '/^d/ { print $NF }'`"
-cd $SND_DIR
+SND_DIR="`basename svn://svn.icculus.org/smpeg/trunk`"
+
+if [ "`find "$SRC_DIR/" -name .svn`" != "" ] && [ -d "$SRC_DIR/$SND_DIR" ]; then
+  cd $SND_DIR
+  svn update || exit $ERROR_VCS
+else
+  svn checkout svn://svn.icculus.org/smpeg/trunk $SND_DIR || exit $ERROR_VCS
+  cd $SND_DIR
+fi
+
 PKG_VERSION="`svn info | awk '/Last Changed Rev:/ { print $4 }'`_svn"
 
 # Copy svn source

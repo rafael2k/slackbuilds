@@ -1,0 +1,22 @@
+# Dependency list to visual
+#
+# dependency [condition] [version]]
+python				
+numpy				
+gtk				
+atk				
+atkmm				
+sigc++				
+gtkmm				
+gdkmm				
+glib				
+glibmm				
+pango				
+pangomm				
+freetype2				
+gtkglext				
+gtkglextmm				
+cairo				
+cairomm				
+libglade				
+libglademm				

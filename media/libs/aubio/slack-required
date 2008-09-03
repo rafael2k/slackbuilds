@@ -1,0 +1,7 @@
+# Dependency list to aubio
+#
+# dependency [condition] [version]]
+fftw				
+jack				
+swig				
+libsamplerate				

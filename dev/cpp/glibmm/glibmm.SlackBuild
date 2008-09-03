@@ -31,7 +31,7 @@ CWD="$(pwd)"
 SRC_NAME="glibmm"
 PKG_NAME="glibmm"
 ARCH=${ARCH:=i486}
-SRC_VERSION=${VERSION:=2.12.10}
+SRC_VERSION=${VERSION:=2.14.2}
 PKG_VERSION="$(echo "$SRC_VERSION" | tr '[[:blank:]-]' '_')"
 BUILD=${BUILD:=1rha}
 SRC_DIR=${SRC_DIR:=$CWD}/$PKG_NAME
@@ -77,14 +77,14 @@ mkdir -p "$PKG_WORK" || exit $ERROR_MKDIR
 
 # Dowload source if necessary
 SRC="$SRC_NAME-$VERSION.tar.bz2"
-URL="http://ftp.acc.umu.se/pub/GNOME/sources/glibmm/2.12/$SRC"
+URL="http://ftp.acc.umu.se/pub/GNOME/sources/glibmm/2.14/$SRC"
 
 if [ ! -s "$SRC_DIR/$SRC" ] || ! bunzip2 -t "$SRC_DIR/$SRC" 2> /dev/null; then
   wget "$URL" -O "$SRC_DIR/$SRC" || exit $ERROR_WGET
 fi
 
 MD5SUM_SRC="$(md5sum "$SRC_DIR/$SRC" | cut -d " " -f 1)"
-MD5SUM_URL="85830693d669f0d86d6e64db3b57f581"
+MD5SUM_URL=58b4fdc97738795a19b1f5ad37f186b4
 
 [ "$MD5SUM_SRC" == "$MD5SUM_URL" ] || exit $ERROR_MD5
 

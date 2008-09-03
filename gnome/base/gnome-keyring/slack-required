@@ -1,0 +1,5 @@
+# Dependency list to gnome-keyring
+#
+# dependency [condition] [version]]
+GConf		>=		2.20.1
+libtasn1		>=		1.4

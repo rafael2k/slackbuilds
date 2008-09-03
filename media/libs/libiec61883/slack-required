@@ -1,1 +1,4 @@
-libraw1394
+# Dependency list to libiec61883
+#
+# dependency [condition] [version]]
+libraw1394				

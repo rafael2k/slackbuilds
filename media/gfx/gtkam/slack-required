@@ -1,2 +1,5 @@
-libgphoto2
-libexif-gtk
+# Dependency list to gtkam
+#
+# dependency [condition] [version]]
+libgphoto2				
+libexif-gtk				

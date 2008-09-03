@@ -1,1 +1,4 @@
-swfdec
+# Dependency list to swfdec-mozilla
+#
+# dependency [condition] [version]]
+swfdec				

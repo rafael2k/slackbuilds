@@ -1,0 +1,4 @@
+# Dependency list to enchant
+#
+# dependency [condition] [version]]
+aspell				

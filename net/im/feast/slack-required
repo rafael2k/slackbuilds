@@ -1,2 +1,5 @@
-libiconv
-silc-toolkit
+# Dependency list to feast
+#
+# dependency [condition] [version]]
+libiconv				
+silc-toolkit				

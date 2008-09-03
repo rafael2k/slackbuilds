@@ -1,1 +1,4 @@
-eet
+# Dependency list to evas
+#
+# dependency [condition] [version]]
+eet				

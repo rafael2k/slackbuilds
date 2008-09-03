@@ -1,0 +1,5 @@
+# Dependency list to gst-plugins-ugly
+#
+# dependency [condition] [version]]
+gstreamer				
+gst-plugins-base				

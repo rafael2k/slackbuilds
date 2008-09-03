@@ -1,2 +1,5 @@
-eet
-evas
+# Dependency list to ecore
+#
+# dependency [condition] [version]]
+eet				
+evas				
