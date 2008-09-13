@@ -24,7 +24,7 @@
 #   wget = wget program
 #   wget_options = wget command options
 #   url = remote data url
-#   bandwidthlimit = set a badnwidth limit in kbps (remote source only)
+#   bandwidthlimit = set a bandwidth limit in kbps (remote source only)
 #
 #   [destination]
 #   folder = local folder
