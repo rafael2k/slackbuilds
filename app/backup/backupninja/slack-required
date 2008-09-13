@@ -1,0 +1,4 @@
+# Dependency list to backupninja
+#
+# dependency [condition] [version]]
+perl-dbd-mysql				
