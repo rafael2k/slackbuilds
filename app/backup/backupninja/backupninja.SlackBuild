@@ -188,6 +188,48 @@ backupninja:
 backupninja:
 EODESC
 
+# Add a post-installation script (doinst.sh)
+cat << EOSCRIPT > "$PKG/install/doinst.sh"
+config() {
+  NEW="\$1"
+  OLD="\$(dirname \$NEW)/\$(basename \$NEW .new)"
+  OLD="\$(dirname \$NEW)/\$(basename \$OLD .sample)"
+  OLD="\$(dirname \$NEW)/\$(basename \$OLD .dist)"
+
+  # If there's no config file by that name, mv it over:
+  if [ ! -r \$OLD ]; then
+    mv \$NEW \$OLD
+  elif [ "\$(cat \$OLD | md5sum)" = "\$(cat \$NEW | md5sum)" ]; then
+    # toss the redundant copy
+    rm \$NEW
+  fi
+  # Otherwise, we leave the .new copy for the admin to consider...
+}
+
+mkgroup() {
+  GROUP="\$1"
+  if ! grep -qe "^\$GROUP:" etc/group; then
+    echo Creating group \$GROUP...
+    chroot . /usr/sbin/groupadd \$GROUP
+  fi
+}
+
+mkuser() {
+  USER="\$1"
+  if [ ! -z "\$2" ]; then
+    GROUP="\$2"
+  else
+    GROUP="\$USER"
+  fi
+  if ! grep -qe "^\$USER:" etc/passwd; then
+    echo Creating user \$USER...
+    chroot . /usr/sbin/useradd \$USER -g \$GROUP
+  fi
+}
+
+config /etc/backupninja.conf.new
+EOSCRIPT
+
 # Build the package
 cd "$PKG"
 makepkg -l y -c n "$REPOS/$PKG_NAME-$PKG_VERSION-$ARCH-$BUILD.tgz" || exit $ERROR_MKPKG
