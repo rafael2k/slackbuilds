@@ -78,7 +78,7 @@ mkdir -p "$PKG_WORK" || exit $ERROR_MKDIR
 
 # Dowload source if necessary
 SRC="$SRC_NAME-$VERSION.tar.gz"
-URL="http://dev.riseup.net/backupninja/download/$SRC"
+URL="http://riseuplabs.org/backupninja/download/$SRC"
 
 if [ ! -s "$SRC_DIR/$SRC" ] || ! gunzip -t "$SRC_DIR/$SRC" 2> /dev/null; then
   wget "$URL" -O "$SRC_DIR/$SRC" || exit $ERROR_WGET
