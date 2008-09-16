@@ -37,12 +37,10 @@ fi
 CWD="`pwd`"
 
 PACKAGE="kernel-ratten"
-PATCHSET="rt"
 ARCH="x86_64"
 BUILD=${BUILD:=1rha}
 KERNEL_VERSION=${KERNEL_VERSION:=2.6.26}
 EXTRAVERSION=${EXTRAVERSION:=5}
-REALTIME_PATCH=${REALTIME_PATCH:=rt-lsm-0.8.7-kernel.patch}
 TMP=${TMP:=/tmp}
 SRC_DIR=${SRC:=$CWD}
 REPOS=${REPOS:=$TMP}
@@ -88,12 +86,11 @@ cd linux-$KERNEL_VERSION
 
 if [ ! -z "$EXTRAVERSION" ] && [ ! -z "$PATCHSET" ]; then
   sed -e "s/^EXTRAVERSION =.*$/EXTRAVERSION = \.$EXTRAVERSION-$PATCHSET/" Makefile > Makefile.tmp
+  mv Makefile.tmp Makefile
 elif [ ! -z "$PATCHSET" ]; then
   sed -e "s/^EXTRAVERSION =*$/EXTRAVERSION = -$PATCHSET/" Makefile > Makefile.tmp
+  mv Makefile.tmp Makefile
 fi
-
-mv Makefile.tmp Makefile
-patch -p1 < $CWD/$REALTIME_PATCH || exit $ERROR_PATCH
 
 make oldconfig || exit $ERROR_MAKE
 time make || exit $ERROR_MAKE
