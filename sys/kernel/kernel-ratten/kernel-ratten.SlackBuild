@@ -37,13 +37,11 @@ fi
 CWD="`pwd`"
 
 PACKAGE="kernel-ratten"
-PATCHSET="bs-rt"
+PATCHSET="rt"
 ARCH="x86_64"
-SPLASH="/etc/bootsplash/themes/Slack-Black-Tux/config/bootsplash-1024x768.cfg"
 BUILD=${BUILD:=1rha}
-KERNEL_VERSION=${KERNEL_VERSION:=2.6.18}
-EXTRAVERSION=${EXTRAVERSION:=1}
-PATCH_VERSION=${PATCH_VERSION:=3.1.6-2.6.15}
+KERNEL_VERSION=${KERNEL_VERSION:=2.6.26}
+EXTRAVERSION=${EXTRAVERSION:=5}
 REALTIME_PATCH=${REALTIME_PATCH:=rt-lsm-0.8.7-kernel.patch}
 TMP=${TMP:=/tmp}
 SRC_DIR=${SRC:=$CWD}
@@ -55,36 +53,21 @@ ERROR_MD5=34;       ERROR_CONF=35;      ERROR_HELP=36
 ERROR_TAR=37;       ERROR_MKPKG=38;     ERROR_GPG=39
 ERROR_PATCH=40
 
-if [ ! -f "$SPLASH" ]; then
-  echo error: file not found: $SPLASH
-  exit 1
-fi
-
 if [ ! -z "$EXTRAVERSION" ]; then
   KERNEL_VERSION="$KERNEL_VERSION.$EXTRAVERSION"
 fi
 
 RTOOL="wget"
 KERNEL="linux-$KERNEL_VERSION.tar.bz2"
-PATCH="bootsplash-$PATCH_VERSION.diff"
 KERNEL_URL="http://www.kernel.org/pub/linux/kernel/v2.6/$KERNEL"
-PATCH_URL="ftp://ftp.openbios.org/pub/bootsplash/kernel/$PATCH"
 
 SRC_DIR="$SRC_DIR/kernel"
 mkdir -p $SRC_DIR
 
-if [ "$RTOOL" == "wget" ]; then
-
-  if [ ! -f "$SRC_DIR/$KERNEL" ]; then
-    rm -f $SRC_DIR/$KERNEL.sign
-    wget "$KERNEL_URL" -O "$SRC_DIR/$KERNEL" || exit $ERROR_WGET
-    wget "$KERNEL_URL.sign" -O "$SRC_DIR/$KERNEL.sign" || exit $ERROR_WGET
-  fi
-
-  if [ ! -f "$SRC_DIR/$PATCH" ]; then
-    wget "$PATCH_URL" -O "$SRC_DIR/$PATCH" || exit $ERROR_WGET
-  fi
-
+if [ ! -f "$SRC_DIR/$KERNEL" ]; then
+  rm -f $SRC_DIR/$KERNEL.sign
+  wget "$KERNEL_URL" -O "$SRC_DIR/$KERNEL" || exit $ERROR_WGET
+  wget "$KERNEL_URL.sign" -O "$SRC_DIR/$KERNEL.sign" || exit $ERROR_WGET
 fi
 
 TMP="$TMP/$PACKAGE"
@@ -111,7 +94,6 @@ fi
 
 mv Makefile.tmp Makefile
 patch -p1 < $CWD/$REALTIME_PATCH || exit $ERROR_PATCH
-patch -p1 < $SRC_DIR/$PATCH || exit $ERROR_TAR
 
 make oldconfig || exit $ERROR_MAKE
 time make || exit $ERROR_MAKE
@@ -164,7 +146,6 @@ for file in COPYING CREDITS MAINTAINERS README REPORTING-BUGS; do
 done
 
 mkinitrd -c -k $KERNEL_VERSION -o $PKG/boot/initrd.gz
-splash -s -f $SPLASH > $PKG/boot/initrd.gz 
 
 cd $PKG
 
