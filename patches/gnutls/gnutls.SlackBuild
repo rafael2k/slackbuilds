@@ -16,7 +16,7 @@
 #
 # slackbuild for gnutls, by Silvio Rhatto
 # requires:  
-# tested: gnutls-2.4.1
+# tested: gnutls-2.6.1
 #
 
 # Look for slackbuildrc
@@ -31,7 +31,7 @@ CWD="$(pwd)"
 SRC_NAME="gnutls"
 PKG_NAME="gnutls"
 ARCH=${ARCH:=i486}
-SRC_VERSION=${VERSION:=2.4.1}
+SRC_VERSION=${VERSION:=2.6.1}
 PKG_VERSION="$(echo "$SRC_VERSION" | tr '[[:blank:]-]' '_')"
 BUILD=${BUILD:=1rha}
 SRC_DIR=${SRC_DIR:=$CWD}/$PKG_NAME
