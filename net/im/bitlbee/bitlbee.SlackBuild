@@ -16,7 +16,7 @@
 #
 # slackbuild for bitlbee, by Silvio Rhatto
 # requires: gnutls 
-# tested: bitlbee-1.2.1
+# tested: bitlbee-1.2.3
 #
 
 # Look for slackbuildrc
@@ -31,7 +31,7 @@ CWD="$(pwd)"
 SRC_NAME="bitlbee"
 PKG_NAME="bitlbee"
 ARCH=${ARCH:=i486}
-SRC_VERSION=${VERSION:=1.2.1}
+SRC_VERSION=${VERSION:=1.2.3}
 PKG_VERSION="$(echo "$SRC_VERSION" | tr '[[:blank:]-]' '_')"
 BUILD=${BUILD:=1rha}
 SRC_DIR=${SRC_DIR:=$CWD}/$PKG_NAME
@@ -185,6 +185,9 @@ cat << EOSCRIPT > "$PKG/install/doinst.sh"
 config() {
   NEW="\$1"
   OLD="\$(dirname \$NEW)/\$(basename \$NEW .new)"
+  OLD="\$(dirname \$NEW)/\$(basename \$OLD .sample)"
+  OLD="\$(dirname \$NEW)/\$(basename \$OLD .dist)"
+
   # If there's no config file by that name, mv it over:
   if [ ! -r \$OLD ]; then
     mv \$NEW \$OLD
