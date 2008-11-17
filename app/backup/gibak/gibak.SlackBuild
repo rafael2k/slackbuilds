@@ -96,6 +96,11 @@ cat OMakefile >> OMakefile.new || exit $ERROR_MAKE
 mv OMakefile.new OMakefile || exit $ERROR_MAKE
 omake || exit $ERROR_MAKE
 
+# Install
+mkdir -p $PKG/usr/bin || exit $ERROR_INSTALL
+cp find-git-files find-git-repos gibak ometastore $PKG/usr/bin || exit $ERROR_INSTALL
+chmod 755 $PKG/usr/bin/* || exit $ERROR_INSTALL
+
 # Strip binaries
 ( cd "$PKG"
   find . | xargs file | grep "executable" | grep ELF | cut -f 1 -d : | \
