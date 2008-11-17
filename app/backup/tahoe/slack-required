@@ -1,11 +1,11 @@
 # Dependency list to tahoe
 #
 # dependency [condition] [version]]
-setuptools				
-Twisted				
+zfec				
 foolscap				
 simplejson				
 pycryptopp				
 Nevow				
 zope.interface				
+Twisted				
 setuptools				
