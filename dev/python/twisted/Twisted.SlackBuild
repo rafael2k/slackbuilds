@@ -16,7 +16,7 @@
 #
 # slackbuild for Twisted, by Rudson R. Alves
 # requires: glibc-solibs python zope.interface 
-# tested: Twisted-2.5.0
+# tested: Twisted-8.1.0
 #
 
 # Look for slackbuildrc
@@ -31,7 +31,7 @@ CWD="$(pwd)"
 SRC_NAME="Twisted"
 PKG_NAME="Twisted"
 ARCH=${ARCH:=i486}
-SRC_VERSION=${VERSION:=2.5.0}
+SRC_VERSION=${VERSION:=8.1.0}
 PKG_VERSION="$(echo "$SRC_VERSION" | tr '[[:blank:]-]' '_')"
 BUILD=${BUILD:=1rra}
 SRC_DIR=${SRC_DIR:=$CWD}/$PKG_NAME
@@ -78,7 +78,7 @@ mkdir -p "$PKG_WORK" || exit $ERROR_MKDIR
 
 # Dowload source if necessary
 SRC="$SRC_NAME-$VERSION.tar.bz2"
-URL="http://tmrc.mit.edu/mirror/twisted/Twisted/2.5/$SRC"
+URL="http://tmrc.mit.edu/mirror/twisted/Twisted/8.1/$SRC"
 
 if [ ! -s "$SRC_DIR/$SRC" ] || ! bunzip2 -t "$SRC_DIR/$SRC" 2> /dev/null; then
   wget "$URL" -O "$SRC_DIR/$SRC" || exit $ERROR_WGET
