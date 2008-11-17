@@ -121,17 +121,17 @@ cat << EODESC > "$PKG/install/slack-desc"
 # customary to leave one space after the ':'.
 
        |-----handy-ruler------------------------------------------------------|
-twisted: twisted by Slack.Sarava
-twisted:
-twisted: Twisted is an event-driven networking framework written in Python and
-twisted: licensed under the MIT license. See the FAQ for commonly asked
-twisted: questions about Twisted. Twisted projects variously support TCP, UDP,
-twisted: SSL/TLS, multicast, Unix sockets, a large number of protocols
-twisted: (including HTTP, NNTP, IMAP, SSH, IRC, FTP, and others), and much more
-twisted:
-twisted:
-twisted:
-twisted:
+Twisted: Twisted by Slack.Sarava
+Twisted:
+Twisted: Twisted is an event-driven networking framework written in Python and
+Twisted: licensed under the MIT license. See the FAQ for commonly asked
+Twisted: questions about Twisted. Twisted projects variously support TCP, UDP,
+Twisted: SSL/TLS, multicast, Unix sockets, a large number of protocols
+Twisted: (including HTTP, NNTP, IMAP, SSH, IRC, FTP, and others), and much more
+Twisted:
+Twisted:
+Twisted:
+Twisted:
 EODESC
 
 # Build the package
