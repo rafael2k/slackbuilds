@@ -1,0 +1,4 @@
+# Dependency list to Nevow
+#
+# dependency [condition] [version]]
+Twisted				
