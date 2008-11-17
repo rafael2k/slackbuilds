@@ -3,3 +3,4 @@
 # dependency [condition] [version]]
 glibc-solibs				
 python				
+zope.interface				
