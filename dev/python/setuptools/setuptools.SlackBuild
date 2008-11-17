@@ -16,7 +16,7 @@
 #
 # slackbuild for setuptools, by Silvio Rhatto
 # requires:  
-# tested: setuptools-0.6c8
+# tested: setuptools-0.6c9
 #
 
 # Look for slackbuildrc
@@ -31,7 +31,7 @@ CWD="$(pwd)"
 SRC_NAME="setuptools"
 PKG_NAME="setuptools"
 ARCH=${ARCH:=i486}
-SRC_VERSION=${VERSION:=0.6c8}
+SRC_VERSION=${VERSION:=0.6c9}
 PKG_VERSION="$(echo "$SRC_VERSION" | tr '[[:blank:]-]' '_')"
 BUILD=${BUILD:=1rha}
 SRC_DIR=${SRC_DIR:=$CWD}/$PKG_NAME
@@ -91,7 +91,7 @@ PKG_SRC="$PWD/`ls -l | awk '/^d/ { print $NF }'`"
 cd "$PKG_SRC"
 
 # Build and install package
-python setup.py build install --root=$PKG
+python setup.py build install --root=$PKG || exit $ERROR_INSTALL
 
 # Strip binaries
 ( cd "$PKG"
