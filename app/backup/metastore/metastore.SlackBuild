@@ -28,7 +28,7 @@ fi
 
 # Set variables
 CWD="$(pwd)"
-SRC_NAME=""
+SRC_NAME="metastore"
 PKG_NAME="metastore"
 ARCH=${ARCH:=i486}
 SRC_VERSION=${VERSION:=}
