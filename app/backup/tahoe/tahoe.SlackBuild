@@ -91,8 +91,11 @@ PKG_SRC="$PWD/`ls -l | awk '/^d/ { print $NF }'`"
 cd "$PKG_SRC"
 
 # Build and install package
-make || exit $ERROR_MAKE
-python setup.py build install --root=$PKG || exit $ERROR_INSTALL
+#make || exit $ERROR_MAKE
+#python setup.py build install --root=$PKG || exit $ERROR_INSTALL
+
+# Install
+make install DESTDIR="$PKG" || exit $ERROR_INSTALL
 
 # Strip binaries
 ( cd "$PKG"
