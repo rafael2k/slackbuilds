@@ -3,3 +3,9 @@
 # dependency [condition] [version]]
 setuptools				
 Twisted				
+foolscap				
+simplejson				
+pycryptopp				
+Nevow				
+zope.interface				
+setuptools				
