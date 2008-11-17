@@ -123,11 +123,11 @@ cat << EODESC > "$PKG/install/slack-desc"
      |-----handy-ruler--------------------------------------------------------|
 Nevow: Nevow
 Nevow: 
-Nevow:
-Nevow:
-Nevow:
-Nevow: 
-Nevow: 
+Nevow: Nevow - Pronounced as the French "nouveau", or "noo-voh", Nevow is
+Nevow: a web application construction kit written in Python. It is designed
+Nevow: to allow the programmer to express as much of the view logic as
+Nevow: desired in Python, and includes a pure Python XML expression syntax
+Nevow: named stan to facilitate this.
 Nevow: 
 Nevow: 
 Nevow: 
