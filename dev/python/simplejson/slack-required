@@ -1,0 +1,4 @@
+# Dependency list to simplejson
+#
+# dependency [condition] [version]]
+setuptools				
