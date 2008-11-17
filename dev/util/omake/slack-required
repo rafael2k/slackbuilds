@@ -1,0 +1,4 @@
+# Dependency list to omake
+#
+# dependency [condition] [version]]
+ocaml				
