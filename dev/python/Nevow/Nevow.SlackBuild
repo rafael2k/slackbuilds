@@ -78,7 +78,7 @@ mkdir -p "$PKG_WORK" || exit $ERROR_MKDIR
 
 # Dowload source if necessary
 SRC="$SRC_NAME-$VERSION.tar.gz?format=raw"
-URL="http://divmod.org/trac/attachment/wiki/SoftwareReleases/Nevow-0.9.31.tar.gz?format=raw/$SRC"
+URL="http://divmod.org/trac/attachment/wiki/SoftwareReleases/$SRC"
 
 if [ ! -s "$SRC_DIR/$SRC" ] || ! gunzip -t "$SRC_DIR/$SRC" 2> /dev/null; then
   wget "$URL" -O "$SRC_DIR/$SRC" || exit $ERROR_WGET
