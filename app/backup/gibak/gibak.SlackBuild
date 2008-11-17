@@ -92,7 +92,7 @@ cd "$PKG_SRC"
 
 # Build and install package
 echo "INCLUDES += $LIBDIR" > OMakefile.new || exit $ERROR_MAKE
-cat OMakefile > OMakefile.new || exit $ERROR_MAKE
+cat OMakefile >> OMakefile.new || exit $ERROR_MAKE
 mv OMakefile.new OMakefile || exit $ERROR_MAKE
 omake || exit $ERROR_MAKE
 
