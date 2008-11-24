@@ -91,7 +91,7 @@ PKG_SRC="$PWD/`ls -l | awk '/^d/ { print $NF }'`"
 cd "$PKG_SRC"
 
 # Build and install package
-./install.rb --destdir=$PKG || exit $ERROR_INSTALL
+ruby install.rb --destdir=$PKG || exit $ERROR_INSTALL
 
 # Strip binaries
 ( cd "$PKG"
