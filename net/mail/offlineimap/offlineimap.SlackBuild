@@ -16,7 +16,7 @@
 #
 # slackbuild for offlineimap, by Silvio Rhatto
 # requires:  
-# tested: offlineimap-6.0.2
+# tested: offlineimap-6.0.3
 #
 
 # Look for slackbuildrc
@@ -31,7 +31,7 @@ CWD="$(pwd)"
 SRC_NAME="offlineimap"
 PKG_NAME="offlineimap"
 ARCH=${ARCH:=i486}
-SRC_VERSION=${VERSION:=6.0.2}
+SRC_VERSION=${VERSION:=6.0.3}
 PKG_VERSION="$(echo "$SRC_VERSION" | tr '[[:blank:]-]' '_')"
 BUILD=${BUILD:=1rha}
 SRC_DIR=${SRC_DIR:=$CWD}/$PKG_NAME
@@ -77,7 +77,7 @@ mkdir -p "$REPOS" || exit $ERROR_MKDIR
 mkdir -p "$PKG_WORK" || exit $ERROR_MKDIR
 
 # Dowload source if necessary
-SRC="241?attachment_id=332"
+SRC="242?attachment_id=334"
 URL="http://software.complete.org/software/versions/download/$SRC"
 
 if [ ! -s "$SRC_DIR/$SRC" ] || ! gunzip -t "$SRC_DIR/$SRC" 2> /dev/null; then
