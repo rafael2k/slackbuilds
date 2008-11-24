@@ -134,12 +134,12 @@ fi
 make $NUMJOBS || exit $ERROR_MAKE
 
 # Install
-mkdir -p $PKG
-mkdir -p $PKG/usr/sbin $PKG/var/spool/anacron $PKG/usr/man/man5 $PKG/usr/man/man8
+mkdir -p $PKG/usr/sbin $PKG/var/spool/anacron $PKG/usr/man/man5 $PKG/usr/man/man8 $PKG/etc
 
 cp anacron $PKG/usr/sbin
 cp anacrontab.5 $PKG/usr/man/man5
 cp anacron.8 $PKG/usr/man/man8
+cp $CWD/anacrontab.new $PKG/etc
 
 gzip $PKG/usr/man/man5/anacrontab.5
 gzip $PKG/usr/man/man8/anacron.8
@@ -184,6 +184,48 @@ anacron: commands are run at the specified intervals as closely as
 anacron: machine-uptime permits.
 anacron:
 EODESC
+
+# Add a post-installation script (doinst.sh)
+cat << EOSCRIPT > "$PKG/install/doinst.sh"
+config() {
+  NEW="\$1"
+  OLD="\$(dirname \$NEW)/\$(basename \$NEW .new)"
+  OLD="\$(dirname \$NEW)/\$(basename \$OLD .sample)"
+  OLD="\$(dirname \$NEW)/\$(basename \$OLD .dist)"
+
+  # If there's no config file by that name, mv it over:
+  if [ ! -r \$OLD ]; then
+    mv \$NEW \$OLD
+  elif [ "\$(cat \$OLD | md5sum)" = "\$(cat \$NEW | md5sum)" ]; then
+    # toss the redundant copy
+    rm \$NEW
+  fi
+  # Otherwise, we leave the .new copy for the admin to consider...
+}
+
+mkgroup() {
+  GROUP="\$1"
+  if ! grep -qe "^\$GROUP:" etc/group; then
+    echo Creating group \$GROUP...
+    chroot . /usr/sbin/groupadd \$GROUP
+  fi
+}
+
+mkuser() {
+  USER="\$1"
+  if [ ! -z "\$2" ]; then
+    GROUP="\$2"
+  else
+    GROUP="\$USER"
+  fi
+  if ! grep -qe "^\$USER:" etc/passwd; then
+    echo Creating user \$USER...
+    chroot . /usr/sbin/useradd \$USER -g \$GROUP
+  fi
+}
+
+config etc/anacrontab.new
+EOSCRIPT
 
 # Build the package
 cd "$PKG"
