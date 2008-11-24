@@ -77,8 +77,8 @@ mkdir -p "$REPOS" || exit $ERROR_MKDIR
 mkdir -p "$PKG_WORK" || exit $ERROR_MKDIR
 
 # Dowload source if necessary
-SRC="242?attachment_id=334"
-URL="http://software.complete.org/software/versions/download/$SRC"
+SRC="$SRC_NAME"_"$SRC_VERSION.tar.EXT"
+URL="http://ftp.de.debian.org/debian/pool/main/o/offlineimap/$SRC"
 
 if [ ! -s "$SRC_DIR/$SRC" ] || ! gunzip -t "$SRC_DIR/$SRC" 2> /dev/null; then
   wget "$URL" -O "$SRC_DIR/$SRC" || exit $ERROR_WGET
