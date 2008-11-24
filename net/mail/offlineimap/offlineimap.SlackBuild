@@ -77,7 +77,7 @@ mkdir -p "$REPOS" || exit $ERROR_MKDIR
 mkdir -p "$PKG_WORK" || exit $ERROR_MKDIR
 
 # Dowload source if necessary
-SRC="$SRC_NAME"_"$SRC_VERSION.tar.EXT"
+SRC="$SRC_NAME"_"$SRC_VERSION.tar.gz"
 URL="http://ftp.de.debian.org/debian/pool/main/o/offlineimap/$SRC"
 
 if [ ! -s "$SRC_DIR/$SRC" ] || ! gunzip -t "$SRC_DIR/$SRC" 2> /dev/null; then
