@@ -16,7 +16,7 @@
 #
 # slackbuild for imlib2, by Alexandre Vieira de Souza
 # requires:  
-# tested: imlib2-1.4.1
+# tested: imlib2-1.4.2
 #
 
 # Look for slackbuildrc
@@ -31,7 +31,7 @@ CWD="$(pwd)"
 SRC_NAME="imlib2"
 PKG_NAME="imlib2"
 ARCH=${ARCH:=i486}
-SRC_VERSION=${VERSION:=1.4.1}
+SRC_VERSION=${VERSION:=1.4.2}
 PKG_VERSION="$(echo "$SRC_VERSION" | tr '[[:blank:]-]' '_')"
 BUILD=${BUILD:=1avs}
 SRC_DIR=${SRC_DIR:=$CWD}/$PKG_NAME
@@ -78,7 +78,7 @@ mkdir -p "$PKG_WORK" || exit $ERROR_MKDIR
 
 # Dowload source if necessary
 SRC="$SRC_NAME-$VERSION.tar.gz"
-URL="http://prdownloads.sourceforge.net/enlightenment/$SRC"
+URL="http://downloads.sourceforge.net/enlightenment/$SRC"
 
 if [ ! -s "$SRC_DIR/$SRC" ] || ! gunzip -t "$SRC_DIR/$SRC" 2> /dev/null; then
   wget "$URL" -O "$SRC_DIR/$SRC" || exit $ERROR_WGET
