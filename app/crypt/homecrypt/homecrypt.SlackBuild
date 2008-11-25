@@ -1,0 +1,109 @@
+#!/bin/bash
+#
+#  homecrypt.SlackBuild is free software; you can redistribute
+#  it and/or modify it under the terms of the GNU General Public License as
+#  published by the Free Software Foundation; either version 2 of the License,
+#  or any later version.
+#
+#  homecrypt.SlackBuild is distributed in the hope that it will
+#  be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General
+#  Public License for more details.
+#
+#  You should have received a copy of the GNU General Public License along
+#  with this program; if not, write to the Free Software Foundation, Inc.,
+#  59 Temple Place - Suite 330, Boston, MA 02111-1307, USA
+#
+# slackbuild for homecrypt, by Silvio Rhatto
+# requires:  
+# tested: homecrypt-svn_version
+#
+
+# Look for slackbuildrc
+if [ -f ~/.slackbuildrc ]; then
+  source ~/.slackbuildrc
+elif [ -f /etc/slackbuildrc ]; then
+  source /etc/slackbuildrc
+fi
+
+# Set variables
+CWD="$(pwd)"
+SRC_NAME="homecrypt"
+PKG_NAME="homecrypt"
+ARCH="noarch"
+SRC_VERSION=${VERSION:=svn_version}
+PKG_VERSION="$(echo "$SRC_VERSION" | tr '[[:blank:]-]' '_')"
+BUILD=${BUILD:=1rha}
+SRC_DIR=${SRC_DIR:=$CWD}/$PKG_NAME
+TMP=${TMP:=/tmp}
+PKG=${PKG:=$TMP/package-$PKG_NAME}
+REPOS=${REPOS:=$TMP}
+PREFIX=${PREFIX:=/usr}
+PKG_WORK="$TMP/$SRC_NAME"
+CONF_OPTIONS=${CONF_OPTIONS:=""}
+NUMJOBS=${NUMJOBS:=""}
+
+# Set system libraries' path and optmization flags based on $ARCH
+LIBDIR="$PREFIX/lib"
+
+if [ "$ARCH" = "i386" ]; then
+  SLKCFLAGS="-O2 -march=i386 -mcpu=i686"
+elif [ "$ARCH" = "i486" ]; then
+  SLKCFLAGS="-O2 -march=i486 -mcpu=i686"
+elif [ "$ARCH" = "i686" ]; then
+  SLKCFLAGS="-O2 -march=i686"
+elif [ "$ARCH" = "s390" ]; then
+  SLKCFLAGS="-O2"
+elif [ "$ARCH" = "x86_64" ]; then
+  SLKCFLAGS="-O2 -fPIC"
+  LIBDIR="$PREFIX/lib64"
+  LDFLAGS="-L/lib64 -L/usr/lib64"
+fi
+
+# Set error codes (used by createpkg)
+ERROR_WGET=31;      ERROR_MAKE=32;      ERROR_INSTALL=33
+ERROR_MD5=34;       ERROR_CONF=35;      ERROR_HELP=36
+ERROR_TAR=37;       ERROR_MKPKG=38;     ERROR_GPG=39
+ERROR_PATCH=40;     ERROR_VCS=41;       ERROR_MKDIR=42
+
+# Clean up any leftovers of previous builds
+rm -rf "$PKG_WORK" 2> /dev/null
+rm -rf "$PKG" 2> /dev/null
+
+# Create directories if necessary
+mkdir -p "$SRC_DIR" || exit $ERROR_MKDIR
+mkdir -p "$PKG" || exit $ERROR_MKDIR
+mkdir -p "$REPOS" || exit $ERROR_MKDIR
+mkdir -p "$PKG_WORK" || exit $ERROR_MKDIR
+
+# Get svn source code
+cd "$SRC_DIR"
+SND_DIR="`basename http://svn.sarava.org/homecrypt/`"
+
+if [ "`find "$SRC_DIR/" -name .svn`" != "" ] && [ -d "$SRC_DIR/$SND_DIR" ]; then
+  cd $SND_DIR
+  svn update || exit $ERROR_VCS
+else
+  svn checkout http://svn.sarava.org/homecrypt/ $SND_DIR || exit $ERROR_VCS
+  cd $SND_DIR
+fi
+
+PKG_VERSION="`svn info | awk '/Last Changed Rev:/ { print $4 }'`_svn"
+
+# Copy svn source
+cd "$PKG_WORK"
+cp -a $SRC_DIR/* .
+PKG_SRC="$PWD/$SND_DIR"
+cd "$PKG_SRC"
+
+# Install
+make install DESTDIR="$PKG" || exit $ERROR_INSTALL
+
+# Build the package
+cd "$PKG"
+makepkg -l y -c n "$REPOS/$PKG_NAME-$PKG_VERSION-$ARCH-$BUILD.tgz" || exit $ERROR_MKPKG
+
+# Delete source and build directories if requested
+if [ "$CLEANUP" == "yes" ]; then
+  rm -rf "$PKG_WORK" "$PKG"
+fi
