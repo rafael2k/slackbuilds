@@ -96,8 +96,8 @@ cp -a $SRC_DIR/* .
 PKG_SRC="$PWD/$SND_DIR"
 cd "$PKG_SRC"
 
-# Install
-make install DESTDIR="$PKG" || exit $ERROR_INSTALL
+# Compile
+./homecrypt.SlackBuild || exit $ERROR_MAKE
 
 # Build the package
 cd "$PKG"
