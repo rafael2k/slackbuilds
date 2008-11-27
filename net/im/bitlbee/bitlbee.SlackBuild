@@ -181,6 +181,7 @@ for config_file in etc/bitlbee/bitlbee.conf; do
 done
 
 # Add a post-installation script (doinst.sh)
+mkdir -p "$PKG/install" || exit $ERROR_MKDIR
 cat << EOSCRIPT > "$PKG/install/doinst.sh"
 config() {
   NEW="\$1"
@@ -222,6 +223,12 @@ mkuser() {
 config etc/bitlbee/bitlbee.conf.new
 EOSCRIPT
 
+# Copy slack-required
+mkdir -p "$PKG/install" || exit $ERROR_MKDIR
+if [ -f "$CWD/slack-required" ]; then
+  cp $CWD/slack-required $PKG/install
+fi
+
 # Build the package
 mkdir -p $PKG/etc/bitlbee
 cp bitlbee.conf $PKG/etc/bitlbee/bitlbee.conf.new
@@ -229,6 +236,6 @@ cd "$PKG"
 makepkg -l y -c n "$REPOS/$PKG_NAME-$PKG_VERSION-$ARCH-$BUILD.tgz" || exit $ERROR_MKPKG
 
 # Delete source and build directories if requested
-if [ "$CLEANUP" == "yes" ]; then
+if [ "$CLEANUP" == "yes" ] || [ "$1" = "--cleanup" ]; then
   rm -rf "$PKG_WORK" "$PKG"
 fi

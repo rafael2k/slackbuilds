@@ -103,10 +103,16 @@ make $NUMJOBS || exit $ERROR_MAKE
 strip theorur
 make make_pkg
 
+# Copy slack-required
+mkdir -p "$PKG/install" || exit $ERROR_MKDIR
+if [ -f "$CWD/slack-required" ]; then
+  cp $CWD/slack-required $PKG/install
+fi
+
 # Build the package
 mv *-1rd.tgz $REPOS/$PKG_NAME-$PKG_VERSION-$ARCH-$BUILD.tgz || exit $ERROR_MKPKG
 
 # Delete source and build directories if requested
-if [ "$CLEANUP" == "yes" ]; then
+if [ "$CLEANUP" == "yes" ] || [ "$1" = "--cleanup" ]; then
   rm -rf "$PKG_WORK" "$PKG"
 fi
