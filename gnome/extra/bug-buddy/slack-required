@@ -1,0 +1,8 @@
+# Dependency list to bug-buddy
+#
+# dependency [condition] [version]]
+gnome-menus		>=		2.22.0
+gnome-desktop		>=		2.22.0
+evolution-data-server		>=		2.22.0
+libgtop		>=		2.22.0
+libelf				

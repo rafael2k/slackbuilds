@@ -1,0 +1,12 @@
+# Dependency list to evolution-data-server
+#
+# dependency [condition] [version]]
+gtk+		>=		2.10.0
+ORBit		>=		2.9.8
+gnome-vfs		>=		2.4.0
+libbonobo		>=		2.20.3
+gconf		>=		2.0.0
+libglade		>=		2.0.0
+libgnome		>=		2.0.0
+libxml		>=		2.0.0
+libsoup		>=		2.3.0

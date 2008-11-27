@@ -1,0 +1,4 @@
+# Dependency list to gnome-desktop
+#
+# dependency [condition] [version]]
+libgnomeui		>=		2.22.1

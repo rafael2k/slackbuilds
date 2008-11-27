@@ -1,0 +1,5 @@
+# Dependency list to xchm
+#
+# dependency [condition] [version]]
+wxGTK		>=		2.8.7
+chmlib		>=		0.39
