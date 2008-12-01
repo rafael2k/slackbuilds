@@ -85,8 +85,8 @@ if [ ! -s "$SRC_DIR/$SRC" ] || ! gunzip -t "$SRC_DIR/$SRC" 2> /dev/null; then
 fi
 
 # Import minimized signing key from
-if echo [[SIGNING KEY URL]] | grep -q -v "SIGNING KEY URL"; then
-  lynx -dump [[SIGNING KEY URL]] | gpg --import || exit $ERROR_GPG
+if echo http://www.rsnapshot.org/KEYS | grep -q -v "SIGNING KEY URL"; then
+  lynx -dump http://www.rsnapshot.org/KEYS | gpg --import || exit $ERROR_GPG
 elif echo [[SIGNING KEY ID]] | grep -q -v "SIGNING KEY ID"; then
   gpg --recv-keys [[SIGNING KEY ID]] || exit $ERROR_GPG
 else
@@ -96,10 +96,10 @@ EOKEY
 fi
 
 # Download source's signature if necessary and check it
-if echo http://www.rsnapshot.org/KEYS | grep -q -v "SIGNING URL"; then
-  SIGNATURE="`basename http://www.rsnapshot.org/KEYS`"
+if echo [[SIGNING URL]] | grep -q -v "SIGNING URL"; then
+  SIGNATURE="`basename [[SIGNING URL]]`"
   if [ ! -s "$SRC_DIR/$SIGNATURE" ]; then
-    wget "http://www.rsnapshot.org/KEYS" -O "$SRC_DIR/$SIGNATURE" || exit $ERROR_WGET
+    wget "[[SIGNING URL]]" -O "$SRC_DIR/$SIGNATURE" || exit $ERROR_WGET
   fi
 else
   if [ -s "$SRC_DIR/$SRC.sig" ]; then
