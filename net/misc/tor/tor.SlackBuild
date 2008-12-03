@@ -16,7 +16,7 @@
 #
 # slackbuild for tor, by Silvio Rhatto
 # requires: libevent 
-# tested: tor-0.2.0.30
+# tested: tor-0.2.0.32
 #
 
 # Look for slackbuildrc
@@ -31,7 +31,7 @@ CWD="$(pwd)"
 SRC_NAME="tor"
 PKG_NAME="tor"
 ARCH=${ARCH:=i486}
-SRC_VERSION=${VERSION:=0.2.0.30}
+SRC_VERSION=${VERSION:=0.2.0.32}
 PKG_VERSION="$(echo "$SRC_VERSION" | tr '[[:blank:]-]' '_')"
 BUILD=${BUILD:=1rha}
 SRC_DIR=${SRC_DIR:=$CWD}/$PKG_NAME
