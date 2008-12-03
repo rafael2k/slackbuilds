@@ -16,7 +16,7 @@
 #
 # slackbuild for privoxy, by Silvio Rhatto
 # requires:  
-# tested: privoxy-3.0.9-beta
+# tested: privoxy-3.0.10
 #
 
 # Look for slackbuildrc
@@ -31,7 +31,7 @@ CWD="$(pwd)"
 SRC_NAME="privoxy"
 PKG_NAME="privoxy"
 ARCH=${ARCH:=i486}
-SRC_VERSION=${VERSION:=3.0.9-beta}
+SRC_VERSION=${VERSION:=3.0.10}
 PKG_VERSION="$(echo "$SRC_VERSION" | tr '[[:blank:]-]' '_')"
 BUILD=${BUILD:=1rha}
 SRC_DIR=${SRC_DIR:=$CWD}/$PKG_NAME
@@ -85,7 +85,7 @@ if ! grep -qe "^$PKG_NAME:" /etc/passwd; then
 fi
 
 # Dowload source if necessary
-SRC="$SRC_NAME-$VERSION-src.tar.gz"
+SRC="$SRC_NAME-$VERSION-stable-src.tar.gz"
 URL="http://downloads.sourceforge.net/ijbswa/$SRC"
 
 if [ ! -s "$SRC_DIR/$SRC" ] || ! gunzip -t "$SRC_DIR/$SRC" 2> /dev/null; then
@@ -195,6 +195,7 @@ for config_file in etc/privoxy/config etc/privoxy/trust; do
 done
 
 # Add a post-installation script (doinst.sh)
+mkdir -p "$PKG/install" || exit $ERROR_MKDIR
 cat << EOSCRIPT > "$PKG/install/doinst.sh"
 config() {
   NEW="\$1"
@@ -241,6 +242,6 @@ cd "$PKG"
 makepkg -l y -c n "$REPOS/$PKG_NAME-$PKG_VERSION-$ARCH-$BUILD.tgz" || exit $ERROR_MKPKG
 
 # Delete source and build directories if requested
-if [ "$CLEANUP" == "yes" ]; then
+if [ "$CLEANUP" == "yes" ] || [ "$1" = "--cleanup" ]; then
   rm -rf "$PKG_WORK" "$PKG"
 fi
