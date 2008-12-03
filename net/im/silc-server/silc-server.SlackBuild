@@ -16,7 +16,7 @@
 #
 # slackbuild for silc-server, by Silvio Rhatto
 # requires: silc-toolkit 
-# tested: silc-server-1.1.6
+# tested: silc-server-1.1.14
 #
 
 # Look for slackbuildrc
@@ -31,7 +31,7 @@ CWD="$(pwd)"
 SRC_NAME="silc-server"
 PKG_NAME="silc-server"
 ARCH=${ARCH:=i486}
-SRC_VERSION=${VERSION:=1.1.6}
+SRC_VERSION=${VERSION:=1.1.14}
 PKG_VERSION="$(echo "$SRC_VERSION" | tr '[[:blank:]-]' '_')"
 BUILD=${BUILD:=1rha}
 SRC_DIR=${SRC_DIR:=$CWD}/$PKG_NAME
