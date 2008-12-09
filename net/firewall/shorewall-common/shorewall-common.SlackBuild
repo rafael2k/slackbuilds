@@ -215,7 +215,7 @@ mkuser() {
   fi
 }
 
-config etc/shorewall.new config etc/rc.d/rc.shorewall.new
+config etc/shorewall.new ; config etc/rc.d/rc.shorewall.new
 EOSCRIPT
 
 # Build the package
