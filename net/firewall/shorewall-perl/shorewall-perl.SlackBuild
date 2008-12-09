@@ -138,7 +138,7 @@ cd "$PKG_SRC"
 chmod +x install.sh && DEST=/etc/rc.d PREFIX=$PKG ./install.sh
 
 # Install documentation
-DOCS="COPYING INSTALL README.txt"
+DOCS="COPYING README.txt"
 mkdir -p "$PKG/usr/doc/$PKG_NAME-$PKG_VERSION" || exit $ERROR_MKDIR
 for doc in $DOCS; do
   if [ -f "$doc" ]; then
