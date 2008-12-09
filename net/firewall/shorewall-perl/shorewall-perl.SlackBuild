@@ -134,6 +134,7 @@ tar --no-same-owner --no-same-permissions -xvf "$SRC_DIR/$SRC" || exit $ERROR_TA
 PKG_SRC="$PWD/`ls -l | awk '/^d/ { print $NF }'`"
 cd "$PKG_SRC"
 
+# Install
 chmod +x install.sh && DEST=/etc/rc.d PREFIX=$PKG ./install.sh
 
 # Install documentation
