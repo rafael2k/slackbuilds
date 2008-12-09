@@ -171,7 +171,7 @@ shorewall-common:
 EODESC
 
 # Move config files to .new to avoid overwriting any system config
-for config_file in etc/shorewall; do
+for config_file in etc/shorewall etc/rc.d/rc.shorewall; do
   mv $PKG/$config_file $PKG/$config_file.new
 done
 
@@ -215,7 +215,7 @@ mkuser() {
   fi
 }
 
-config etc/shorewall.new
+config etc/shorewall.new config etc/rc.d/rc.shorewall.new
 EOSCRIPT
 
 # Build the package
