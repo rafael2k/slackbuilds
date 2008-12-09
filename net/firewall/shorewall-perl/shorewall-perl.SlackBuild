@@ -30,7 +30,7 @@ fi
 CWD="$(pwd)"
 SRC_NAME="shorewall-perl"
 PKG_NAME="shorewall-perl"
-ARCH=${ARCH:=i486}
+ARCH="noarch"
 SRC_VERSION=${VERSION:=4.2.2.2}
 PKG_VERSION="$(echo "$SRC_VERSION" | tr '[[:blank:]-]' '_')"
 BUILD=${BUILD:=1rha}
