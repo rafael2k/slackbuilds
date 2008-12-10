@@ -31,7 +31,7 @@ CWD="$(pwd)"
 SRC_NAME="dvgrab"
 PKG_NAME="dvgrab"
 ARCH=${ARCH:=i486}
-SRC_VERSION=${VERSION:=3.1}
+SRC_VERSION=${VERSION:=3.2}
 PKG_VERSION="$(echo "$SRC_VERSION" | tr '[[:blank:]-]' '_')"
 BUILD=${BUILD:=1rha}
 SRC_DIR=${SRC_DIR:=$CWD}/$PKG_NAME
