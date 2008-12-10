@@ -1,0 +1,20 @@
+--- glibmm-2.12.10-orig/glib/glibmm/convert.cc	2007-06-10 11:42:32.000000000 -0300
++++ glibmm-2.12.10/glib/glibmm/convert.cc	2008-12-10 21:05:07.000000000 -0200
+@@ -27,6 +27,7 @@
+ #include <glib/gconvert.h>
+ #include <glib/gmessages.h>
+ #include <glib/gunicode.h>
++#include <glib/gtestutils.h>
+ #include <glibmm/utility.h>
+ 
+ 
+--- glibmm-2.12.10-orig/glib/glibmm/date.cc	2007-06-10 11:42:33.000000000 -0300
++++ glibmm-2.12.10/glib/glibmm/date.cc	2008-12-10 21:05:50.000000000 -0200
+@@ -32,6 +32,7 @@
+ 
+ #include <glibmm/convert.h>
+ #include <glibmm/utility.h>
++#include <glib/gtestutils.h>
+ 
+ #include <glibmmconfig.h>
+ GLIBMM_USING_STD(max)
