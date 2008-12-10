@@ -40,7 +40,7 @@ PKG=${PKG:=$TMP/package-$PKG_NAME}
 REPOS=${REPOS:=$TMP}
 PREFIX=${PREFIX:=/usr}
 PKG_WORK="$TMP/$SRC_NAME"
-CONF_OPTIONS=${CONF_OPTIONS:="$EXTRA_AC_FLAGS --enable-shared --enable-pthreads --enable-swscale --enable-x11grab --enable-libmp3lame --enable-libvorbis --enable-libtheora --enable-libfaac --enable-libx264 --enable-postproc --enable-gpl"}
+CONF_OPTIONS=${CONF_OPTIONS:="$EXTRA_AC_FLAGS --enable-shared --enable-pthreads --enable-swscale --enable-x11grab --enable-libmp3lame --enable-libvorbis --enable-libtheora --enable-libfaac --enable-faad --enable-libx264 --enable-postproc --enable-gpl"}
 NUMJOBS=${NUMJOBS:=""}
 
 # Set system libraries' path and optmization flags based on $ARCH
