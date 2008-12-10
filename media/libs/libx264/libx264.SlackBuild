@@ -16,7 +16,7 @@
 #
 # slackbuild for libx264, by Silvio Rhatto
 # requires: yasm 
-# tested: libx264-20080714
+# tested: libx264-20081210
 #
 
 # Look for slackbuildrc
@@ -31,7 +31,7 @@ CWD="$(pwd)"
 SRC_NAME="libx264"
 PKG_NAME="libx264"
 ARCH=${ARCH:=i486}
-SRC_VERSION=${VERSION:=20081209}
+SRC_VERSION=${VERSION:=20081210}
 PKG_VERSION="$(echo "$SRC_VERSION" | tr '[[:blank:]-]' '_')"
 BUILD=${BUILD:=1rha}
 SRC_DIR=${SRC_DIR:=$CWD}/$PKG_NAME
