@@ -11,6 +11,6 @@ numpy
 wxWidgets				
 wxPython				
 gsl
-pygtk
-Cheetah
-lxml
+# pygtk
+# Cheetah
+# lxml
