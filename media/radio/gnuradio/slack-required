@@ -10,3 +10,7 @@ jack
 numpy				
 wxWidgets				
 wxPython				
+gsl
+pygtk
+Cheetah
+lxml
