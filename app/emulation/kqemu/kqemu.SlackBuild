@@ -59,7 +59,7 @@ REPOS=${REPOS:=$TMP}
 PREFIX=${PREFIX:=/usr}
 OPTCONF=${OPTCONF:=""}
 MD5=${MD5:=$MD5_ORIG}
-URL=${URL:="http://fabrice.bellard.free.fr/qemu/$SRC"}
+URL=${URL:="http://bellard.org/qemu/$SRC"}
 KVERSION=`uname -r | tr - _ `
 
 # ----------------  Download fontes  ----------------------
