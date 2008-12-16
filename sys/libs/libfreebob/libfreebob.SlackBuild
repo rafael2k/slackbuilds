@@ -16,7 +16,7 @@
 #
 # slackbuild for libfreebob, by Rudson R. Alves
 # requires: cxxlibs gcc glibc-solibs alsa-lib libavc1394 libiec61883 libraw1394 libxml2 
-# tested: libfreebob-1.0.7
+# tested: libfreebob-1.0.11
 #
 
 # Look for slackbuildrc
@@ -31,7 +31,7 @@ CWD="$(pwd)"
 SRC_NAME="libfreebob"
 PKG_NAME="libfreebob"
 ARCH=${ARCH:=i486}
-SRC_VERSION=${VERSION:=1.0.7}
+SRC_VERSION=${VERSION:=1.0.11}
 PKG_VERSION="$(echo "$SRC_VERSION" | tr '[[:blank:]-]' '_')"
 BUILD=${BUILD:=2rra}
 SRC_DIR=${SRC_DIR:=$CWD}/$PKG_NAME
@@ -89,6 +89,38 @@ cd "$PKG_WORK"
 tar --no-same-owner --no-same-permissions -xvf "$SRC_DIR/$SRC" || exit $ERROR_TAR
 PKG_SRC="$PWD/`ls -l | awk '/^d/ { print $NF }'`"
 cd "$PKG_SRC"
+
+# Patch source
+patches="
+         $PKG_NAME.diff $PKG_NAME-$PKG_VERSION.diff
+         $PKG_NAME-$PKG_VERSION-$ARCH.diff $PKG_NAME-$ARCH.diff"
+for patch in $patches; do
+  if [ -f "$CWD/$patch" ]; then
+    patch -Np1 < "$CWD/$patch" || exit $ERROR_PATCH
+  elif [ -f "$CWD/patches/$patch" ]; then
+    patch -Np1 < "$CWD/patches/$patch" || exit $ERROR_PATCH
+  elif [ -f "$CWD/$patch.gz" ]; then
+    gzip -dc "$CWD/$patch.gz" | patch -Np1 || exit $ERROR_PATCH
+  elif [ -f "$CWD/patches/$patch.gz" ]; then
+    gzip -dc "$CWD/patches/$patch.gz" | patch -Np1 || exit $ERROR_PATCH
+  fi
+done
+
+if echo [[PATCH URLS]] | grep -q -v "PATCH URLS"; then
+  for patch_url in [[PATCH URLS]]; do
+    patch="`basename $patch_url`"
+    if [ ! -s "$SRC_DIR/$patch" ]; then
+      wget "$patch_url" -O "$SRC_DIR/$patch" || exit $ERROR_WGET
+    fi
+    if [ "`basename $patch .gz`" != "$patch" ]; then
+      gzip -dc $SRC_DIR/$patch | patch -Np1 || exit $ERROR_PATCH
+    elif [ "`basename $patch .bz2`" != "$patch" ]; then
+      bzip2 -dc $SRC_DIR/$patch | patch -Np1 || exit $ERROR_PATCH
+    else
+      patch -Np1 < "$SRC_DIR/$patch" || exit $ERROR_PATCH
+    fi
+  done
+fi
 
 # Configure
 CFLAGS="$SLKCFLAGS" \
