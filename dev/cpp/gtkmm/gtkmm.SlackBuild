@@ -92,7 +92,7 @@ if [ -e "$CWD/Manifest" ]; then
 
   for ((MANIFEST_COUNT=1; MANIFEST_COUNT <= $MANIFEST_LINES; MANIFEST_COUNT++)); do
 
-    MANIFEST_LINE="`head -n $MANIFEST_COUNT $CWD/Manifest | tail -n 1`"
+    MANIFEST_LINE="`grep -E -v "^(MKBUILD|SLACKBUILD)" $CWD/Manifest | head -n $MANIFEST_COUNT | tail -n 1`"
     MANIFEST_FILE="`echo $MANIFEST_LINE | awk '{ print $2 }'`"
     MANIFEST_FILE_TYPE="`echo $MANIFEST_LINE | awk '{ print $1 }'`"
 
