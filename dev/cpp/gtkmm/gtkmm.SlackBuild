@@ -85,12 +85,6 @@ if [ ! -s "$SRC_DIR/$SRC" ] || ! bunzip2 -t "$SRC_DIR/$SRC" 2> /dev/null; then
   wget "$URL" -O "$SRC_DIR/$SRC" || exit $ERROR_WGET
 fi
 
-# Untar
-cd "$PKG_WORK"
-tar --no-same-owner --no-same-permissions -xvf "$SRC_DIR/$SRC" || exit $ERROR_TAR
-PKG_SRC="$PWD/`ls -l | awk '/^d/ { print $NF }'`"
-cd "$PKG_SRC"
-
 # Check Manifest file
 if [ -e "$CWD/Manifest" ]; then
 
@@ -147,6 +141,12 @@ if [ -e "$CWD/Manifest" ]; then
 else
   exit $ERROR_MANIFEST
 fi
+
+# Untar
+cd "$PKG_WORK"
+tar --no-same-owner --no-same-permissions -xvf "$SRC_DIR/$SRC" || exit $ERROR_TAR
+PKG_SRC="$PWD/`ls -l | awk '/^d/ { print $NF }'`"
+cd "$PKG_SRC"
 
 # Configure
 CFLAGS="$SLKCFLAGS" \
