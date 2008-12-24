@@ -133,7 +133,7 @@ if [ -e "$CWD/Manifest" ]; then
         ALGO_SRC="`"$ALGO"sum $MANIFEST_FILE | awk '{ print $1 }'`"
       fi
       ALGO="`echo $ALGO | tr '[:lower:]' '[:upper:]'`"
-      ALGO_MANIFEST=$(echo $MANIFEST_LINE | sed 's/.* $ALGO //' | awk '{ print $1 }')
+      ALGO_MANIFEST=$(echo $MANIFEST_LINE | sed "s/.* $ALGO //" | awk '{ print $1 }')
       if [ "$ALGO_SRC" != "$ALGO_MANIFEST" ]; then
         echo "$ALGO Manifest: $ALGO_MANIFEST; $ALGO $SRC: $ALGO_SRC"
         exit $ERROR_MANIFEST
