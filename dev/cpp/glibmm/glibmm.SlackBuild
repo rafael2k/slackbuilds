@@ -16,7 +16,7 @@
 #
 # slackbuild for glibmm, by Silvio Rhatto
 # requires: libsigc++ glib 
-# tested: glibmm-2.12.10
+# tested: glibmm-2.16.4
 #
 
 # Look for slackbuildrc
@@ -31,7 +31,7 @@ CWD="$(pwd)"
 SRC_NAME="glibmm"
 PKG_NAME="glibmm"
 ARCH=${ARCH:=i486}
-SRC_VERSION=${VERSION:=2.12.10}
+SRC_VERSION=${VERSION:=2.16.4}
 PKG_VERSION="$(echo "$SRC_VERSION" | tr '[[:blank:]-]' '_')"
 BUILD=${BUILD:=1rha}
 SRC_DIR=${SRC_DIR:=$CWD}/$PKG_NAME
@@ -79,7 +79,7 @@ mkdir -p "$PKG_WORK" || exit $ERROR_MKDIR
 
 # Dowload source if necessary
 SRC="$SRC_NAME-$VERSION.tar.bz2"
-URL="http://ftp.acc.umu.se/pub/GNOME/sources/glibmm/2.12/$SRC"
+URL="http://ftp.acc.umu.se/pub/GNOME/sources/glibmm/2.16/$SRC"
 
 if [ ! -s "$SRC_DIR/$SRC" ] || ! bunzip2 -t "$SRC_DIR/$SRC" 2> /dev/null; then
   wget "$URL" -O "$SRC_DIR/$SRC" || exit $ERROR_WGET
