@@ -65,6 +65,7 @@ ERROR_WGET=31;      ERROR_MAKE=32;      ERROR_INSTALL=33
 ERROR_MD5=34;       ERROR_CONF=35;      ERROR_HELP=36
 ERROR_TAR=37;       ERROR_MKPKG=38;     ERROR_GPG=39
 ERROR_PATCH=40;     ERROR_VCS=41;       ERROR_MKDIR=42
+ERROR_MANIFEST=43;
 
 # Clean up any leftovers of previous builds
 rm -rf "$PKG_WORK" 2> /dev/null
@@ -82,6 +83,107 @@ URL="http://downloads.sourceforge.net/inkscape/$SRC"
 
 if [ ! -s "$SRC_DIR/$SRC" ] || ! gunzip -t "$SRC_DIR/$SRC" 2> /dev/null; then
   wget "$URL" -O "$SRC_DIR/$SRC" || exit $ERROR_WGET
+fi
+
+# Import minimized signing key from
+if echo [[SIGNING KEY URL]] | grep -q -v "SIGNING KEY URL"; then
+  lynx -dump [[SIGNING KEY URL]] | gpg --import || exit $ERROR_GPG
+elif echo [[SIGNING KEY ID]] | grep -q -v "SIGNING KEY ID"; then
+  gpg --recv-keys [[SIGNING KEY ID]] || exit $ERROR_GPG
+else
+  gpg --import << EOKEY || exit $ERROR_GPG
+[[SIGNING KEY]]
+EOKEY
+fi
+
+# Download source's signature if necessary and check it
+if echo [[SIGNING URL]] | grep -q -v "SIGNING URL"; then
+  SIGNATURE="`basename [[SIGNING URL]]`"
+  if [ ! -s "$SRC_DIR/$SIGNATURE" ]; then
+    wget "[[SIGNING URL]]" -O "$SRC_DIR/$SIGNATURE" || exit $ERROR_WGET
+  fi
+else
+  if [ -s "$SRC_DIR/$SRC.sig" ]; then
+    SIGNATURE="$SRC.sig"
+  elif [ -s "$SRC_DIR/$SRC.asc" ]; then
+    SIGNATURE="$SRC.asc"
+  else
+    echo Trying to get signature file from $URL.sig...
+    if wget "$URL.sig" -O "$SRC_DIR/$SRC.sig"; then
+      SIGNATURE="$SRC.sig"
+    else
+      rm $SRC_DIR/$SRC.sig
+      echo Trying to get signature file from $URL.asc...
+      if wget "$URL.asc" -O "$SRC_DIR/$SRC.asc"; then
+        SIGNATURE="$SRC.asc"
+      else
+        rm $SRC_DIR/$SRC.asc
+        echo "Error getting source's signature file"
+        exit $ERROR_GPG
+      fi
+    fi
+  fi
+fi
+
+echo Checking $SRC_DIR/$SRC with gpg using $SRC_DIR/$SIGNATURE...
+gpg --verify "$SRC_DIR/$SIGNATURE" "$SRC_DIR/$SRC" || exit $ERROR_GPG
+echo Success.
+
+# Check Manifest file
+if [ -e "$CWD/Manifest" ]; then
+
+  MANIFEST_LINES="`grep -E -v "^(MKBUILD|SLACKBUILD)" $CWD/Manifest | wc -l`"
+
+  for ((MANIFEST_COUNT=1; MANIFEST_COUNT <= $MANIFEST_LINES; MANIFEST_COUNT++)); do
+
+    MANIFEST_LINE="`grep -E -v "^(MKBUILD|SLACKBUILD)" $CWD/Manifest | head -n $MANIFEST_COUNT | tail -n 1`"
+    MANIFEST_FILE="`echo $MANIFEST_LINE | awk '{ print $2 }'`"
+    MANIFEST_FILE_TYPE="`echo $MANIFEST_LINE | awk '{ print $1 }'`"
+
+    if [ -e "$SRC_DIR/$MANIFEST_FILE" ]; then
+      MANIFEST_FILE="$SRC_DIR/$MANIFEST_FILE"
+    else
+      MANIFEST_FILE="`find $CWD -name $MANIFEST_FILE`"
+    fi
+
+    if [ ! -e "$MANIFEST_FILE" ] || [ -d "$MANIFEST_FILE" ]; then
+      continue
+    fi
+
+    echo "Checking Manifest for $MANIFEST_FILE_TYPE $MANIFEST_FILE integrity..."
+
+    SIZE_SRC="`wc -c $MANIFEST_FILE | awk '{ print $1 }'`"
+    SIZE_MANIFEST="`echo $MANIFEST_LINE | awk '{ print $3 }'`"
+
+    # Check source code size
+    if [ "$SIZE_SRC" != "$SIZE_MANIFEST" ]; then
+      echo "SIZE Manifest: $SIZE_MANIFEST; SIZE $SRC: $SIZE_SRC"
+      exit $ERROR_MANIFEST
+    else
+      echo "Size match."
+    fi
+
+    # Check source code integrity
+    for ALGO in md5 sha1 sha256 sha512 rmd160; do
+      if [ $ALGO = "rmd160" ]; then
+        ALGO_SRC="`openssl rmd160 $MANIFEST_FILE | awk '{ print $2 }'`"
+      else
+        ALGO_SRC="`"$ALGO"sum $MANIFEST_FILE | awk '{ print $1 }'`"
+      fi
+      ALGO="`echo $ALGO | tr '[:lower:]' '[:upper:]'`"
+      ALGO_MANIFEST=$(echo $MANIFEST_LINE | sed "s/.* $ALGO //" | awk '{ print $1 }')
+      if [ "$ALGO_SRC" != "$ALGO_MANIFEST" ]; then
+        echo "$ALGO Manifest: $ALGO_MANIFEST; $ALGO $SRC: $ALGO_SRC"
+        exit $ERROR_MANIFEST
+      else
+        echo "$ALGO match."
+      fi
+    done
+
+  done
+
+else
+  exit $ERROR_MANIFEST
 fi
 
 # Untar
