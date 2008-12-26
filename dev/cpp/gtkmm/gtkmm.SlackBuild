@@ -16,7 +16,7 @@
 #
 # slackbuild for gtkmm, by Silvio Rhatto
 # requires: cairomm glibmm 
-# tested: gtkmm-2.8.12
+# tested: gtkmm-2.12.7
 #
 
 # Look for slackbuildrc
@@ -31,7 +31,7 @@ CWD="$(pwd)"
 SRC_NAME="gtkmm"
 PKG_NAME="gtkmm"
 ARCH=${ARCH:=i486}
-SRC_VERSION=${VERSION:=2.8.12}
+SRC_VERSION=${VERSION:=2.12.7}
 PKG_VERSION="$(echo "$SRC_VERSION" | tr '[[:blank:]-]' '_')"
 BUILD=${BUILD:=1rha}
 SRC_DIR=${SRC_DIR:=$CWD}/$PKG_NAME
@@ -79,7 +79,7 @@ mkdir -p "$PKG_WORK" || exit $ERROR_MKDIR
 
 # Dowload source if necessary
 SRC="$SRC_NAME-$VERSION.tar.bz2"
-URL="http://ftp.gnome.org/pub/GNOME/sources/gtkmm/2.8/$SRC"
+URL="http://ftp.acc.umu.se/pub/GNOME/sources/gtkmm/2.12/$SRC"
 
 if [ ! -s "$SRC_DIR/$SRC" ] || ! bunzip2 -t "$SRC_DIR/$SRC" 2> /dev/null; then
   wget "$URL" -O "$SRC_DIR/$SRC" || exit $ERROR_WGET
