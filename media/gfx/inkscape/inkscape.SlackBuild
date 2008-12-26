@@ -88,8 +88,8 @@ fi
 # Import minimized signing key from
 if echo [[SIGNING KEY URL]] | grep -q -v "SIGNING KEY URL"; then
   lynx -dump [[SIGNING KEY URL]] | gpg --import || exit $ERROR_GPG
-elif echo [[SIGNING KEY ID]] | grep -q -v "SIGNING KEY ID"; then
-  gpg --recv-keys [[SIGNING KEY ID]] || exit $ERROR_GPG
+elif echo 944F1A9D | grep -q -v "SIGNING KEY ID"; then
+  gpg --recv-keys 944F1A9D || exit $ERROR_GPG
 else
   gpg --import << EOKEY || exit $ERROR_GPG
 [[SIGNING KEY]]
