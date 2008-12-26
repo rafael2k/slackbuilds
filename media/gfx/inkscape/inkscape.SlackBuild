@@ -15,7 +15,7 @@
 #  59 Temple Place - Suite 330, Boston, MA 02111-1307, USA
 #
 # slackbuild for inkscape, by Alexandre Vieira de Souza
-# requires: gtk+2 gtkmm glib2 libsigc++ libxslt libxml2 
+# requires: gtk+2 gtkmm glib2 libsigc++ libxslt libxml2 libgc 
 # tested: inkscape-0.46
 #
 
