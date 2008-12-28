@@ -2,3 +2,5 @@
 #
 # dependency [condition] [version]]
 librsync				
+py-gnupg				
+pexpect				
