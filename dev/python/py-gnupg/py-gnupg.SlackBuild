@@ -195,9 +195,6 @@ cd "$PKG_SRC"
 # Build and install package
 python setup.py build install --root=$PKG || exit $ERROR_INSTALL
 
-# Install
-make install DESTDIR="$PKG" || exit $ERROR_INSTALL
-
 # Strip binaries
 ( cd "$PKG"
   find . | xargs file | grep "executable" | grep ELF | cut -f 1 -d : | \
