@@ -1,6 +1,4 @@
-# Dependency list to embryo
-#
-# dependency [condition] [version]]
+eina				
 eet				
 evas				
 ecore				
