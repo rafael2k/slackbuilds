@@ -1,6 +1,6 @@
-eina				
-eet				
-evas				
+# Dependency list to ecore
+#
+# dependency [condition] [version]]
 eina				
 eet				
 evas				
