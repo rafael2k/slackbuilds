@@ -1,3 +1,6 @@
+# Dependency list to enlightenment
+#
+# dependency [condition] [version]]
 eina				
 eet				
 evas				
