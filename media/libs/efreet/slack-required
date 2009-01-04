@@ -1,6 +1,4 @@
-# Dependency list to efreet
-#
-# dependency [condition] [version]]
+eina				
 eet				
 evas				
 ecore				
