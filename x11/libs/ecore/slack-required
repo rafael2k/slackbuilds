@@ -1,5 +1,6 @@
-# Dependency list to ecore
-#
-# dependency [condition] [version]]
+eina				
+eet				
+evas				
+eina				
 eet				
 evas				
