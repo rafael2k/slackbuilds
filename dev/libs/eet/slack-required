@@ -1,2 +1,4 @@
-eina				
+# Dependency list to eet
+#
+# dependency [condition] [version]]
 eina				
