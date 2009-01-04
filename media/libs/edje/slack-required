@@ -1,3 +1,6 @@
+# Dependency list to edje
+#
+# dependency [condition] [version]]
 eina				
 eet				
 evas				
