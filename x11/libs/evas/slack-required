@@ -1,4 +1,5 @@
-eina				
-eet				
+# Dependency list to evas
+#
+# dependency [condition] [version]]
 eina				
 eet				
