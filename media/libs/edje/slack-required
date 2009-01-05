@@ -1,6 +1,7 @@
 # Dependency list to edje
 #
 # dependency [condition] [version]]
+libiconv				
 eina				
 eet				
 evas				
