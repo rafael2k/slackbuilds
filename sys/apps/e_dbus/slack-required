@@ -1,0 +1,4 @@
+# Dependency list to e_dbus
+#
+# dependency [condition] [version]]
+ecore				
