@@ -164,7 +164,7 @@ make install root=$PKG || exit $ERROR_INSTALL
 
 # Copy config files
 mkdir -p $PKG/etc
-for conf in mozpluggerrc; do
+for conf in mozpluggerrc.new; do
   mkdir -p $PKG/etc/`dirname $conf`
   if [ -e "$CWD/conf/$conf" ]; then
     cp -a $CWD/conf/$conf $PKG/etc/$conf
