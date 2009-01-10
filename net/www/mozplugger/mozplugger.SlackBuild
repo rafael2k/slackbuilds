@@ -162,6 +162,19 @@ make install root=$PKG || exit $ERROR_INSTALL
     xargs strip --strip-unneeded 2> /dev/null
 )
 
+# Copy config files
+mkdir -p $PKG/etc
+for conf in mozpluggerrc; do
+  mkdir -p $PKG/etc/`dirname $conf`
+  if [ -e "$CWD/conf/$conf" ]; then
+    cp -a $CWD/conf/$conf $PKG/etc/$conf
+  elif [ -e "$CWD/$conf" ]; then
+    cp -a $CWD/$conf $PKG/etc/$conf
+  elif [ -e "$conf" ]; then
+    cp -a $conf $PKG/etc/$conf
+  fi
+done
+
 # Install documentation
 DOCS="COPYING ChangeLog README"
 mkdir -p "$PKG/usr/doc/$PKG_NAME-$PKG_VERSION" || exit $ERROR_MKDIR
@@ -194,6 +207,49 @@ mozplugger:
 mozplugger:
 mozplugger:
 EODESC
+
+# Add a post-installation script (doinst.sh)
+mkdir -p "$PKG/install" || exit $ERROR_MKDIR
+cat << EOSCRIPT > "$PKG/install/doinst.sh"
+config() {
+  NEW="\$1"
+  OLD="\$(dirname \$NEW)/\$(basename \$NEW .new)"
+  OLD="\$(dirname \$NEW)/\$(basename \$OLD .sample)"
+  OLD="\$(dirname \$NEW)/\$(basename \$OLD .dist)"
+
+  # If there's no config file by that name, mv it over:
+  if [ ! -r \$OLD ]; then
+    mv \$NEW \$OLD
+  elif [ "\$(cat \$OLD | md5sum)" = "\$(cat \$NEW | md5sum)" ]; then
+    # toss the redundant copy
+    rm \$NEW
+  fi
+  # Otherwise, we leave the .new copy for the admin to consider...
+}
+
+mkgroup() {
+  GROUP="\$1"
+  if ! grep -qe "^\$GROUP:" etc/group; then
+    echo Creating group \$GROUP...
+    chroot . /usr/sbin/groupadd \$GROUP
+  fi
+}
+
+mkuser() {
+  USER="\$1"
+  if [ ! -z "\$2" ]; then
+    GROUP="\$2"
+  else
+    GROUP="\$USER"
+  fi
+  if ! grep -qe "^\$USER:" etc/passwd; then
+    echo Creating user \$USER...
+    chroot . /usr/sbin/useradd \$USER -g \$GROUP
+  fi
+}
+
+config etc/mozpluggerrc
+EOSCRIPT
 
 # Build the package
 cd "$PKG"
