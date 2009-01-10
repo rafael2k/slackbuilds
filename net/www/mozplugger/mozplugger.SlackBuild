@@ -248,7 +248,7 @@ mkuser() {
   fi
 }
 
-config etc/mozpluggerrc
+config etc/mozpluggerrc.new
 EOSCRIPT
 
 # Build the package
