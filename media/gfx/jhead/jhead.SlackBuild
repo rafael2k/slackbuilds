@@ -47,9 +47,9 @@ NUMJOBS=${NUMJOBS:=""}
 LIBDIR="$PREFIX/lib"
 
 if [ "$ARCH" = "i386" ]; then
-  SLKCFLAGS="-O2 -march=i386 -mcpu=i686"
+  SLKCFLAGS="-O2 -march=i386 -mtune=i686"
 elif [ "$ARCH" = "i486" ]; then
-  SLKCFLAGS="-O2 -march=i486 -mcpu=i686"
+  SLKCFLAGS="-O2 -march=i486 -mtune=i686"
 elif [ "$ARCH" = "i686" ]; then
   SLKCFLAGS="-O2 -march=i686"
 elif [ "$ARCH" = "s390" ]; then
@@ -120,7 +120,7 @@ if [ -e "$CWD/Manifest" ]; then
     fi
 
     # Check source code integrity
-    for ALGO in md5 sha1 sha256 sha512 rmd160; do
+    for ALGO in md5 rmd160 sha1 sha256 sha512; do
       if [ $ALGO = "rmd160" ]; then
         ALGO_SRC="`openssl rmd160 $MANIFEST_FILE | awk '{ print $2 }'`"
       else
@@ -147,6 +147,31 @@ cd "$PKG_WORK"
 tar --no-same-owner --no-same-permissions -xvf "$SRC_DIR/$SRC" || exit $ERROR_TAR
 PKG_SRC="$PWD/`ls -l | awk '/^d/ { print $NF }'`"
 cd "$PKG_SRC"
+
+# Patch source
+patches=" [[PATCH URLS]]
+         $PKG_NAME.diff $PKG_NAME-$PKG_VERSION.diff
+         $PKG_NAME-$PKG_VERSION-$ARCH.diff $PKG_NAME-$ARCH.diff"
+for patch in $patches; do
+  patch="`basename $patch`"
+  if [ -f "$CWD/$patch" ]; then
+    patch -Np1 < "$CWD/$patch" || exit $ERROR_PATCH
+  elif [ -f "$CWD/patches/$patch" ]; then
+    patch -Np1 < "$CWD/patches/$patch" || exit $ERROR_PATCH
+  elif [ -f "$CWD/$patch.gz" ]; then
+    gzip -dc "$CWD/$patch.gz" | patch -Np1 || exit $ERROR_PATCH
+  elif [ -f "$CWD/patches/$patch.gz" ]; then
+    gzip -dc "$CWD/patches/$patch.gz" | patch -Np1 || exit $ERROR_PATCH
+  elif [ -f "$SRC_DIR/$patch" ]; then
+    if [ "`basename $patch .gz`" != "$patch" ]; then
+      gzip -dc $SRC_DIR/$patch | patch -Np1 || exit $ERROR_PATCH
+    elif [ "`basename $patch .bz2`" != "$patch" ]; then
+      bzip2 -dc $SRC_DIR/$patch | patch -Np1 || exit $ERROR_PATCH
+    else
+      patch -Np1 < "$SRC_DIR/$patch" || exit $ERROR_PATCH
+    fi
+  fi
+done
 
 # Compile
 make $NUMJOBS || exit $ERROR_MAKE

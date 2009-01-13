@@ -162,19 +162,6 @@ make install root=$PKG || exit $ERROR_INSTALL
     xargs strip --strip-unneeded 2> /dev/null
 )
 
-# Copy config files
-mkdir -p $PKG/etc
-for conf in mozpluggerrc; do
-  mkdir -p $PKG/etc/`dirname $conf`
-  if [ -e "$CWD/conf/$conf" ]; then
-    cp -a $CWD/conf/$conf $PKG/etc/$conf
-  elif [ -e "$CWD/$conf" ]; then
-    cp -a $CWD/$conf $PKG/etc/$conf
-  elif [ -e "$conf" ]; then
-    cp -a $conf $PKG/etc/$conf
-  fi
-done
-
 # Install documentation
 DOCS="COPYING ChangeLog README"
 mkdir -p "$PKG/usr/doc/$PKG_NAME-$PKG_VERSION" || exit $ERROR_MKDIR
@@ -209,7 +196,7 @@ mozplugger:
 EODESC
 
 # Move config files to .new to avoid overwriting any system config
-for config_file in mozpluggerrc; do
+for config_file in etc/mozpluggerrc; do
   mv $PKG/$config_file $PKG/$config_file.new
 done
 
