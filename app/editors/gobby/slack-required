@@ -1,0 +1,7 @@
+# Dependency list to gobby
+#
+# dependency [condition] [version]]
+libxml++				
+gtksourceview				
+net6				
+obby				
