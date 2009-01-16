@@ -1,4 +1,0 @@
-# Dependency list to xmms
-#
-# dependency [condition] [version]]
-libmikmod		>=		3.2.0
