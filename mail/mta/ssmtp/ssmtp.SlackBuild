@@ -1,96 +1,198 @@
 #!/bin/bash
 #
-#  ssmtp.SlackBuild is free software; you can redistribute it and/or modify it under the
-#  terms of the GNU General Public License as published by the Free Software
-#  Foundation; either version 2 of the License, or any later version.
+#  ssmtp.SlackBuild is free software; you can redistribute
+#  it and/or modify it under the terms of the GNU General Public License as
+#  published by the Free Software Foundation; either version 2 of the License,
+#  or any later version.
 #
-#  ssmtp.SlackBuild is distributed in the hope that it will be useful, but WITHOUT ANY
-#  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
-#  A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
+#  ssmtp.SlackBuild is distributed in the hope that it will
+#  be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General
+#  Public License for more details.
 #
-#  You should have received a copy of the GNU General Public License along with
-#  this program; if not, write to the Free Software Foundation, Inc., 59 Temple
-#  Place - Suite 330, Boston, MA 02111-1307, USA
+#  You should have received a copy of the GNU General Public License along
+#  with this program; if not, write to the Free Software Foundation, Inc.,
+#  59 Temple Place - Suite 330, Boston, MA 02111-1307, USA
 #
-# slackbuild script for ssmtp
-# by rhatto at riseup.net
+# slackbuild for ssmtp, by Silvio Rhatto
+# requires:  
+# tested: ssmtp-6.61
 #
 
-CWD="`pwd`"
-
+# Look for slackbuildrc
 if [ -f ~/.slackbuildrc ]; then
   source ~/.slackbuildrc
 elif [ -f /etc/slackbuildrc ]; then
   source /etc/slackbuildrc
 fi
 
-# default settings
-PACKAGE="ssmtp"
+# Set variables
+CWD="$(pwd)"
+SRC_NAME="ssmtp"
+PKG_NAME="ssmtp"
 ARCH=${ARCH:=i486}
-VERSION=${VERSION:=2.61}
-BUILD=${BUILD:=4rha}
-SRC_DIR=${SRC:=$CWD}
+SRC_VERSION=${VERSION:=6.61}
+PKG_VERSION="$(echo "$SRC_VERSION" | tr '[[:blank:]-]' '_')"
+BUILD=${BUILD:=1rha}
+SRC_DIR=${SRC_DIR:=$CWD}/$PKG_NAME
 TMP=${TMP:=/tmp}
+PKG=${PKG:=$TMP/package-$PKG_NAME}
 REPOS=${REPOS:=$TMP}
+PREFIX=${PREFIX:=/usr}
+PKG_WORK="$TMP/$SRC_NAME"
+CONF_OPTIONS=${CONF_OPTIONS:=""}
+NUMJOBS=${NUMJOBS:=""}
 
-if [ "$ARCH" == "x86_64" ]; then
-  LIBDIR=/usr/lib64
+# Set system libraries' path and optmization flags based on $ARCH
+LIBDIR="$PREFIX/lib"
+
+if [ "$ARCH" = "i386" ]; then
+  SLKCFLAGS="-O2 -march=i386 -mtune=i686"
+elif [ "$ARCH" = "i486" ]; then
+  SLKCFLAGS="-O2 -march=i486 -mtune=i686"
+elif [ "$ARCH" = "i686" ]; then
+  SLKCFLAGS="-O2 -march=i686"
+elif [ "$ARCH" = "s390" ]; then
+  SLKCFLAGS="-O2"
+elif [ "$ARCH" = "x86_64" ]; then
+  SLKCFLAGS="-O2 -fPIC"
+  LIBDIR="$PREFIX/lib64"
+  LDFLAGS="-L/lib64 -L/usr/lib64"
+fi
+
+# Set error codes (used by createpkg)
+ERROR_WGET=31;      ERROR_MAKE=32;      ERROR_INSTALL=33
+ERROR_MD5=34;       ERROR_CONF=35;      ERROR_HELP=36
+ERROR_TAR=37;       ERROR_MKPKG=38;     ERROR_GPG=39
+ERROR_PATCH=40;     ERROR_VCS=41;       ERROR_MKDIR=42
+ERROR_MANIFEST=43;
+
+# Clean up any leftovers of previous builds
+rm -rf "$PKG_WORK" 2> /dev/null
+rm -rf "$PKG" 2> /dev/null
+
+# Create directories if necessary
+mkdir -p "$SRC_DIR" || exit $ERROR_MKDIR
+mkdir -p "$PKG" || exit $ERROR_MKDIR
+mkdir -p "$REPOS" || exit $ERROR_MKDIR
+mkdir -p "$PKG_WORK" || exit $ERROR_MKDIR
+
+# Dowload source if necessary
+SRC="$SRC_NAME"_"$VERSION.orig.tar.gz"
+URL="http://ftp.de.debian.org/debian/pool/main/s/ssmtp/$SRC"
+
+if [ ! -s "$SRC_DIR/$SRC" ] || ! gunzip -t "$SRC_DIR/$SRC" 2> /dev/null; then
+  wget "$URL" -O "$SRC_DIR/$SRC" || exit $ERROR_WGET
+fi
+
+# Check Manifest file
+if [ -e "$CWD/Manifest" ]; then
+
+  MANIFEST_LINES="`grep -E -v "^(MKBUILD|SLACKBUILD)" $CWD/Manifest | wc -l`"
+
+  for ((MANIFEST_COUNT=1; MANIFEST_COUNT <= $MANIFEST_LINES; MANIFEST_COUNT++)); do
+
+    MANIFEST_LINE="`grep -E -v "^(MKBUILD|SLACKBUILD)" $CWD/Manifest | head -n $MANIFEST_COUNT | tail -n 1`"
+    MANIFEST_FILE="`echo $MANIFEST_LINE | awk '{ print $2 }'`"
+    MANIFEST_FILE_TYPE="`echo $MANIFEST_LINE | awk '{ print $1 }'`"
+
+    if [ -e "$SRC_DIR/$MANIFEST_FILE" ]; then
+      MANIFEST_FILE="$SRC_DIR/$MANIFEST_FILE"
+    else
+      MANIFEST_FILE="`find $CWD -name $MANIFEST_FILE`"
+    fi
+
+    if [ ! -e "$MANIFEST_FILE" ] || [ -d "$MANIFEST_FILE" ]; then
+      continue
+    fi
+
+    echo "Checking Manifest for $MANIFEST_FILE_TYPE $MANIFEST_FILE integrity..."
+
+    SIZE_SRC="`wc -c $MANIFEST_FILE | awk '{ print $1 }'`"
+    SIZE_MANIFEST="`echo $MANIFEST_LINE | awk '{ print $3 }'`"
+
+    # Check source code size
+    if [ "$SIZE_SRC" != "$SIZE_MANIFEST" ]; then
+      echo "SIZE Manifest: $SIZE_MANIFEST; SIZE $SRC: $SIZE_SRC"
+      exit $ERROR_MANIFEST
+    else
+      echo "Size match."
+    fi
+
+    # Check source code integrity
+    for ALGO in md5 rmd160 sha1 sha256 sha512; do
+      if [ $ALGO = "rmd160" ]; then
+        ALGO_SRC="`openssl rmd160 $MANIFEST_FILE | awk '{ print $2 }'`"
+      else
+        ALGO_SRC="`"$ALGO"sum $MANIFEST_FILE | awk '{ print $1 }'`"
+      fi
+      ALGO="`echo $ALGO | tr '[:lower:]' '[:upper:]'`"
+      ALGO_MANIFEST=$(echo $MANIFEST_LINE | sed "s/.* $ALGO //" | awk '{ print $1 }')
+      if [ "$ALGO_SRC" != "$ALGO_MANIFEST" ]; then
+        echo "$ALGO Manifest: $ALGO_MANIFEST; $ALGO $SRC: $ALGO_SRC"
+        exit $ERROR_MANIFEST
+      else
+        echo "$ALGO match."
+      fi
+    done
+
+  done
+
 else
-  LIBDIR=/usr/lib
+  exit $ERROR_MANIFEST
 fi
 
-RTOOL="wget"
-PACKAGE_EXT="gz"
-SRC="$PACKAGE"_"$VERSION.orig.tar.$PACKAGE_EXT"
-URL="http://ftp.debian.org/debian/pool/main/s/ssmtp/$SRC"
+# Untar
+cd "$PKG_WORK"
+tar --no-same-owner --no-same-permissions -xvf "$SRC_DIR/$SRC" || exit $ERROR_TAR
+PKG_SRC="$PWD/`ls -l | awk '/^d/ { print $NF }'`"
+cd "$PKG_SRC"
 
-if [ "$PACKAGE_EXT" == "bz2" ]; then
-  tarflag="j"
-else
-  tarflag="z"
-fi
+# Configure
+CFLAGS="$SLKCFLAGS" \
+  CXXFLAGS="$SLKCFLAGS" \
+  ./configure \
+  --prefix="$PREFIX" --libdir="$LIBDIR" $CONF_OPTIONS || exit $ERROR_CONF
 
-SRC_DIR="$SRC_DIR/$PACKAGE"
-mkdir -p $SRC_DIR
+# Compile
+make $NUMJOBS || exit $ERROR_MAKE
 
-if [ "$RTOOL" == "wget" ] && [ ! -f "$SRC_DIR/$SRC" ]; then
-  wget "$URL" -O "$SRC_DIR/$SRC"
-fi
+# Install
+mkdir -p $PKG/usr/{sbin,man/man8}
+mkdir -p $PKG/etc/ssmtp
+cp ssmtp $PKG/usr/sbin ; chmod 755 $PKG/usr/sbin/ssmtp
+cp ssmtp.8 $PKG/usr/man/man8 ; chmod 644 $PKG/usr/man/man8/ssmtp.8
+cp ssmtp.conf $PKG/etc/ssmtp/ssmtp.conf.new
+cp revaliases $PKG/etc/ssmtp/revaliases.conf.new
 
-TMP="$TMP/$PACKAGE"
-rm -rf $TMP
-mkdir -p $TMP/package-$PACKAGE
-cd $TMP
+# Strip binaries
+( cd "$PKG"
+  find . | xargs file | grep "executable" | grep ELF | cut -f 1 -d : | \
+    xargs strip --strip-unneeded 2> /dev/null
+  find . | xargs file | grep "shared object" | grep ELF | cut -f 1 -d : | \
+    xargs strip --strip-unneeded 2> /dev/null
+)
 
-tar xvf$tarflag $SRC_DIR/$SRC
-cd $PACKAGE-$VERSION
-./configure --prefix=/usr --sysconfdir=/etc --libdir=$LIBDIR
-make || exit 32
+# Install documentation
+DOCS="CHANGELOG_OLD COPYING INSTALL README TLS"
+mkdir -p "$PKG/usr/doc/$PKG_NAME-$PKG_VERSION" || exit $ERROR_MKDIR
+for doc in $DOCS; do
+  if [ -f "$doc" ]; then
+    cp -a $doc "$PKG/usr/doc/$PKG_NAME-$PKG_VERSION"
+  fi
+done
 
-CWD="`pwd`"
-
-cd $TMP/package-$PACKAGE
-
-mkdir -p usr/{sbin,man/man8}
-mkdir -p etc/ssmtp
-
-cp $CWD/ssmtp usr/sbin ; chmod 755 usr/sbin/ssmtp
-cp $CWD/ssmtp.8 usr/man/man8 ; chmod 644 usr/man/man8/ssmtp.8
-cp $CWD/ssmtp.conf etc/ssmtp/ssmtp.conf.new
-cp $CWD/revaliases etc/ssmtp/revaliases.conf.new
-
-strip --strip-unneeded usr/sbin/ssmtp
-
-mkdir install
-cat << EOF > install/slack-desc
+# Add package description (slack-desc)
+mkdir -p "$PKG/install" || exit $ERROR_MKDIR
+cat << EODESC > "$PKG/install/slack-desc"
 # HOW TO EDIT THIS FILE:
-# The "handy ruler" below makes it easier to edit a package description.  Line
+# The "handy ruler" below makes it easier to edit a package description. Line
 # up the first '|' above the ':' following the base package name, and the '|'
-# on the right side marks the last column you can put a character in.  You must
+# on the right side marks the last column you can put a character in. You must
 # make exactly 11 lines for the formatting to be correct.  It's also
 # customary to leave one space after the ':'.
 
-     |-----handy-ruler-----------------------------------------------------|
+     |-----handy-ruler--------------------------------------------------------|
 ssmtp: ssmtp (extremely simple MTA)
 ssmtp:
 ssmtp: This is sSMTP, a program that replaces sendmail on workstations
@@ -102,27 +204,56 @@ ssmtp: one.
 ssmtp:
 ssmtp:
 ssmtp:
-EOF
+EODESC
 
-# docs
-mkdir -p usr/doc/$PACKAGE-$VERSION
+# Add a post-installation script (doinst.sh)
+mkdir -p "$PKG/install" || exit $ERROR_MKDIR
+cat << EOSCRIPT > "$PKG/install/doinst.sh"
+config() {
+  NEW="\$1"
+  OLD="\$(dirname \$NEW)/\$(basename \$NEW .new)"
+  OLD="\$(dirname \$NEW)/\$(basename \$OLD .sample)"
+  OLD="\$(dirname \$NEW)/\$(basename \$OLD .dist)"
 
-for file in CHANGELOG_OLD COPYING INSTALL README TLS; do 
-  cp $CWD/$file* usr/doc/$PACKAGE-$VERSION/
-done
+  # If there's no config file by that name, mv it over:
+  if [ ! -r \$OLD ]; then
+    mv \$NEW \$OLD
+  elif [ "\$(cat \$OLD | md5sum)" = "\$(cat \$NEW | md5sum)" ]; then
+    # toss the redundant copy
+    rm \$NEW
+  fi
+  # Otherwise, we leave the .new copy for the admin to consider...
+}
 
-# install script
-echo '( if [ ! -f "etc/ssmtp/ssmtp.conf" ]; then mv etc/ssmtp/ssmtp.conf.new etc/ssmtp/ssmtp.conf; fi )' > install/doinst.sh
-echo '( if [ ! -f "etc/ssmtp/revaliases" ]; then mv etc/ssmtp/revaliases.conf.new etc/ssmtp/revaliases; fi )' >> install/doinst.sh
-echo '( cd usr/man/man8 ; rm -rf sendmail.8.gz )' >> install/doinst.sh
-echo '( cd usr/man/man8 ; ln -sf .gz sendmail.8.gz )' >> install/doinst.sh
-echo '( cd usr/sbin ; rm -rf sendmail )' >> install/doinst.sh
-echo '( cd usr/sbin ; ln -sf ssmtp sendmail )' >> install/doinst.sh
-echo '( cd usr/lib ; ln -sf ../sbin/ssmtp sendmail )' >> install/doinst.sh
+mkgroup() {
+  GROUP="\$1"
+  if ! grep -qe "^\$GROUP:" etc/group; then
+    echo Creating group \$GROUP...
+    chroot . /usr/sbin/groupadd \$GROUP
+  fi
+}
 
-makepkg -c y -l y $REPOS/$PACKAGE-$VERSION-$ARCH-$BUILD.tgz
+mkuser() {
+  USER="\$1"
+  if [ ! -z "\$2" ]; then
+    GROUP="\$2"
+  else
+    GROUP="\$USER"
+  fi
+  if ! grep -qe "^\$USER:" etc/passwd; then
+    echo Creating user \$USER...
+    chroot . /usr/sbin/useradd \$USER -g \$GROUP
+  fi
+}
 
-if [ "$CLEANUP" == "yes" ]; then
-  rm -rf $TMP
+config etc/ssmtp/ssmtp.conf.new ; config etc/ssmtp/revaliases.conf.new ; ( cd usr/man/man8 ; rm -rf sendmail.8.gz ) ; ( cd usr/man/man8 ; ln -sf .gz sendmail.8.gz ) ; ( cd usr/sbin ; rm -rf sendmail ) ; ( cd usr/sbin ; ln -sf ssmtp sendmail ) ; ( cd usr/lib ; ln -sf ../sbin/ssmtp sendmail )
+EOSCRIPT
+
+# Build the package
+cd "$PKG"
+makepkg -l y -c n "$REPOS/$PKG_NAME-$PKG_VERSION-$ARCH-$BUILD.tgz" || exit $ERROR_MKPKG
+
+# Delete source and build directories if requested
+if [ "$CLEANUP" == "yes" ] || [ "$1" = "--cleanup" ]; then
+  rm -rf "$PKG_WORK" "$PKG"
 fi
-
