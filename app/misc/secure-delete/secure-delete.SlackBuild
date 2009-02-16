@@ -1,11 +1,11 @@
 #!/bin/bash
 #
-#  wipe.SlackBuild is free software; you can redistribute
+#  secure-delete.SlackBuild is free software; you can redistribute
 #  it and/or modify it under the terms of the GNU General Public License as
 #  published by the Free Software Foundation; either version 2 of the License,
 #  or any later version.
 #
-#  wipe.SlackBuild is distributed in the hope that it will
+#  secure-delete.SlackBuild is distributed in the hope that it will
 #  be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
 #  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General
 #  Public License for more details.
@@ -14,9 +14,9 @@
 #  with this program; if not, write to the Free Software Foundation, Inc.,
 #  59 Temple Place - Suite 330, Boston, MA 02111-1307, USA
 #
-# slackbuild for wipe, by Silvio Rhatto
+# slackbuild for secure-delete, by Silvio Rhatto
 # requires:  
-# tested: wipe-2.2.0
+# tested: secure-delete-3.1
 # model: generic.mkSlackBuild $Rev: 784 $
 #
 
@@ -29,10 +29,10 @@ fi
 
 # Set variables
 CWD="$(pwd)"
-SRC_NAME="wipe"
-PKG_NAME="wipe"
+SRC_NAME="secure_delete"
+PKG_NAME="secure-delete"
 ARCH=${ARCH:=i486}
-SRC_VERSION=${VERSION:=2.2.0}
+SRC_VERSION=${VERSION:=3.1}
 PKG_VERSION="$(echo "$SRC_VERSION" | tr '[[:blank:]-]' '_')"
 BUILD=${BUILD:=1rha}
 SRC_DIR=${SRC_DIR:=$CWD}/$PKG_NAME
@@ -79,11 +79,77 @@ mkdir -p "$REPOS" || exit $ERROR_MKDIR
 mkdir -p "$PKG_WORK" || exit $ERROR_MKDIR
 
 # Dowload source if necessary
-SRC="$SRC_NAME-$VERSION.tar.bz2"
-URL="http://downloads.sourceforge.net/wipe/$SRC"
+SRC="$SRC_NAME-$VERSION.tar.gz"
+URL="http://freeworld.thc.org/releases/$SRC"
 
-if [ ! -s "$SRC_DIR/$SRC" ] || ! bunzip2 -t "$SRC_DIR/$SRC" 2> /dev/null; then
+if [ ! -s "$SRC_DIR/$SRC" ] || ! gunzip -t "$SRC_DIR/$SRC" 2> /dev/null; then
   wget "$URL" -O "$SRC_DIR/$SRC" || exit $ERROR_WGET
+fi
+
+# Check Manifest file
+if [ -e "$CWD/Manifest" ]; then
+
+  # Manifest signature checking
+  if grep -q -- "-----BEGIN PGP SIGNED MESSAGE-----" $CWD/Manifest; then
+    echo "Checking Manifest signature..."
+    gpg --verify $CWD/Manifest
+    if [ "$?" != "0" ]; then
+      exit $ERROR_MANIFEST
+    fi
+  fi
+
+  MANIFEST_LINES="`grep -E -v "^(MKBUILD|SLACKBUILD)" $CWD/Manifest | wc -l`"
+
+  for ((MANIFEST_COUNT=1; MANIFEST_COUNT <= $MANIFEST_LINES; MANIFEST_COUNT++)); do
+
+    MANIFEST_LINE="`grep -E -v "^(MKBUILD|SLACKBUILD)" $CWD/Manifest | head -n $MANIFEST_COUNT | tail -n 1`"
+    MANIFEST_FILE="`echo $MANIFEST_LINE | awk '{ print $2 }'`"
+    MANIFEST_FILE_TYPE="`echo $MANIFEST_LINE | awk '{ print $1 }'`"
+
+    if [ -e "$SRC_DIR/$MANIFEST_FILE" ]; then
+      MANIFEST_FILE="$SRC_DIR/$MANIFEST_FILE"
+    else
+      MANIFEST_FILE="`find $CWD -name $MANIFEST_FILE`"
+    fi
+
+    if [ ! -e "$MANIFEST_FILE" ] || [ -d "$MANIFEST_FILE" ]; then
+      continue
+    fi
+
+    echo "Checking Manifest for $MANIFEST_FILE_TYPE $MANIFEST_FILE integrity..."
+
+    SIZE_SRC="`wc -c $MANIFEST_FILE | awk '{ print $1 }'`"
+    SIZE_MANIFEST="`echo $MANIFEST_LINE | awk '{ print $3 }'`"
+
+    # Check source code size
+    if [ "$SIZE_SRC" != "$SIZE_MANIFEST" ]; then
+      echo "SIZE Manifest: $SIZE_MANIFEST; SIZE $SRC: $SIZE_SRC"
+      exit $ERROR_MANIFEST
+    else
+      echo "Size match."
+    fi
+
+    # Check source code integrity
+    for ALGO in md5 rmd160 sha1 sha256 sha512; do
+      if [ $ALGO = "rmd160" ]; then
+        ALGO_SRC="`openssl rmd160 $MANIFEST_FILE | awk '{ print $2 }'`"
+      else
+        ALGO_SRC="`"$ALGO"sum $MANIFEST_FILE | awk '{ print $1 }'`"
+      fi
+      ALGO="`echo $ALGO | tr '[:lower:]' '[:upper:]'`"
+      ALGO_MANIFEST=$(echo $MANIFEST_LINE | sed "s/.* $ALGO //" | awk '{ print $1 }')
+      if [ "$ALGO_SRC" != "$ALGO_MANIFEST" ]; then
+        echo "$ALGO Manifest: $ALGO_MANIFEST; $ALGO $SRC: $ALGO_SRC"
+        exit $ERROR_MANIFEST
+      else
+        echo "$ALGO match."
+      fi
+    done
+
+  done
+
+else
+  exit $ERROR_MANIFEST
 fi
 
 # Untar
@@ -93,7 +159,7 @@ PKG_SRC="$PWD/`ls -l | awk '/^d/ { print $NF }'`"
 cd "$PKG_SRC"
 
 # Patch source
-patches=" [[PATCH URLS]]
+patches=" http://ftp.de.debian.org/debian/pool/main/s/secure-delete/secure-delete_3.1-4.diff.gz
          $PKG_NAME.diff $PKG_NAME-$PKG_VERSION.diff
          $PKG_NAME-$PKG_VERSION-$ARCH.diff $PKG_NAME-$ARCH.diff"
 for patch in $patches; do
@@ -117,19 +183,12 @@ for patch in $patches; do
   fi
 done
 
-# Configure
-autoheader
-autoconf
-CFLAGS="$SLKCFLAGS" \
-  CXXFLAGS="$SLKCFLAGS" \
-  ./configure \
-  --prefix="$PREFIX" --libdir="$LIBDIR" $CONF_OPTIONS || exit $ERROR_CONF
-
 # Compile
 make $NUMJOBS || exit $ERROR_MAKE
 
 # Install
-make install DESTDIR="$PKG" || exit $ERROR_INSTALL
+mkdir -p $PKG/bin
+cp -f srm sfill sswap smem $PKG/bin || exit $ERROR_INSTALL
 
 # Strip binaries
 ( cd "$PKG"
@@ -140,7 +199,7 @@ make install DESTDIR="$PKG" || exit $ERROR_INSTALL
 )
 
 # Install documentation
-DOCS="CHANGES INSTALL LICENSE README TESTING TODO"
+DOCS="CHANGES FILES README TODO"
 mkdir -p "$PKG/usr/doc/$PKG_NAME-$PKG_VERSION" || exit $ERROR_MKDIR
 for doc in $DOCS; do
   if [ -f "$doc" ]; then
@@ -158,18 +217,18 @@ cat << EODESC > "$PKG/install/slack-desc"
 # make exactly 11 lines for the formatting to be correct.  It's also
 # customary to leave one space after the ':'.
 
-    |-----handy-ruler---------------------------------------------------------|
-wipe: wipe (secure deletion of files from magnetic media)
-wipe:
-wipe: Wipe repeatedly writes special patterns to the file or files to be
-wipe: destroyed, using the fsync() call and/or the O_SYNC bit to force
-wipe: disk access, in order to lessen the chance of data recovery using
-wipe: techniques such as magnetic force microscopy.
-wipe:
-wipe:
-wipe:
-wipe:
-wipe:
+             |-----handy-ruler------------------------------------------------|
+secure-delete: secure-delete
+secure-delete:
+secure-delete: Secure file/disk/swap/memory erasure utilities.
+secure-delete:
+secure-delete:
+secure-delete:
+secure-delete:
+secure-delete:
+secure-delete:
+secure-delete:
+secure-delete:
 EODESC
 
 # Build the package
