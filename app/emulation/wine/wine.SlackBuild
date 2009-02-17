@@ -16,7 +16,8 @@
 #
 # slackbuild for wine, by Rudson R. Alves
 # requires:  
-# tested: wine-1.0.1
+# tested: wine-1.1.15
+# model: generic.mkSlackBuild $Rev: 784 $
 #
 
 # Look for slackbuildrc
@@ -31,7 +32,7 @@ CWD="$(pwd)"
 SRC_NAME="wine"
 PKG_NAME="wine"
 ARCH=${ARCH:=i486}
-SRC_VERSION=${VERSION:=1.0.1}
+SRC_VERSION=${VERSION:=1.1.15}
 PKG_VERSION="$(echo "$SRC_VERSION" | tr '[[:blank:]-]' '_')"
 BUILD=${BUILD:=1rra}
 SRC_DIR=${SRC_DIR:=$CWD}/$PKG_NAME
@@ -88,6 +89,15 @@ fi
 
 # Check Manifest file
 if [ -e "$CWD/Manifest" ]; then
+
+  # Manifest signature checking
+  if grep -q -- "-----BEGIN PGP SIGNED MESSAGE-----" $CWD/Manifest; then
+    echo "Checking Manifest signature..."
+    gpg --verify $CWD/Manifest
+    if [ "$?" != "0" ]; then
+      exit $ERROR_MANIFEST
+    fi
+  fi
 
   MANIFEST_LINES="`grep -E -v "^(MKBUILD|SLACKBUILD)" $CWD/Manifest | wc -l`"
 
