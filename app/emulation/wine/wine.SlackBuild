@@ -41,7 +41,8 @@ PKG=${PKG:=$TMP/package-$PKG_NAME}
 REPOS=${REPOS:=$TMP}
 PREFIX=${PREFIX:=/usr}
 PKG_WORK="$TMP/$SRC_NAME"
-CONF_OPTIONS=${CONF_OPTIONS:="--sysconfdir=/etc --localstatedir=/var"}
+# TEMPORARY ADDED --without-freetype as it's failing to build for some unknow reason...
+CONF_OPTIONS=${CONF_OPTIONS:="--sysconfdir=/etc --localstatedir=/var --without-freetype"}
 NUMJOBS=${NUMJOBS:="-j4"}
 
 # Set system libraries' path and optmization flags based on $ARCH
