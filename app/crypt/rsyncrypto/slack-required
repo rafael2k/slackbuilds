@@ -1,0 +1,4 @@
+# Dependency list to rsyncrypto
+#
+# dependency [condition] [version]]
+argtable				
