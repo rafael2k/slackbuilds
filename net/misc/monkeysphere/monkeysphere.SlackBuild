@@ -16,7 +16,8 @@
 #
 # slackbuild for monkeysphere, by Silvio Rhatto
 # requires:  
-# tested: monkeysphere-0.22
+# tested: monkeysphere-0.23.1
+# model: generic.mkSlackBuild $Rev: 784 $
 #
 
 # Look for slackbuildrc
@@ -31,7 +32,7 @@ CWD="$(pwd)"
 SRC_NAME="monkeysphere"
 PKG_NAME="monkeysphere"
 ARCH=${ARCH:=i486}
-SRC_VERSION=${VERSION:=0.22}
+SRC_VERSION=${VERSION:=0.23.1}
 PKG_VERSION="$(echo "$SRC_VERSION" | tr '[[:blank:]-]' '_')"
 BUILD=${BUILD:=1rha}
 SRC_DIR=${SRC_DIR:=$CWD}/$PKG_NAME
@@ -205,7 +206,7 @@ monkeysphere:
 EODESC
 
 # Move config files to .new to avoid overwriting any system config
-for config_file in etc/monkeysphere/gnupg-host.conf etc/monkeysphere/gnupg-authentication.conf etc/monkeysphere/monkeysphere.conf etc/monkeysphere/monkeysphere-server.conf; do
+for config_file in etc/monkeysphere/gnupg-host.conf etc/monkeysphere/gnupg-authentication.conf etc/monkeysphere/monkeysphere.conf etc/monkeysphere/monkeysphere-server.conf etc/monkeysphere/monkeysphere-authentication.conf etc/monkeysphere/monkeysphere-host.conf; do
   mv $PKG/$config_file $PKG/$config_file.new
 done
 
@@ -249,7 +250,7 @@ mkuser() {
   fi
 }
 
-config etc/monkeysphere/gnupg-host.conf.new; config etc/monkeysphere/gnupg-authentication.conf.new; config etc/monkeysphere/monkeysphere.conf.new; config etc/monkeysphere/monkeysphere-server.conf.new
+config etc/monkeysphere/gnupg-host.conf.new; config etc/monkeysphere/gnupg-authentication.conf.new; config etc/monkeysphere/monkeysphere.conf.new; config etc/monkeysphere/monkeysphere-server.conf.new ; config etc/monkeysphere/monkeysphere-authentication.conf.new ; config etc/monkeysphere/monkeysphere-host.conf.new
 EOSCRIPT
 
 # Build the package
