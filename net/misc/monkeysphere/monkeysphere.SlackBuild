@@ -16,8 +16,8 @@
 #
 # slackbuild for monkeysphere, by Silvio Rhatto
 # requires:  
-# tested: monkeysphere-0.23.1
-# model: generic.mkSlackBuild $Rev: 784 $
+# tested: monkeysphere-0.24
+# model: generic.mkSlackBuild $Rev: 796 $
 #
 
 # Look for slackbuildrc
@@ -32,13 +32,14 @@ CWD="$(pwd)"
 SRC_NAME="monkeysphere"
 PKG_NAME="monkeysphere"
 ARCH=${ARCH:=i486}
-SRC_VERSION=${VERSION:=0.23.1}
+SRC_VERSION=${VERSION:=0.24}
 PKG_VERSION="$(echo "$SRC_VERSION" | tr '[[:blank:]-]' '_')"
 BUILD=${BUILD:=1rha}
 SRC_DIR=${SRC_DIR:=$CWD}/$PKG_NAME
 TMP=${TMP:=/tmp}
 PKG=${PKG:=$TMP/package-$PKG_NAME}
 REPOS=${REPOS:=$TMP}
+SLACKBUILD_PATH=${SLACKBUILD_PATH:="net/misc/monkeysphere"}
 PREFIX=${PREFIX:=/usr}
 PKG_WORK="$TMP/$SRC_NAME"
 CONF_OPTIONS=${CONF_OPTIONS:=""}
@@ -255,7 +256,8 @@ EOSCRIPT
 
 # Build the package
 cd "$PKG"
-makepkg -l y -c n "$REPOS/$PKG_NAME-$PKG_VERSION-$ARCH-$BUILD.tgz" || exit $ERROR_MKPKG
+mkdir -p $REPOS/$SLACKBUILD_PATH
+makepkg -l y -c n "$REPOS/$SLACKBUILD_PATH/$PKG_NAME-$PKG_VERSION-$ARCH-$BUILD.tgz" || exit $ERROR_MKPKG
 
 # Delete source and build directories if requested
 if [ "$CLEANUP" == "yes" ] || [ "$1" = "--cleanup" ]; then
