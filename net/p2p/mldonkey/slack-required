@@ -4,4 +4,3 @@
 librsvg		>=		2.4.0
 gd		>=		2.0.28
 ocaml				
-lablgtk				
