@@ -6,3 +6,5 @@ gnome-doc-utils
 GConf				
 libgnome				
 libgnomeui				
+ptlib				
+avahi				

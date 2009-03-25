@@ -1,4 +1,4 @@
 # Dependency list to opal
 #
 # dependency [condition] [version]]
-pwlib				
+ptlib				
