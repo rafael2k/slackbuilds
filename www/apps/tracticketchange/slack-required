@@ -1,0 +1,5 @@
+# Dependency list to TracTicketChange
+#
+# dependency [condition] [version]]
+Trac				
+TracTicketDelete				
