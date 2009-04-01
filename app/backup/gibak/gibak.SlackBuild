@@ -15,9 +15,9 @@
 #  59 Temple Place - Suite 330, Boston, MA 02111-1307, USA
 #
 # slackbuild for gibak, by Silvio Rhatto
-# requires: omake 
-# tested: gibak-0.3.0
-# model: generic.mkSlackBuild $Rev: 796 $
+# requires:  
+# tested: gibak-
+# model: generic.mkSlackBuild $Rev: 805 $
 #
 
 # Look for slackbuildrc
@@ -32,7 +32,7 @@ CWD="$(pwd)"
 SRC_NAME="gibak"
 PKG_NAME="gibak"
 ARCH=${ARCH:=i486}
-SRC_VERSION=${VERSION:=0.3.0}
+SRC_VERSION=${VERSION:=}
 PKG_VERSION="$(echo "$SRC_VERSION" | tr '[[:blank:]-]' '_')"
 BUILD=${BUILD:=1rha}
 SRC_DIR=${SRC_DIR:=$CWD}/$PKG_NAME
@@ -79,13 +79,25 @@ mkdir -p "$PKG" || exit $ERROR_MKDIR
 mkdir -p "$REPOS" || exit $ERROR_MKDIR
 mkdir -p "$PKG_WORK" || exit $ERROR_MKDIR
 
-# Dowload source if necessary
-SRC="$SRC_NAME-$VERSION.tar.gz"
-URL="http://eigenclass.org/static/gibak/$SRC"
+# Get git source code
+cd "$SRC_DIR"
+SND_DIR="$PKG_NAME.git"
 
-if [ ! -s "$SRC_DIR/$SRC" ] || ! gunzip -t "$SRC_DIR/$SRC" 2> /dev/null; then
-  wget "$URL" -O "$SRC_DIR/$SRC" || exit $ERROR_WGET
+if [ "`find "$SRC_DIR/" -name *.git`" != "" ] && [ -d "$SRC_DIR/$SND_DIR" ]; then
+  cd $SND_DIR
+  git pull || exit $ERROR_VCS
+else
+  git clone http://eigenclass.org/repos/git/gibak/.git $SND_DIR || exit $ERROR_VCS
+  cd $SND_DIR
 fi
+
+PKG_VERSION="`git log | head -n 1 | awk '{ print $2 }'`_git"
+
+# Copy git source
+cd "$PKG_WORK"
+cp -a $SRC_DIR/* .
+PKG_SRC="$PWD/$SND_DIR"
+cd "$PKG_SRC"
 
 # Check Manifest file
 if [ -e "$CWD/Manifest" ]; then
@@ -152,12 +164,6 @@ if [ -e "$CWD/Manifest" ]; then
 else
   exit $ERROR_MANIFEST
 fi
-
-# Untar
-cd "$PKG_WORK"
-tar --no-same-owner --no-same-permissions -xvf "$SRC_DIR/$SRC" || exit $ERROR_TAR
-PKG_SRC="$PWD/`ls -l | awk '/^d/ { print $NF }'`"
-cd "$PKG_SRC"
 
 # Build and install package
 echo "INCLUDES += $LIBDIR" > OMakefile.new || exit $ERROR_MAKE

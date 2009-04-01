@@ -1,0 +1,4 @@
+# Dependency list to TracFootNoteMacro
+#
+# dependency [condition] [version]]
+Trac				

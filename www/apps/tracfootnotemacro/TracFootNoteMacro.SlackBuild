@@ -1,11 +1,11 @@
 #!/bin/bash
 #
-#  setuptools.SlackBuild is free software; you can redistribute
+#  TracFootNoteMacro.SlackBuild is free software; you can redistribute
 #  it and/or modify it under the terms of the GNU General Public License as
 #  published by the Free Software Foundation; either version 2 of the License,
 #  or any later version.
 #
-#  setuptools.SlackBuild is distributed in the hope that it will
+#  TracFootNoteMacro.SlackBuild is distributed in the hope that it will
 #  be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
 #  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General
 #  Public License for more details.
@@ -14,9 +14,9 @@
 #  with this program; if not, write to the Free Software Foundation, Inc.,
 #  59 Temple Place - Suite 330, Boston, MA 02111-1307, USA
 #
-# slackbuild for setuptools, by Silvio Rhatto
-# requires:  
-# tested: setuptools-0.6c9
+# slackbuild for TracFootNoteMacro, by Silvio Rhatto
+# requires: 
+# tested: TracFootNoteMacro-svn_version
 # model: generic.mkSlackBuild $Rev: 805 $
 #
 
@@ -29,17 +29,17 @@ fi
 
 # Set variables
 CWD="$(pwd)"
-SRC_NAME="setuptools"
-PKG_NAME="setuptools"
+SRC_NAME="TracFootNoteMacro"
+PKG_NAME="TracFootNoteMacro"
 ARCH=${ARCH:=i486}
-SRC_VERSION=${VERSION:=0.6c9}
+SRC_VERSION=${VERSION:=svn_version}
 PKG_VERSION="$(echo "$SRC_VERSION" | tr '[[:blank:]-]' '_')"
 BUILD=${BUILD:=1rha}
 SRC_DIR=${SRC_DIR:=$CWD}/$PKG_NAME
 TMP=${TMP:=/tmp}
 PKG=${PKG:=$TMP/package-$PKG_NAME}
 REPOS=${REPOS:=$TMP}
-SLACKBUILD_PATH=${SLACKBUILD_PATH:="dev/python/setuptools"}
+SLACKBUILD_PATH=${SLACKBUILD_PATH:="www/apps/tracfootnotemacro"}
 PREFIX=${PREFIX:=/usr}
 PKG_WORK="$TMP/$SRC_NAME"
 CONF_OPTIONS=${CONF_OPTIONS:=""}
@@ -79,88 +79,28 @@ mkdir -p "$PKG" || exit $ERROR_MKDIR
 mkdir -p "$REPOS" || exit $ERROR_MKDIR
 mkdir -p "$PKG_WORK" || exit $ERROR_MKDIR
 
-# Dowload source if necessary
-SRC="$SRC_NAME-$VERSION.tar.gz"
-URL="http://pypi.python.org/packages/source/s/setuptools/$SRC"
+# Get svn source code
+cd "$SRC_DIR"
+SND_DIR="`basename http://trac-hacks.org/svn/footnotemacro/0.11`"
 
-if [ ! -s "$SRC_DIR/$SRC" ] || ! gunzip -t "$SRC_DIR/$SRC" 2> /dev/null; then
-  wget "$URL" -O "$SRC_DIR/$SRC" || exit $ERROR_WGET
-fi
-
-# Check Manifest file
-if [ -e "$CWD/Manifest" ]; then
-
-  # Manifest signature checking
-  if grep -q -- "-----BEGIN PGP SIGNED MESSAGE-----" $CWD/Manifest; then
-    echo "Checking Manifest signature..."
-    gpg --verify $CWD/Manifest
-    if [ "$?" != "0" ]; then
-      exit $ERROR_MANIFEST
-    fi
-  fi
-
-  MANIFEST_LINES="`grep -E -v "^(MKBUILD|SLACKBUILD)" $CWD/Manifest | wc -l`"
-
-  for ((MANIFEST_COUNT=1; MANIFEST_COUNT <= $MANIFEST_LINES; MANIFEST_COUNT++)); do
-
-    MANIFEST_LINE="`grep -E -v "^(MKBUILD|SLACKBUILD)" $CWD/Manifest | head -n $MANIFEST_COUNT | tail -n 1`"
-    MANIFEST_FILE="`echo $MANIFEST_LINE | awk '{ print $2 }'`"
-    MANIFEST_FILE_TYPE="`echo $MANIFEST_LINE | awk '{ print $1 }'`"
-
-    if [ -e "$SRC_DIR/$MANIFEST_FILE" ]; then
-      MANIFEST_FILE="$SRC_DIR/$MANIFEST_FILE"
-    else
-      MANIFEST_FILE="`find $CWD -name $MANIFEST_FILE`"
-    fi
-
-    if [ ! -e "$MANIFEST_FILE" ] || [ -d "$MANIFEST_FILE" ]; then
-      continue
-    fi
-
-    echo "Checking Manifest for $MANIFEST_FILE_TYPE $MANIFEST_FILE integrity..."
-
-    SIZE_SRC="`wc -c $MANIFEST_FILE | awk '{ print $1 }'`"
-    SIZE_MANIFEST="`echo $MANIFEST_LINE | awk '{ print $3 }'`"
-
-    # Check source code size
-    if [ "$SIZE_SRC" != "$SIZE_MANIFEST" ]; then
-      echo "SIZE Manifest: $SIZE_MANIFEST; SIZE $SRC: $SIZE_SRC"
-      exit $ERROR_MANIFEST
-    else
-      echo "Size match."
-    fi
-
-    # Check source code integrity
-    for ALGO in md5 rmd160 sha1 sha256 sha512; do
-      if [ $ALGO = "rmd160" ]; then
-        ALGO_SRC="`openssl rmd160 $MANIFEST_FILE | awk '{ print $2 }'`"
-      else
-        ALGO_SRC="`"$ALGO"sum $MANIFEST_FILE | awk '{ print $1 }'`"
-      fi
-      ALGO="`echo $ALGO | tr '[:lower:]' '[:upper:]'`"
-      ALGO_MANIFEST=$(echo $MANIFEST_LINE | sed "s/.* $ALGO //" | awk '{ print $1 }')
-      if [ "$ALGO_SRC" != "$ALGO_MANIFEST" ]; then
-        echo "$ALGO Manifest: $ALGO_MANIFEST; $ALGO $SRC: $ALGO_SRC"
-        exit $ERROR_MANIFEST
-      else
-        echo "$ALGO match."
-      fi
-    done
-
-  done
-
+if [ "`find "$SRC_DIR/" -name .svn`" != "" ] && [ -d "$SRC_DIR/$SND_DIR" ]; then
+  cd $SND_DIR
+  svn update || exit $ERROR_VCS
 else
-  exit $ERROR_MANIFEST
+  svn checkout http://trac-hacks.org/svn/footnotemacro/0.11 $SND_DIR || exit $ERROR_VCS
+  cd $SND_DIR
 fi
 
-# Untar
+PKG_VERSION="`svn info | awk '/Last Changed Rev:/ { print $4 }'`_svn"
+
+# Copy svn source
 cd "$PKG_WORK"
-tar --no-same-owner --no-same-permissions -xvf "$SRC_DIR/$SRC" || exit $ERROR_TAR
-PKG_SRC="$PWD/`ls -l | awk '/^d/ { print $NF }'`"
+cp -a $SRC_DIR/* .
+PKG_SRC="$PWD/$SND_DIR"
 cd "$PKG_SRC"
 
 # Build and install package
-python setup.py build install --root=$PKG || exit $ERROR_INSTALL
+python setup.py build install --root=$PKG
 
 # Strip binaries
 ( cd "$PKG"
@@ -171,7 +111,7 @@ python setup.py build install --root=$PKG || exit $ERROR_INSTALL
 )
 
 # Install documentation
-DOCS="PKG-INFO README.txt"
+DOCS="COPYING README"
 mkdir -p "$PKG/usr/doc/$PKG_NAME-$PKG_VERSION" || exit $ERROR_MKDIR
 for doc in $DOCS; do
   if [ -f "$doc" ]; then
@@ -189,19 +129,25 @@ cat << EODESC > "$PKG/install/slack-desc"
 # make exactly 11 lines for the formatting to be correct.  It's also
 # customary to leave one space after the ':'.
 
-          |-----handy-ruler---------------------------------------------------|
-setuptools: setuptools 
-setuptools:
-setuptools: setuptools is a collection of enhancements to the Python distutils.
-setuptools:
-setuptools:
-setuptools:
-setuptools:
-setuptools:
-setuptools:
-setuptools:
-setuptools:
+                 |-----handy-ruler--------------------------------------------|
+TracFootNoteMacro: TracFootNoteMacro
+TracFootNoteMacro: 
+TracFootNoteMacro: The FootNoteMacro automatically collates and generates
+TracFootNoteMacro: footnotes. 
+TracFootNoteMacro: 
+TracFootNoteMacro: 
+TracFootNoteMacro: 
+TracFootNoteMacro: 
+TracFootNoteMacro: 
+TracFootNoteMacro: 
+TracFootNoteMacro: 
 EODESC
+
+# Copy slack-required
+mkdir -p "$PKG/install" || exit $ERROR_MKDIR
+if [ -f "$CWD/slack-required" ]; then
+  cp $CWD/slack-required $PKG/install
+fi
 
 # Build the package
 cd "$PKG"
