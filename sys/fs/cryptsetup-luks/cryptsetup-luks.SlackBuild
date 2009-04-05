@@ -81,7 +81,7 @@ mkdir -p "$PKG_WORK" || exit $ERROR_MKDIR
 
 # Dowload source if necessary
 SRC="cryptsetup-$VERSION.tar.bz2"
-URL="http://luks.endorphin.org/source/$SRC"
+URL="http://cryptsetup.googlecode.com/files/$SRC"
 
 if [ ! -s "$SRC_DIR/$SRC" ] || ! bunzip2 -t "$SRC_DIR/$SRC" 2> /dev/null; then
   wget "$URL" -O "$SRC_DIR/$SRC" || exit $ERROR_WGET
