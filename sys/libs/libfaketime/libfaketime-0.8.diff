@@ -1,0 +1,26 @@
+diff -Naur libfaketime-0.8.orig/Makefile libfaketime-0.8/Makefile
+--- libfaketime-0.8.orig/Makefile	2008-08-24 10:11:06.000000000 -0300
++++ libfaketime-0.8/Makefile	2009-04-06 11:15:55.000000000 -0300
+@@ -70,13 +70,13 @@
+ 
+ install: libs
+ 	@echo 
+-	@echo "Copying the libraries to /usr/lib/faketime and the wrapper script to /usr/bin ..."
+-	-mkdir -p /usr/lib/faketime 
+-	cp libfaketime.so.1 libfaketimeMT.so.1 /usr/lib/faketime
+-	cp faketime /usr/bin 
+-	cp faketime.1 /usr/share/man/man1/faketime.1
+-	gzip /usr/share/man/man1/faketime.1
+-	-mkdir -p /usr/share/doc/faketime
+-	cp README /usr/share/doc/faketime/README
+-	cp Changelog /usr/share/doc/faketime/Changelog
++	@echo "Copying the libraries to ${DESTDIR}/usr/lib/faketime and the wrapper script to /usr/bin ..."
++	-mkdir -p ${DESTDIR}/usr/lib/faketime 
++	cp libfaketime.so.1 libfaketimeMT.so.1 ${DESTDIR}/usr/lib/faketime
++	-mkdir -p ${DESTDIR}/usr/bin
++	cp faketime ${DESTDIR}/usr/bin 
++	-mkdir -p ${DESTDIR}/usr/share/man/man1/
++	cp faketime.1 ${DESTDIR}/usr/share/man/man1/faketime.1
++	gzip ${DESTDIR}/usr/share/man/man1/faketime.1
++	-mkdir -p ${DESTDIR}/usr/share/doc/faketime
+ 
