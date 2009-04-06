@@ -14,7 +14,7 @@
 #
 # slackbuild for Qemu, by Rudson R. Alves
 # requires: qemu
-# tested: kqemu-1.3.0pre11
+# tested: kqemu-1.3.0pre11, kqemu-1.4.0pre1
 
 CWD=`pwd`
 
@@ -27,7 +27,7 @@ fi
 # --------  Variáveis de controle de versão  --------------
 # Nome da fonte para a qual o slackbuild foi construído e
 # o seu md5sum
-SRC_ORIG="kqemu-1.3.0pre11.tar.gz"
+SRC_ORIG="kqemu-1.4.0pre1.tar.gz"
 #MD5_ORIG=""
 PACKAGE_ORIG=`echo $SRC_ORIG | sed -r 's/(.*)-(.*)\.(.*\..*)$/\1/'`
 VERSION_ORIG=`echo $SRC_ORIG | sed -r 's/(.*)-(.*)\.(.*\..*)$/\2/'`
@@ -59,7 +59,7 @@ REPOS=${REPOS:=$TMP}
 PREFIX=${PREFIX:=/usr}
 OPTCONF=${OPTCONF:=""}
 MD5=${MD5:=$MD5_ORIG}
-URL=${URL:="http://bellard.org/qemu/$SRC"}
+URL=${URL:="http://www.nongnu.org/qemu/$SRC"}
 KVERSION=`uname -r | tr - _ `
 
 # ----------------  Download fontes  ----------------------
