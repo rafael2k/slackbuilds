@@ -1,0 +1,5 @@
+# Dependency list to libzrtpcpp
+#
+# dependency [condition] [version]]
+commoncpp2				
+ccrtp				
