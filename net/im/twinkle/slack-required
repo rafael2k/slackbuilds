@@ -1,0 +1,9 @@
+# Dependency list to twinkle
+#
+# dependency [condition] [version]]
+commoncpp2				
+ccrtp				
+libzrtpcpp				
+speex				
+libsndfile				
+boost				
