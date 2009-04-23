@@ -15,8 +15,9 @@
 #  59 Temple Place - Suite 330, Boston, MA 02111-1307, USA
 #
 # slackbuild for inkscape, by Alexandre Vieira de Souza
-# requires: gtk+2 gtkmm glib2 libsigc++ libxslt libxml2 libgc 
+# requires: gtk+2 gtkmm glib2 libsigc++ libxslt libxml2 libgc boost 
 # tested: inkscape-0.46
+# model: generic.mkSlackBuild $Rev: 805 $
 #
 
 # Look for slackbuildrc
@@ -38,6 +39,7 @@ SRC_DIR=${SRC_DIR:=$CWD}/$PKG_NAME
 TMP=${TMP:=/tmp}
 PKG=${PKG:=$TMP/package-$PKG_NAME}
 REPOS=${REPOS:=$TMP}
+SLACKBUILD_PATH=${SLACKBUILD_PATH:="media/gfx/inkscape"}
 PREFIX=${PREFIX:=/usr}
 PKG_WORK="$TMP/$SRC_NAME"
 CONF_OPTIONS=${CONF_OPTIONS:=""}
@@ -47,9 +49,9 @@ NUMJOBS=${NUMJOBS:="-j4"}
 LIBDIR="$PREFIX/lib"
 
 if [ "$ARCH" = "i386" ]; then
-  SLKCFLAGS="-O2 -march=i386 -mcpu=i686"
+  SLKCFLAGS="-O2 -march=i386 -mtune=i686"
 elif [ "$ARCH" = "i486" ]; then
-  SLKCFLAGS="-O2 -march=i486 -mcpu=i686"
+  SLKCFLAGS="-O2 -march=i486 -mtune=i686"
 elif [ "$ARCH" = "i686" ]; then
   SLKCFLAGS="-O2 -march=i686"
 elif [ "$ARCH" = "s390" ]; then
@@ -132,6 +134,15 @@ echo Success.
 # Check Manifest file
 if [ -e "$CWD/Manifest" ]; then
 
+  # Manifest signature checking
+  if grep -q -- "-----BEGIN PGP SIGNED MESSAGE-----" $CWD/Manifest; then
+    echo "Checking Manifest signature..."
+    gpg --verify $CWD/Manifest
+    if [ "$?" != "0" ]; then
+      exit $ERROR_MANIFEST
+    fi
+  fi
+
   MANIFEST_LINES="`grep -E -v "^(MKBUILD|SLACKBUILD)" $CWD/Manifest | wc -l`"
 
   for ((MANIFEST_COUNT=1; MANIFEST_COUNT <= $MANIFEST_LINES; MANIFEST_COUNT++)); do
@@ -164,7 +175,7 @@ if [ -e "$CWD/Manifest" ]; then
     fi
 
     # Check source code integrity
-    for ALGO in md5 sha1 sha256 sha512 rmd160; do
+    for ALGO in md5 rmd160 sha1 sha256 sha512; do
       if [ $ALGO = "rmd160" ]; then
         ALGO_SRC="`openssl rmd160 $MANIFEST_FILE | awk '{ print $2 }'`"
       else
@@ -278,7 +289,8 @@ fi
 
 # Build the package
 cd "$PKG"
-makepkg -l y -c n "$REPOS/$PKG_NAME-$PKG_VERSION-$ARCH-$BUILD.tgz" || exit $ERROR_MKPKG
+mkdir -p $REPOS/$SLACKBUILD_PATH
+makepkg -l y -c n "$REPOS/$SLACKBUILD_PATH/$PKG_NAME-$PKG_VERSION-$ARCH-$BUILD.tgz" || exit $ERROR_MKPKG
 
 # Delete source and build directories if requested
 if [ "$CLEANUP" == "yes" ] || [ "$1" = "--cleanup" ]; then

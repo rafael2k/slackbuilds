@@ -8,3 +8,4 @@ libsigc++		>=		2.0.12
 libxslt		>=		1.0.15
 libxml2		>=		2.6.20
 libgc		>=		6.4
+boost				
