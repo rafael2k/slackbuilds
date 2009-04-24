@@ -17,6 +17,7 @@
 # slackbuild for ffmpeg, by Silvio Rhatto
 # requires: lame faac libx264 
 # tested: ffmpeg-svn_version
+# model: generic.mkSlackBuild $Rev: 805 $
 #
 
 # Look for slackbuildrc
@@ -38,18 +39,19 @@ SRC_DIR=${SRC_DIR:=$CWD}/$PKG_NAME
 TMP=${TMP:=/tmp}
 PKG=${PKG:=$TMP/package-$PKG_NAME}
 REPOS=${REPOS:=$TMP}
+SLACKBUILD_PATH=${SLACKBUILD_PATH:="media/video/ffmpeg"}
 PREFIX=${PREFIX:=/usr}
 PKG_WORK="$TMP/$SRC_NAME"
-CONF_OPTIONS=${CONF_OPTIONS:="$EXTRA_AC_FLAGS --enable-shared --enable-pthreads --enable-swscale --enable-x11grab --enable-libmp3lame --enable-libvorbis --enable-libtheora --enable-libfaac --enable-libfaad --enable-libx264 --enable-postproc --enable-gpl"}
+CONF_OPTIONS=${CONF_OPTIONS:="$EXTRA_AC_FLAGS --enable-shared --enable-pthreads --enable-x11grab --enable-libmp3lame --enable-libvorbis --enable-libtheora --enable-libfaac --enable-libfaad --enable-libx264 --enable-postproc --enable-gpl"}
 NUMJOBS=${NUMJOBS:=""}
 
 # Set system libraries' path and optmization flags based on $ARCH
 LIBDIR="$PREFIX/lib"
 
 if [ "$ARCH" = "i386" ]; then
-  SLKCFLAGS="-O2 -march=i386 -mcpu=i686"
+  SLKCFLAGS="-O2 -march=i386 -mtune=i686"
 elif [ "$ARCH" = "i486" ]; then
-  SLKCFLAGS="-O2 -march=i486 -mcpu=i686"
+  SLKCFLAGS="-O2 -march=i486 -mtune=i686"
 elif [ "$ARCH" = "i686" ]; then
   SLKCFLAGS="-O2 -march=i686"
 elif [ "$ARCH" = "s390" ]; then
@@ -65,6 +67,7 @@ ERROR_WGET=31;      ERROR_MAKE=32;      ERROR_INSTALL=33
 ERROR_MD5=34;       ERROR_CONF=35;      ERROR_HELP=36
 ERROR_TAR=37;       ERROR_MKPKG=38;     ERROR_GPG=39
 ERROR_PATCH=40;     ERROR_VCS=41;       ERROR_MKDIR=42
+ERROR_MANIFEST=43;
 
 # Clean up any leftovers of previous builds
 rm -rf "$PKG_WORK" 2> /dev/null
@@ -97,10 +100,11 @@ PKG_SRC="$PWD/$SND_DIR"
 cd "$PKG_SRC"
 
 # Patch source
-patches="
+patches=" [[PATCH URLS]]
          $PKG_NAME.diff $PKG_NAME-$PKG_VERSION.diff
          $PKG_NAME-$PKG_VERSION-$ARCH.diff $PKG_NAME-$ARCH.diff"
 for patch in $patches; do
+  patch="`basename $patch`"
   if [ -f "$CWD/$patch" ]; then
     patch -Np1 < "$CWD/$patch" || exit $ERROR_PATCH
   elif [ -f "$CWD/patches/$patch" ]; then
@@ -109,15 +113,7 @@ for patch in $patches; do
     gzip -dc "$CWD/$patch.gz" | patch -Np1 || exit $ERROR_PATCH
   elif [ -f "$CWD/patches/$patch.gz" ]; then
     gzip -dc "$CWD/patches/$patch.gz" | patch -Np1 || exit $ERROR_PATCH
-  fi
-done
-
-if echo [[PATCH URLS]] | grep -q -v "PATCH URLS"; then
-  for patch_url in [[PATCH URLS]]; do
-    patch="`basename $patch_url`"
-    if [ ! -s "$SRC_DIR/$patch" ]; then
-      wget "$patch_url" -O "$SRC_DIR/$patch" || exit $ERROR_WGET
-    fi
+  elif [ -f "$SRC_DIR/$patch" ]; then
     if [ "`basename $patch .gz`" != "$patch" ]; then
       gzip -dc $SRC_DIR/$patch | patch -Np1 || exit $ERROR_PATCH
     elif [ "`basename $patch .bz2`" != "$patch" ]; then
@@ -125,8 +121,8 @@ if echo [[PATCH URLS]] | grep -q -v "PATCH URLS"; then
     else
       patch -Np1 < "$SRC_DIR/$patch" || exit $ERROR_PATCH
     fi
-  done
-fi
+  fi
+done
 
 # Configure
 if [ "$ARCH" == "powerpc" ]; then
@@ -202,7 +198,8 @@ fi
 
 # Build the package
 cd "$PKG"
-makepkg -l y -c n "$REPOS/$PKG_NAME-$PKG_VERSION-$ARCH-$BUILD.tgz" || exit $ERROR_MKPKG
+mkdir -p $REPOS/$SLACKBUILD_PATH
+makepkg -l y -c n "$REPOS/$SLACKBUILD_PATH/$PKG_NAME-$PKG_VERSION-$ARCH-$BUILD.tgz" || exit $ERROR_MKPKG
 
 # Delete source and build directories if requested
 if [ "$CLEANUP" == "yes" ] || [ "$1" = "--cleanup" ]; then
