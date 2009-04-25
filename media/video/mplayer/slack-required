@@ -1,4 +1,4 @@
-# Dependency list to mplayer-export
+# Dependency list to MPlayer
 #
 # dependency [condition] [version]]
 speex				

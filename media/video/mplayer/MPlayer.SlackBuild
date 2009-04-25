@@ -15,8 +15,8 @@
 #  59 Temple Place - Suite 330, Boston, MA 02111-1307, USA
 #
 # slackbuild for MPlayer, by Silvio Rhatto
-# requires: speex jack libx264 faac faad2 
-# tested: MPlayer-snapshot
+# requires:  
+# tested: MPlayer-svn_version
 # model: generic.mkSlackBuild $Rev: 805 $
 #
 
@@ -29,10 +29,10 @@ fi
 
 # Set variables
 CWD="$(pwd)"
-SRC_NAME="mplayer-export"
+SRC_NAME="MPlayer"
 PKG_NAME="MPlayer"
 ARCH=${ARCH:=i486}
-SRC_VERSION=${VERSION:=snapshot}
+SRC_VERSION=${VERSION:=svn_version}
 PKG_VERSION="$(echo "$SRC_VERSION" | tr '[[:blank:]-]' '_')"
 BUILD=${BUILD:=1rha}
 SRC_DIR=${SRC_DIR:=$CWD}/$PKG_NAME
@@ -79,29 +79,24 @@ mkdir -p "$PKG" || exit $ERROR_MKDIR
 mkdir -p "$REPOS" || exit $ERROR_MKDIR
 mkdir -p "$PKG_WORK" || exit $ERROR_MKDIR
 
-# Dowload source if necessary
-SRC="$SRC_NAME-$VERSION.tar.bz2"
-URL="http://www1.mplayerhq.hu/MPlayer/releases/$SRC"
+# Get svn source code
+cd "$SRC_DIR"
+SND_DIR="`basename svn://svn.mplayerhq.hu/mplayer/trunk`"
 
-if [ ! -s "$SRC_DIR/$SRC" ] || ! bunzip2 -t "$SRC_DIR/$SRC" 2> /dev/null; then
-  wget "$URL" -O "$SRC_DIR/$SRC" || exit $ERROR_WGET
+if [ "`find "$SRC_DIR/" -name .svn`" != "" ] && [ -d "$SRC_DIR/$SND_DIR" ]; then
+  cd $SND_DIR
+  svn update || exit $ERROR_VCS
+else
+  svn checkout svn://svn.mplayerhq.hu/mplayer/trunk $SND_DIR || exit $ERROR_VCS
+  cd $SND_DIR
 fi
 
-# Download skin
-SKIN="Blue"
-SKIN_VERSION="1.7"
-SKIN_EXT="bz2"
-SKIN_SRC=${PACKAGE_SKIN:=$SKIN-$SKIN_VERSION.tar.$SKIN_EXT}
-SKIN_URL="http://www.mplayerhq.hu/MPlayer/skins/$SKIN_SRC"
+PKG_VERSION="`svn info | awk '/Last Changed Rev:/ { print $4 }'`_svn"
 
-if [ ! -s "$SRC_DIR/$SKIN_SRC" ] || ! bunzip2 -t "$SRC_DIR/$SKIN_SRC" 2> /dev/null; then
-  wget "$SKIN_URL" -O "$SRC_DIR/$SKIN_SRC" || exit $ERROR_WGET
-fi
-
-# Untar
+# Copy svn source
 cd "$PKG_WORK"
-tar --no-same-owner --no-same-permissions -xvf "$SRC_DIR/$SRC" || exit $ERROR_TAR
-PKG_SRC="$PWD/`ls -l | awk '/^d/ { print $NF }'`"
+cp -a $SRC_DIR/* .
+PKG_SRC="$PWD/$SND_DIR"
 cd "$PKG_SRC"
 
 # Patch source
