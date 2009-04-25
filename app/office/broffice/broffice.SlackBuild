@@ -16,7 +16,8 @@
 #
 # slackbuild for broffice, by Rudson R. Alves
 # requires:  
-# tested: broffice-2.4.1
+# tested: broffice-3.0.1
+# model: generic.mkSlackBuild $Rev: 805 $
 #
 
 # Look for slackbuildrc
@@ -31,13 +32,14 @@ CWD="$(pwd)"
 SRC_NAME="BrOo"
 PKG_NAME="broffice"
 ARCH=${ARCH:=i686}
-SRC_VERSION=${VERSION:=2.4.1}
+SRC_VERSION=${VERSION:=3.0.1}
 PKG_VERSION="$(echo "$SRC_VERSION" | tr '[[:blank:]-]' '_')"
 BUILD=${BUILD:=1rra}
 SRC_DIR=${SRC_DIR:=$CWD}/$PKG_NAME
 TMP=${TMP:=/tmp}
 PKG=${PKG:=$TMP/package-$PKG_NAME}
 REPOS=${REPOS:=$TMP}
+SLACKBUILD_PATH=${SLACKBUILD_PATH:="app/office/broffice"}
 PREFIX=${PREFIX:=/usr/share/broffice.org2.4}
 PKG_WORK="$TMP/$SRC_NAME"
 CONF_OPTIONS=${CONF_OPTIONS:=""}
@@ -48,6 +50,7 @@ ERROR_WGET=31;      ERROR_MAKE=32;      ERROR_INSTALL=33
 ERROR_MD5=34;       ERROR_CONF=35;      ERROR_HELP=36
 ERROR_TAR=37;       ERROR_MKPKG=38;     ERROR_GPG=39
 ERROR_PATCH=40;     ERROR_VCS=41;       ERROR_MKDIR=42
+ERROR_MANIFEST=43;
 
 # Clean up any leftovers of previous builds
 rm -rf "$PKG_WORK" 2> /dev/null
@@ -138,9 +141,10 @@ EODESC
 
 # Build the package
 cd "$PKG"
-makepkg -l y -c n "$REPOS/$PKG_NAME-$PKG_VERSION-$ARCH-$BUILD.tgz" || exit $ERROR_MKPKG
+mkdir -p $REPOS/$SLACKBUILD_PATH
+makepkg -l y -c n "$REPOS/$SLACKBUILD_PATH/$PKG_NAME-$PKG_VERSION-$ARCH-$BUILD.tgz" || exit $ERROR_MKPKG
 
 # Delete source and build directories if requested
-if [ "$CLEANUP" == "yes" ]; then
+if [ "$CLEANUP" == "yes" ] || [ "$1" = "--cleanup" ]; then
   rm -rf "$PKG_WORK" "$PKG"
 fi
