@@ -16,7 +16,8 @@
 #
 # slackbuild for gstreamer, by Rafael Diniz
 # requires:  
-# tested: gstreamer-0.10.19
+# tested: gstreamer-0.10.22
+# model: generic.mkSlackBuild $Rev: 805 $
 #
 
 # Look for slackbuildrc
@@ -31,13 +32,14 @@ CWD="$(pwd)"
 SRC_NAME="gstreamer"
 PKG_NAME="gstreamer"
 ARCH=${ARCH:=i486}
-SRC_VERSION=${VERSION:=0.10.19}
+SRC_VERSION=${VERSION:=0.10.22}
 PKG_VERSION="$(echo "$SRC_VERSION" | tr '[[:blank:]-]' '_')"
 BUILD=${BUILD:=1rd}
 SRC_DIR=${SRC_DIR:=$CWD}/$PKG_NAME
 TMP=${TMP:=/tmp}
 PKG=${PKG:=$TMP/package-$PKG_NAME}
 REPOS=${REPOS:=$TMP}
+SLACKBUILD_PATH=${SLACKBUILD_PATH:="media/libs/gstreamer"}
 PREFIX=${PREFIX:=/usr}
 PKG_WORK="$TMP/$SRC_NAME"
 CONF_OPTIONS=${CONF_OPTIONS:="--sysconfdir=/etc --with-docdir=/usr/doc/$PKG_NAME-$PKG_VERSION"}
@@ -47,9 +49,9 @@ NUMJOBS=${NUMJOBS:="-j3"}
 LIBDIR="$PREFIX/lib"
 
 if [ "$ARCH" = "i386" ]; then
-  SLKCFLAGS="-O2 -march=i386 -mcpu=i686"
+  SLKCFLAGS="-O2 -march=i386 -mtune=i686"
 elif [ "$ARCH" = "i486" ]; then
-  SLKCFLAGS="-O2 -march=i486 -mcpu=i686"
+  SLKCFLAGS="-O2 -march=i486 -mtune=i686"
 elif [ "$ARCH" = "i686" ]; then
   SLKCFLAGS="-O2 -march=i686"
 elif [ "$ARCH" = "s390" ]; then
@@ -65,6 +67,7 @@ ERROR_WGET=31;      ERROR_MAKE=32;      ERROR_INSTALL=33
 ERROR_MD5=34;       ERROR_CONF=35;      ERROR_HELP=36
 ERROR_TAR=37;       ERROR_MKPKG=38;     ERROR_GPG=39
 ERROR_PATCH=40;     ERROR_VCS=41;       ERROR_MKDIR=42
+ERROR_MANIFEST=43;
 
 # Clean up any leftovers of previous builds
 rm -rf "$PKG_WORK" 2> /dev/null
@@ -145,9 +148,10 @@ EODESC
 
 # Build the package
 cd "$PKG"
-makepkg -l y -c n "$REPOS/$PKG_NAME-$PKG_VERSION-$ARCH-$BUILD.tgz" || exit $ERROR_MKPKG
+mkdir -p $REPOS/$SLACKBUILD_PATH
+makepkg -l y -c n "$REPOS/$SLACKBUILD_PATH/$PKG_NAME-$PKG_VERSION-$ARCH-$BUILD.tgz" || exit $ERROR_MKPKG
 
 # Delete source and build directories if requested
-if [ "$CLEANUP" == "yes" ]; then
+if [ "$CLEANUP" == "yes" ] || [ "$1" = "--cleanup" ]; then
   rm -rf "$PKG_WORK" "$PKG"
 fi
