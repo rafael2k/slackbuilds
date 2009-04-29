@@ -6,7 +6,7 @@
 # Adaptation for slack.sarava.org standard by Rafael Diniz <rafael (at) riseup (dot) net>
 
 PRGNAM=qt4
-VERSION=${VERSION:-4.4.0}
+VERSION=${VERSION:-4.4.3}
 ARCH=${ARCH:-i486}
 BUILD=${BUILD:-1}
 TAG=${TAG:-rd}
