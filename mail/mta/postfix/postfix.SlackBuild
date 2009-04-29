@@ -1,222 +1,317 @@
 #!/bin/bash
 #
-# original script from http://www.slacky.it/download/network/tool/postfix/2.2.10/src/postfix.SlackBuild
-# changes by rhatto at riseup.net
+#  postfix.SlackBuild is free software; you can redistribute
+#  it and/or modify it under the terms of the GNU General Public License as
+#  published by the Free Software Foundation; either version 2 of the License,
+#  or any later version.
+#
+#  postfix.SlackBuild is distributed in the hope that it will
+#  be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General
+#  Public License for more details.
+#
+#  You should have received a copy of the GNU General Public License along
+#  with this program; if not, write to the Free Software Foundation, Inc.,
+#  59 Temple Place - Suite 330, Boston, MA 02111-1307, USA
+#
+# slackbuild for postfix, by Silvio Rhatto
+# requires:  
+# tested: postfix-2.5.6
+# model: generic.mkSlackBuild $Rev: 805 $
 #
 
-if [ -s "slack-required" ]; then
-  echo Recomended and required packages for building postfix are:
-  cat slack-required | sed -e 's/^/\t/'
-  if [ "$INTERACT" != "no" ]; then
-    echo If you dont have those installed, press Ctrl-C. Otherwise, hit ENTER.
-    read crap
-#  else
-#    echo Sleeping 3 seconds...
-#    sleep 3
-  fi
-fi
-
-CWD=`pwd`
-
+# Look for slackbuildrc
 if [ -f ~/.slackbuildrc ]; then
   source ~/.slackbuildrc
 elif [ -f /etc/slackbuildrc ]; then
   source /etc/slackbuildrc
 fi
 
-# default settings
-PACKAGE=postfix
+# Set variables
+CWD="$(pwd)"
+SRC_NAME="postfix"
+PKG_NAME="postfix"
 ARCH=${ARCH:=i486}
-VERSION=${VERSION:=2.4.9}
+SRC_VERSION=${VERSION:=2.5.6}
+PKG_VERSION="$(echo "$SRC_VERSION" | tr '[[:blank:]-]' '_')"
 BUILD=${BUILD:=1rha}
-SRC_DIR=${SRC:=$CWD}
+SRC_DIR=${SRC_DIR:=$CWD}/$PKG_NAME
 TMP=${TMP:=/tmp}
+PKG=${PKG:=$TMP/package-$PKG_NAME}
 REPOS=${REPOS:=$TMP}
+SLACKBUILD_PATH=${SLACKBUILD_PATH:="mail/mta/postfix"}
+PREFIX=${PREFIX:=/usr}
+PKG_WORK="$TMP/$SRC_NAME"
+CONF_OPTIONS=${CONF_OPTIONS:=""}
+NUMJOBS=${NUMJOBS:=""}
 
-# -------  error codes for createpkg  --------------
+# Set system libraries' path and optmization flags based on $ARCH
+LIBDIR="$PREFIX/lib"
+
+if [ "$ARCH" = "i386" ]; then
+  SLKCFLAGS="-O2 -march=i386 -mtune=i686"
+elif [ "$ARCH" = "i486" ]; then
+  SLKCFLAGS="-O2 -march=i486 -mtune=i686"
+elif [ "$ARCH" = "i686" ]; then
+  SLKCFLAGS="-O2 -march=i686"
+elif [ "$ARCH" = "s390" ]; then
+  SLKCFLAGS="-O2"
+elif [ "$ARCH" = "x86_64" ]; then
+  SLKCFLAGS="-O2 -fPIC"
+  LIBDIR="$PREFIX/lib64"
+  LDFLAGS="-L/lib64 -L/usr/lib64"
+fi
+
+# Set error codes (used by createpkg)
 ERROR_WGET=31;      ERROR_MAKE=32;      ERROR_INSTALL=33
 ERROR_MD5=34;       ERROR_CONF=35;      ERROR_HELP=36
 ERROR_TAR=37;       ERROR_MKPKG=38;     ERROR_GPG=39
-ERROR_PATCH=40
+ERROR_PATCH=40;     ERROR_VCS=41;       ERROR_MKDIR=42
+ERROR_MANIFEST=43;
 
-if [ "$ARCH" == "x86_64" ]; then
-  LIBDIR=/usr/lib64
-else
-  LIBDIR=/usr/lib
+# Clean up any leftovers of previous builds
+rm -rf "$PKG_WORK" 2> /dev/null
+rm -rf "$PKG" 2> /dev/null
+
+# Create directories if necessary
+mkdir -p "$SRC_DIR" || exit $ERROR_MKDIR
+mkdir -p "$PKG" || exit $ERROR_MKDIR
+mkdir -p "$REPOS" || exit $ERROR_MKDIR
+mkdir -p "$PKG_WORK" || exit $ERROR_MKDIR
+
+# Dowload source if necessary
+SRC="$SRC_NAME-$VERSION.tar.gz"
+URL="http://ftp.unicamp.br/pub/postfix/official/$SRC"
+
+if [ ! -s "$SRC_DIR/$SRC" ] || ! gunzip -t "$SRC_DIR/$SRC" 2> /dev/null; then
+  wget "$URL" -O "$SRC_DIR/$SRC" || exit $ERROR_WGET
 fi
 
-# general definitions
-PACKAGE_EXT="gz"
-NAME=$PACKAGE
-DOCDIR=/usr/doc/${NAME}-${VERSION}
+# Check Manifest file
+if [ -e "$CWD/Manifest" ]; then
+
+  # Manifest signature checking
+  if grep -q -- "-----BEGIN PGP SIGNED MESSAGE-----" $CWD/Manifest; then
+    echo "Checking Manifest signature..."
+    gpg --verify $CWD/Manifest
+    if [ "$?" != "0" ]; then
+      exit $ERROR_MANIFEST
+    fi
+  fi
+
+  MANIFEST_LINES="`grep -E -v "^(MKBUILD|SLACKBUILD)" $CWD/Manifest | wc -l`"
+
+  for ((MANIFEST_COUNT=1; MANIFEST_COUNT <= $MANIFEST_LINES; MANIFEST_COUNT++)); do
+
+    MANIFEST_LINE="`grep -E -v "^(MKBUILD|SLACKBUILD)" $CWD/Manifest | head -n $MANIFEST_COUNT | tail -n 1`"
+    MANIFEST_FILE="`echo $MANIFEST_LINE | awk '{ print $2 }'`"
+    MANIFEST_FILE_TYPE="`echo $MANIFEST_LINE | awk '{ print $1 }'`"
+
+    if [ -e "$SRC_DIR/$MANIFEST_FILE" ]; then
+      MANIFEST_FILE="$SRC_DIR/$MANIFEST_FILE"
+    else
+      MANIFEST_FILE="`find $CWD -name $MANIFEST_FILE`"
+    fi
+
+    if [ ! -e "$MANIFEST_FILE" ] || [ -d "$MANIFEST_FILE" ]; then
+      continue
+    fi
+
+    echo "Checking Manifest for $MANIFEST_FILE_TYPE $MANIFEST_FILE integrity..."
+
+    SIZE_SRC="`wc -c $MANIFEST_FILE | awk '{ print $1 }'`"
+    SIZE_MANIFEST="`echo $MANIFEST_LINE | awk '{ print $3 }'`"
+
+    # Check source code size
+    if [ "$SIZE_SRC" != "$SIZE_MANIFEST" ]; then
+      echo "SIZE Manifest: $SIZE_MANIFEST; SIZE $SRC: $SIZE_SRC"
+      exit $ERROR_MANIFEST
+    else
+      echo "Size match."
+    fi
+
+    # Check source code integrity
+    for ALGO in md5 rmd160 sha1 sha256 sha512; do
+      if [ $ALGO = "rmd160" ]; then
+        ALGO_SRC="`openssl rmd160 $MANIFEST_FILE | awk '{ print $2 }'`"
+      else
+        ALGO_SRC="`"$ALGO"sum $MANIFEST_FILE | awk '{ print $1 }'`"
+      fi
+      ALGO="`echo $ALGO | tr '[:lower:]' '[:upper:]'`"
+      ALGO_MANIFEST=$(echo $MANIFEST_LINE | sed "s/.* $ALGO //" | awk '{ print $1 }')
+      if [ "$ALGO_SRC" != "$ALGO_MANIFEST" ]; then
+        echo "$ALGO Manifest: $ALGO_MANIFEST; $ALGO $SRC: $ALGO_SRC"
+        exit $ERROR_MANIFEST
+      else
+        echo "$ALGO match."
+      fi
+    done
+
+  done
+
+else
+  exit $ERROR_MANIFEST
+fi
+
+# Untar
+cd "$PKG_WORK"
+tar --no-same-owner --no-same-permissions -xvf "$SRC_DIR/$SRC" || exit $ERROR_TAR
+PKG_SRC="$PWD/`ls -l | awk '/^d/ { print $NF }'`"
+cd "$PKG_SRC"
+
+# Patch source
+patches=" [[PATCH URLS]]
+         $PKG_NAME.diff $PKG_NAME-$PKG_VERSION.diff
+         $PKG_NAME-$PKG_VERSION-$ARCH.diff $PKG_NAME-$ARCH.diff"
+for patch in $patches; do
+  patch="`basename $patch`"
+  if [ -f "$CWD/$patch" ]; then
+    patch -Np1 < "$CWD/$patch" || exit $ERROR_PATCH
+  elif [ -f "$CWD/patches/$patch" ]; then
+    patch -Np1 < "$CWD/patches/$patch" || exit $ERROR_PATCH
+  elif [ -f "$CWD/$patch.gz" ]; then
+    gzip -dc "$CWD/$patch.gz" | patch -Np1 || exit $ERROR_PATCH
+  elif [ -f "$CWD/patches/$patch.gz" ]; then
+    gzip -dc "$CWD/patches/$patch.gz" | patch -Np1 || exit $ERROR_PATCH
+  elif [ -f "$SRC_DIR/$patch" ]; then
+    if [ "`basename $patch .gz`" != "$patch" ]; then
+      gzip -dc $SRC_DIR/$patch | patch -Np1 || exit $ERROR_PATCH
+    elif [ "`basename $patch .bz2`" != "$patch" ]; then
+      bzip2 -dc $SRC_DIR/$patch | patch -Np1 || exit $ERROR_PATCH
+    else
+      patch -Np1 < "$SRC_DIR/$patch" || exit $ERROR_PATCH
+    fi
+  fi
+done
+
+# Compile
+DOCDIR=/usr/doc/${PKG_NAME}-${VERSION}
 READMEDIR=${DOCDIR}/README_FILES
 HTMLDIR=${DOCDIR}/HTML
 MANDIR=/usr/man
-TMP="$TMP/$PACKAGE"
-PKGDIR=${TMP}/package-${NAME}
-SOURCEDIR=${TMP}/${NAME}-${VERSION}
-RTOOL="wget"
-SRC="$PACKAGE-$VERSION.tar.$PACKAGE_EXT"
-
-# url definitions
-VDA="$PACKAGE-$VERSION-vda.patch.gz"
-VDA_URL="http://web.onda.com.br/nadal/postfix/VDA/$VDA"
-ANON="postfix-anon-$VERSION.diff"
-#URL="ftp://ftp.pucpr.br/$PACKAGE/official/$SRC"
-URL="http://ftp.unicamp.br/pub/postfix/official/$SRC"
-
-SRC_DIR="$SRC_DIR/$PACKAGE"
-mkdir -p $SRC_DIR
-
-# download sources
-if [ "$RTOOL" == "wget" ]; then
- if [ ! -f "$SRC_DIR/$SRC" ]; then
-   wget "$URL" -O "$SRC_DIR/$SRC" || exit $ERROR_WGET
- fi
-# if [ ! -f "$SRC_DIR/$VDA" ]; then
-#   wget "$VDA_URL" -O "$SRC_DIR/$VDA" # || exit $ERROR_WGET
-# fi
- if [ ! -f "$SRC_DIR/$SRC.sig" ]; then
-   wget "$URL.sig" -O "$SRC_DIR/$SRC.sig" || exit $ERROR_WGET
- fi
-fi
-
-#gpg --import << EOGPG
-#-----BEGIN PGP PUBLIC KEY BLOCK-----
-#Version: GnuPG v1.4.5 (GNU/Linux)
-#
-#mQENA0Ije1oAAAEIALlEqB1UICFF3dfwDij9LHtBhtiEfGnv0PL5rRmSJ4rA9pqs
-#oM3oc0nfgnB502XpeCkT1RW5ymQggEx7+8fXnWhNUAmNGPrbmWzymvrdr4XnPOoB
-#ODlnVYkc9Gt5BLRNSfuLbc1G3nH+FDzhpuJ5zqtb8RrYm5FOPU7eC9QnVoC2nXPW
-#fPfTWVXQoCOEuQQ3zZHEculWQYhRVgxI+CFZjWzWgwZq3wWi/nGGZcFYRtCfodH4
-#UiP0lvj8tOEhD8vUGQKiQGwiw/BBbiCm5ZPcCkSOWxXbZTUrkfTzwse9Ka2blmgH
-#AhlySLtSD/tCX2ykzQEK9JJDw4++By9g8MErzZkABRG0JFdpZXRzZSBWZW5lbWEg
-#PHdpZXRzZUBwb3JjdXBpbmUub3JnPokBFQMFEEIje1oHL2DwwSvNmQEBA8oIALG7
-#Un8SRtlQ+EXMSK/MyJLD9+T/tS1vq2Z6BwN6oZ0G21VvbMdhXvOEjPUFXhJPIFs8
-#pNIYtUV/uQMiMZsATOlJObe3ZkXazdbpGcGAekO0G158CYy2mH50hqYLewTYCt3T
-#TNf6fSu+bVFrrQ8S/89QDceN0M+WFECgjlYHMTMqB2Ye2KZRWAQG1S8hLLFG42HV
-#QaWAVG4yR4xZEC0sYuMBZQTJlJXWb/CnhdlcdS2y5DRq/UYZ5oM/ZilKnIxnWzvf
-#zZM/5+5d7DA0YLjY2uIiSGWs9MfQv1MwvAPjTs/Aiz0j3y5lCa3lVObGskroUhN6
-#Pf14rTC6p585H3mQBRs=
-#=uI0x
-#-----END PGP PUBLIC KEY BLOCK-----
-#-----BEGIN PGP PUBLIC KEY BLOCK-----
-#Version: GnuPG v1.4.5 (GNU/Linux)
-#
-#mQCNAirDhV8AAAED/i4LrhQ/mwOgam8ZfQpEcxYoE9kru5oRDGtoVeKae/4bUver
-#aGX7qVtskD6vwPwr2FF6JW2c+z2oY4JGPGUArORiigoT82/q6vqT0Wm1jIPsXQSB
-#ZCkBoyvBcmXEi+J7eDBbWLPDxeDimgrORbAIQ4uikRafs8KlpNyA8qbVMny5AAUR
-#tCR3aWV0c2UgdmVuZW1hIDx3aWV0c2VAcG9yY3VwaW5lLm9yZz6JAJUDBRA02Qb0
-#3IDyptUyfLkBAaETA/0ZI0+GLRf5bQTflXgi79u9qcWaN/CSWRBsloOEEx12EO2s
-#lXNtkS970CxDESEr2Z75eqXtlDM4CPIzhzVoU7b6yrr0fzP576k6RX/JadEohf2V
-#VXhgmkpktRKMqdXZO+qj0QpekXCOm079hTU9kUSpd7+LeIhF5xI4skuoq83dm7Ql
-#d2lldHNlIHZlbmVtYSA8d2lldHNlQHd6di53aW4udHVlLm5sPokAlQMFEC99Gmfc
-#gPKm1TJ8uQEBJzsD+waYQmJKG0btGU0+GUTg+bRMSfCGwb9p9vbwnXQIPlQrsF8B
-#ozm8IyFGWxsfKT8dRljqmAEwKLhaFgYdFrnliuYfmVMw+nSpdpTDVE0N4d7hd8mT
-#N+WCvY0g6x9rv1uBPKK6lPgWoZHskbzNLwiDXZ5vPKdoSCCIi3aQkCQd+6qx
-#=FFWq
-#-----END PGP PUBLIC KEY BLOCK-----
-#EOGPG 
-#
-#gpg --verify $SRC_DIR/$SRC.sig $SRC_DIR/$SRC || exit $ERROR_GPG
-
-rm -rf ${PKGDIR}
-mkdir -p ${PKGDIR}
-
-cd  ${PKGDIR}
-# install scripts
-
-if [ -e ${CWD}/script_${NAME}.tgz ]; then
-  tar zxvf ${CWD}/script_${NAME}.tgz || exit $ERROR_TAR
-else
-  mkdir -v install
-fi
-sleep 1
-if [ -e ${CWD}/slack-desc ];then
-  cat ${CWD}/slack-desc | grep ^${NAME} > ${PKGDIR}/install/slack-desc
-fi
-
-# Extract
-
-cd  ${TMP}
-rm -rf ${NAME}-${VERSION}  ${SOURCEDIR}
-tar xzvf $SRC_DIR/${NAME}-$VERSION.tar.gz || exit $ERROR_TAR
-# Patch
-
-if [ -s "$SRC_DIR/$VDA" ]; then
-  gzip -dc $SRC_DIR/$VDA | patch -p0
-fi
-
-if [ -f "$CWD/$ANON" ]; then
-  patch -p0 < $CWD/$ANON
-fi
-
-cd  ${SOURCEDIR}
-sleep 1
-
-# Build
-
-# make -f Makefile.init makefiles \
-#    'CCARGS=-DUSE_TLS -DHAS_SSL -I/usr/include/openssl -DHAS_MYSQL -I/usr/include/mysql' \
-#    'AUXLIBS=-L/usr/lib -lssl -lcrypto -L/usr/lib/mysql -lmysqlclient -lz -lm'
-
-# db3 explicit
-# make -f Makefile.init makefiles CCARGS="-DUSE_SASL_AUTH -I/usr/include/sasl/ -DHAS_MYSQL -I/usr/include/mysql/ -I/usr/include -DHAS_LDAP -DUSE_TLS -I/usr/include/gnutls/ -DHAS_PCRE -I/usr/include -DHAS_DB -I/usr/include/db3" AUXLIBS="-L/usr/lib -lsasl2 -L/usr/lib/mysql/ -lmysqlclient -lz -lm -L/usr/lib -lssl -lcrypto -L/usr/lib -lpcre -L/usr/lib -lldap -L/usr/lib -llber -L/usr/include/db3 -ldb3"
 
 make -f Makefile.init makefiles CCARGS="-DUSE_SASL_AUTH -DUSE_CYRUS_SASL -I/usr/include/sasl/ -DHAS_MYSQL -I/usr/include/mysql/ -I/usr/include -DHAS_LDAP -DUSE_TLS -I/usr/include/gnutls/ -DHAS_PCRE -I/usr/include" AUXLIBS="-L/usr/lib -lsasl2 -L/usr/lib/mysql/ -lmysqlclient -lz -lm -L/usr/lib -lssl -lcrypto -L/usr/lib -lpcre -L/usr/lib -lldap -L/usr/lib -llber" || exit $ERROR_CONF
 
 make || exit $ERROR_MAKE
-sleep 1
 
-sh postfix-install						\
- install_root=${PKGDIR}						\
- tempdir=${SOURCE}						\
- manpage_directory=${MANDIR}					\
- readme_directory=${READMEDIR}					\
- html_directory=${HTMLDIR}					\
- config_directory=/etc/postfix					\
- sample_directory=/etc/postfix/sample				\
- daemon_directory=/usr/libexec/postfix				\
- command_directory=/usr/sbin/					\
- queue_directory=/var/spool/postfix				\
- sendmail_path=/usr/sbin/sendmail				\
- newaliases_path=/usr/sbin/newaliases				\
- mailq_path=/usr/sbin/mailq					\
- mail_owner=postfix						\
- setgid_group=postdrop						\
- -non-interactive || exit $ERROR_INSTALL
+# Install
+make non-interactive-package                 \
+ install_root=$PKG                           \
+ tempdir=$TMP/$PKG_NAME-temp                 \
+ manpage_directory=${MANDIR}                 \
+ readme_directory=${READMEDIR}               \
+ html_directory=${HTMLDIR}                   \
+ config_directory=/etc/postfix               \
+ sample_directory=/etc/postfix/sample        \
+ daemon_directory=/usr/libexec/postfix       \
+ command_directory=/usr/sbin/                \
+ queue_directory=/var/spool/postfix          \
+ sendmail_path=/usr/sbin/sendmail            \
+ newaliases_path=/usr/sbin/newaliases        \
+ mailq_path=/usr/sbin/mailq                  \
+ mail_owner=postfix                          \
+ setgid_group=postdrop                       \
+ || exit $ERROR_INSTALL
 
-cd  ${PKGDIR}/etc/postfix 
+# Strip binaries
+( cd "$PKG"
+  find . | xargs file | grep "executable" | grep ELF | cut -f 1 -d : | \
+    xargs strip --strip-unneeded 2> /dev/null
+  find . | xargs file | grep "shared object" | grep ELF | cut -f 1 -d : | \
+    xargs strip --strip-unneeded 2> /dev/null
+)
 
-for a in access aliases canonical header_checks main.cf makedefs.out master.cf postfix-files relocated transport virtual; do
-   mv ${a} ${a}.new
-done
+# Copy init scripts
+mkdir -p $PKG/etc/rc.d
+cp $CWD/rc.* $PKG/etc/rc.d/
 
-sleep 2
-
-mkdir -p ${PKGDIR}/${DOCDIR}
-
-for file in AUTHORS COPYING HACKING NEWS README TODO INSTALL AAAREADME COMPATIBILITY COPYRIGHT HISTORY LICENSE RELEASE_NOTES* TLS_* US_PATENT_6321267; do
-  if [ -e "${SOURCEDIR}/${file}" ]; then
-    cp -v ${SOURCEDIR}/${file} ${PKGDIR}/${DOCDIR}/
+# Install documentation
+DOCS="AUTHORS COPYING HACKING NEWS README TODO INSTALL AAAREADME COMPATIBILITY COPYRIGHT HISTORY LICENSE RELEASE_NOTES* TLS_* US_PATENT_6321267"
+mkdir -p "$PKG/usr/doc/$PKG_NAME-$PKG_VERSION" || exit $ERROR_MKDIR
+for doc in $DOCS; do
+  if [ -f "$doc" ]; then
+    cp -a $doc "$PKG/usr/doc/$PKG_NAME-$PKG_VERSION"
   fi
 done
 
-( cd $PKGDIR
-  find . | xargs file | grep "executable" | grep ELF | cut -f 1 -d : | xargs strip --strip-unneeded 2> /dev/null
-  find . | xargs file | grep "shared object" | grep ELF | cut -f 1 -d : | xargs strip --strip-unneeded 2> /dev/null
-)
+# Add package description (slack-desc)
+mkdir -p "$PKG/install" || exit $ERROR_MKDIR
+cat << EODESC > "$PKG/install/slack-desc"
+# HOW TO EDIT THIS FILE:
+# The "handy ruler" below makes it easier to edit a package description. Line
+# up the first '|' above the ':' following the base package name, and the '|'
+# on the right side marks the last column you can put a character in. You must
+# make exactly 11 lines for the formatting to be correct.  It's also
+# customary to leave one space after the ':'.
 
-find ${PKGDIR}/${DOCDIR} ${PKGDIR}/${MANDIR} -type f | xargs gzip -v
+       |-----handy-ruler------------------------------------------------------|
+postfix: Postfix (an alternative to the widely-used Sendmail program.)
+postfix: 
+postfix: Postfix attempts to be fast, easy to administer, and secure, while at
+postfix: the same time being sendmail compatible enough to not upset existing
+postfix: users. Thus, the outside has a sendmail-ish flavor, but the inside is
+postfix: completely different.
+postfix: 
+postfix: This is postfix compiled with pcre, mysql, sasl, tls, ldap and
+postfix: patched with VDA and postfix-anon.
+postfix: 
+postfix: 
+EODESC
 
-find ${PKGDIR}/bin ${PKGDIR}/sbin ${PKGDIR}/usr/bin ${PKGDIR}/usr/sbin -type f | xargs chown -v root.bin
-# Build the package:
-cd $PKGDIR
-#requiredbuilder -v -y -s $CWD $PKGDIR
-/sbin/makepkg -l n -c n --prepend $REPOS/${NAME}-${VERSION}-${ARCH}-${BUILD}.tgz || exit $ERROR_MKPKG
+# Move config files to .new to avoid overwriting any system config
+for config_file in etc/postfix/access etc/postfix/aliases etc/postfix/canonical etc/postfix/generic etc/postfix/header_checks etc/postfix/main.cf etc/postfix/master.cf etc/postfix/relocated etc/postfix/transport etc/postfix/virtual; do
+  mv $PKG/$config_file $PKG/$config_file.new
+done
 
-# Clean up the extra stuff:
-if [ "$CLEANUP" == "yes" ]; then
-  rm -rf $TMP
+# Add a post-installation script (doinst.sh)
+mkdir -p "$PKG/install" || exit $ERROR_MKDIR
+cat << EOSCRIPT > "$PKG/install/doinst.sh"
+config() {
+  NEW="\$1"
+  OLD="\$(dirname \$NEW)/\$(basename \$NEW .new)"
+  OLD="\$(dirname \$NEW)/\$(basename \$OLD .sample)"
+  OLD="\$(dirname \$NEW)/\$(basename \$OLD .dist)"
+
+  # If there's no config file by that name, mv it over:
+  if [ ! -r \$OLD ]; then
+    mv \$NEW \$OLD
+  elif [ "\$(cat \$OLD | md5sum)" = "\$(cat \$NEW | md5sum)" ]; then
+    # toss the redundant copy
+    rm \$NEW
+  fi
+  # Otherwise, we leave the .new copy for the admin to consider...
+}
+
+mkgroup() {
+  GROUP="\$1"
+  if ! grep -qe "^\$GROUP:" etc/group; then
+    echo Creating group \$GROUP...
+    chroot . /usr/sbin/groupadd \$GROUP
+  fi
+}
+
+mkuser() {
+  USER="\$1"
+  if [ ! -z "\$2" ]; then
+    GROUP="\$2"
+  else
+    GROUP="\$USER"
+  fi
+  if ! grep -qe "^\$USER:" etc/passwd; then
+    echo Creating user \$USER...
+    chroot . /usr/sbin/useradd \$USER -g \$GROUP
+  fi
+}
+
+config etc/postfix/access.new ; config etc/postfix/aliases.new ; config etc/postfix/canonical.new ; config etc/postfix/generic.new ; config etc/postfix/header_checks.new ; config etc/postfix/main.cf.new ; config etc/postfix/master.cf.new ; config etc/postfix/relocated.new ; config etc/postfix/transport.new ; config etc/postfix/virtual.new; config etc/rc.d/rc.postfix.new
+EOSCRIPT
+
+# Build the package
+cd "$PKG"
+mkdir -p $REPOS/$SLACKBUILD_PATH
+makepkg -l y -c n "$REPOS/$SLACKBUILD_PATH/$PKG_NAME-$PKG_VERSION-$ARCH-$BUILD.tgz" || exit $ERROR_MKPKG
+
+# Delete source and build directories if requested
+if [ "$CLEANUP" == "yes" ] || [ "$1" = "--cleanup" ]; then
+  rm -rf "$PKG_WORK" "$PKG"
 fi
-

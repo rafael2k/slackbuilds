@@ -40,7 +40,7 @@ TMP=${TMP:=/tmp}
 PKG=${PKG:=$TMP/package-$PKG_NAME}
 REPOS=${REPOS:=$TMP}
 SLACKBUILD_PATH=${SLACKBUILD_PATH:="app/office/broffice"}
-PREFIX=${PREFIX:=/usr/share/broffice.org2.4}
+PREFIX=${PREFIX:=/usr/share/broffice.org}
 PKG_WORK="$TMP/$SRC_NAME"
 CONF_OPTIONS=${CONF_OPTIONS:=""}
 NUMJOBS=${NUMJOBS:=""}
@@ -91,20 +91,20 @@ rm *.rpm 2>/dev/null
 
 # Convert links to KDE
 cd desktop-integration
-echo -e "\ninstall broffice.org-slackware-menus-2.4*.rpm"
-tar xvf broffice.org-slackware-menus-2.4*.tgz -C $PKG || exit $ERROR_TAR
+echo -e "\ninstall broffice.org-slackware-menus-*.rpm"
+tar xvf broffice.org*-slackware-menus-*.tgz -C $PKG || exit $ERROR_TAR
 rm *.rpm *.deb 2>/dev/null
 cd ..
 
 # Change opt directory
 mkdir -p $PKG/usr/share
-mv $PKG/opt/broffice.org2.4 $PKG/usr/share/
+mv $PKG/opt/broffice.org* $PKG/usr/share/
 
 mv $PKG/opt/kde/share/* $PKG/usr/share/
 rm -rf $PKG/opt
 
 # Change doinstall install directory
-sed 's/\/opt\/broffice.org2.4/\/usr\/share\/broffice.org2.4\//' $PKG/install/doinst.sh > $PKG/install/doinst.sh.new
+sed 's/\/opt\/broffice.org/\/usr\/share\/broffice.org\//' $PKG/install/doinst.sh > $PKG/install/doinst.sh.new
 mv $PKG/install/doinst.sh.new $PKG/install/doinst.sh
 
 # Strip binaries
