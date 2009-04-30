@@ -1,0 +1,8 @@
+# Dependency list to pisa
+#
+# dependency [condition] [version]]
+Pygments				
+ReportLab				
+html5lib				
+pyPdf				
+Imaging				
