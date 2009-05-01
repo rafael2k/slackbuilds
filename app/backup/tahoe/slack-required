@@ -9,3 +9,7 @@ Nevow
 zope.interface				
 Twisted				
 setuptools				
+pyOpenSSL				
+pyutil				
+argparse				
+zbase32				

@@ -15,8 +15,9 @@
 #  59 Temple Place - Suite 330, Boston, MA 02111-1307, USA
 #
 # slackbuild for simplejson, by Silvio Rhatto
-# requires: setuptools 
-# tested: simplejson-2.0.4
+# requires:  
+# tested: simplejson-2.0.9
+# model: generic.mkSlackBuild $Rev: 805 $
 #
 
 # Look for slackbuildrc
@@ -31,13 +32,14 @@ CWD="$(pwd)"
 SRC_NAME="simplejson"
 PKG_NAME="simplejson"
 ARCH=${ARCH:=i486}
-SRC_VERSION=${VERSION:=2.0.4}
+SRC_VERSION=${VERSION:=2.0.9}
 PKG_VERSION="$(echo "$SRC_VERSION" | tr '[[:blank:]-]' '_')"
 BUILD=${BUILD:=1rha}
 SRC_DIR=${SRC_DIR:=$CWD}/$PKG_NAME
 TMP=${TMP:=/tmp}
 PKG=${PKG:=$TMP/package-$PKG_NAME}
 REPOS=${REPOS:=$TMP}
+SLACKBUILD_PATH=${SLACKBUILD_PATH:="dev/python/simplejson"}
 PREFIX=${PREFIX:=/usr}
 PKG_WORK="$TMP/$SRC_NAME"
 CONF_OPTIONS=${CONF_OPTIONS:=""}
@@ -47,9 +49,9 @@ NUMJOBS=${NUMJOBS:=""}
 LIBDIR="$PREFIX/lib"
 
 if [ "$ARCH" = "i386" ]; then
-  SLKCFLAGS="-O2 -march=i386 -mcpu=i686"
+  SLKCFLAGS="-O2 -march=i386 -mtune=i686"
 elif [ "$ARCH" = "i486" ]; then
-  SLKCFLAGS="-O2 -march=i486 -mcpu=i686"
+  SLKCFLAGS="-O2 -march=i486 -mtune=i686"
 elif [ "$ARCH" = "i686" ]; then
   SLKCFLAGS="-O2 -march=i686"
 elif [ "$ARCH" = "s390" ]; then
@@ -65,6 +67,7 @@ ERROR_WGET=31;      ERROR_MAKE=32;      ERROR_INSTALL=33
 ERROR_MD5=34;       ERROR_CONF=35;      ERROR_HELP=36
 ERROR_TAR=37;       ERROR_MKPKG=38;     ERROR_GPG=39
 ERROR_PATCH=40;     ERROR_VCS=41;       ERROR_MKDIR=42
+ERROR_MANIFEST=43;
 
 # Clean up any leftovers of previous builds
 rm -rf "$PKG_WORK" 2> /dev/null
@@ -82,6 +85,72 @@ URL="http://pypi.python.org/packages/source/s/simplejson/$SRC"
 
 if [ ! -s "$SRC_DIR/$SRC" ] || ! gunzip -t "$SRC_DIR/$SRC" 2> /dev/null; then
   wget "$URL" -O "$SRC_DIR/$SRC" || exit $ERROR_WGET
+fi
+
+# Check Manifest file
+if [ -e "$CWD/Manifest" ]; then
+
+  # Manifest signature checking
+  if grep -q -- "-----BEGIN PGP SIGNED MESSAGE-----" $CWD/Manifest; then
+    echo "Checking Manifest signature..."
+    gpg --verify $CWD/Manifest
+    if [ "$?" != "0" ]; then
+      exit $ERROR_MANIFEST
+    fi
+  fi
+
+  MANIFEST_LINES="`grep -E -v "^(MKBUILD|SLACKBUILD)" $CWD/Manifest | wc -l`"
+
+  for ((MANIFEST_COUNT=1; MANIFEST_COUNT <= $MANIFEST_LINES; MANIFEST_COUNT++)); do
+
+    MANIFEST_LINE="`grep -E -v "^(MKBUILD|SLACKBUILD)" $CWD/Manifest | head -n $MANIFEST_COUNT | tail -n 1`"
+    MANIFEST_FILE="`echo $MANIFEST_LINE | awk '{ print $2 }'`"
+    MANIFEST_FILE_TYPE="`echo $MANIFEST_LINE | awk '{ print $1 }'`"
+
+    if [ -e "$SRC_DIR/$MANIFEST_FILE" ]; then
+      MANIFEST_FILE="$SRC_DIR/$MANIFEST_FILE"
+    else
+      MANIFEST_FILE="`find $CWD -name $MANIFEST_FILE`"
+    fi
+
+    if [ ! -e "$MANIFEST_FILE" ] || [ -d "$MANIFEST_FILE" ]; then
+      continue
+    fi
+
+    echo "Checking Manifest for $MANIFEST_FILE_TYPE $MANIFEST_FILE integrity..."
+
+    SIZE_SRC="`wc -c $MANIFEST_FILE | awk '{ print $1 }'`"
+    SIZE_MANIFEST="`echo $MANIFEST_LINE | awk '{ print $3 }'`"
+
+    # Check source code size
+    if [ "$SIZE_SRC" != "$SIZE_MANIFEST" ]; then
+      echo "SIZE Manifest: $SIZE_MANIFEST; SIZE $SRC: $SIZE_SRC"
+      exit $ERROR_MANIFEST
+    else
+      echo "Size match."
+    fi
+
+    # Check source code integrity
+    for ALGO in md5 rmd160 sha1 sha256 sha512; do
+      if [ $ALGO = "rmd160" ]; then
+        ALGO_SRC="`openssl rmd160 $MANIFEST_FILE | awk '{ print $2 }'`"
+      else
+        ALGO_SRC="`"$ALGO"sum $MANIFEST_FILE | awk '{ print $1 }'`"
+      fi
+      ALGO="`echo $ALGO | tr '[:lower:]' '[:upper:]'`"
+      ALGO_MANIFEST=$(echo $MANIFEST_LINE | sed "s/.* $ALGO //" | awk '{ print $1 }')
+      if [ "$ALGO_SRC" != "$ALGO_MANIFEST" ]; then
+        echo "$ALGO Manifest: $ALGO_MANIFEST; $ALGO $SRC: $ALGO_SRC"
+        exit $ERROR_MANIFEST
+      else
+        echo "$ALGO match."
+      fi
+    done
+
+  done
+
+else
+  exit $ERROR_MANIFEST
 fi
 
 # Untar
@@ -142,7 +211,8 @@ fi
 
 # Build the package
 cd "$PKG"
-makepkg -l y -c n "$REPOS/$PKG_NAME-$PKG_VERSION-$ARCH-$BUILD.tgz" || exit $ERROR_MKPKG
+mkdir -p $REPOS/$SLACKBUILD_PATH
+makepkg -l y -c n "$REPOS/$SLACKBUILD_PATH/$PKG_NAME-$PKG_VERSION-$ARCH-$BUILD.tgz" || exit $ERROR_MKPKG
 
 # Delete source and build directories if requested
 if [ "$CLEANUP" == "yes" ] || [ "$1" = "--cleanup" ]; then
