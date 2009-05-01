@@ -13,3 +13,4 @@ pyOpenSSL
 pyutil				
 argparse				
 zbase32				
+numpy				
