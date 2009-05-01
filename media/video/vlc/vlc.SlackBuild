@@ -34,7 +34,7 @@ PKG_NAME="vlc"
 ARCH=${ARCH:=i486}
 SRC_VERSION=${VERSION:=0.9.9a}
 PKG_VERSION="$(echo "$SRC_VERSION" | tr '[[:blank:]-]' '_')"
-BUILD=${BUILD:=1rha}
+BUILD=${BUILD:=2rha}
 SRC_DIR=${SRC_DIR:=$CWD}/$PKG_NAME
 TMP=${TMP:=/tmp}
 PKG=${PKG:=$TMP/package-$PKG_NAME}
@@ -42,7 +42,7 @@ REPOS=${REPOS:=$TMP}
 SLACKBUILD_PATH=${SLACKBUILD_PATH:="media/video/vlc"}
 PREFIX=${PREFIX:=/usr}
 PKG_WORK="$TMP/$SRC_NAME"
-CONF_OPTIONS=${CONF_OPTIONS:="--enable-theora --enable-dv --enable-v4l --enable-real --enable-realrtsp --enable-flac --enable-snapshot --enable-aa --enable-jack --enable-shout --disable-dc1394 --disable-qt4 --disable-skins2"}
+CONF_OPTIONS=${CONF_OPTIONS:="--enable-theora --enable-dv --enable-v4l --enable-real --enable-realrtsp --enable-flac --enable-snapshot --enable-aa --enable-jack --enable-shout --disable-dc1394"}
 NUMJOBS=${NUMJOBS:=""}
 
 # Set system libraries' path and optmization flags based on $ARCH
