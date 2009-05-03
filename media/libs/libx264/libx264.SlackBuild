@@ -15,9 +15,9 @@
 #  59 Temple Place - Suite 330, Boston, MA 02111-1307, USA
 #
 # slackbuild for libx264, by Silvio Rhatto
-# requires:  
-# tested: libx264-20081210
-# model: generic.mkSlackBuild $Rev: 805 $
+# requires: yasm 
+# tested: libx264-20090502
+# model: generic.mkSlackBuild $Rev: 784 $
 #
 
 # Look for slackbuildrc
@@ -32,14 +32,13 @@ CWD="$(pwd)"
 SRC_NAME="libx264"
 PKG_NAME="libx264"
 ARCH=${ARCH:=i486}
-SRC_VERSION=${VERSION:=20081210}
+SRC_VERSION=${VERSION:=20090502}
 PKG_VERSION="$(echo "$SRC_VERSION" | tr '[[:blank:]-]' '_')"
 BUILD=${BUILD:=1rha}
 SRC_DIR=${SRC_DIR:=$CWD}/$PKG_NAME
 TMP=${TMP:=/tmp}
 PKG=${PKG:=$TMP/package-$PKG_NAME}
 REPOS=${REPOS:=$TMP}
-SLACKBUILD_PATH=${SLACKBUILD_PATH:="media/libs/libx264"}
 PREFIX=${PREFIX:=/usr}
 PKG_WORK="$TMP/$SRC_NAME"
 CONF_OPTIONS=${CONF_OPTIONS:="--enable-shared --enable-visualize --enable-pic"}
@@ -245,8 +244,7 @@ fi
 
 # Build the package
 cd "$PKG"
-mkdir -p $REPOS/$SLACKBUILD_PATH
-makepkg -l y -c n "$REPOS/$SLACKBUILD_PATH/$PKG_NAME-$PKG_VERSION-$ARCH-$BUILD.tgz" || exit $ERROR_MKPKG
+makepkg -l y -c n "$REPOS/$PKG_NAME-$PKG_VERSION-$ARCH-$BUILD.tgz" || exit $ERROR_MKPKG
 
 # Delete source and build directories if requested
 if [ "$CLEANUP" == "yes" ] || [ "$1" = "--cleanup" ]; then
