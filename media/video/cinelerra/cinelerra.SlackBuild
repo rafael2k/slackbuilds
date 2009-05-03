@@ -15,7 +15,7 @@
 #  59 Temple Place - Suite 330, Boston, MA 02111-1307, USA
 #
 # slackbuild for cinelerra, by Silvio Rhatto
-# requires: openexr libdv libx264 mjpegtools fftw liba52 lame libsndfile faac faad2 libraw1394 libiec61883 libavc1394 
+# requires:  
 # tested: cinelerra-git_version
 # model: generic.mkSlackBuild $Rev: 805 $
 #
@@ -42,7 +42,7 @@ REPOS=${REPOS:=$TMP}
 SLACKBUILD_PATH=${SLACKBUILD_PATH:="media/video/cinelerra"}
 PREFIX=${PREFIX:=/usr}
 PKG_WORK="$TMP/$SRC_NAME"
-CONF_OPTIONS=${CONF_OPTIONS:=""}
+CONF_OPTIONS=${CONF_OPTIONS:="--with-external-ffmpeg"}
 NUMJOBS=${NUMJOBS:=""}
 
 # Set system libraries' path and optmization flags based on $ARCH
@@ -125,17 +125,6 @@ for patch in $patches; do
 done
 
 # Configure
-if [ "$ARCH" == "i586" ] || [ "$ARCH" == "i686" ]; then
-  CONF_OPTIONS="$CONF_OPTIONS --enable-mmx"
-fi
-
-if [ "$HAVE_ALTIVEC" == "true" ]; then
-  CONF_OPTIONS="$CONF_OPTIONS --enable-altivec"
-  if [ -f "$CWD/$PACKAGE-altivec.diff" ]; then
-    patch -p0 < $CWD/$PACKAGE-altivec.diff || exit $ERROR_PATCH
-  fi 
-fi
-
 ./autogen.sh || exit $ERROR_CONF
 CFLAGS="$SLKCFLAGS" \
   CXXFLAGS="$SLKCFLAGS" \

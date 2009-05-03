@@ -1,0 +1,35 @@
+diff --git a/cinelerra/ffmpeg.C b/cinelerra/ffmpeg.C
+index 85e5614..6cea249 100644
+--- a/cinelerra/ffmpeg.C
++++ b/cinelerra/ffmpeg.C
+@@ -6,6 +6,13 @@ extern "C" {
+ }
+ #endif
+ 
++/* fix for newer ffmpeg */
++#ifndef PIX_FMT_YUV422
++#define PIX_FMT_YUV422 PIX_FMT_YUYV422
++#endif
++#ifndef PIX_FMT_RGBA32 
++#define PIX_FMT_RGBA32 PIX_FMT_RGB32
++#endif 
+ 
+ #include "filebase.h"
+ #include "quicktime.h"
+diff --git a/quicktime/qtffmpeg.c b/quicktime/qtffmpeg.c
+index 594a213..a6d272c 100644
+--- a/quicktime/qtffmpeg.c
++++ b/quicktime/qtffmpeg.c
+@@ -8,8 +8,10 @@
+ // FFMPEG front end for quicktime.
+ 
+ 
+-
+-
++// fix for newer ffmpeg, don't break w/ older ones...
++#ifndef PIX_FMT_YUV422
++#define PIX_FMT_YUV422 PIX_FMT_YUYV422
++#endif
+ 
+ 
+ 
