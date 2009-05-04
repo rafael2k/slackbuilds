@@ -40,7 +40,7 @@ TMP=${TMP:=/tmp}
 PKG=${PKG:=$TMP/package-$PKG_NAME}
 REPOS=${REPOS:=$TMP}
 SLACKBUILD_PATH=${SLACKBUILD_PATH:="app/office/broffice"}
-PREFIX=${PREFIX:=/usr/share/broffice.org}
+PREFIX=${PREFIX:=/usr/share/openoffice.org}
 PKG_WORK="$TMP/$SRC_NAME"
 CONF_OPTIONS=${CONF_OPTIONS:=""}
 NUMJOBS=${NUMJOBS:=""}
@@ -91,20 +91,35 @@ rm *.rpm 2>/dev/null
 
 # Convert links to KDE
 cd desktop-integration
-echo -e "\ninstall broffice.org-slackware-menus-*.rpm"
-tar xvf broffice.org*-slackware-menus-*.tgz -C $PKG || exit $ERROR_TAR
+echo -e "\ninstall broffice.org3.0-slackware-menus-3.0*.tgz"
+tar xvf broffice.org3.0-slackware-menus-3.0*.tgz -C $PKG || exit $ERROR_TAR
 rm *.rpm *.deb 2>/dev/null
 cd ..
 
 # Change opt directory
 mkdir -p $PKG/usr/share
-mv $PKG/opt/broffice.org* $PKG/usr/share/
+mv $PKG/opt/openoffice.org $PKG/usr/share/
+mv $PKG/opt/broffice.org3/* $PKG/usr/share/openoffice.org
+
+cat << EOF  > $PKG/usr/bin/broffice.org3
+#!/bin/sh
+exec /usr/share/openoffice.org/program/soffice "\$@"
+EOF
+
+cat << EOF  > $PKG/usr/bin/broffice.org3-printeradmin
+#!/bin/sh
+exec /usr/share/openoffice.org/program/spadmin
+EOF
+
+chmod +x $PKG/usr/bin/broffice.org3-printeradmin $PKG/usr/bin/broffice.org3
 
 mv $PKG/opt/kde/share/* $PKG/usr/share/
 rm -rf $PKG/opt
 
 # Change doinstall install directory
-sed 's/\/opt\/broffice.org/\/usr\/share\/broffice.org\//' $PKG/install/doinst.sh > $PKG/install/doinst.sh.new
+# REMOVE-ME!!! do the following lines work?
+sed 's/\/opt\/openoffice.org/\/usr\/share\/openoffice.org\//' $PKG/install/doinst.sh > $PKG/install/doinst.sh.new
+sed 's/\/opt/broffice.org3/\/usr\/share\/openoffice.org\//' $PKG/install/doinst.sh > $PKG/install/doinst.sh.new
 mv $PKG/install/doinst.sh.new $PKG/install/doinst.sh
 
 # Strip binaries
