@@ -99,6 +99,72 @@ cp -a $SRC_DIR/* .
 PKG_SRC="$PWD/$SND_DIR"
 cd "$PKG_SRC"
 
+# Check Manifest file
+if [ -e "$CWD/Manifest" ]; then
+
+  # Manifest signature checking
+  if grep -q -- "-----BEGIN PGP SIGNED MESSAGE-----" $CWD/Manifest; then
+    echo "Checking Manifest signature..."
+    gpg --verify $CWD/Manifest
+    if [ "$?" != "0" ]; then
+      exit $ERROR_MANIFEST
+    fi
+  fi
+
+  MANIFEST_LINES="`grep -E -v "^(MKBUILD|SLACKBUILD)" $CWD/Manifest | wc -l`"
+
+  for ((MANIFEST_COUNT=1; MANIFEST_COUNT <= $MANIFEST_LINES; MANIFEST_COUNT++)); do
+
+    MANIFEST_LINE="`grep -E -v "^(MKBUILD|SLACKBUILD)" $CWD/Manifest | head -n $MANIFEST_COUNT | tail -n 1`"
+    MANIFEST_FILE="`echo $MANIFEST_LINE | awk '{ print $2 }'`"
+    MANIFEST_FILE_TYPE="`echo $MANIFEST_LINE | awk '{ print $1 }'`"
+
+    if [ -e "$SRC_DIR/$MANIFEST_FILE" ]; then
+      MANIFEST_FILE="$SRC_DIR/$MANIFEST_FILE"
+    else
+      MANIFEST_FILE="`find $CWD -name $MANIFEST_FILE`"
+    fi
+
+    if [ ! -e "$MANIFEST_FILE" ] || [ -d "$MANIFEST_FILE" ]; then
+      continue
+    fi
+
+    echo "Checking Manifest for $MANIFEST_FILE_TYPE $MANIFEST_FILE integrity..."
+
+    SIZE_SRC="`wc -c $MANIFEST_FILE | awk '{ print $1 }'`"
+    SIZE_MANIFEST="`echo $MANIFEST_LINE | awk '{ print $3 }'`"
+
+    # Check source code size
+    if [ "$SIZE_SRC" != "$SIZE_MANIFEST" ]; then
+      echo "SIZE Manifest: $SIZE_MANIFEST; SIZE $SRC: $SIZE_SRC"
+      exit $ERROR_MANIFEST
+    else
+      echo "Size match."
+    fi
+
+    # Check source code integrity
+    for ALGO in md5 rmd160 sha1 sha256 sha512; do
+      if [ $ALGO = "rmd160" ]; then
+        ALGO_SRC="`openssl rmd160 $MANIFEST_FILE | awk '{ print $2 }'`"
+      else
+        ALGO_SRC="`"$ALGO"sum $MANIFEST_FILE | awk '{ print $1 }'`"
+      fi
+      ALGO="`echo $ALGO | tr '[:lower:]' '[:upper:]'`"
+      ALGO_MANIFEST=$(echo $MANIFEST_LINE | sed "s/.* $ALGO //" | awk '{ print $1 }')
+      if [ "$ALGO_SRC" != "$ALGO_MANIFEST" ]; then
+        echo "$ALGO Manifest: $ALGO_MANIFEST; $ALGO $SRC: $ALGO_SRC"
+        exit $ERROR_MANIFEST
+      else
+        echo "$ALGO match."
+      fi
+    done
+
+  done
+
+else
+  exit $ERROR_MANIFEST
+fi
+
 # Patch source
 patches=" [[PATCH URLS]]
          $PKG_NAME.diff $PKG_NAME-$PKG_VERSION.diff
