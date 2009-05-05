@@ -15,7 +15,7 @@
 #  59 Temple Place - Suite 330, Boston, MA 02111-1307, USA
 #
 # slackbuild for libfreebob, by Rudson R. Alves
-# requires:  
+# requires: cxxlibs gcc glibc-solibs alsa-lib libavc1394 libiec61883 libraw1394 libxml2 
 # tested: libfreebob-1.0.11
 # model: generic.mkSlackBuild $Rev: 805 $
 #
