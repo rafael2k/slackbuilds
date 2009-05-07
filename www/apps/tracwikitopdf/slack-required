@@ -1,0 +1,5 @@
+# Dependency list to TracWikiToPdf
+#
+# dependency [condition] [version]]
+Trac				
+htmldoc				
