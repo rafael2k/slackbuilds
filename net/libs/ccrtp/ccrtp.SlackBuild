@@ -15,8 +15,8 @@
 #  59 Temple Place - Suite 330, Boston, MA 02111-1307, USA
 #
 # slackbuild for ccrtp, by Silvio Rhatto
-# requires: commoncpp2 
-# tested: ccrtp-1.7.1
+# requires:  
+# tested: ccrtp-1.6.2
 # model: generic.mkSlackBuild $Rev: 805 $
 #
 
@@ -32,7 +32,7 @@ CWD="$(pwd)"
 SRC_NAME="ccrtp"
 PKG_NAME="ccrtp"
 ARCH=${ARCH:=i486}
-SRC_VERSION=${VERSION:=1.7.1}
+SRC_VERSION=${VERSION:=1.6.2}
 PKG_VERSION="$(echo "$SRC_VERSION" | tr '[[:blank:]-]' '_')"
 BUILD=${BUILD:=1rha}
 SRC_DIR=${SRC_DIR:=$CWD}/$PKG_NAME
@@ -81,7 +81,7 @@ mkdir -p "$PKG_WORK" || exit $ERROR_MKDIR
 
 # Dowload source if necessary
 SRC="$SRC_NAME-$VERSION.tar.gz"
-URL="http://www.gnutelephony.org/dist/tarballs/$SRC"
+URL="ftp://ftp.gnu.org/gnu/ccrtp/$SRC"
 
 if [ ! -s "$SRC_DIR/$SRC" ] || ! gunzip -t "$SRC_DIR/$SRC" 2> /dev/null; then
   wget "$URL" -O "$SRC_DIR/$SRC" || exit $ERROR_WGET
