@@ -16,7 +16,7 @@
 #
 # slackbuild for drush, by Silvio Rhatto
 # requires:  
-# tested: drush-7.x-2.0-alpha2
+# tested: drush-2.0-rc1
 # model: generic.mkSlackBuild $Rev: 805 $
 #
 
@@ -32,7 +32,7 @@ CWD="$(pwd)"
 SRC_NAME="drush"
 PKG_NAME="drush"
 ARCH="noarch"
-SRC_VERSION=${VERSION:=7.x-2.0-alpha2}
+SRC_VERSION=${VERSION:=2.0-rc1}
 PKG_VERSION="$(echo "$SRC_VERSION" | tr '[[:blank:]-]' '_')"
 BUILD=${BUILD:=1rha}
 SRC_DIR=${SRC_DIR:=$CWD}/$PKG_NAME
@@ -80,7 +80,7 @@ mkdir -p "$REPOS" || exit $ERROR_MKDIR
 mkdir -p "$PKG_WORK" || exit $ERROR_MKDIR
 
 # Dowload source if necessary
-SRC="$SRC_NAME-$VERSION.tar.gz"
+SRC="$SRC_NAME-All-Versions-$VERSION.tar.gz"
 URL="http://ftp.drupal.org/files/projects/$SRC"
 
 if [ ! -s "$SRC_DIR/$SRC" ] || ! gunzip -t "$SRC_DIR/$SRC" 2> /dev/null; then
