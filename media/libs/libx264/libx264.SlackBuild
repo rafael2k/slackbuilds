@@ -15,9 +15,9 @@
 #  59 Temple Place - Suite 330, Boston, MA 02111-1307, USA
 #
 # slackbuild for libx264, by Silvio Rhatto
-# requires: yasm 
+# requires:  
 # tested: libx264-20090502
-# model: generic.mkSlackBuild $Rev: 784 $
+# model: generic.mkSlackBuild $Rev: 805 $
 #
 
 # Look for slackbuildrc
@@ -39,6 +39,7 @@ SRC_DIR=${SRC_DIR:=$CWD}/$PKG_NAME
 TMP=${TMP:=/tmp}
 PKG=${PKG:=$TMP/package-$PKG_NAME}
 REPOS=${REPOS:=$TMP}
+SLACKBUILD_PATH=${SLACKBUILD_PATH:="media/libs/libx264"}
 PREFIX=${PREFIX:=/usr}
 PKG_WORK="$TMP/$SRC_NAME"
 CONF_OPTIONS=${CONF_OPTIONS:="--enable-shared --enable-visualize --enable-pic"}
@@ -244,7 +245,8 @@ fi
 
 # Build the package
 cd "$PKG"
-makepkg -l y -c n "$REPOS/$PKG_NAME-$PKG_VERSION-$ARCH-$BUILD.tgz" || exit $ERROR_MKPKG
+mkdir -p $REPOS/$SLACKBUILD_PATH
+makepkg -l y -c n "$REPOS/$SLACKBUILD_PATH/$PKG_NAME-$PKG_VERSION-$ARCH-$BUILD.tgz" || exit $ERROR_MKPKG
 
 # Delete source and build directories if requested
 if [ "$CLEANUP" == "yes" ] || [ "$1" = "--cleanup" ]; then
