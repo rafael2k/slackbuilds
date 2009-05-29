@@ -1,0 +1,4 @@
+# Dependency list to wine
+#
+# dependency [condition] [version]]
+freetype				
