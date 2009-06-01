@@ -16,7 +16,7 @@
 #
 # slackbuild for wine, by Rudson R. Alves
 # requires:  
-# tested: wine-1.1.19
+# tested: wine-1.1.22
 # model: generic.mkSlackBuild $Rev: 805 $
 #
 
@@ -32,7 +32,7 @@ CWD="$(pwd)"
 SRC_NAME="wine"
 PKG_NAME="wine"
 ARCH=${ARCH:=i486}
-SRC_VERSION=${VERSION:=1.1.19}
+SRC_VERSION=${VERSION:=1.1.22}
 PKG_VERSION="$(echo "$SRC_VERSION" | tr '[[:blank:]-]' '_')"
 BUILD=${BUILD:=1rra}
 SRC_DIR=${SRC_DIR:=$CWD}/$PKG_NAME
@@ -43,7 +43,7 @@ SLACKBUILD_PATH=${SLACKBUILD_PATH:="app/emulation/wine"}
 PREFIX=${PREFIX:=/usr}
 PKG_WORK="$TMP/$SRC_NAME"
 CONF_OPTIONS=${CONF_OPTIONS:="--sysconfdir=/etc --localstatedir=/var"}
-NUMJOBS=${NUMJOBS:="-j4"}
+NUMJOBS=${NUMJOBS:="-j3"}
 
 # Set system libraries' path and optmization flags based on $ARCH
 LIBDIR="$PREFIX/lib"
