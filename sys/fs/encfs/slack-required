@@ -1,0 +1,5 @@
+# Dependency list to encfs
+#
+# dependency [condition] [version]]
+rlog				
+boost				
