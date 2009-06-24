@@ -1,0 +1,18 @@
+diff -Naur cryptopp.orig/GNUmakefile cryptopp/GNUmakefile
+--- cryptopp.orig/GNUmakefile	2009-03-15 02:48:02.000000000 -0300
++++ cryptopp/GNUmakefile	2009-06-24 00:27:45.000000000 -0300
+@@ -118,10 +118,10 @@
+ 	$(RM) cryptest.exe libcryptopp.a $(LIBOBJS) $(TESTOBJS) cryptopp.dll libcryptopp.dll.a libcryptopp.import.a cryptest.import.exe dlltest.exe $(DLLOBJS) $(LIBIMPORTOBJS) $(TESTIMPORTOBJS) $(DLLTESTOBJS)
+ 
+ install:
+-	$(MKDIR) -p $(PREFIX)/include/cryptopp $(PREFIX)/lib $(PREFIX)/bin
+-	$(CP) *.h $(PREFIX)/include/cryptopp
+-	$(CP) *.a $(PREFIX)/lib
+-	$(CP) *.exe $(PREFIX)/bin
++	$(MKDIR) -p $(DESTDIR)/$(PREFIX)/include/cryptopp $(DESTDIR)/$(PREFIX)/lib $(DESTDIR)/$(PREFIX)/bin
++	$(CP) *.h $(DESTDIR)/$(PREFIX)/include/cryptopp
++	$(CP) *.a $(DESTDIR)/$(PREFIX)/lib
++	$(CP) *.exe $(DESTDIR)/$(PREFIX)/bin
+ 
+ libcryptopp.a: $(LIBOBJS)
+ 	$(AR) $(ARFLAGS) $@ $(LIBOBJS)

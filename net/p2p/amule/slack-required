@@ -1,2 +1,4 @@
-libiconv
-wxWidgets
+# Dependency list to aMule
+#
+# dependency [condition] [version]]
+crypto++				

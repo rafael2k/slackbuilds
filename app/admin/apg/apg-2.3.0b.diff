@@ -1,0 +1,47 @@
+diff -Naur apg-2.3.0b.orig/Makefile apg-2.3.0b/Makefile
+--- apg-2.3.0b.orig/Makefile	2003-08-07 12:40:39.000000000 -0300
++++ apg-2.3.0b/Makefile	2009-06-24 00:12:27.000000000 -0300
+@@ -1,7 +1,7 @@
+ ##################################################################
+ # Directories
+ # Install dirs
+-INSTALL_PREFIX = /usr/local
++INSTALL_PREFIX = /usr
+ 
+ # Full default path is /usr/local/bin
+ APG_BIN_DIR = /bin
+@@ -144,22 +144,22 @@
+ 
+ install:
+ 	if test -x ./apg; then \
+-./mkinstalldirs ${INSTALL_PREFIX}${APG_BIN_DIR}; \
+-./mkinstalldirs ${INSTALL_PREFIX}${APG_MAN_DIR}; \
+-./install-sh -c -m 0755 -o root -g ${FIND_GROUP} ./apg ${INSTALL_PREFIX}${APG_BIN_DIR}; \
+-./install-sh -c -m 0444 ./doc/man/apg.1 ${INSTALL_PREFIX}${APG_MAN_DIR}; \
++./mkinstalldirs ${DESTDIR}/${INSTALL_PREFIX}${APG_BIN_DIR}; \
++./mkinstalldirs ${DESTDIR}/${INSTALL_PREFIX}${APG_MAN_DIR}; \
++./install-sh -c -m 0755 -o root -g ${FIND_GROUP} ./apg ${DESTDIR}/${INSTALL_PREFIX}${APG_BIN_DIR}; \
++./install-sh -c -m 0444 ./doc/man/apg.1 ${DESTDIR}/${INSTALL_PREFIX}${APG_MAN_DIR}; \
+ fi
+ 	if test -x ./apgd; then \
+-./mkinstalldirs ${INSTALL_PREFIX}${APGD_BIN_DIR}; \
+-./mkinstalldirs ${INSTALL_PREFIX}${APGD_MAN_DIR}; \
+-./install-sh -c -m 0755 -o root -g ${FIND_GROUP} ./apgd ${INSTALL_PREFIX}${APGD_BIN_DIR}; \
+-./install-sh -c -m 0444 ./doc/man/apgd.8 ${INSTALL_PREFIX}${APGD_MAN_DIR}; \
++./mkinstalldirs ${DESTDIR}/${INSTALL_PREFIX}${APGD_BIN_DIR}; \
++./mkinstalldirs ${DESTDIR}/${INSTALL_PREFIX}${APGD_MAN_DIR}; \
++./install-sh -c -m 0755 -o root -g ${FIND_GROUP} ./apgd ${DESTDIR}/${INSTALL_PREFIX}${APGD_BIN_DIR}; \
++./install-sh -c -m 0444 ./doc/man/apgd.8 ${DESTDIR}/${INSTALL_PREFIX}${APGD_MAN_DIR}; \
+ fi
+ 	if test -x ./apgbfm; then \
+-./mkinstalldirs ${INSTALL_PREFIX}${APG_BIN_DIR}; \
+-./mkinstalldirs ${INSTALL_PREFIX}${APG_MAN_DIR}; \
+-./install-sh -c -m 0755 -o root -g ${FIND_GROUP} ./apgbfm ${INSTALL_PREFIX}${APG_BIN_DIR}; \
+-./install-sh -c -m 0444 ./doc/man/apgbfm.1 ${INSTALL_PREFIX}${APG_MAN_DIR}; \
++./mkinstalldirs ${DESTDIR}/${INSTALL_PREFIX}${APG_BIN_DIR}; \
++./mkinstalldirs ${DESTDIR}/${INSTALL_PREFIX}${APG_MAN_DIR}; \
++./install-sh -c -m 0755 -o root -g ${FIND_GROUP} ./apgbfm ${DESTDIR}/${INSTALL_PREFIX}${APG_BIN_DIR}; \
++./install-sh -c -m 0444 ./doc/man/apgbfm.1 ${DESTDIR}/${INSTALL_PREFIX}${APG_MAN_DIR}; \
+ fi
+ 
+ install-cygwin:
