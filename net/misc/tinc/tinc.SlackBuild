@@ -34,7 +34,7 @@ PKG_NAME="tinc"
 ARCH=${ARCH:=i486}
 SRC_VERSION=${VERSION:=1.0.9}
 PKG_VERSION="$(echo "$SRC_VERSION" | tr '[[:blank:]-]' '_')"
-BUILD=${BUILD:=1rha}
+BUILD=${BUILD:=2rha}
 SRC_DIR=${SRC_DIR:=$CWD}/$PKG_NAME
 TMP=${TMP:=/tmp}
 PKG=${PKG:=$TMP/package-$PKG_NAME}
@@ -42,7 +42,7 @@ REPOS=${REPOS:=$TMP}
 SLACKBUILD_PATH=${SLACKBUILD_PATH:="net/misc/tinc"}
 PREFIX=${PREFIX:=/usr}
 PKG_WORK="$TMP/$SRC_NAME"
-CONF_OPTIONS=${CONF_OPTIONS:=""}
+CONF_OPTIONS=${CONF_OPTIONS:="--sysconfdir=/etc"}
 NUMJOBS=${NUMJOBS:=""}
 
 # Set system libraries' path and optmization flags based on $ARCH
