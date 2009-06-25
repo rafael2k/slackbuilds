@@ -1,0 +1,27 @@
+diff -Naur libnids-1.23.orig/src/Makefile.in libnids-1.23/src/Makefile.in
+--- libnids-1.23.orig/src/Makefile.in	2008-02-21 07:40:19.000000000 -0300
++++ libnids-1.23/src/Makefile.in	2009-06-25 13:09:07.000000000 -0300
+@@ -68,15 +68,15 @@
+ 	$(CC) -shared -Wl,-soname,$(LIBSHARED) -o $(LIBSHARED) $(OBJS_SHARED) $(LIBS) $(LNETLIB) $(PCAPLIB)
+ 
+ _install install: $(LIBSTATIC)
+-	../mkinstalldirs $(install_prefix)$(libdir)
+-	../mkinstalldirs $(install_prefix)$(includedir)
+-	../mkinstalldirs $(install_prefix)$(mandir)/man3
+-	$(INSTALL) -c -m 644 libnids.a $(install_prefix)$(libdir)
+-	$(INSTALL) -c -m 644 nids.h $(install_prefix)$(includedir)
+-	$(INSTALL) -c -m 644 libnids.3 $(install_prefix)$(mandir)/man3
++	../mkinstalldirs $(DESTDIR)/$(install_prefix)$(libdir)
++	../mkinstalldirs $(DESTDIR)/$(install_prefix)$(includedir)
++	../mkinstalldirs $(DESTDIR)/$(install_prefix)$(mandir)/man3
++	$(INSTALL) -c -m 644 libnids.a $(DESTDIR)/$(install_prefix)$(libdir)
++	$(INSTALL) -c -m 644 nids.h $(DESTDIR)/$(install_prefix)$(includedir)
++	$(INSTALL) -c -m 644 libnids.3 $(DESTDIR)/$(install_prefix)$(mandir)/man3
+ _installshared installshared: install $(LIBSHARED)
+-	$(INSTALL) -c -m 755 $(LIBSHARED) $(install_prefix)$(libdir)
+-	ln -s -f $(LIBSHARED) $(install_prefix)$(libdir)/libnids.so
++	$(INSTALL) -c -m 755 $(LIBSHARED) $(DESTDIR)/$(install_prefix)$(libdir)
++	ln -s -f $(LIBSHARED) $(DESTDIR)/$(install_prefix)$(libdir)/libnids.so
+  
+ clean:
+ 	rm -f *.o *~ $(LIBSTATIC) $(LIBSHARED)
