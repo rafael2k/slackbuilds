@@ -1,4 +1,5 @@
 #!/bin/sh
+# thanks to gentoo initscript
 
 tinc_networks() {
 
@@ -11,31 +12,31 @@ tinc_networks() {
 }
 
 tinc_start() {
-	echo "Starting tinc VPN networks"
+  echo "Starting tinc VPN networks"
   for TINCNET in `tinc_networks`; do
     echo "Starting tinc network $TINCNET"
     /usr/sbin/tincd --net="$TINCNET" --logfile=/var/log/tinc.$TINCNET.log --pidfile=/var/run/tinc.$TINCNET.pid
-	done
+  done
 }
 
 tinc_stop() {
-	echo "Stopping tinc VPN networks"
+  echo "Stopping tinc VPN networks"
   for TINCNET in `tinc_networks`; do
-		if [ -f /var/run/tinc."$TINCNET".pid ]; then
-			echo "Stopping tinc network $TINCNET"
-			/usr/sbin/tincd --kill --pidfile=/var/run/tinc."$TINCNET".pid
-		fi
-	done
+    if [ -f /var/run/tinc."$TINCNET".pid ]; then
+      echo "Stopping tinc network $TINCNET"
+      /usr/sbin/tincd --kill --pidfile=/var/run/tinc."$TINCNET".pid
+    fi
+  done
 }
 
 tinc_reload() {
-	echo "Reloading configuration for tinc VPN networks"
+  echo "Reloading configuration for tinc VPN networks"
   for TINCNET in `tinc_networks`; do
-		if [ -f /var/run/tinc."$TINCNET".pid ]; then
-			echo "Reloading tinc network $TINCNET"
-			/usr/sbin/tincd --kill HUP --pidfile=/var/run/tinc."$TINCNET".pid
-		fi
-	done
+    if [ -f /var/run/tinc."$TINCNET".pid ]; then
+      echo "Reloading tinc network $TINCNET"
+      /usr/sbin/tincd --kill HUP --pidfile=/var/run/tinc."$TINCNET".pid
+    fi
+  done
 }
 
 case "$1" in
