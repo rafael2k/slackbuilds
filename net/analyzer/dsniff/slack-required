@@ -1,0 +1,5 @@
+# Dependency list to dsniff
+#
+# dependency [condition] [version]]
+libnids				
+libnet				
