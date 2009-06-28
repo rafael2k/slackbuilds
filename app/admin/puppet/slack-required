@@ -1,0 +1,4 @@
+# Dependency list to puppet
+#
+# dependency [condition] [version]]
+facter				
