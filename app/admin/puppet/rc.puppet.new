@@ -1,10 +1,13 @@
 #!/bin/sh
 
+pidfile="/var/run/puppet/puppetd.pid"
+options="--pidfile $pidfile"
+
 puppet_start() {
-	echo "Starting puppet"
-	start-stop-daemon --start --quiet \
-		--pidfile "/var/run/puppetd.pid" \
-		--exec /usr/bin/puppetd
+  echo "Starting puppet"
+  start-stop-daemon --start --quiet \
+    --pidfile $pidfile \
+    --exec /usr/bin/puppetd -- $options
   if [ "$?" != "0" ]; then
     echo "Failed to start puppet"
   fi
@@ -13,7 +16,7 @@ puppet_start() {
 puppet_stop() {
   echo "Stopping puppet"
   start-stop-daemon --stop --quiet \
-    --pidfile "/var/run/puppet/puppetd.pid"
+    --pidfile $pidfile
   if [ "$?" != "0" ]; then
     echo "Failed to stop puppet"
   fi

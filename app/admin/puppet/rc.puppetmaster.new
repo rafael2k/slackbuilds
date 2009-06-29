@@ -1,10 +1,13 @@
 #!/bin/sh
 
+pidfile="/var/run/puppet/puppetmasterd.pid"
+options="--pidfile $pidfile"
+
 puppetmaster_start() {
-	echo "Starting puppetmaster"
-	start-stop-daemon --start --quiet \
-		--pidfile "/var/run/puppetmasterd.pid" \
-		--exec /usr/bin/puppetmasterd
+  echo "Starting puppetmaster"
+  start-stop-daemon --start --quiet \
+    --pidfile $pidfile \
+    --exec /usr/bin/puppetmasterd -- $options
   if [ "$?" != "0" ]; then
     echo "Failed to start puppetmaster"
   fi
@@ -13,7 +16,7 @@ puppetmaster_start() {
 puppetmaster_stop() {
   echo "Stopping puppetmaster"
   start-stop-daemon --stop --quiet \
-    --pidfile "/var/run/puppet/puppetmasterd.pid"
+    --pidfile $pidfile
   if [ "$?" != "0" ]; then
     echo "Failed to stop puppetmaster"
   fi
