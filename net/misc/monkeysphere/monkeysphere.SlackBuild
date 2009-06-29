@@ -17,7 +17,7 @@
 # slackbuild for monkeysphere, by Silvio Rhatto
 # requires:  
 # tested: monkeysphere-0.24
-# model: generic.mkSlackBuild $Rev: 796 $
+# model: generic.mkSlackBuild $Rev: 805 $
 #
 
 # Look for slackbuildrc
@@ -34,7 +34,7 @@ PKG_NAME="monkeysphere"
 ARCH=${ARCH:=i486}
 SRC_VERSION=${VERSION:=0.24}
 PKG_VERSION="$(echo "$SRC_VERSION" | tr '[[:blank:]-]' '_')"
-BUILD=${BUILD:=1rha}
+BUILD=${BUILD:=2rha}
 SRC_DIR=${SRC_DIR:=$CWD}/$PKG_NAME
 TMP=${TMP:=/tmp}
 PKG=${PKG:=$TMP/package-$PKG_NAME}
@@ -159,6 +159,31 @@ tar --no-same-owner --no-same-permissions -xvf "$SRC_DIR/$SRC" || exit $ERROR_TA
 PKG_SRC="$PWD/`ls -l | awk '/^d/ { print $NF }'`"
 cd "$PKG_SRC"
 
+# Patch source
+patches=" [[PATCH URLS]]
+         $PKG_NAME.diff $PKG_NAME-$PKG_VERSION.diff
+         $PKG_NAME-$PKG_VERSION-$ARCH.diff $PKG_NAME-$ARCH.diff"
+for patch in $patches; do
+  patch="`basename $patch`"
+  if [ -f "$CWD/$patch" ]; then
+    patch -Np1 < "$CWD/$patch" || exit $ERROR_PATCH
+  elif [ -f "$CWD/patches/$patch" ]; then
+    patch -Np1 < "$CWD/patches/$patch" || exit $ERROR_PATCH
+  elif [ -f "$CWD/$patch.gz" ]; then
+    gzip -dc "$CWD/$patch.gz" | patch -Np1 || exit $ERROR_PATCH
+  elif [ -f "$CWD/patches/$patch.gz" ]; then
+    gzip -dc "$CWD/patches/$patch.gz" | patch -Np1 || exit $ERROR_PATCH
+  elif [ -f "$SRC_DIR/$patch" ]; then
+    if [ "`basename $patch .gz`" != "$patch" ]; then
+      gzip -dc $SRC_DIR/$patch | patch -Np1 || exit $ERROR_PATCH
+    elif [ "`basename $patch .bz2`" != "$patch" ]; then
+      bzip2 -dc $SRC_DIR/$patch | patch -Np1 || exit $ERROR_PATCH
+    else
+      patch -Np1 < "$SRC_DIR/$patch" || exit $ERROR_PATCH
+    fi
+  fi
+done
+
 # Compile
 make $NUMJOBS || exit $ERROR_MAKE
 
@@ -207,7 +232,7 @@ monkeysphere:
 EODESC
 
 # Move config files to .new to avoid overwriting any system config
-for config_file in etc/monkeysphere/gnupg-host.conf etc/monkeysphere/gnupg-authentication.conf etc/monkeysphere/monkeysphere.conf etc/monkeysphere/monkeysphere-server.conf etc/monkeysphere/monkeysphere-authentication.conf etc/monkeysphere/monkeysphere-host.conf; do
+for config_file in etc/monkeysphere/monkeysphere-host.conf etc/monkeysphere/monkeysphere.conf etc/monkeysphere/monkeysphere-authentication.conf; do
   mv $PKG/$config_file $PKG/$config_file.new
 done
 
@@ -251,7 +276,7 @@ mkuser() {
   fi
 }
 
-config etc/monkeysphere/gnupg-host.conf.new; config etc/monkeysphere/gnupg-authentication.conf.new; config etc/monkeysphere/monkeysphere.conf.new; config etc/monkeysphere/monkeysphere-server.conf.new ; config etc/monkeysphere/monkeysphere-authentication.conf.new ; config etc/monkeysphere/monkeysphere-host.conf.new
+config etc/monkeysphere/monkeysphere-host.conf.new; config etc/monkeysphere/monkeysphere.conf.new; config etc/monkeysphere/monkeysphere-authentication.conf.new
 EOSCRIPT
 
 # Build the package
