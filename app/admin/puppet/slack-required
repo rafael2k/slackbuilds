@@ -2,3 +2,4 @@
 #
 # dependency [condition] [version]]
 facter				
+openrc				

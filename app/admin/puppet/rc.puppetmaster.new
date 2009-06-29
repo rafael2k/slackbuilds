@@ -1,0 +1,36 @@
+#!/bin/sh
+
+puppetmaster_start() {
+	echo "Starting puppetmaster"
+	start-stop-daemon --start --quiet \
+		--pidfile "/var/run/puppetmasterd.pid" \
+		--exec /usr/bin/puppetmasterd
+  if [ "$?" != "0" ]; then
+    echo "Failed to start puppetmaster"
+  fi
+}
+
+puppetmaster_stop() {
+  echo "Stopping puppetmaster"
+  start-stop-daemon --stop --quiet \
+    --pidfile "/var/run/puppet/puppetmasterd.pid"
+  if [ "$?" != "0" ]; then
+    echo "Failed to stop puppetmaster"
+  fi
+  rm -f "/var/run/puppet/puppetmasterd.pid"
+}
+
+case "$1" in
+'start')
+  puppetmaster_start
+  ;;
+'stop')
+  puppetmaster_stop
+  ;;
+'restart')
+  puppetmaster_stop
+  puppetmaster_start
+  ;;
+*)
+  echo "usage $0 start|stop|restart"
+esac
