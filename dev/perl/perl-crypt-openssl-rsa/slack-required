@@ -1,0 +1,4 @@
+# Dependency list to Crypt-OpenSSL-RSA
+#
+# dependency [condition] [version]]
+perl-crypt-openssl-bignum				

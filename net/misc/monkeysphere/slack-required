@@ -1,0 +1,5 @@
+# Dependency list to monkeysphere
+#
+# dependency [condition] [version]]
+perl-digest-sha1				
+perl-crypt-openssl-rsa				

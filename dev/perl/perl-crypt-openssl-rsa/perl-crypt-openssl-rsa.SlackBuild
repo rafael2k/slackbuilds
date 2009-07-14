@@ -1,11 +1,11 @@
 #!/bin/bash
 #
-#  perl-digest-sha1.SlackBuild is free software; you can redistribute
+#  perl-crypt-openssl-rsa.SlackBuild is free software; you can redistribute
 #  it and/or modify it under the terms of the GNU General Public License as
 #  published by the Free Software Foundation; either version 2 of the License,
 #  or any later version.
 #
-#  perl-digest-sha1.SlackBuild is distributed in the hope that it will
+#  perl-crypt-openssl-rsa.SlackBuild is distributed in the hope that it will
 #  be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
 #  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General
 #  Public License for more details.
@@ -14,9 +14,9 @@
 #  this program; if not, write to the Free Software Foundation, Inc., 59 Temple
 #  Place - Suite 330, Boston, MA 02111-1307, USA
 #
-# slackbuild for perl-digest-sha1, by Silvio Rhatto
-# requires:  
-# tested: perl-digest-sha1-2.12
+# slackbuild for perl-crypt-openssl-rsa, by Silvio Rhatto
+# requires: perl-crypt-openssl-bignum 
+# tested: perl-crypt-openssl-rsa-0.25
 # model: perl.mkSlackBuild $Rev: 796 $
 #
 
@@ -29,17 +29,17 @@ fi
 
 # Set variables
 CWD="$(pwd)"
-SRC_NAME="Digest-SHA1"
-PKG_NAME="perl-digest-sha1"
+SRC_NAME="Crypt-OpenSSL-RSA"
+PKG_NAME="perl-crypt-openssl-rsa"
 ARCH=${ARCH:=i486}
-SRC_VERSION=${VERSION:=2.12}
+SRC_VERSION=${VERSION:=0.25}
 PKG_VERSION="$(echo "$SRC_VERSION" | tr '[[:blank:]-]' '_')"
 BUILD=${BUILD:=1rha}
 SRC_DIR=${SRC_DIR:=$CWD}/$PKG_NAME
 TMP=${TMP:=/tmp}
 PKG=${PKG:=$TMP/package-$PKG_NAME}
 REPOS=${REPOS:=$TMP}
-SLACKBUILD_PATH=${SLACKBUILD_PATH:="dev/perl/perl-digest-sha1"}
+SLACKBUILD_PATH=${SLACKBUILD_PATH:="dev/perl/perl-crypt-openssl-rsa"}
 PREFIX=${PREFIX:=/usr}
 PKG_WORK="$TMP/$SRC_NAME"
 CONF_OPTIONS=${CONF_OPTIONS:=""}
@@ -80,7 +80,7 @@ mkdir -p "$PKG_WORK" || exit $ERROR_MKDIR
 
 # Dowload source if necessary
 SRC="$SRC_NAME-$VERSION.tar.gz"
-URL="http://search.cpan.org/CPAN/authors/id/G/GA/GAAS/$SRC"
+URL="http://search.cpan.org/CPAN/authors/id/I/IR/IROBERTS/$SRC"
 
 if [ ! -s "$SRC_DIR/$SRC" ] || ! gunzip -t "$SRC_DIR/$SRC" 2> /dev/null; then
   wget "$URL" -O "$SRC_DIR/$SRC" || exit $ERROR_WGET
@@ -201,18 +201,18 @@ cat << EODESC > "$PKG/install/slack-desc"
 # make exactly 11 lines for the formatting to be correct.  It's also
 # customary to leave one space after the ':'.
 
-                |-----handy-ruler---------------------------------------------|
-perl-digest-sha1: perl-digest-sha1
-perl-digest-sha1:
-perl-digest-sha1: The Digest::SHA1 module allows you to use the NIST SHA-1 message
-perl-digest-sha1: digest algorithm from within Perl programs. The algorithm takes as
-perl-digest-sha1: input a message of arbitrary length and produces as output a 160-bit
-perl-digest-sha1: "fingerprint" or "message digest" of the input.
-perl-digest-sha1:
-perl-digest-sha1:
-perl-digest-sha1:
-perl-digest-sha1:
-perl-digest-sha1:
+                      |-----handy-ruler---------------------------------------|
+perl-crypt-openssl-rsa: perl-crypt-openssl-rsa
+perl-crypt-openssl-rsa: 
+perl-crypt-openssl-rsa: RSA encoding and decoding, using the openSSL libraries.
+perl-crypt-openssl-rsa: 
+perl-crypt-openssl-rsa: 
+perl-crypt-openssl-rsa: 
+perl-crypt-openssl-rsa: 
+perl-crypt-openssl-rsa: 
+perl-crypt-openssl-rsa: 
+perl-crypt-openssl-rsa: 
+perl-crypt-openssl-rsa: 
 EODESC
 
 # Build the package
