@@ -1,0 +1,4 @@
+# Dependency list to ddclient
+#
+# dependency [condition] [version]]
+perl-io-socket-ssl				
