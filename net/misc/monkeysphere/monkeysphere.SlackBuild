@@ -16,7 +16,7 @@
 #
 # slackbuild for monkeysphere, by Silvio Rhatto
 # requires:  
-# tested: monkeysphere-0.25
+# tested: monkeysphere-0.26
 # model: generic.mkSlackBuild $Rev: 805 $
 #
 
@@ -32,7 +32,7 @@ CWD="$(pwd)"
 SRC_NAME="monkeysphere"
 PKG_NAME="monkeysphere"
 ARCH=${ARCH:=i486}
-SRC_VERSION=${VERSION:=0.25}
+SRC_VERSION=${VERSION:=0.26}
 PKG_VERSION="$(echo "$SRC_VERSION" | tr '[[:blank:]-]' '_')"
 BUILD=${BUILD:=2rha}
 SRC_DIR=${SRC_DIR:=$CWD}/$PKG_NAME
