@@ -1,11 +1,11 @@
 #!/bin/bash
 #
-#  perl-html-parser.SlackBuild is free software; you can redistribute
+#  perl-cgi-formbuilder.SlackBuild is free software; you can redistribute
 #  it and/or modify it under the terms of the GNU General Public License as
 #  published by the Free Software Foundation; either version 2 of the License,
 #  or any later version.
 #
-#  perl-html-parser.SlackBuild is distributed in the hope that it will
+#  perl-cgi-formbuilder.SlackBuild is distributed in the hope that it will
 #  be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
 #  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General
 #  Public License for more details.
@@ -14,9 +14,9 @@
 #  this program; if not, write to the Free Software Foundation, Inc., 59 Temple
 #  Place - Suite 330, Boston, MA 02111-1307, USA
 #
-# slackbuild for perl-html-parser, by Silvio Rhatto
+# slackbuild for perl-cgi-formbuilder, by Silvio Rhatto
 # requires:  
-# tested: perl-html-parser-3.62
+# tested: perl-cgi-formbuilder-3.0501
 # model: perl.mkSlackBuild $Rev: 796 $
 #
 
@@ -29,17 +29,17 @@ fi
 
 # Set variables
 CWD="$(pwd)"
-SRC_NAME="HTML-Parser"
-PKG_NAME="perl-html-parser"
+SRC_NAME="CGI-FormBuilder"
+PKG_NAME="perl-cgi-formbuilder"
 ARCH=${ARCH:=i486}
-SRC_VERSION=${VERSION:=3.62}
+SRC_VERSION=${VERSION:=3.0501}
 PKG_VERSION="$(echo "$SRC_VERSION" | tr '[[:blank:]-]' '_')"
 BUILD=${BUILD:=1rha}
 SRC_DIR=${SRC_DIR:=$CWD}/$PKG_NAME
 TMP=${TMP:=/tmp}
 PKG=${PKG:=$TMP/package-$PKG_NAME}
 REPOS=${REPOS:=$TMP}
-SLACKBUILD_PATH=${SLACKBUILD_PATH:="dev/perl/perl-html-parser"}
+SLACKBUILD_PATH=${SLACKBUILD_PATH:="dev/perl/perl-cgi-formbuilder"}
 PREFIX=${PREFIX:=/usr}
 PKG_WORK="$TMP/$SRC_NAME"
 CONF_OPTIONS=${CONF_OPTIONS:=""}
@@ -79,10 +79,10 @@ mkdir -p "$REPOS" || exit $ERROR_MKDIR
 mkdir -p "$PKG_WORK" || exit $ERROR_MKDIR
 
 # Dowload source if necessary
-SRC="$SRC_NAME-$VERSION.tar.gz"
-URL="http://search.cpan.org/CPAN/authors/id/G/GA/GAAS/$SRC"
+SRC="$SRC_NAME-$VERSION.tgz"
+URL="http://search.cpan.org/CPAN/authors/id/N/NW/NWIGER/$SRC"
 
-if [ ! -s "$SRC_DIR/$SRC" ] || ! gunzip -t "$SRC_DIR/$SRC" 2> /dev/null; then
+if [ ! -s "$SRC_DIR/$SRC" ] || ! gzip  "$SRC_DIR/$SRC" 2> /dev/null; then
   wget "$URL" -O "$SRC_DIR/$SRC" || exit $ERROR_WGET
 fi
 
@@ -158,6 +158,31 @@ tar --no-same-owner --no-same-permissions -xvf "$SRC_DIR/$SRC" || exit $ERROR_TA
 PKG_SRC=`ls -l | awk '/^d/ { print $8 }'`
 cd "$PKG_SRC"
 
+# Patch source
+patches=" [[PATCH URLS]]
+         $PKG_NAME.diff $PKG_NAME-$PKG_VERSION.diff
+         $PKG_NAME-$PKG_VERSION-$ARCH.diff $PKG_NAME-$ARCH.diff"
+for patch in $patches; do
+  patch="`basename $patch`"
+  if [ -f "$CWD/$patch" ]; then
+    patch -Np1 < "$CWD/$patch" || exit $ERROR_PATCH
+  elif [ -f "$CWD/patches/$patch" ]; then
+    patch -Np1 < "$CWD/patches/$patch" || exit $ERROR_PATCH
+  elif [ -f "$CWD/$patch.gz" ]; then
+    gzip -dc "$CWD/$patch.gz" | patch -Np1 || exit $ERROR_PATCH
+  elif [ -f "$CWD/patches/$patch.gz" ]; then
+    gzip -dc "$CWD/patches/$patch.gz" | patch -Np1 || exit $ERROR_PATCH
+  elif [ -f "$SRC_DIR/$patch" ]; then
+    if [ "`basename $patch .gz`" != "$patch" ]; then
+      gzip -dc $SRC_DIR/$patch | patch -Np1 || exit $ERROR_PATCH
+    elif [ "`basename $patch .bz2`" != "$patch" ]; then
+      bzip2 -dc $SRC_DIR/$patch | patch -Np1 || exit $ERROR_PATCH
+    else
+      patch -Np1 < "$SRC_DIR/$patch" || exit $ERROR_PATCH
+    fi
+  fi
+done
+
 # Configure
 perl Makefile.PL || exit $ERROR_CONF
 
@@ -201,18 +226,18 @@ cat << EODESC > "$PKG/install/slack-desc"
 # make exactly 11 lines for the formatting to be correct.  It's also
 # customary to leave one space after the ':'.
 
-                |-----handy-ruler---------------------------------------------|
-perl-html-parser: perl-html-parser (Perl HTML parsing modules)
-perl-html-parser:
-perl-html-parser:
-perl-html-parser:
-perl-html-parser:
-perl-html-parser:
-perl-html-parser:
-perl-html-parser:
-perl-html-parser:
-perl-html-parser:
-perl-html-parser:
+                    |-----handy-ruler-----------------------------------------|
+perl-cgi-formbuilder: perl-cgi-formbuilder
+perl-cgi-formbuilder:
+perl-cgi-formbuilder: Easily generate and process stateful forms.
+perl-cgi-formbuilder:
+perl-cgi-formbuilder:
+perl-cgi-formbuilder:
+perl-cgi-formbuilder:
+perl-cgi-formbuilder:
+perl-cgi-formbuilder:
+perl-cgi-formbuilder:
+perl-cgi-formbuilder:
 EODESC
 
 # Build the package

@@ -1,0 +1,4 @@
+# Dependency list to HTML-Scrubber
+#
+# dependency [condition] [version]]
+perl-html-parser				

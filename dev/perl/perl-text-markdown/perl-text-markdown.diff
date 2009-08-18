@@ -1,0 +1,13 @@
+diff -Naur Text-Markdown-1.0.24.orig/Makefile.PL Text-Markdown-1.0.24/Makefile.PL
+--- Text-Markdown-1.0.24.orig/Makefile.PL	2008-10-23 15:30:29.000000000 -0200
++++ Text-Markdown-1.0.24/Makefile.PL	2009-08-17 23:34:47.000000000 -0300
+@@ -20,7 +20,7 @@
+ build_requires  'FindBin'         => undef;
+ 
+ # Scripts I install
+-prompt_script('script/Markdown.pl');
+-prompt_script('script/MultiMarkdown.pl');
++#prompt_script('script/Markdown.pl');
++#prompt_script('script/MultiMarkdown.pl');
+ 
+ WriteAll;
