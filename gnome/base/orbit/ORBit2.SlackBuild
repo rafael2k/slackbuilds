@@ -16,8 +16,8 @@
 #
 # slackbuild for ORBit2, by Rudson R. Alves
 # requires:  
-# tested: ORBit2-2.14.13
-# model: generic.mkSlackBuild $Rev: 796 $
+# tested: ORBit2-2.14.17
+# model: generic.mkSlackBuild $Rev: 808 $
 #
 
 # Look for slackbuildrc
@@ -32,7 +32,7 @@ CWD="$(pwd)"
 SRC_NAME="ORBit2"
 PKG_NAME="ORBit2"
 ARCH=${ARCH:=i486}
-SRC_VERSION=${VERSION:=2.14.13}
+SRC_VERSION=${VERSION:=2.14.17}
 PKG_VERSION="$(echo "$SRC_VERSION" | tr '[[:blank:]-]' '_')"
 BUILD=${BUILD:=1rra}
 SRC_DIR=${SRC_DIR:=$CWD}/$PKG_NAME
@@ -42,7 +42,7 @@ REPOS=${REPOS:=$TMP}
 SLACKBUILD_PATH=${SLACKBUILD_PATH:="gnome/base/orbit"}
 PREFIX=${PREFIX:=/usr}
 PKG_WORK="$TMP/$SRC_NAME"
-CONF_OPTIONS=${CONF_OPTIONS:=""}
+CONF_OPTIONS=${CONF_OPTIONS:="--sysconfdir=/etc/gnome/2.26.3"}
 NUMJOBS="-j1"
 
 # Set system libraries' path and optmization flags based on $ARCH

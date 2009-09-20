@@ -15,9 +15,9 @@
 #  59 Temple Place - Suite 330, Boston, MA 02111-1307, USA
 #
 # slackbuild for avahi, by Rudson R. Alves
-# requires:  
-# tested: avahi-0.6.24
-# model: generic.mkSlackBuild $Rev: 796 $
+# requires: glib2 expat libdaemon xmltoman 
+# tested: avahi-0.6.25
+# model: generic.mkSlackBuild $Rev: 808 $
 #
 
 # Look for slackbuildrc
@@ -32,7 +32,7 @@ CWD="$(pwd)"
 SRC_NAME="avahi"
 PKG_NAME="avahi"
 ARCH=${ARCH:=i486}
-SRC_VERSION=${VERSION:=0.6.24}
+SRC_VERSION=${VERSION:=0.6.25}
 PKG_VERSION="$(echo "$SRC_VERSION" | tr '[[:blank:]-]' '_')"
 BUILD=${BUILD:=1rra}
 SRC_DIR=${SRC_DIR:=$CWD}/$PKG_NAME
