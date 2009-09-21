@@ -161,14 +161,12 @@ cd "$PKG_SRC"
 
 # Install
 mkdir -p "$PKG/etc/rc.d" || exit $ERROR_MKDIR
-mkdir -p "$PKG/etc/logrotate.d" || exit $ERROR_MKDIR
 mkdir -p "$PKG/$PREFIX/bin" || exit $ERROR_MKDIR
 mkdir -p "$PKG/$PREFIX/man/man1" || exit $ERROR_MKDIR
 mkdir -p "$PKG/$PREFIX/man/man8" || exit $ERROR_MKDIR
 cp -r "etc/init.d/arno-iptables-firewall" "$PKG/etc/rc.d/rc.firewall.new"
 cp -r "etc/arno-iptables-firewall" "$PKG/etc"
 cp -r "contrib/Slackware/syslog.conf" "$PKG/etc/syslog.conf.new"
-cp -r "$CWD/syslog.new" "$PKG/etc/logrotate.d"
 cp -r "bin/arno-fwfilter" "$PKG/$PREFIX/bin"
 cp -r "share/man/man1/arno-fwfilter.1" "$PKG/$PREFIX/man/man1"
 cp -r "share/man/man8/arno-iptables-firewall.8" "$PKG/$PREFIX/man/man8"
