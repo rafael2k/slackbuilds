@@ -16,8 +16,8 @@
 #
 # slackbuild for calcurse, by Silvio Rhatto
 # requires:  
-# tested: calcurse-2.5
-# model: generic.mkSlackBuild $Rev: 796 $
+# tested: calcurse-2.7
+# model: generic.mkSlackBuild $Rev: 808 $
 #
 
 # Look for slackbuildrc
@@ -32,7 +32,7 @@ CWD="$(pwd)"
 SRC_NAME="calcurse"
 PKG_NAME="calcurse"
 ARCH=${ARCH:=i486}
-SRC_VERSION=${VERSION:=2.5}
+SRC_VERSION=${VERSION:=2.7}
 PKG_VERSION="$(echo "$SRC_VERSION" | tr '[[:blank:]-]' '_')"
 BUILD=${BUILD:=1rha}
 SRC_DIR=${SRC_DIR:=$CWD}/$PKG_NAME
