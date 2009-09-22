@@ -15,9 +15,9 @@
 #  59 Temple Place - Suite 330, Boston, MA 02111-1307, USA
 #
 # slackbuild for vlc, by Silvio Rhatto
-# requires:  
-# tested: vlc-0.9.9a
-# model: generic.mkSlackBuild $Rev: 805 $
+# requires: jack libraw1394 libdc1394 mpeg2dec liba52 faac lame wxWidgets libshout ffmpeg qt4 
+# tested: vlc-1.0.2
+# model: generic.mkSlackBuild $Rev: 808 $
 #
 
 # Look for slackbuildrc
@@ -32,9 +32,9 @@ CWD="$(pwd)"
 SRC_NAME="vlc"
 PKG_NAME="vlc"
 ARCH=${ARCH:=i486}
-SRC_VERSION=${VERSION:=0.9.9a}
+SRC_VERSION=${VERSION:=1.0.2}
 PKG_VERSION="$(echo "$SRC_VERSION" | tr '[[:blank:]-]' '_')"
-BUILD=${BUILD:=2rha}
+BUILD=${BUILD:=1rha}
 SRC_DIR=${SRC_DIR:=$CWD}/$PKG_NAME
 TMP=${TMP:=/tmp}
 PKG=${PKG:=$TMP/package-$PKG_NAME}
@@ -42,7 +42,7 @@ REPOS=${REPOS:=$TMP}
 SLACKBUILD_PATH=${SLACKBUILD_PATH:="media/video/vlc"}
 PREFIX=${PREFIX:=/usr}
 PKG_WORK="$TMP/$SRC_NAME"
-CONF_OPTIONS=${CONF_OPTIONS:="--enable-theora --enable-dv --enable-v4l --enable-real --enable-realrtsp --enable-flac --enable-snapshot --enable-aa --enable-jack --enable-shout --disable-dc1394"}
+CONF_OPTIONS=${CONF_OPTIONS:="--enable-theora --enable-dv --enable-v4l --enable-real --enable-realrtsp --enable-flac --enable-snapshot --enable-aa --enable-jack --enable-shout --disable-dc1394 --disable-nls --disable-mozilla"}
 NUMJOBS=${NUMJOBS:=""}
 
 # Set system libraries' path and optmization flags based on $ARCH
@@ -81,7 +81,7 @@ mkdir -p "$PKG_WORK" || exit $ERROR_MKDIR
 
 # Dowload source if necessary
 SRC="$SRC_NAME-$VERSION.tar.bz2"
-URL="http://download.videolan.org/pub/videolan/vlc/0.9.9a/$SRC"
+URL="http://download.videolan.org/pub/videolan/vlc/1.0.2/$SRC"
 
 if [ ! -s "$SRC_DIR/$SRC" ] || ! bunzip2 -t "$SRC_DIR/$SRC" 2> /dev/null; then
   wget "$URL" -O "$SRC_DIR/$SRC" || exit $ERROR_WGET
@@ -158,6 +158,31 @@ cd "$PKG_WORK"
 tar --no-same-owner --no-same-permissions -xvf "$SRC_DIR/$SRC" || exit $ERROR_TAR
 PKG_SRC="$PWD/`ls -l | awk '/^d/ { print $NF }'`"
 cd "$PKG_SRC"
+
+# Patch source
+patches=" [[PATCH URLS]]
+         $PKG_NAME.diff $PKG_NAME-$PKG_VERSION.diff
+         $PKG_NAME-$PKG_VERSION-$ARCH.diff $PKG_NAME-$ARCH.diff"
+for patch in $patches; do
+  patch="`basename $patch`"
+  if [ -f "$CWD/$patch" ]; then
+    patch -Np1 < "$CWD/$patch" || exit $ERROR_PATCH
+  elif [ -f "$CWD/patches/$patch" ]; then
+    patch -Np1 < "$CWD/patches/$patch" || exit $ERROR_PATCH
+  elif [ -f "$CWD/$patch.gz" ]; then
+    gzip -dc "$CWD/$patch.gz" | patch -Np1 || exit $ERROR_PATCH
+  elif [ -f "$CWD/patches/$patch.gz" ]; then
+    gzip -dc "$CWD/patches/$patch.gz" | patch -Np1 || exit $ERROR_PATCH
+  elif [ -f "$SRC_DIR/$patch" ]; then
+    if [ "`basename $patch .gz`" != "$patch" ]; then
+      gzip -dc $SRC_DIR/$patch | patch -Np1 || exit $ERROR_PATCH
+    elif [ "`basename $patch .bz2`" != "$patch" ]; then
+      bzip2 -dc $SRC_DIR/$patch | patch -Np1 || exit $ERROR_PATCH
+    else
+      patch -Np1 < "$SRC_DIR/$patch" || exit $ERROR_PATCH
+    fi
+  fi
+done
 
 # Configure
 CFLAGS="$SLKCFLAGS" \

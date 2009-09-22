@@ -1,0 +1,12 @@
+diff -Naur vlc-1.0.2.orig/src/misc/objects.c vlc-1.0.2/src/misc/objects.c
+--- vlc-1.0.2.orig/src/misc/objects.c	2009-09-18 13:37:49.000000000 -0300
++++ vlc-1.0.2/src/misc/objects.c	2009-09-22 13:38:55.000000000 -0300
+@@ -381,7 +381,7 @@
+         /* This can only ever happen if someone killed us without locking: */
+         assert (internals->pipes[1] == -1);
+ 
+-#ifdef HAVE_EVENTFD
++#ifdef HAVE_SYS_EVENTFD
+         internals->pipes[0] = internals->pipes[1] = eventfd (0, 0);
+         if (internals->pipes[0] == -1)
+ #endif
