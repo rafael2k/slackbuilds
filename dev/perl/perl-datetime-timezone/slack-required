@@ -1,0 +1,4 @@
+# Dependency list to DateTime-TimeZone
+#
+# dependency [condition] [version]]
+perl-class-singleton				
