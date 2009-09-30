@@ -17,7 +17,7 @@
 # slackbuild for perl-ical-parser, by Silvio Rhatto
 # requires:  
 # tested: perl-ical-parser-1.16
-# model: perl.mkSlackBuild $Rev: 796 $
+# model: perl.mkSlackBuild $Rev: 820 $
 #
 
 # Look for slackbuildrc
