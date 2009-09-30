@@ -16,8 +16,8 @@
 #
 # slackbuild for dovecot, by Silvio Rhatto
 # requires:  
-# tested: dovecot-1.1.14
-# model: generic.mkSlackBuild $Rev: 805 $
+# tested: dovecot-1.1.19
+# model: generic.mkSlackBuild $Rev: 808 $
 #
 
 # Look for slackbuildrc
@@ -32,7 +32,7 @@ CWD="$(pwd)"
 SRC_NAME="dovecot"
 PKG_NAME="dovecot"
 ARCH=${ARCH:=i486}
-SRC_VERSION=${VERSION:=1.1.14}
+SRC_VERSION=${VERSION:=1.1.19}
 PKG_VERSION="$(echo "$SRC_VERSION" | tr '[[:blank:]-]' '_')"
 BUILD=${BUILD:=1rha}
 SRC_DIR=${SRC_DIR:=$CWD}/$PKG_NAME
@@ -86,6 +86,50 @@ URL="http://www.dovecot.org/releases/1.1/$SRC"
 if [ ! -s "$SRC_DIR/$SRC" ] || ! gunzip -t "$SRC_DIR/$SRC" 2> /dev/null; then
   wget "$URL" -O "$SRC_DIR/$SRC" || exit $ERROR_WGET
 fi
+
+# Import minimized signing key from
+if echo [[SIGNING KEY URL]] | grep -q -v "SIGNING KEY URL"; then
+  lynx -dump [[SIGNING KEY URL]] | gpg --import || exit $ERROR_GPG
+elif echo 40558AC9 | grep -q -v "SIGNING KEY ID"; then
+  gpg --recv-keys 40558AC9 || exit $ERROR_GPG
+else
+  gpg --import << EOKEY || exit $ERROR_GPG
+[[SIGNING KEY]]
+EOKEY
+fi
+
+# Download source's signature if necessary and check it
+if echo [[SIGNING URL]] | grep -q -v "SIGNING URL"; then
+  SIGNATURE="`basename [[SIGNING URL]]`"
+  if [ ! -s "$SRC_DIR/$SIGNATURE" ]; then
+    wget "[[SIGNING URL]]" -O "$SRC_DIR/$SIGNATURE" || exit $ERROR_WGET
+  fi
+else
+  if [ -s "$SRC_DIR/$SRC.sig" ]; then
+    SIGNATURE="$SRC.sig"
+  elif [ -s "$SRC_DIR/$SRC.asc" ]; then
+    SIGNATURE="$SRC.asc"
+  else
+    echo Trying to get signature file from $URL.sig...
+    if wget "$URL.sig" -O "$SRC_DIR/$SRC.sig"; then
+      SIGNATURE="$SRC.sig"
+    else
+      rm $SRC_DIR/$SRC.sig
+      echo Trying to get signature file from $URL.asc...
+      if wget "$URL.asc" -O "$SRC_DIR/$SRC.asc"; then
+        SIGNATURE="$SRC.asc"
+      else
+        rm $SRC_DIR/$SRC.asc
+        echo "Error getting source's signature file"
+        exit $ERROR_GPG
+      fi
+    fi
+  fi
+fi
+
+echo Checking $SRC_DIR/$SRC with gpg using $SRC_DIR/$SIGNATURE...
+gpg --verify "$SRC_DIR/$SIGNATURE" "$SRC_DIR/$SRC" || exit $ERROR_GPG
+echo Success.
 
 # Check Manifest file
 if [ -e "$CWD/Manifest" ]; then
