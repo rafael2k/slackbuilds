@@ -16,8 +16,8 @@
 #
 # slackbuild for gnome-doc-utils, by Rudson R. Alves
 # requires:  
-# tested: gnome-doc-utils-0.12.0
-# model: generic.mkSlackBuild $Rev: 796 $
+# tested: gnome-doc-utils-0.18.0
+# model: generic.mkSlackBuild $Rev: 808 $
 #
 
 # Look for slackbuildrc
@@ -32,7 +32,7 @@ CWD="$(pwd)"
 SRC_NAME="gnome-doc-utils"
 PKG_NAME="gnome-doc-utils"
 ARCH=${ARCH:=i486}
-SRC_VERSION=${VERSION:=0.12.0}
+SRC_VERSION=${VERSION:=0.18.0}
 PKG_VERSION="$(echo "$SRC_VERSION" | tr '[[:blank:]-]' '_')"
 BUILD=${BUILD:=1rra}
 SRC_DIR=${SRC_DIR:=$CWD}/$PKG_NAME
@@ -43,7 +43,7 @@ SLACKBUILD_PATH=${SLACKBUILD_PATH:="app/text/gnome-doc-utils"}
 PREFIX=${PREFIX:=/usr}
 PKG_WORK="$TMP/$SRC_NAME"
 CONF_OPTIONS=${CONF_OPTIONS:=""}
-NUMJOBS=${NUMJOBS:="-j7"}
+NUMJOBS=${NUMJOBS:=""}
 
 # Set system libraries' path and optmization flags based on $ARCH
 LIBDIR="$PREFIX/lib"
@@ -81,7 +81,7 @@ mkdir -p "$PKG_WORK" || exit $ERROR_MKDIR
 
 # Dowload source if necessary
 SRC="$SRC_NAME-$VERSION.tar.bz2"
-URL="http://ftp.acc.umu.se/pub/gnome/sources/gnome-doc-utils/0.12/$SRC"
+URL="http://ftp.acc.umu.se/pub/gnome/sources/gnome-doc-utils/0.18/$SRC"
 
 if [ ! -s "$SRC_DIR/$SRC" ] || ! bunzip2 -t "$SRC_DIR/$SRC" 2> /dev/null; then
   wget "$URL" -O "$SRC_DIR/$SRC" || exit $ERROR_WGET
