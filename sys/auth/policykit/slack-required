@@ -1,0 +1,4 @@
+# Dependency list to PolicyKit
+#
+# dependency [condition] [version]]
+linux-pam				

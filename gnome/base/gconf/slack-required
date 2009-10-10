@@ -3,3 +3,4 @@
 # dependency [condition] [version]]
 glib				
 ORBit2				
+PolicyKit				
