@@ -1,0 +1,4 @@
+# Dependency list to mplayerplug-in
+#
+# dependency [condition] [version]]
+MPlayer				
