@@ -1,6 +1,6 @@
-diff --recursive --unified libmikmod-3.1.11/NEWS libmikmod-3.1.11-a/NEWS
---- libmikmod-3.1.11/NEWS	2004-01-21 12:43:52.000000000 -0500
-+++ libmikmod-3.1.11-a/NEWS	2004-06-04 08:24:26.000000000 -0400
+diff -Naur libmikmod-3.1.11.orig/NEWS libmikmod-3.1.11/NEWS
+--- libmikmod-3.1.11.orig/NEWS	2004-01-21 15:43:52.000000000 -0200
++++ libmikmod-3.1.11/NEWS	2009-10-21 17:41:26.000000000 -0200
 @@ -1,3 +1,17 @@
 +Summary of changes between libmikmod 3.1.11 and libmikmod 3.1.11-a
 +========================================================================
@@ -19,9 +19,9 @@ diff --recursive --unified libmikmod-3.1.11/NEWS libmikmod-3.1.11-a/NEWS
  Summary of changes between libmikmod 3.1.10 and libmikmod 3.1.11 (Thiers):
  ==========================================================================
  
-diff --recursive --unified libmikmod-3.1.11/config.guess libmikmod-3.1.11-a/config.guess
---- libmikmod-3.1.11/config.guess	2004-01-21 12:43:53.000000000 -0500
-+++ libmikmod-3.1.11-a/config.guess	2004-06-04 08:24:26.000000000 -0400
+diff -Naur libmikmod-3.1.11.orig/config.guess libmikmod-3.1.11/config.guess
+--- libmikmod-3.1.11.orig/config.guess	2004-01-21 15:43:53.000000000 -0200
++++ libmikmod-3.1.11/config.guess	2009-10-21 17:41:26.000000000 -0200
 @@ -1,9 +1,9 @@
  #! /bin/sh
  # Attempt to guess a canonical system name.
@@ -770,9 +770,9 @@ diff --recursive --unified libmikmod-3.1.11/config.guess libmikmod-3.1.11-a/conf
  
  # Apollos put the system type in the environment.
  
-diff --recursive --unified libmikmod-3.1.11/config.sub libmikmod-3.1.11-a/config.sub
---- libmikmod-3.1.11/config.sub	2004-01-21 12:43:53.000000000 -0500
-+++ libmikmod-3.1.11-a/config.sub	2004-06-04 08:24:26.000000000 -0400
+diff -Naur libmikmod-3.1.11.orig/config.sub libmikmod-3.1.11/config.sub
+--- libmikmod-3.1.11.orig/config.sub	2004-01-21 15:43:53.000000000 -0200
++++ libmikmod-3.1.11/config.sub	2009-10-21 17:41:26.000000000 -0200
 @@ -3,7 +3,7 @@
  #   Copyright (C) 1992, 1993, 1994, 1995, 1996, 1997, 1998, 1999,
  #   2000, 2001, 2002 Free Software Foundation, Inc.
@@ -1063,9 +1063,9 @@ diff --recursive --unified libmikmod-3.1.11/config.sub libmikmod-3.1.11-a/config
  				vendor=wrs
  				;;
  			-aux*)
-diff --recursive --unified libmikmod-3.1.11/configure.in libmikmod-3.1.11-a/configure.in
---- libmikmod-3.1.11/configure.in	2004-01-21 12:43:52.000000000 -0500
-+++ libmikmod-3.1.11-a/configure.in	2004-06-04 08:24:26.000000000 -0400
+diff -Naur libmikmod-3.1.11.orig/configure.in libmikmod-3.1.11/configure.in
+--- libmikmod-3.1.11.orig/configure.in	2004-01-21 15:43:52.000000000 -0200
++++ libmikmod-3.1.11/configure.in	2009-10-21 17:41:26.000000000 -0200
 @@ -1,6 +1,6 @@
  dnl Process this file with autoconf to produce a configure script.
  dnl
@@ -1074,9 +1074,9 @@ diff --recursive --unified libmikmod-3.1.11/configure.in libmikmod-3.1.11-a/conf
  
  AC_INIT(include/mikmod.h.in)
  
-diff --recursive --unified libmikmod-3.1.11/dlapi/dl_hpux.c libmikmod-3.1.11-a/dlapi/dl_hpux.c
---- libmikmod-3.1.11/dlapi/dl_hpux.c	2004-01-21 12:43:52.000000000 -0500
-+++ libmikmod-3.1.11-a/dlapi/dl_hpux.c	2004-06-04 08:24:26.000000000 -0400
+diff -Naur libmikmod-3.1.11.orig/dlapi/dl_hpux.c libmikmod-3.1.11/dlapi/dl_hpux.c
+--- libmikmod-3.1.11.orig/dlapi/dl_hpux.c	2004-01-21 15:43:52.000000000 -0200
++++ libmikmod-3.1.11/dlapi/dl_hpux.c	2009-10-21 17:41:26.000000000 -0200
 @@ -1,6 +1,6 @@
  /*==============================================================================
  
@@ -1085,9 +1085,9 @@ diff --recursive --unified libmikmod-3.1.11/dlapi/dl_hpux.c libmikmod-3.1.11-a/d
  
    simple dlopen()-like implementation above HP-UX shl_xxx() API
  
-diff --recursive --unified libmikmod-3.1.11/docs/mikmod.texi libmikmod-3.1.11-a/docs/mikmod.texi
---- libmikmod-3.1.11/docs/mikmod.texi	2004-01-21 12:43:52.000000000 -0500
-+++ libmikmod-3.1.11-a/docs/mikmod.texi	2004-06-04 08:24:26.000000000 -0400
+diff -Naur libmikmod-3.1.11.orig/docs/mikmod.texi libmikmod-3.1.11/docs/mikmod.texi
+--- libmikmod-3.1.11.orig/docs/mikmod.texi	2004-01-21 15:43:52.000000000 -0200
++++ libmikmod-3.1.11/docs/mikmod.texi	2009-10-21 17:41:26.000000000 -0200
 @@ -7,7 +7,7 @@
  
    MikMod Sound Library Documentation
@@ -1097,9 +1097,9 @@ diff --recursive --unified libmikmod-3.1.11/docs/mikmod.texi libmikmod-3.1.11-a/
  
  @end ignore
  @c comment this during modifications
-diff --recursive --unified libmikmod-3.1.11/drivers/drv_AF.c libmikmod-3.1.11-a/drivers/drv_AF.c
---- libmikmod-3.1.11/drivers/drv_AF.c	2004-01-21 12:43:52.000000000 -0500
-+++ libmikmod-3.1.11-a/drivers/drv_AF.c	2004-06-04 08:24:26.000000000 -0400
+diff -Naur libmikmod-3.1.11.orig/drivers/drv_AF.c libmikmod-3.1.11/drivers/drv_AF.c
+--- libmikmod-3.1.11.orig/drivers/drv_AF.c	2004-01-21 15:43:52.000000000 -0200
++++ libmikmod-3.1.11/drivers/drv_AF.c	2009-10-21 17:41:26.000000000 -0200
 @@ -20,7 +20,7 @@
    
  /*==============================================================================
@@ -1109,9 +1109,9 @@ diff --recursive --unified libmikmod-3.1.11/drivers/drv_AF.c libmikmod-3.1.11-a/
  
    Driver for output on AF audio server.
  
-diff --recursive --unified libmikmod-3.1.11/drivers/drv_aix.c libmikmod-3.1.11-a/drivers/drv_aix.c
---- libmikmod-3.1.11/drivers/drv_aix.c	2004-01-21 12:43:52.000000000 -0500
-+++ libmikmod-3.1.11-a/drivers/drv_aix.c	2004-06-04 08:24:26.000000000 -0400
+diff -Naur libmikmod-3.1.11.orig/drivers/drv_aix.c libmikmod-3.1.11/drivers/drv_aix.c
+--- libmikmod-3.1.11.orig/drivers/drv_aix.c	2004-01-21 15:43:52.000000000 -0200
++++ libmikmod-3.1.11/drivers/drv_aix.c	2009-10-21 17:41:26.000000000 -0200
 @@ -20,7 +20,7 @@
    
  /*==============================================================================
@@ -1121,9 +1121,9 @@ diff --recursive --unified libmikmod-3.1.11/drivers/drv_aix.c libmikmod-3.1.11-a
  
    Driver for output to AIX series audio device
  
-diff --recursive --unified libmikmod-3.1.11/drivers/drv_alsa.c libmikmod-3.1.11-a/drivers/drv_alsa.c
---- libmikmod-3.1.11/drivers/drv_alsa.c	2004-01-21 12:43:52.000000000 -0500
-+++ libmikmod-3.1.11-a/drivers/drv_alsa.c	2004-06-04 08:24:26.000000000 -0400
+diff -Naur libmikmod-3.1.11.orig/drivers/drv_alsa.c libmikmod-3.1.11/drivers/drv_alsa.c
+--- libmikmod-3.1.11.orig/drivers/drv_alsa.c	2004-01-21 15:43:52.000000000 -0200
++++ libmikmod-3.1.11/drivers/drv_alsa.c	2009-10-21 17:41:26.000000000 -0200
 @@ -20,7 +20,7 @@
  
  /*==============================================================================
@@ -1133,9 +1133,9 @@ diff --recursive --unified libmikmod-3.1.11/drivers/drv_alsa.c libmikmod-3.1.11-
  
    Driver for Advanced Linux Sound Architecture (ALSA)
  
-diff --recursive --unified libmikmod-3.1.11/drivers/drv_dart.c libmikmod-3.1.11-a/drivers/drv_dart.c
---- libmikmod-3.1.11/drivers/drv_dart.c	2004-01-21 12:43:52.000000000 -0500
-+++ libmikmod-3.1.11-a/drivers/drv_dart.c	2004-06-04 08:24:26.000000000 -0400
+diff -Naur libmikmod-3.1.11.orig/drivers/drv_dart.c libmikmod-3.1.11/drivers/drv_dart.c
+--- libmikmod-3.1.11.orig/drivers/drv_dart.c	2004-01-21 15:43:52.000000000 -0200
++++ libmikmod-3.1.11/drivers/drv_dart.c	2009-10-21 17:41:26.000000000 -0200
 @@ -20,7 +20,7 @@
  
  /*==============================================================================
@@ -1145,9 +1145,9 @@ diff --recursive --unified libmikmod-3.1.11/drivers/drv_dart.c libmikmod-3.1.11-
  
    Driver for output on OS/2 MMPM/2 using direct audio (DART)
  
-diff --recursive --unified libmikmod-3.1.11/drivers/drv_ds.c libmikmod-3.1.11-a/drivers/drv_ds.c
---- libmikmod-3.1.11/drivers/drv_ds.c	2004-01-21 12:43:52.000000000 -0500
-+++ libmikmod-3.1.11-a/drivers/drv_ds.c	2004-06-04 08:24:26.000000000 -0400
+diff -Naur libmikmod-3.1.11.orig/drivers/drv_ds.c libmikmod-3.1.11/drivers/drv_ds.c
+--- libmikmod-3.1.11.orig/drivers/drv_ds.c	2004-01-21 15:43:52.000000000 -0200
++++ libmikmod-3.1.11/drivers/drv_ds.c	2009-10-21 17:41:26.000000000 -0200
 @@ -20,7 +20,7 @@
  
  /*==============================================================================
@@ -1157,9 +1157,9 @@ diff --recursive --unified libmikmod-3.1.11/drivers/drv_ds.c libmikmod-3.1.11-a/
  
    Driver for output on win32 platforms using DirectSound
  
-diff --recursive --unified libmikmod-3.1.11/drivers/drv_esd.c libmikmod-3.1.11-a/drivers/drv_esd.c
---- libmikmod-3.1.11/drivers/drv_esd.c	2004-01-21 12:43:52.000000000 -0500
-+++ libmikmod-3.1.11-a/drivers/drv_esd.c	2004-06-04 08:24:26.000000000 -0400
+diff -Naur libmikmod-3.1.11.orig/drivers/drv_esd.c libmikmod-3.1.11/drivers/drv_esd.c
+--- libmikmod-3.1.11.orig/drivers/drv_esd.c	2004-01-21 15:43:52.000000000 -0200
++++ libmikmod-3.1.11/drivers/drv_esd.c	2009-10-21 17:41:26.000000000 -0200
 @@ -20,7 +20,7 @@
  
  /*==============================================================================
@@ -1169,9 +1169,9 @@ diff --recursive --unified libmikmod-3.1.11/drivers/drv_esd.c libmikmod-3.1.11-a
  
    Driver for the Enlightened sound daemon (EsounD)
  
-diff --recursive --unified libmikmod-3.1.11/drivers/drv_hp.c libmikmod-3.1.11-a/drivers/drv_hp.c
---- libmikmod-3.1.11/drivers/drv_hp.c	2004-01-21 12:43:52.000000000 -0500
-+++ libmikmod-3.1.11-a/drivers/drv_hp.c	2004-06-04 08:24:26.000000000 -0400
+diff -Naur libmikmod-3.1.11.orig/drivers/drv_hp.c libmikmod-3.1.11/drivers/drv_hp.c
+--- libmikmod-3.1.11.orig/drivers/drv_hp.c	2004-01-21 15:43:52.000000000 -0200
++++ libmikmod-3.1.11/drivers/drv_hp.c	2009-10-21 17:41:26.000000000 -0200
 @@ -20,7 +20,7 @@
    
  /*==============================================================================
@@ -1181,9 +1181,9 @@ diff --recursive --unified libmikmod-3.1.11/drivers/drv_hp.c libmikmod-3.1.11-a/
  
    Driver for output to HP 9000 series /dev/audio
  
-diff --recursive --unified libmikmod-3.1.11/drivers/drv_mac.c libmikmod-3.1.11-a/drivers/drv_mac.c
---- libmikmod-3.1.11/drivers/drv_mac.c	2004-01-21 12:43:52.000000000 -0500
-+++ libmikmod-3.1.11-a/drivers/drv_mac.c	2004-06-04 08:24:26.000000000 -0400
+diff -Naur libmikmod-3.1.11.orig/drivers/drv_mac.c libmikmod-3.1.11/drivers/drv_mac.c
+--- libmikmod-3.1.11.orig/drivers/drv_mac.c	2004-01-21 15:43:52.000000000 -0200
++++ libmikmod-3.1.11/drivers/drv_mac.c	2009-10-21 17:41:26.000000000 -0200
 @@ -20,7 +20,7 @@
  
  /*==============================================================================
@@ -1193,9 +1193,9 @@ diff --recursive --unified libmikmod-3.1.11/drivers/drv_mac.c libmikmod-3.1.11-a
  
    Driver for output to the Macintosh Sound Manager
  
-diff --recursive --unified libmikmod-3.1.11/drivers/drv_nos.c libmikmod-3.1.11-a/drivers/drv_nos.c
---- libmikmod-3.1.11/drivers/drv_nos.c	2004-01-21 12:43:52.000000000 -0500
-+++ libmikmod-3.1.11-a/drivers/drv_nos.c	2004-06-04 08:24:26.000000000 -0400
+diff -Naur libmikmod-3.1.11.orig/drivers/drv_nos.c libmikmod-3.1.11/drivers/drv_nos.c
+--- libmikmod-3.1.11.orig/drivers/drv_nos.c	2004-01-21 15:43:52.000000000 -0200
++++ libmikmod-3.1.11/drivers/drv_nos.c	2009-10-21 17:41:26.000000000 -0200
 @@ -20,7 +20,7 @@
  
  /*==============================================================================
@@ -1205,9 +1205,9 @@ diff --recursive --unified libmikmod-3.1.11/drivers/drv_nos.c libmikmod-3.1.11-a
  
    Driver for no output
  
-diff --recursive --unified libmikmod-3.1.11/drivers/drv_os2.c libmikmod-3.1.11-a/drivers/drv_os2.c
---- libmikmod-3.1.11/drivers/drv_os2.c	2004-01-21 12:43:52.000000000 -0500
-+++ libmikmod-3.1.11-a/drivers/drv_os2.c	2004-06-04 08:24:26.000000000 -0400
+diff -Naur libmikmod-3.1.11.orig/drivers/drv_os2.c libmikmod-3.1.11/drivers/drv_os2.c
+--- libmikmod-3.1.11.orig/drivers/drv_os2.c	2004-01-21 15:43:52.000000000 -0200
++++ libmikmod-3.1.11/drivers/drv_os2.c	2009-10-21 17:41:26.000000000 -0200
 @@ -20,7 +20,7 @@
  
  /*==============================================================================
@@ -1217,9 +1217,9 @@ diff --recursive --unified libmikmod-3.1.11/drivers/drv_os2.c libmikmod-3.1.11-a
  
    Driver for output on OS/2 using MMPM/2 MCI interface
  
-diff --recursive --unified libmikmod-3.1.11/drivers/drv_oss.c libmikmod-3.1.11-a/drivers/drv_oss.c
---- libmikmod-3.1.11/drivers/drv_oss.c	2004-01-21 12:43:52.000000000 -0500
-+++ libmikmod-3.1.11-a/drivers/drv_oss.c	2004-06-04 08:24:26.000000000 -0400
+diff -Naur libmikmod-3.1.11.orig/drivers/drv_oss.c libmikmod-3.1.11/drivers/drv_oss.c
+--- libmikmod-3.1.11.orig/drivers/drv_oss.c	2004-01-21 15:43:52.000000000 -0200
++++ libmikmod-3.1.11/drivers/drv_oss.c	2009-10-21 17:41:26.000000000 -0200
 @@ -20,7 +20,7 @@
  
  /*==============================================================================
@@ -1229,9 +1229,9 @@ diff --recursive --unified libmikmod-3.1.11/drivers/drv_oss.c libmikmod-3.1.11-a
  
    Driver for output on Linux and FreeBSD Open Sound System (OSS) (/dev/dsp) 
  
-diff --recursive --unified libmikmod-3.1.11/drivers/drv_pipe.c libmikmod-3.1.11-a/drivers/drv_pipe.c
---- libmikmod-3.1.11/drivers/drv_pipe.c	2004-01-21 12:43:52.000000000 -0500
-+++ libmikmod-3.1.11-a/drivers/drv_pipe.c	2004-06-04 08:24:26.000000000 -0400
+diff -Naur libmikmod-3.1.11.orig/drivers/drv_pipe.c libmikmod-3.1.11/drivers/drv_pipe.c
+--- libmikmod-3.1.11.orig/drivers/drv_pipe.c	2004-01-21 15:43:52.000000000 -0200
++++ libmikmod-3.1.11/drivers/drv_pipe.c	2009-10-21 17:41:26.000000000 -0200
 @@ -20,7 +20,7 @@
  
  /*==============================================================================
@@ -1241,9 +1241,9 @@ diff --recursive --unified libmikmod-3.1.11/drivers/drv_pipe.c libmikmod-3.1.11-
  
    Driver for output via a pipe to another command
  
-diff --recursive --unified libmikmod-3.1.11/drivers/drv_raw.c libmikmod-3.1.11-a/drivers/drv_raw.c
---- libmikmod-3.1.11/drivers/drv_raw.c	2004-01-21 12:43:52.000000000 -0500
-+++ libmikmod-3.1.11-a/drivers/drv_raw.c	2004-06-04 08:24:26.000000000 -0400
+diff -Naur libmikmod-3.1.11.orig/drivers/drv_raw.c libmikmod-3.1.11/drivers/drv_raw.c
+--- libmikmod-3.1.11.orig/drivers/drv_raw.c	2004-01-21 15:43:52.000000000 -0200
++++ libmikmod-3.1.11/drivers/drv_raw.c	2009-10-21 17:41:26.000000000 -0200
 @@ -20,7 +20,7 @@
  
  /*==============================================================================
@@ -1253,9 +1253,9 @@ diff --recursive --unified libmikmod-3.1.11/drivers/drv_raw.c libmikmod-3.1.11-a
  
    Driver for output to a file called MUSIC.RAW
  
-diff --recursive --unified libmikmod-3.1.11/drivers/drv_sam9407.c libmikmod-3.1.11-a/drivers/drv_sam9407.c
---- libmikmod-3.1.11/drivers/drv_sam9407.c	2004-01-21 12:43:52.000000000 -0500
-+++ libmikmod-3.1.11-a/drivers/drv_sam9407.c	2004-06-04 08:24:26.000000000 -0400
+diff -Naur libmikmod-3.1.11.orig/drivers/drv_sam9407.c libmikmod-3.1.11/drivers/drv_sam9407.c
+--- libmikmod-3.1.11.orig/drivers/drv_sam9407.c	2004-01-21 15:43:52.000000000 -0200
++++ libmikmod-3.1.11/drivers/drv_sam9407.c	2009-10-21 17:41:26.000000000 -0200
 @@ -20,7 +20,7 @@
  
  /*==============================================================================
@@ -1265,9 +1265,9 @@ diff --recursive --unified libmikmod-3.1.11/drivers/drv_sam9407.c libmikmod-3.1.
    
    Driver for the Linux sam9407 driver
    
-diff --recursive --unified libmikmod-3.1.11/drivers/drv_sgi.c libmikmod-3.1.11-a/drivers/drv_sgi.c
---- libmikmod-3.1.11/drivers/drv_sgi.c	2004-01-21 12:43:52.000000000 -0500
-+++ libmikmod-3.1.11-a/drivers/drv_sgi.c	2004-06-04 08:24:26.000000000 -0400
+diff -Naur libmikmod-3.1.11.orig/drivers/drv_sgi.c libmikmod-3.1.11/drivers/drv_sgi.c
+--- libmikmod-3.1.11.orig/drivers/drv_sgi.c	2004-01-21 15:43:52.000000000 -0200
++++ libmikmod-3.1.11/drivers/drv_sgi.c	2009-10-21 17:41:26.000000000 -0200
 @@ -20,7 +20,7 @@
    
  /*==============================================================================
@@ -1277,9 +1277,9 @@ diff --recursive --unified libmikmod-3.1.11/drivers/drv_sgi.c libmikmod-3.1.11-a
  
    Driver for output on SGI audio system (needs libaudio from the dmedia
    package).
-diff --recursive --unified libmikmod-3.1.11/drivers/drv_stdout.c libmikmod-3.1.11-a/drivers/drv_stdout.c
---- libmikmod-3.1.11/drivers/drv_stdout.c	2004-01-21 12:43:52.000000000 -0500
-+++ libmikmod-3.1.11-a/drivers/drv_stdout.c	2004-06-04 08:24:26.000000000 -0400
+diff -Naur libmikmod-3.1.11.orig/drivers/drv_stdout.c libmikmod-3.1.11/drivers/drv_stdout.c
+--- libmikmod-3.1.11.orig/drivers/drv_stdout.c	2004-01-21 15:43:52.000000000 -0200
++++ libmikmod-3.1.11/drivers/drv_stdout.c	2009-10-21 17:41:26.000000000 -0200
 @@ -20,7 +20,7 @@
  
  /*==============================================================================
@@ -1289,9 +1289,9 @@ diff --recursive --unified libmikmod-3.1.11/drivers/drv_stdout.c libmikmod-3.1.1
  
    Output data to stdout
  
-diff --recursive --unified libmikmod-3.1.11/drivers/drv_sun.c libmikmod-3.1.11-a/drivers/drv_sun.c
---- libmikmod-3.1.11/drivers/drv_sun.c	2004-01-21 12:43:52.000000000 -0500
-+++ libmikmod-3.1.11-a/drivers/drv_sun.c	2004-06-04 08:24:26.000000000 -0400
+diff -Naur libmikmod-3.1.11.orig/drivers/drv_sun.c libmikmod-3.1.11/drivers/drv_sun.c
+--- libmikmod-3.1.11.orig/drivers/drv_sun.c	2004-01-21 15:43:52.000000000 -0200
++++ libmikmod-3.1.11/drivers/drv_sun.c	2009-10-21 17:41:26.000000000 -0200
 @@ -20,7 +20,7 @@
  
  /*==============================================================================
@@ -1301,9 +1301,9 @@ diff --recursive --unified libmikmod-3.1.11/drivers/drv_sun.c libmikmod-3.1.11-a
  
    Driver for output on the Sun audio device (/dev/audio).
    Also works under NetBSD and OpenBSD
-diff --recursive --unified libmikmod-3.1.11/drivers/drv_ultra.c libmikmod-3.1.11-a/drivers/drv_ultra.c
---- libmikmod-3.1.11/drivers/drv_ultra.c	2004-01-21 12:43:52.000000000 -0500
-+++ libmikmod-3.1.11-a/drivers/drv_ultra.c	2004-06-04 08:24:26.000000000 -0400
+diff -Naur libmikmod-3.1.11.orig/drivers/drv_ultra.c libmikmod-3.1.11/drivers/drv_ultra.c
+--- libmikmod-3.1.11.orig/drivers/drv_ultra.c	2004-01-21 15:43:52.000000000 -0200
++++ libmikmod-3.1.11/drivers/drv_ultra.c	2009-10-21 17:41:26.000000000 -0200
 @@ -20,7 +20,7 @@
  
  /*==============================================================================
@@ -1313,9 +1313,9 @@ diff --recursive --unified libmikmod-3.1.11/drivers/drv_ultra.c libmikmod-3.1.11
  
    Driver for the Linux Ultrasound driver
  
-diff --recursive --unified libmikmod-3.1.11/drivers/drv_wav.c libmikmod-3.1.11-a/drivers/drv_wav.c
---- libmikmod-3.1.11/drivers/drv_wav.c	2004-01-21 12:43:52.000000000 -0500
-+++ libmikmod-3.1.11-a/drivers/drv_wav.c	2004-06-04 08:24:26.000000000 -0400
+diff -Naur libmikmod-3.1.11.orig/drivers/drv_wav.c libmikmod-3.1.11/drivers/drv_wav.c
+--- libmikmod-3.1.11.orig/drivers/drv_wav.c	2004-01-21 15:43:52.000000000 -0200
++++ libmikmod-3.1.11/drivers/drv_wav.c	2009-10-21 17:41:26.000000000 -0200
 @@ -20,7 +20,7 @@
  
  /*==============================================================================
@@ -1325,9 +1325,9 @@ diff --recursive --unified libmikmod-3.1.11/drivers/drv_wav.c libmikmod-3.1.11-a
  
    Driver for output to a file called MUSIC.WAV
  
-diff --recursive --unified libmikmod-3.1.11/drivers/drv_win.c libmikmod-3.1.11-a/drivers/drv_win.c
---- libmikmod-3.1.11/drivers/drv_win.c	2004-01-21 12:43:52.000000000 -0500
-+++ libmikmod-3.1.11-a/drivers/drv_win.c	2004-06-04 08:24:26.000000000 -0400
+diff -Naur libmikmod-3.1.11.orig/drivers/drv_win.c libmikmod-3.1.11/drivers/drv_win.c
+--- libmikmod-3.1.11.orig/drivers/drv_win.c	2004-01-21 15:43:52.000000000 -0200
++++ libmikmod-3.1.11/drivers/drv_win.c	2009-10-21 17:41:26.000000000 -0200
 @@ -20,7 +20,7 @@
  
  /*==============================================================================
@@ -1337,9 +1337,9 @@ diff --recursive --unified libmikmod-3.1.11/drivers/drv_win.c libmikmod-3.1.11-a
  
    Driver for output on win32 platforms using the multimedia API
  
-diff --recursive --unified libmikmod-3.1.11/include/mikmod.h.in libmikmod-3.1.11-a/include/mikmod.h.in
---- libmikmod-3.1.11/include/mikmod.h.in	2004-01-21 12:43:53.000000000 -0500
-+++ libmikmod-3.1.11-a/include/mikmod.h.in	2004-06-04 08:24:26.000000000 -0400
+diff -Naur libmikmod-3.1.11.orig/include/mikmod.h.in libmikmod-3.1.11/include/mikmod.h.in
+--- libmikmod-3.1.11.orig/include/mikmod.h.in	2004-01-21 15:43:53.000000000 -0200
++++ libmikmod-3.1.11/include/mikmod.h.in	2009-10-21 17:41:26.000000000 -0200
 @@ -20,7 +20,7 @@
  
  /*==============================================================================
@@ -1358,9 +1358,9 @@ diff --recursive --unified libmikmod-3.1.11/include/mikmod.h.in libmikmod-3.1.11
  /* 64 bit architectures */
  
  typedef signed char     SBYTE;      /* 1 byte, signed */
-diff --recursive --unified libmikmod-3.1.11/include/mikmod_internals.h libmikmod-3.1.11-a/include/mikmod_internals.h
---- libmikmod-3.1.11/include/mikmod_internals.h	2004-01-21 12:43:53.000000000 -0500
-+++ libmikmod-3.1.11-a/include/mikmod_internals.h	2004-06-04 08:24:26.000000000 -0400
+diff -Naur libmikmod-3.1.11.orig/include/mikmod_internals.h libmikmod-3.1.11/include/mikmod_internals.h
+--- libmikmod-3.1.11.orig/include/mikmod_internals.h	2004-01-21 15:43:53.000000000 -0200
++++ libmikmod-3.1.11/include/mikmod_internals.h	2009-10-21 17:41:26.000000000 -0200
 @@ -20,7 +20,7 @@
  
  /*==============================================================================
@@ -1370,9 +1370,9 @@ diff --recursive --unified libmikmod-3.1.11/include/mikmod_internals.h libmikmod
  
    MikMod sound library internal definitions
  
-diff --recursive --unified libmikmod-3.1.11/libmikmod.m4 libmikmod-3.1.11-a/libmikmod.m4
---- libmikmod-3.1.11/libmikmod.m4	2004-01-21 12:43:53.000000000 -0500
-+++ libmikmod-3.1.11-a/libmikmod.m4	2004-06-04 08:24:26.000000000 -0400
+diff -Naur libmikmod-3.1.11.orig/libmikmod.m4 libmikmod-3.1.11/libmikmod.m4
+--- libmikmod-3.1.11.orig/libmikmod.m4	2004-01-21 15:43:53.000000000 -0200
++++ libmikmod-3.1.11/libmikmod.m4	2009-10-21 17:41:26.000000000 -0200
 @@ -8,7 +8,7 @@
  dnl Test for libmikmod, and define LIBMIKMOD_CFLAGS, LIBMIKMOD_LIBS and
  dnl LIBMIKMOD_LDADD
@@ -1382,9 +1382,9 @@ diff --recursive --unified libmikmod-3.1.11/libmikmod.m4 libmikmod-3.1.11-a/libm
  [dnl 
  dnl Get the cflags and libraries from the libmikmod-config script
  dnl
-diff --recursive --unified libmikmod-3.1.11/loaders/load_669.c libmikmod-3.1.11-a/loaders/load_669.c
---- libmikmod-3.1.11/loaders/load_669.c	2004-01-21 12:43:53.000000000 -0500
-+++ libmikmod-3.1.11-a/loaders/load_669.c	2004-06-04 08:24:27.000000000 -0400
+diff -Naur libmikmod-3.1.11.orig/loaders/load_669.c libmikmod-3.1.11/loaders/load_669.c
+--- libmikmod-3.1.11.orig/loaders/load_669.c	2004-01-21 15:43:53.000000000 -0200
++++ libmikmod-3.1.11/loaders/load_669.c	2009-10-21 17:41:26.000000000 -0200
 @@ -20,7 +20,7 @@
  
  /*==============================================================================
@@ -1394,9 +1394,9 @@ diff --recursive --unified libmikmod-3.1.11/loaders/load_669.c libmikmod-3.1.11-
  
    Composer 669 module loader
  
-diff --recursive --unified libmikmod-3.1.11/loaders/load_amf.c libmikmod-3.1.11-a/loaders/load_amf.c
---- libmikmod-3.1.11/loaders/load_amf.c	2004-01-21 12:43:53.000000000 -0500
-+++ libmikmod-3.1.11-a/loaders/load_amf.c	2004-06-04 08:24:27.000000000 -0400
+diff -Naur libmikmod-3.1.11.orig/loaders/load_amf.c libmikmod-3.1.11/loaders/load_amf.c
+--- libmikmod-3.1.11.orig/loaders/load_amf.c	2004-01-21 15:43:53.000000000 -0200
++++ libmikmod-3.1.11/loaders/load_amf.c	2009-10-21 17:41:26.000000000 -0200
 @@ -20,7 +20,7 @@
  
  /*==============================================================================
@@ -1406,9 +1406,9 @@ diff --recursive --unified libmikmod-3.1.11/loaders/load_amf.c libmikmod-3.1.11-
  
    DMP Advanced Module Format loader
  
-diff --recursive --unified libmikmod-3.1.11/loaders/load_dsm.c libmikmod-3.1.11-a/loaders/load_dsm.c
---- libmikmod-3.1.11/loaders/load_dsm.c	2004-01-21 12:43:53.000000000 -0500
-+++ libmikmod-3.1.11-a/loaders/load_dsm.c	2004-06-04 08:24:27.000000000 -0400
+diff -Naur libmikmod-3.1.11.orig/loaders/load_dsm.c libmikmod-3.1.11/loaders/load_dsm.c
+--- libmikmod-3.1.11.orig/loaders/load_dsm.c	2004-01-21 15:43:53.000000000 -0200
++++ libmikmod-3.1.11/loaders/load_dsm.c	2009-10-21 17:41:26.000000000 -0200
 @@ -20,7 +20,7 @@
  
  /*==============================================================================
@@ -1418,9 +1418,9 @@ diff --recursive --unified libmikmod-3.1.11/loaders/load_dsm.c libmikmod-3.1.11-
  
    DSIK internal format (DSM) module loader
  
-diff --recursive --unified libmikmod-3.1.11/loaders/load_far.c libmikmod-3.1.11-a/loaders/load_far.c
---- libmikmod-3.1.11/loaders/load_far.c	2004-01-21 12:43:53.000000000 -0500
-+++ libmikmod-3.1.11-a/loaders/load_far.c	2004-06-04 08:24:27.000000000 -0400
+diff -Naur libmikmod-3.1.11.orig/loaders/load_far.c libmikmod-3.1.11/loaders/load_far.c
+--- libmikmod-3.1.11.orig/loaders/load_far.c	2004-01-21 15:43:53.000000000 -0200
++++ libmikmod-3.1.11/loaders/load_far.c	2009-10-21 17:41:26.000000000 -0200
 @@ -20,7 +20,7 @@
  
  /*==============================================================================
@@ -1430,9 +1430,9 @@ diff --recursive --unified libmikmod-3.1.11/loaders/load_far.c libmikmod-3.1.11-
  
    Farandole (FAR) module loader
  
-diff --recursive --unified libmikmod-3.1.11/loaders/load_gdm.c libmikmod-3.1.11-a/loaders/load_gdm.c
---- libmikmod-3.1.11/loaders/load_gdm.c	2004-01-21 12:43:53.000000000 -0500
-+++ libmikmod-3.1.11-a/loaders/load_gdm.c	2004-06-04 08:24:27.000000000 -0400
+diff -Naur libmikmod-3.1.11.orig/loaders/load_gdm.c libmikmod-3.1.11/loaders/load_gdm.c
+--- libmikmod-3.1.11.orig/loaders/load_gdm.c	2004-01-21 15:43:53.000000000 -0200
++++ libmikmod-3.1.11/loaders/load_gdm.c	2009-10-21 17:41:26.000000000 -0200
 @@ -20,7 +20,7 @@
  
  /*==============================================================================
@@ -1442,9 +1442,9 @@ diff --recursive --unified libmikmod-3.1.11/loaders/load_gdm.c libmikmod-3.1.11-
  
    General DigiMusic (GDM) module loader
  
-diff --recursive --unified libmikmod-3.1.11/loaders/load_imf.c libmikmod-3.1.11-a/loaders/load_imf.c
---- libmikmod-3.1.11/loaders/load_imf.c	2004-01-21 12:43:53.000000000 -0500
-+++ libmikmod-3.1.11-a/loaders/load_imf.c	2004-06-04 08:24:27.000000000 -0400
+diff -Naur libmikmod-3.1.11.orig/loaders/load_imf.c libmikmod-3.1.11/loaders/load_imf.c
+--- libmikmod-3.1.11.orig/loaders/load_imf.c	2004-01-21 15:43:53.000000000 -0200
++++ libmikmod-3.1.11/loaders/load_imf.c	2009-10-21 17:41:26.000000000 -0200
 @@ -20,7 +20,7 @@
  
  /*==============================================================================
@@ -1454,9 +1454,9 @@ diff --recursive --unified libmikmod-3.1.11/loaders/load_imf.c libmikmod-3.1.11-
  
    Imago Orpheus (IMF) module loader
  
-diff --recursive --unified libmikmod-3.1.11/loaders/load_it.c libmikmod-3.1.11-a/loaders/load_it.c
---- libmikmod-3.1.11/loaders/load_it.c	2004-01-21 12:43:52.000000000 -0500
-+++ libmikmod-3.1.11-a/loaders/load_it.c	2004-06-04 08:24:27.000000000 -0400
+diff -Naur libmikmod-3.1.11.orig/loaders/load_it.c libmikmod-3.1.11/loaders/load_it.c
+--- libmikmod-3.1.11.orig/loaders/load_it.c	2004-01-21 15:43:52.000000000 -0200
++++ libmikmod-3.1.11/loaders/load_it.c	2009-10-21 17:41:26.000000000 -0200
 @@ -20,7 +20,7 @@
  
  /*==============================================================================
@@ -1466,9 +1466,9 @@ diff --recursive --unified libmikmod-3.1.11/loaders/load_it.c libmikmod-3.1.11-a
  
    Impulse tracker (IT) module loader
  
-diff --recursive --unified libmikmod-3.1.11/loaders/load_m15.c libmikmod-3.1.11-a/loaders/load_m15.c
---- libmikmod-3.1.11/loaders/load_m15.c	2004-01-21 12:43:53.000000000 -0500
-+++ libmikmod-3.1.11-a/loaders/load_m15.c	2004-06-04 08:24:27.000000000 -0400
+diff -Naur libmikmod-3.1.11.orig/loaders/load_m15.c libmikmod-3.1.11/loaders/load_m15.c
+--- libmikmod-3.1.11.orig/loaders/load_m15.c	2004-01-21 15:43:53.000000000 -0200
++++ libmikmod-3.1.11/loaders/load_m15.c	2009-10-21 17:41:26.000000000 -0200
 @@ -20,7 +20,7 @@
  
  /*==============================================================================
@@ -1478,9 +1478,9 @@ diff --recursive --unified libmikmod-3.1.11/loaders/load_m15.c libmikmod-3.1.11-
  
    15 instrument MOD loader
    Also supports Ultimate Sound Tracker (old M15 format)
-diff --recursive --unified libmikmod-3.1.11/loaders/load_med.c libmikmod-3.1.11-a/loaders/load_med.c
---- libmikmod-3.1.11/loaders/load_med.c	2004-01-21 12:43:53.000000000 -0500
-+++ libmikmod-3.1.11-a/loaders/load_med.c	2004-06-04 08:24:27.000000000 -0400
+diff -Naur libmikmod-3.1.11.orig/loaders/load_med.c libmikmod-3.1.11/loaders/load_med.c
+--- libmikmod-3.1.11.orig/loaders/load_med.c	2004-01-21 15:43:53.000000000 -0200
++++ libmikmod-3.1.11/loaders/load_med.c	2009-10-21 17:41:26.000000000 -0200
 @@ -20,7 +20,7 @@
  
  /*==============================================================================
@@ -1490,9 +1490,9 @@ diff --recursive --unified libmikmod-3.1.11/loaders/load_med.c libmikmod-3.1.11-
  
    Amiga MED module loader
  
-diff --recursive --unified libmikmod-3.1.11/loaders/load_mod.c libmikmod-3.1.11-a/loaders/load_mod.c
---- libmikmod-3.1.11/loaders/load_mod.c	2004-01-21 12:43:53.000000000 -0500
-+++ libmikmod-3.1.11-a/loaders/load_mod.c	2004-06-04 08:24:27.000000000 -0400
+diff -Naur libmikmod-3.1.11.orig/loaders/load_mod.c libmikmod-3.1.11/loaders/load_mod.c
+--- libmikmod-3.1.11.orig/loaders/load_mod.c	2004-01-21 15:43:53.000000000 -0200
++++ libmikmod-3.1.11/loaders/load_mod.c	2009-10-21 17:41:26.000000000 -0200
 @@ -20,7 +20,7 @@
  
  /*==============================================================================
@@ -1502,9 +1502,9 @@ diff --recursive --unified libmikmod-3.1.11/loaders/load_mod.c libmikmod-3.1.11-
  
    Generic MOD loader (Protracker, StarTracker, FastTracker, etc)
  
-diff --recursive --unified libmikmod-3.1.11/loaders/load_mtm.c libmikmod-3.1.11-a/loaders/load_mtm.c
---- libmikmod-3.1.11/loaders/load_mtm.c	2004-01-21 12:43:53.000000000 -0500
-+++ libmikmod-3.1.11-a/loaders/load_mtm.c	2004-06-04 08:24:27.000000000 -0400
+diff -Naur libmikmod-3.1.11.orig/loaders/load_mtm.c libmikmod-3.1.11/loaders/load_mtm.c
+--- libmikmod-3.1.11.orig/loaders/load_mtm.c	2004-01-21 15:43:53.000000000 -0200
++++ libmikmod-3.1.11/loaders/load_mtm.c	2009-10-21 17:41:26.000000000 -0200
 @@ -20,7 +20,7 @@
  
  /*==============================================================================
@@ -1514,9 +1514,9 @@ diff --recursive --unified libmikmod-3.1.11/loaders/load_mtm.c libmikmod-3.1.11-
  
    MTM module loader
  
-diff --recursive --unified libmikmod-3.1.11/loaders/load_okt.c libmikmod-3.1.11-a/loaders/load_okt.c
---- libmikmod-3.1.11/loaders/load_okt.c	2004-01-21 12:43:53.000000000 -0500
-+++ libmikmod-3.1.11-a/loaders/load_okt.c	2004-06-04 08:24:27.000000000 -0400
+diff -Naur libmikmod-3.1.11.orig/loaders/load_okt.c libmikmod-3.1.11/loaders/load_okt.c
+--- libmikmod-3.1.11.orig/loaders/load_okt.c	2004-01-21 15:43:53.000000000 -0200
++++ libmikmod-3.1.11/loaders/load_okt.c	2009-10-21 17:41:26.000000000 -0200
 @@ -20,7 +20,7 @@
  
  /*==============================================================================
@@ -1526,9 +1526,9 @@ diff --recursive --unified libmikmod-3.1.11/loaders/load_okt.c libmikmod-3.1.11-
  
    Oktalyzer (OKT) module loader
  
-diff --recursive --unified libmikmod-3.1.11/loaders/load_s3m.c libmikmod-3.1.11-a/loaders/load_s3m.c
---- libmikmod-3.1.11/loaders/load_s3m.c	2004-01-21 12:43:53.000000000 -0500
-+++ libmikmod-3.1.11-a/loaders/load_s3m.c	2004-06-04 08:24:27.000000000 -0400
+diff -Naur libmikmod-3.1.11.orig/loaders/load_s3m.c libmikmod-3.1.11/loaders/load_s3m.c
+--- libmikmod-3.1.11.orig/loaders/load_s3m.c	2004-01-21 15:43:53.000000000 -0200
++++ libmikmod-3.1.11/loaders/load_s3m.c	2009-10-21 17:41:26.000000000 -0200
 @@ -20,7 +20,7 @@
  
  /*==============================================================================
@@ -1538,9 +1538,9 @@ diff --recursive --unified libmikmod-3.1.11/loaders/load_s3m.c libmikmod-3.1.11-
  
    Screamtracker (S3M) module loader
  
-diff --recursive --unified libmikmod-3.1.11/loaders/load_stm.c libmikmod-3.1.11-a/loaders/load_stm.c
---- libmikmod-3.1.11/loaders/load_stm.c	2004-01-21 12:43:53.000000000 -0500
-+++ libmikmod-3.1.11-a/loaders/load_stm.c	2004-06-04 08:24:27.000000000 -0400
+diff -Naur libmikmod-3.1.11.orig/loaders/load_stm.c libmikmod-3.1.11/loaders/load_stm.c
+--- libmikmod-3.1.11.orig/loaders/load_stm.c	2004-01-21 15:43:53.000000000 -0200
++++ libmikmod-3.1.11/loaders/load_stm.c	2009-10-21 17:41:26.000000000 -0200
 @@ -20,7 +20,7 @@
  
  /*==============================================================================
@@ -1550,9 +1550,9 @@ diff --recursive --unified libmikmod-3.1.11/loaders/load_stm.c libmikmod-3.1.11-
  
    Screamtracker 2 (STM) module loader
  
-diff --recursive --unified libmikmod-3.1.11/loaders/load_stx.c libmikmod-3.1.11-a/loaders/load_stx.c
---- libmikmod-3.1.11/loaders/load_stx.c	2004-01-21 12:43:53.000000000 -0500
-+++ libmikmod-3.1.11-a/loaders/load_stx.c	2004-06-04 08:24:27.000000000 -0400
+diff -Naur libmikmod-3.1.11.orig/loaders/load_stx.c libmikmod-3.1.11/loaders/load_stx.c
+--- libmikmod-3.1.11.orig/loaders/load_stx.c	2004-01-21 15:43:53.000000000 -0200
++++ libmikmod-3.1.11/loaders/load_stx.c	2009-10-21 17:41:26.000000000 -0200
 @@ -20,7 +20,7 @@
  
  /*==============================================================================
@@ -1562,9 +1562,9 @@ diff --recursive --unified libmikmod-3.1.11/loaders/load_stx.c libmikmod-3.1.11-
  
    STMIK 0.2 (STX) module loader
  
-diff --recursive --unified libmikmod-3.1.11/loaders/load_ult.c libmikmod-3.1.11-a/loaders/load_ult.c
---- libmikmod-3.1.11/loaders/load_ult.c	2004-01-21 12:43:53.000000000 -0500
-+++ libmikmod-3.1.11-a/loaders/load_ult.c	2004-06-04 08:24:27.000000000 -0400
+diff -Naur libmikmod-3.1.11.orig/loaders/load_ult.c libmikmod-3.1.11/loaders/load_ult.c
+--- libmikmod-3.1.11.orig/loaders/load_ult.c	2004-01-21 15:43:53.000000000 -0200
++++ libmikmod-3.1.11/loaders/load_ult.c	2009-10-21 17:41:26.000000000 -0200
 @@ -20,7 +20,7 @@
  
  /*==============================================================================
@@ -1574,9 +1574,9 @@ diff --recursive --unified libmikmod-3.1.11/loaders/load_ult.c libmikmod-3.1.11-
  
    Ultratracker (ULT) module loader
  
-diff --recursive --unified libmikmod-3.1.11/loaders/load_uni.c libmikmod-3.1.11-a/loaders/load_uni.c
---- libmikmod-3.1.11/loaders/load_uni.c	2004-01-21 12:43:53.000000000 -0500
-+++ libmikmod-3.1.11-a/loaders/load_uni.c	2004-06-04 08:24:27.000000000 -0400
+diff -Naur libmikmod-3.1.11.orig/loaders/load_uni.c libmikmod-3.1.11/loaders/load_uni.c
+--- libmikmod-3.1.11.orig/loaders/load_uni.c	2004-01-21 15:43:53.000000000 -0200
++++ libmikmod-3.1.11/loaders/load_uni.c	2009-10-21 17:41:26.000000000 -0200
 @@ -20,7 +20,7 @@
  
  /*==============================================================================
@@ -1586,9 +1586,9 @@ diff --recursive --unified libmikmod-3.1.11/loaders/load_uni.c libmikmod-3.1.11-
  
    UNIMOD (libmikmod's and APlayer's internal module format) loader
  
-diff --recursive --unified libmikmod-3.1.11/loaders/load_xm.c libmikmod-3.1.11-a/loaders/load_xm.c
---- libmikmod-3.1.11/loaders/load_xm.c	2004-01-21 12:43:53.000000000 -0500
-+++ libmikmod-3.1.11-a/loaders/load_xm.c	2004-06-04 08:24:27.000000000 -0400
+diff -Naur libmikmod-3.1.11.orig/loaders/load_xm.c libmikmod-3.1.11/loaders/load_xm.c
+--- libmikmod-3.1.11.orig/loaders/load_xm.c	2004-01-21 15:43:53.000000000 -0200
++++ libmikmod-3.1.11/loaders/load_xm.c	2009-10-21 17:41:26.000000000 -0200
 @@ -20,7 +20,7 @@
  
  /*==============================================================================
@@ -1598,9 +1598,19 @@ diff --recursive --unified libmikmod-3.1.11/loaders/load_xm.c libmikmod-3.1.11-a
  
    Fasttracker (XM) module loader
  
-diff --recursive --unified libmikmod-3.1.11/macintosh/mikmod.h libmikmod-3.1.11-a/macintosh/mikmod.h
---- libmikmod-3.1.11/macintosh/mikmod.h	2004-01-21 12:43:53.000000000 -0500
-+++ libmikmod-3.1.11-a/macintosh/mikmod.h	2004-06-04 08:24:27.000000000 -0400
+@@ -622,7 +622,8 @@
+ 				/* read the remainder of the header */
+ 				for(u=headend-_mm_ftell(modreader);u;u--) _mm_read_UBYTE(modreader);
+ 
+-				if(_mm_eof(modreader)) {
++				/* last instrument is at the end of file in version 0x0104 */
++				if(_mm_eof(modreader) && (mh->version<0x0104 || t<of.numins-1)) {
+ 					free(nextwav);free(wh);
+ 					nextwav=NULL;wh=NULL;
+ 					_mm_errno = MMERR_LOADING_SAMPLEINFO;
+diff -Naur libmikmod-3.1.11.orig/macintosh/mikmod.h libmikmod-3.1.11/macintosh/mikmod.h
+--- libmikmod-3.1.11.orig/macintosh/mikmod.h	2004-01-21 15:43:53.000000000 -0200
++++ libmikmod-3.1.11/macintosh/mikmod.h	2009-10-21 17:41:26.000000000 -0200
 @@ -20,7 +20,7 @@
  
  /*==============================================================================
@@ -1610,9 +1620,9 @@ diff --recursive --unified libmikmod-3.1.11/macintosh/mikmod.h libmikmod-3.1.11-
  
    MikMod sound library include file
  
-diff --recursive --unified libmikmod-3.1.11/mkinstalldirs libmikmod-3.1.11-a/mkinstalldirs
---- libmikmod-3.1.11/mkinstalldirs	2004-01-21 12:43:53.000000000 -0500
-+++ libmikmod-3.1.11-a/mkinstalldirs	2004-06-04 08:24:26.000000000 -0400
+diff -Naur libmikmod-3.1.11.orig/mkinstalldirs libmikmod-3.1.11/mkinstalldirs
+--- libmikmod-3.1.11.orig/mkinstalldirs	2004-01-21 15:43:53.000000000 -0200
++++ libmikmod-3.1.11/mkinstalldirs	2009-10-21 17:41:26.000000000 -0200
 @@ -4,7 +4,7 @@
  # Created: 1993-05-16
  # Public domain
@@ -1622,9 +1632,9 @@ diff --recursive --unified libmikmod-3.1.11/mkinstalldirs libmikmod-3.1.11-a/mki
  
  errstatus=0
  
-diff --recursive --unified libmikmod-3.1.11/mmio/mmalloc.c libmikmod-3.1.11-a/mmio/mmalloc.c
---- libmikmod-3.1.11/mmio/mmalloc.c	2004-01-21 12:43:52.000000000 -0500
-+++ libmikmod-3.1.11-a/mmio/mmalloc.c	2004-06-04 08:24:27.000000000 -0400
+diff -Naur libmikmod-3.1.11.orig/mmio/mmalloc.c libmikmod-3.1.11/mmio/mmalloc.c
+--- libmikmod-3.1.11.orig/mmio/mmalloc.c	2004-01-21 15:43:52.000000000 -0200
++++ libmikmod-3.1.11/mmio/mmalloc.c	2009-10-21 17:41:26.000000000 -0200
 @@ -20,7 +20,7 @@
  
  /*==============================================================================
@@ -1634,9 +1644,9 @@ diff --recursive --unified libmikmod-3.1.11/mmio/mmalloc.c libmikmod-3.1.11-a/mm
  
    Dynamic memory routines
  
-diff --recursive --unified libmikmod-3.1.11/mmio/mmerror.c libmikmod-3.1.11-a/mmio/mmerror.c
---- libmikmod-3.1.11/mmio/mmerror.c	2004-01-21 12:43:52.000000000 -0500
-+++ libmikmod-3.1.11-a/mmio/mmerror.c	2004-06-04 08:24:27.000000000 -0400
+diff -Naur libmikmod-3.1.11.orig/mmio/mmerror.c libmikmod-3.1.11/mmio/mmerror.c
+--- libmikmod-3.1.11.orig/mmio/mmerror.c	2004-01-21 15:43:52.000000000 -0200
++++ libmikmod-3.1.11/mmio/mmerror.c	2009-10-21 17:41:26.000000000 -0200
 @@ -20,7 +20,7 @@
  
  /*==============================================================================
@@ -1646,9 +1656,9 @@ diff --recursive --unified libmikmod-3.1.11/mmio/mmerror.c libmikmod-3.1.11-a/mm
  
    Error handling functions.
    Register an error handler with _mm_RegisterErrorHandler() and you're all set.
-diff --recursive --unified libmikmod-3.1.11/mmio/mmio.c libmikmod-3.1.11-a/mmio/mmio.c
---- libmikmod-3.1.11/mmio/mmio.c	2004-01-21 12:43:52.000000000 -0500
-+++ libmikmod-3.1.11-a/mmio/mmio.c	2004-06-04 08:24:27.000000000 -0400
+diff -Naur libmikmod-3.1.11.orig/mmio/mmio.c libmikmod-3.1.11/mmio/mmio.c
+--- libmikmod-3.1.11.orig/mmio/mmio.c	2004-01-21 15:43:52.000000000 -0200
++++ libmikmod-3.1.11/mmio/mmio.c	2009-10-21 17:41:26.000000000 -0200
 @@ -20,7 +20,7 @@
  
  /*==============================================================================
@@ -1658,9 +1668,9 @@ diff --recursive --unified libmikmod-3.1.11/mmio/mmio.c libmikmod-3.1.11-a/mmio/
  
    Portable file I/O routines
  
-diff --recursive --unified libmikmod-3.1.11/os2/configure.cmd libmikmod-3.1.11-a/os2/configure.cmd
---- libmikmod-3.1.11/os2/configure.cmd	2004-01-21 12:43:52.000000000 -0500
-+++ libmikmod-3.1.11-a/os2/configure.cmd	2004-06-04 08:24:27.000000000 -0400
+diff -Naur libmikmod-3.1.11.orig/os2/configure.cmd libmikmod-3.1.11/os2/configure.cmd
+--- libmikmod-3.1.11.orig/os2/configure.cmd	2004-01-21 15:43:52.000000000 -0200
++++ libmikmod-3.1.11/os2/configure.cmd	2009-10-21 17:41:26.000000000 -0200
 @@ -22,7 +22,7 @@
  
  /*==============================================================================
@@ -1670,9 +1680,9 @@ diff --recursive --unified libmikmod-3.1.11/os2/configure.cmd libmikmod-3.1.11-a
  
    Configuration script for libmikmod under OS/2
  
-diff --recursive --unified libmikmod-3.1.11/playercode/mdreg.c libmikmod-3.1.11-a/playercode/mdreg.c
---- libmikmod-3.1.11/playercode/mdreg.c	2004-01-21 12:43:53.000000000 -0500
-+++ libmikmod-3.1.11-a/playercode/mdreg.c	2004-06-04 08:24:27.000000000 -0400
+diff -Naur libmikmod-3.1.11.orig/playercode/mdreg.c libmikmod-3.1.11/playercode/mdreg.c
+--- libmikmod-3.1.11.orig/playercode/mdreg.c	2004-01-21 15:43:53.000000000 -0200
++++ libmikmod-3.1.11/playercode/mdreg.c	2009-10-21 17:41:26.000000000 -0200
 @@ -20,7 +20,7 @@
  
  /*==============================================================================
@@ -1682,9 +1692,9 @@ diff --recursive --unified libmikmod-3.1.11/playercode/mdreg.c libmikmod-3.1.11-
  
    Routine for registering all drivers in libmikmod for the current platform.
  
-diff --recursive --unified libmikmod-3.1.11/playercode/mdriver.c libmikmod-3.1.11-a/playercode/mdriver.c
---- libmikmod-3.1.11/playercode/mdriver.c	2004-01-21 12:43:53.000000000 -0500
-+++ libmikmod-3.1.11-a/playercode/mdriver.c	2004-06-04 08:24:27.000000000 -0400
+diff -Naur libmikmod-3.1.11.orig/playercode/mdriver.c libmikmod-3.1.11/playercode/mdriver.c
+--- libmikmod-3.1.11.orig/playercode/mdriver.c	2004-01-21 15:43:53.000000000 -0200
++++ libmikmod-3.1.11/playercode/mdriver.c	2009-10-21 17:41:26.000000000 -0200
 @@ -20,7 +20,7 @@
  
  /*==============================================================================
@@ -1694,9 +1704,9 @@ diff --recursive --unified libmikmod-3.1.11/playercode/mdriver.c libmikmod-3.1.1
  
    These routines are used to access the available soundcard drivers.
  
-diff --recursive --unified libmikmod-3.1.11/playercode/mdulaw.c libmikmod-3.1.11-a/playercode/mdulaw.c
---- libmikmod-3.1.11/playercode/mdulaw.c	2004-01-21 12:43:53.000000000 -0500
-+++ libmikmod-3.1.11-a/playercode/mdulaw.c	2004-06-04 08:24:27.000000000 -0400
+diff -Naur libmikmod-3.1.11.orig/playercode/mdulaw.c libmikmod-3.1.11/playercode/mdulaw.c
+--- libmikmod-3.1.11.orig/playercode/mdulaw.c	2004-01-21 15:43:53.000000000 -0200
++++ libmikmod-3.1.11/playercode/mdulaw.c	2009-10-21 17:41:26.000000000 -0200
 @@ -20,7 +20,7 @@
  
  /*==============================================================================
@@ -1706,9 +1716,9 @@ diff --recursive --unified libmikmod-3.1.11/playercode/mdulaw.c libmikmod-3.1.11
  
    Mu-law routines
  
-diff --recursive --unified libmikmod-3.1.11/playercode/mloader.c libmikmod-3.1.11-a/playercode/mloader.c
---- libmikmod-3.1.11/playercode/mloader.c	2004-01-21 12:43:53.000000000 -0500
-+++ libmikmod-3.1.11-a/playercode/mloader.c	2004-06-04 08:24:27.000000000 -0400
+diff -Naur libmikmod-3.1.11.orig/playercode/mloader.c libmikmod-3.1.11/playercode/mloader.c
+--- libmikmod-3.1.11.orig/playercode/mloader.c	2004-01-21 15:43:53.000000000 -0200
++++ libmikmod-3.1.11/playercode/mloader.c	2009-10-21 17:41:26.000000000 -0200
 @@ -20,7 +20,7 @@
  
  /*==============================================================================
@@ -1718,9 +1728,26 @@ diff --recursive --unified libmikmod-3.1.11/playercode/mloader.c libmikmod-3.1.1
  
    These routines are used to access the available module loaders
  
-diff --recursive --unified libmikmod-3.1.11/playercode/mlreg.c libmikmod-3.1.11-a/playercode/mlreg.c
---- libmikmod-3.1.11/playercode/mlreg.c	2004-01-21 12:43:53.000000000 -0500
-+++ libmikmod-3.1.11-a/playercode/mlreg.c	2004-06-04 08:24:27.000000000 -0400
+@@ -450,10 +450,12 @@
+ 	if (!l->Init || l->Init()) {
+ 		_mm_rewind(modreader);
+ 		ok = l->Load(curious);
+-		/* propagate inflags=flags for in-module samples */
+-		for (t = 0; t < of.numsmp; t++)
+-			if (of.samples[t].inflags == 0)
+-				of.samples[t].inflags = of.samples[t].flags;
++		if (ok) {
++			/* propagate inflags=flags for in-module samples */
++			for (t = 0; t < of.numsmp; t++)
++				if (of.samples[t].inflags == 0)
++					of.samples[t].inflags = of.samples[t].flags;
++		}
+ 	} else
+ 		ok = 0;
+ 
+diff -Naur libmikmod-3.1.11.orig/playercode/mlreg.c libmikmod-3.1.11/playercode/mlreg.c
+--- libmikmod-3.1.11.orig/playercode/mlreg.c	2004-01-21 15:43:53.000000000 -0200
++++ libmikmod-3.1.11/playercode/mlreg.c	2009-10-21 17:41:26.000000000 -0200
 @@ -20,7 +20,7 @@
  
  /*==============================================================================
@@ -1730,9 +1757,9 @@ diff --recursive --unified libmikmod-3.1.11/playercode/mlreg.c libmikmod-3.1.11-
  
    Routine for registering all loaders in libmikmod for the current platform.
  
-diff --recursive --unified libmikmod-3.1.11/playercode/mlutil.c libmikmod-3.1.11-a/playercode/mlutil.c
---- libmikmod-3.1.11/playercode/mlutil.c	2004-01-21 12:43:53.000000000 -0500
-+++ libmikmod-3.1.11-a/playercode/mlutil.c	2004-06-04 08:24:27.000000000 -0400
+diff -Naur libmikmod-3.1.11.orig/playercode/mlutil.c libmikmod-3.1.11/playercode/mlutil.c
+--- libmikmod-3.1.11.orig/playercode/mlutil.c	2004-01-21 15:43:53.000000000 -0200
++++ libmikmod-3.1.11/playercode/mlutil.c	2009-10-21 17:41:26.000000000 -0200
 @@ -20,7 +20,7 @@
  
  /*==============================================================================
@@ -1742,9 +1769,9 @@ diff --recursive --unified libmikmod-3.1.11/playercode/mlutil.c libmikmod-3.1.11
  
    Utility functions for the module loader
  
-diff --recursive --unified libmikmod-3.1.11/playercode/mplayer.c libmikmod-3.1.11-a/playercode/mplayer.c
---- libmikmod-3.1.11/playercode/mplayer.c	2004-01-21 12:43:53.000000000 -0500
-+++ libmikmod-3.1.11-a/playercode/mplayer.c	2004-06-04 08:24:27.000000000 -0400
+diff -Naur libmikmod-3.1.11.orig/playercode/mplayer.c libmikmod-3.1.11/playercode/mplayer.c
+--- libmikmod-3.1.11.orig/playercode/mplayer.c	2004-01-21 15:43:53.000000000 -0200
++++ libmikmod-3.1.11/playercode/mplayer.c	2009-10-21 17:41:26.000000000 -0200
 @@ -20,7 +20,7 @@
  
  /*==============================================================================
@@ -1754,9 +1781,45 @@ diff --recursive --unified libmikmod-3.1.11/playercode/mplayer.c libmikmod-3.1.1
  
    The Protracker Player Driver
  
-diff --recursive --unified libmikmod-3.1.11/playercode/munitrk.c libmikmod-3.1.11-a/playercode/munitrk.c
---- libmikmod-3.1.11/playercode/munitrk.c	2004-01-21 12:43:53.000000000 -0500
-+++ libmikmod-3.1.11-a/playercode/munitrk.c	2004-06-04 08:24:27.000000000 -0400
+@@ -2318,7 +2318,7 @@
+ 	SAMPLE *s;
+ 
+ 	mod->totalchn=mod->realchn=0;
+-	for (channel=0;channel<md_sngchn;channel++) {
++	for (channel=0;channel<pf->numchn;channel++) {
+ 		aout=&mod->voice[channel];
+ 		i=aout->main.i;
+ 		s=aout->main.s;
+@@ -3086,7 +3086,7 @@
+ 		pf->patbrk=0;
+ 		pf->vbtick=pf->sngspd;
+ 
+-		for (t=0;t<md_sngchn;t++) {
++		for (t=0;t<pf->numchn;t++) {
+ 			Voice_Stop_internal(t);
+ 			pf->voice[t].main.i=NULL;
+ 			pf->voice[t].main.s=NULL;
+@@ -3111,7 +3111,7 @@
+ 		pf->patbrk=0;
+ 		pf->vbtick=pf->sngspd;
+ 
+-		for (t=0;t<md_sngchn;t++) {
++		for (t=0;t<pf->numchn;t++) {
+ 			Voice_Stop_internal(t);
+ 			pf->voice[t].main.i=NULL;
+ 			pf->voice[t].main.s=NULL;
+@@ -3138,7 +3138,7 @@
+ 		pf->sngpos=pos;
+ 		pf->vbtick=pf->sngspd;
+ 
+-		for (t=0;t<md_sngchn;t++) {
++		for (t=0;t<pf->numchn;t++) {
+ 			Voice_Stop_internal(t);
+ 			pf->voice[t].main.i=NULL;
+ 			pf->voice[t].main.s=NULL;
+diff -Naur libmikmod-3.1.11.orig/playercode/munitrk.c libmikmod-3.1.11/playercode/munitrk.c
+--- libmikmod-3.1.11.orig/playercode/munitrk.c	2004-01-21 15:43:53.000000000 -0200
++++ libmikmod-3.1.11/playercode/munitrk.c	2009-10-21 17:41:26.000000000 -0200
 @@ -20,7 +20,7 @@
  
  /*==============================================================================
@@ -1766,9 +1829,9 @@ diff --recursive --unified libmikmod-3.1.11/playercode/munitrk.c libmikmod-3.1.1
  
    All routines dealing with the manipulation of UNITRK streams
  
-diff --recursive --unified libmikmod-3.1.11/playercode/mwav.c libmikmod-3.1.11-a/playercode/mwav.c
---- libmikmod-3.1.11/playercode/mwav.c	2004-01-21 12:43:53.000000000 -0500
-+++ libmikmod-3.1.11-a/playercode/mwav.c	2004-06-04 08:24:27.000000000 -0400
+diff -Naur libmikmod-3.1.11.orig/playercode/mwav.c libmikmod-3.1.11/playercode/mwav.c
+--- libmikmod-3.1.11.orig/playercode/mwav.c	2004-01-21 15:43:53.000000000 -0200
++++ libmikmod-3.1.11/playercode/mwav.c	2009-10-21 17:41:26.000000000 -0200
 @@ -20,7 +20,7 @@
  
  /*==============================================================================
@@ -1778,9 +1841,9 @@ diff --recursive --unified libmikmod-3.1.11/playercode/mwav.c libmikmod-3.1.11-a
  
    WAV sample loader
  
-diff --recursive --unified libmikmod-3.1.11/playercode/npertab.c libmikmod-3.1.11-a/playercode/npertab.c
---- libmikmod-3.1.11/playercode/npertab.c	2004-01-21 12:43:53.000000000 -0500
-+++ libmikmod-3.1.11-a/playercode/npertab.c	2004-06-04 08:24:27.000000000 -0400
+diff -Naur libmikmod-3.1.11.orig/playercode/npertab.c libmikmod-3.1.11/playercode/npertab.c
+--- libmikmod-3.1.11.orig/playercode/npertab.c	2004-01-21 15:43:53.000000000 -0200
++++ libmikmod-3.1.11/playercode/npertab.c	2009-10-21 17:41:26.000000000 -0200
 @@ -20,7 +20,7 @@
  
  /*==============================================================================
@@ -1790,9 +1853,9 @@ diff --recursive --unified libmikmod-3.1.11/playercode/npertab.c libmikmod-3.1.1
  
    MOD format period table.  Used by both the MOD and M15 (15-inst mod) Loaders.
  
-diff --recursive --unified libmikmod-3.1.11/playercode/sloader.c libmikmod-3.1.11-a/playercode/sloader.c
---- libmikmod-3.1.11/playercode/sloader.c	2004-01-21 12:43:53.000000000 -0500
-+++ libmikmod-3.1.11-a/playercode/sloader.c	2004-06-04 08:24:27.000000000 -0400
+diff -Naur libmikmod-3.1.11.orig/playercode/sloader.c libmikmod-3.1.11/playercode/sloader.c
+--- libmikmod-3.1.11.orig/playercode/sloader.c	2004-01-21 15:43:53.000000000 -0200
++++ libmikmod-3.1.11/playercode/sloader.c	2009-10-21 17:41:26.000000000 -0200
 @@ -20,7 +20,7 @@
  
  /*==============================================================================
@@ -1802,9 +1865,9 @@ diff --recursive --unified libmikmod-3.1.11/playercode/sloader.c libmikmod-3.1.1
  
    Routines for loading samples. The sample loader utilizes the routines
    provided by the "registered" sample loader.
-diff --recursive --unified libmikmod-3.1.11/playercode/virtch.c libmikmod-3.1.11-a/playercode/virtch.c
---- libmikmod-3.1.11/playercode/virtch.c	2004-01-21 12:43:53.000000000 -0500
-+++ libmikmod-3.1.11-a/playercode/virtch.c	2004-06-04 08:24:27.000000000 -0400
+diff -Naur libmikmod-3.1.11.orig/playercode/virtch.c libmikmod-3.1.11/playercode/virtch.c
+--- libmikmod-3.1.11.orig/playercode/virtch.c	2004-01-21 15:43:53.000000000 -0200
++++ libmikmod-3.1.11/playercode/virtch.c	2009-10-21 17:41:26.000000000 -0200
 @@ -20,7 +20,7 @@
  
  /*==============================================================================
@@ -1814,9 +1877,9 @@ diff --recursive --unified libmikmod-3.1.11/playercode/virtch.c libmikmod-3.1.11
  
    Sample mixing routines, using a 32 bits mixing buffer.
  
-diff --recursive --unified libmikmod-3.1.11/playercode/virtch2.c libmikmod-3.1.11-a/playercode/virtch2.c
---- libmikmod-3.1.11/playercode/virtch2.c	2004-01-21 12:43:53.000000000 -0500
-+++ libmikmod-3.1.11-a/playercode/virtch2.c	2004-06-04 08:24:27.000000000 -0400
+diff -Naur libmikmod-3.1.11.orig/playercode/virtch2.c libmikmod-3.1.11/playercode/virtch2.c
+--- libmikmod-3.1.11.orig/playercode/virtch2.c	2004-01-21 15:43:53.000000000 -0200
++++ libmikmod-3.1.11/playercode/virtch2.c	2009-10-21 17:41:26.000000000 -0200
 @@ -20,7 +20,7 @@
  
  /*==============================================================================
@@ -1826,9 +1889,9 @@ diff --recursive --unified libmikmod-3.1.11/playercode/virtch2.c libmikmod-3.1.1
  
    High-quality sample mixing routines, using a 32 bits mixing buffer,
    interpolation, and sample smoothing to improve sound quality and remove
-diff --recursive --unified libmikmod-3.1.11/playercode/virtch_common.c libmikmod-3.1.11-a/playercode/virtch_common.c
---- libmikmod-3.1.11/playercode/virtch_common.c	2004-01-21 12:43:53.000000000 -0500
-+++ libmikmod-3.1.11-a/playercode/virtch_common.c	2004-06-04 08:24:27.000000000 -0400
+diff -Naur libmikmod-3.1.11.orig/playercode/virtch_common.c libmikmod-3.1.11/playercode/virtch_common.c
+--- libmikmod-3.1.11.orig/playercode/virtch_common.c	2004-01-21 15:43:53.000000000 -0200
++++ libmikmod-3.1.11/playercode/virtch_common.c	2009-10-21 17:41:26.000000000 -0200
 @@ -20,7 +20,7 @@
  
  /*==============================================================================
@@ -1838,9 +1901,9 @@ diff --recursive --unified libmikmod-3.1.11/playercode/virtch_common.c libmikmod
  
    Common source parts between the two software mixers.
    This file is probably the ugliest part of libmikmod...
-diff --recursive --unified libmikmod-3.1.11/win32/mikmod_build.h libmikmod-3.1.11-a/win32/mikmod_build.h
---- libmikmod-3.1.11/win32/mikmod_build.h	2004-01-21 12:43:52.000000000 -0500
-+++ libmikmod-3.1.11-a/win32/mikmod_build.h	2004-06-04 08:24:27.000000000 -0400
+diff -Naur libmikmod-3.1.11.orig/win32/mikmod_build.h libmikmod-3.1.11/win32/mikmod_build.h
+--- libmikmod-3.1.11.orig/win32/mikmod_build.h	2004-01-21 15:43:52.000000000 -0200
++++ libmikmod-3.1.11/win32/mikmod_build.h	2009-10-21 17:41:26.000000000 -0200
 @@ -20,7 +20,7 @@
  
  /*==============================================================================
