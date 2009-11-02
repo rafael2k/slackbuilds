@@ -16,8 +16,8 @@
 #
 # slackbuild for perl-html-parser, by Silvio Rhatto
 # requires:  
-# tested: perl-html-parser-3.62
-# model: perl.mkSlackBuild $Rev: 796 $
+# tested: perl-html-parser-3.64
+# model: perl.mkSlackBuild $Rev: 824 $
 #
 
 # Look for slackbuildrc
@@ -32,7 +32,7 @@ CWD="$(pwd)"
 SRC_NAME="HTML-Parser"
 PKG_NAME="perl-html-parser"
 ARCH=${ARCH:=i486}
-SRC_VERSION=${VERSION:=3.62}
+SRC_VERSION=${VERSION:=3.64}
 PKG_VERSION="$(echo "$SRC_VERSION" | tr '[[:blank:]-]' '_')"
 BUILD=${BUILD:=1rha}
 SRC_DIR=${SRC_DIR:=$CWD}/$PKG_NAME
