@@ -16,8 +16,8 @@
 #
 # slackbuild for debootstrap, by Silvio Rhatto
 # requires:  
-# tested: debootstrap-1.0.12
-# model: generic.mkSlackBuild $Rev: 805 $
+# tested: debootstrap-1.0.20
+# model: generic.mkSlackBuild $Rev: 824 $
 #
 
 # Look for slackbuildrc
@@ -32,7 +32,7 @@ CWD="$(pwd)"
 SRC_NAME="debootstrap"
 PKG_NAME="debootstrap"
 ARCH="noarch"
-SRC_VERSION=${VERSION:=1.0.12}
+SRC_VERSION=${VERSION:=1.0.20}
 PKG_VERSION="$(echo "$SRC_VERSION" | tr '[[:blank:]-]' '_')"
 BUILD=${BUILD:=1rha}
 SRC_DIR=${SRC_DIR:=$CWD}/$PKG_NAME
