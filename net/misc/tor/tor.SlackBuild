@@ -16,8 +16,8 @@
 #
 # slackbuild for tor, by Silvio Rhatto
 # requires:  
-# tested: tor-0.2.0.35
-# model: generic.mkSlackBuild $Rev: 805 $
+# tested: tor-0.2.1.22
+# model: generic.mkSlackBuild $Rev: 824 $
 #
 
 # Look for slackbuildrc
@@ -32,7 +32,7 @@ CWD="$(pwd)"
 SRC_NAME="tor"
 PKG_NAME="tor"
 ARCH=${ARCH:=i486}
-SRC_VERSION=${VERSION:=0.2.0.35}
+SRC_VERSION=${VERSION:=0.2.1.22}
 PKG_VERSION="$(echo "$SRC_VERSION" | tr '[[:blank:]-]' '_')"
 BUILD=${BUILD:=1rha}
 SRC_DIR=${SRC_DIR:=$CWD}/$PKG_NAME
@@ -109,6 +109,8 @@ else
     SIGNATURE="$SRC.sig"
   elif [ -s "$SRC_DIR/$SRC.asc" ]; then
     SIGNATURE="$SRC.asc"
+  elif [ -s "$SRC_DIR/$SRC.sign" ]; then
+    SIGNATURE="$SRC.sign"
   else
     echo Trying to get signature file from $URL.sig...
     if wget "$URL.sig" -O "$SRC_DIR/$SRC.sig"; then
@@ -120,8 +122,14 @@ else
         SIGNATURE="$SRC.asc"
       else
         rm $SRC_DIR/$SRC.asc
-        echo "Error getting source's signature file"
-        exit $ERROR_GPG
+        echo Trying to get signature file from $URL.sign...
+        if wget "$URL.sign" -O "$SRC_DIR/$SRC.sign"; then
+          SIGNATURE="$SRC.sign"
+        else
+          rm $SRC_DIR/$SRC.sign
+          echo "Error getting source's signature file"
+          exit $ERROR_GPG
+        fi
       fi
     fi
   fi
