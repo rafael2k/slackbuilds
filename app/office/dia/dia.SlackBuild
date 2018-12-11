@@ -16,7 +16,7 @@
 #
 # slackbuild for dia, by Silvio Rhatto
 # requires:  
-# tested: dia-0.96.1
+# tested: dia-0.97.3
 #
 
 # Look for slackbuildrc
@@ -30,8 +30,8 @@ fi
 CWD="$(pwd)"
 SRC_NAME="dia"
 PKG_NAME="dia"
-ARCH=${ARCH:=i486}
-SRC_VERSION=${VERSION:=0.96.1}
+ARCH=${ARCH:=x86_64}
+SRC_VERSION=${VERSION:=0.97.3}
 PKG_VERSION="$(echo "$SRC_VERSION" | tr '[[:blank:]-]' '_')"
 BUILD=${BUILD:=1rha}
 SRC_DIR=${SRC_DIR:=$CWD}/$PKG_NAME
@@ -76,18 +76,18 @@ mkdir -p "$REPOS" || exit $ERROR_MKDIR
 mkdir -p "$PKG_WORK" || exit $ERROR_MKDIR
 
 # Dowload source if necessary
-SRC="$SRC_NAME-$VERSION.tar.bz2"
+SRC="$SRC_NAME-$VERSION.tar.xz"
 SUB_VERSION=`echo $PKG_VERSION | sed 's/\(^[0-9]\+\.[0-9]\+\)\..*$/\1/'`
 URL="http://ftp.gnome.org/pub/gnome/sources/$PKG_NAME/$SUB_VERSION/$SRC"
 
-if [ ! -s "$SRC_DIR/$SRC" ] || ! bunzip2 -t "$SRC_DIR/$SRC" 2> /dev/null; then
+if [ ! -s "$SRC_DIR/$SRC" ] || ! xz -t "$SRC_DIR/$SRC" 2> /dev/null; then
   wget "$URL" -O "$SRC_DIR/$SRC" || exit $ERROR_WGET
 fi
 
 # Untar
 cd "$PKG_WORK"
 tar --no-same-owner --no-same-permissions -xvf "$SRC_DIR/$SRC" || exit $ERROR_TAR
-PKG_SRC="$PWD/`ls -l | awk '/^d/ { print $8 }'`"
+PKG_SRC="$PWD/`ls -l | awk '/^d/ { print $9 }'`"
 cd "$PKG_SRC"
 
 # Configure
